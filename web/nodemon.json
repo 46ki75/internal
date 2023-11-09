@@ -1,0 +1,10 @@
+{
+  "watch": ["src"],
+  "ext": "js,ts,json,jsx,tsx,css,scss",
+  "ignore": ["src/tests/*"],
+  "exec": "tsc && vite build",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "verbose": false
+}

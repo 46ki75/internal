@@ -2,8 +2,4 @@ FROM node:20
 
 WORKDIR /workspace
 
-RUN useradd -m shirayuki
-
-USER shirayuki
-
 CMD ["npm", "run", "build:watch"]

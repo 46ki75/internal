@@ -9,7 +9,7 @@
     "build": "tsc && vite build",
     "build:watch": "nodemon",
     "format": "prettier --write .",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint ./src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "prettier": "prettier-config-standard",

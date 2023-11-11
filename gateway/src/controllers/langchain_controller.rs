@@ -7,7 +7,7 @@ pub async fn forward_request(
     req: HttpRequest,
     body: web::Bytes,
 ) -> Result<HttpResponse, Error> {
-    let url = format!("http://localhost:10002{}", req.uri());
+    let url = format!("http://langchain:10002{}", req.uri());
     let forwarded_request = client.request(req.method().clone(), &url);
 
     let mut request_builder = forwarded_request.body(body);

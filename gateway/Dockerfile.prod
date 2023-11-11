@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:22.04 as builder
 
 RUN apt-get update && \
     apt-get install -y curl build-essential gcc make pkg-config libssl-dev
@@ -14,3 +14,12 @@ COPY . .
 RUN cargo build --release
 
 CMD ["./target/release/gateway"]
+
+FROM ubuntu:22.04 as runtime
+
+RUN apt-get update && \
+    apt-get install -y libssl-dev
+
+COPY --from=builder /workspace/target/release/gateway /gateway
+
+CMD ["/gateway"]

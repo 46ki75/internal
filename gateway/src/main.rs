@@ -15,7 +15,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .app_data(web::Data::new(client.clone()))
             .configure(langchain_controller::config)
-            .service(fs::Files::new("/", "./dist").index_file("index.html"))
+            .service(fs::Files::new("/", "/dist").index_file("index.html"))
     })
     .bind("0.0.0.0:10000")?
     .run()

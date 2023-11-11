@@ -1,0 +1,25 @@
+version: '3'
+services:
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile.dev
+    ports:
+      - "10000:10000"
+    volumes:
+      - ./gateway:/workspace
+      - ./web/dist:/dist
+
+  langchain:
+    build:
+      context: ./langchain
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./langchain:/workspace
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./web:/workspace

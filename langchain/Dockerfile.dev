@@ -1,0 +1,14 @@
+FROM python:3.10
+
+WORKDIR /workspace
+
+COPY pyproject.toml poetry.lock* /workspace/
+
+RUN pip install poetry \
+    && poetry config virtualenvs.create false
+
+RUN poetry install
+
+COPY . /workspace
+
+CMD ["python3", "bootstrap_dev.py"]

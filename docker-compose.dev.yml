@@ -8,7 +8,7 @@ services:
       - "10000:10000"
     volumes:
       - ./gateway:/workspace
-      - ./web/dist:/dist
+      - web-dist:/dist 
 
   langchain:
     build:
@@ -23,3 +23,7 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./web:/workspace
+      - web-dist:/workspace/dist 
+
+volumes:
+  web-dist:

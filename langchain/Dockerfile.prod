@@ -13,4 +13,4 @@ RUN poetry install
 
 COPY . /workspace
 
-CMD ["python3", "bootstrap_prod.py"]
+CMD ["python3", "bootstrap.py"]

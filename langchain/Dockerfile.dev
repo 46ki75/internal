@@ -9,13 +9,6 @@ RUN pip install poetry \
 
 RUN poetry install
 
-COPY setup-user.sh /setup-user.sh
-
-RUN chmod +x /setup-user.sh && /setup-user.sh
-
-ARG UID
-USER ${UID}
-
 COPY . /workspace
 
-CMD ["python3", "bootstrap_dev.py"]
+CMD ["python3", "bootstrap.py"]

@@ -1,6 +1,6 @@
 {
   "folders": [
     { "name": "nitro", "path": "." },
-    { "name": "cdk", "path": "./cdk" }
-  ]
+    { "name": "cdk", "path": "./cdk" },
+  ],
 }

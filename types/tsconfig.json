@@ -12,26 +12,12 @@
     "jsxFactory": "h",
     "jsxFragmentFactory": "Fragment",
     "paths": {
-      "#imports": [
-        "./nitro-imports"
-      ],
-      "~/*": [
-        "../../server/*"
-      ],
-      "@/*": [
-        "../../server/*"
-      ],
-      "~~/*": [
-        "../../*"
-      ],
-      "@@/*": [
-        "../../*"
-      ]
+      "#imports": ["./nitro-imports"],
+      "~/*": ["../../server/*"],
+      "@/*": ["../../server/*"],
+      "~~/*": ["../../*"],
+      "@@/*": ["../../*"]
     }
   },
-  "include": [
-    "./nitro.d.ts",
-    "../../**/*",
-    "../../server/**/*"
-  ]
+  "include": ["./nitro.d.ts", "../../**/*", "../../server/**/*"]
 }

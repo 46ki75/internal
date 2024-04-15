@@ -6,7 +6,16 @@
     "prepare": "nitro prepare",
     "preview": "node .output/server/index.mjs"
   },
+  "prettier": "prettier-config-standard",
   "devDependencies": {
-    "nitropack": "latest"
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.6",
+    "nitropack": "latest",
+    "prettier": "^3.2.5",
+    "prettier-config-standard": "^7.0.0"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "jsonwebtoken": "^9.0.2"
   }
 }

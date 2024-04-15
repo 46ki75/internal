@@ -39,7 +39,7 @@ export class CdkStack extends cdk.Stack {
     // ルートの追加
     httpApi.addRoutes({
       path: "/{all+}",
-      methods: [HttpMethod.GET, HttpMethod.POST],
+      methods: [HttpMethod.ANY],
       integration: lambdaIntegration,
     });
   }

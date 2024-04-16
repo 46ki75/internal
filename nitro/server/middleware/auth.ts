@@ -24,8 +24,8 @@ export default defineEventHandler((event) => {
 
   if (
     !isValid &&
-    event.path !== '/auth/login' &&
-    event.path !== '/auth/logout'
+    event.path !== '/api/auth/login' &&
+    event.path !== '/api/auth/logout'
   ) {
     setResponseStatus(event, 403)
     return { error: 'The token is not valid. Please login again.' }

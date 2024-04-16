@@ -24,6 +24,7 @@ export default defineEventHandler((event) => {
 
   if (
     !isValid &&
+    event.path !== '/api/up' &&
     event.path !== '/api/auth/login' &&
     event.path !== '/api/auth/logout'
   ) {

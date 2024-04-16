@@ -1,0 +1,10 @@
+{
+  "hosted-zone:account=173800583470:domainName=46ki75.com:region=ap-northeast-1": {
+    "Id": "/hostedzone/Z02395321SCYI1K0FXKWB",
+    "Name": "46ki75.com."
+  },
+  "hosted-zone:account=173800583470:domainName=46ki75.com:region=us-east-1": {
+    "Id": "/hostedzone/Z02395321SCYI1K0FXKWB",
+    "Name": "46ki75.com."
+  }
+}

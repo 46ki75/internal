@@ -1,18 +1,24 @@
 {
   "name": "Next.js Dev Container",
   "build": { "dockerfile": "Dockerfile" },
-  "postCreateCommand": "npm i",
   "customizations": {
     "vscode": {
       "settings": {},
       "extensions": [
+        "redhat.vscode-yaml",
+        "redhat.vscode-xml",
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
-        "svipas.prettier-plus",
         "usernamehw.errorlens",
-        "Vue.volar"
+        "Vue.volar",
+        "ms-azuretools.vscode-docker"
       ]
     }
   },
-  "forwardPorts": [5173, 6006]
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "8gb",
+    "storage": "32gb"
+  },
+  "forwardPorts": [3000, 4000]
 }

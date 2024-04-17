@@ -13,3 +13,6 @@ PS1+="\[\e[30m\]\$ "
 PS1+="\[\e[0m\]"
 
 unset color_prompt force_color_prompt
+
+export VOLTA_HOME="$HOME/.volta"
+export PATH="$VOLTA_HOME/bin:$PATH"

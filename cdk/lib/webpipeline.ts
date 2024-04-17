@@ -52,15 +52,6 @@ export class WebCodePipelineStack extends cdk.Stack {
       publicReadAccess: true
     })
 
-    bucket.addToResourcePolicy(
-      new PolicyStatement({
-        actions: ['s3:GetObject'],
-        effect: Effect.ALLOW,
-        resources: [bucket.bucketArn + '/*'],
-        principals: [new ServicePrincipal('cloudfront.amazonaws.com')]
-      })
-    )
-
     // # --------------------------------------------------
     //
     // CodeBuild
@@ -75,7 +66,7 @@ export class WebCodePipelineStack extends cdk.Stack {
             commands: ['cd web', 'npm install']
           },
           build: {
-            commands: ['npm run build']
+            commands: ['npm run generate']
           }
         },
         artifacts: {

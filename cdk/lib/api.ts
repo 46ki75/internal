@@ -3,9 +3,13 @@ import {
   CorsHttpMethod,
   DomainName,
   HttpApi,
+  HttpIntegration,
   HttpNoneAuthorizer
 } from 'aws-cdk-lib/aws-apigatewayv2'
-import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations'
+import {
+  HttpLambdaIntegration,
+  HttpUrlIntegration
+} from 'aws-cdk-lib/aws-apigatewayv2-integrations'
 import { Function, Code, Runtime } from 'aws-cdk-lib/aws-lambda'
 import { Construct } from 'constructs'
 import * as path from 'path'
@@ -43,7 +47,7 @@ export class ApiStack extends cdk.Stack {
     // # --------------------------------------------------
 
     const certificate = new Certificate(this, 'APIInternalCertificate', {
-      domainName: 'api.internal.46ki75.com',
+      domainName: 'internal.46ki75.com',
       validation: CertificateValidation.fromDns(zone)
     })
 
@@ -53,12 +57,12 @@ export class ApiStack extends cdk.Stack {
     //
     // # --------------------------------------------------
 
-    const lambda = new Function(this, 'Lambda', {
-      code: Code.fromAsset(path.join(__dirname, '../../nitro/.output/server')),
-      handler: 'index.handler',
-      runtime: Runtime.NODEJS_20_X,
-      environment: { JWT_SECRET: 'placeholders' }
-    })
+    // const lambda = new Function(this, 'Lambda', {
+    //   code: Code.fromAsset(path.join(__dirname, '../../nitro/.output/server')),
+    //   handler: 'index.handler',
+    //   runtime: Runtime.NODEJS_20_X,
+    //   environment: { JWT_SECRET: 'placeholders' }
+    // })
 
     // # --------------------------------------------------
     //
@@ -68,7 +72,7 @@ export class ApiStack extends cdk.Stack {
 
     const domain = new DomainName(this, 'APIGWDomainName', {
       certificate,
-      domainName: 'api.internal.46ki75.com'
+      domainName: 'internal.46ki75.com'
     })
 
     const httpApi = new HttpApi(this, 'HttpApi', {
@@ -76,18 +80,15 @@ export class ApiStack extends cdk.Stack {
       description: 'Internal HTTP API',
       corsPreflight: {
         allowCredentials: true,
-        allowOrigins: [
-          'https://internal.46ki75.com',
-          'https://api.internal.46ki75.com'
-        ],
+        allowOrigins: ['https://internal.46ki75.com'],
         allowMethods: [CorsHttpMethod.ANY]
       },
       createDefaultStage: true,
       defaultAuthorizationScopes: [],
       defaultAuthorizer: new HttpNoneAuthorizer(),
-      defaultIntegration: new HttpLambdaIntegration(
-        'LambdaIntegration',
-        lambda
+      defaultIntegration: new HttpUrlIntegration(
+        'S3Integration',
+        'http://46ki75-internal-web-frontend.s3-website-ap-northeast-1.amazonaws.com/'
       ),
       defaultDomainMapping: { domainName: domain },
       disableExecuteApiEndpoint: false

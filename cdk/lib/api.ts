@@ -21,7 +21,7 @@ export class ApiStack extends cdk.Stack {
     super(scope, id, {
       env: {
         account: process.env.CDK_DEFAULT_ACCOUNT,
-        region: process.env.CDK_DEFAULT_REGION
+        region: 'ap-northeast-1'
       },
       ...props
     })

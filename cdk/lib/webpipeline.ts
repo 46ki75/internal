@@ -1,4 +1,5 @@
 import * as cdk from 'aws-cdk-lib'
+import { OriginAccessIdentity } from 'aws-cdk-lib/aws-cloudfront'
 import {
   PipelineProject,
   BuildSpec,
@@ -11,21 +12,61 @@ import {
   S3DeployAction,
   CodeStarConnectionsSourceAction
 } from 'aws-cdk-lib/aws-codepipeline-actions'
-import { Bucket } from 'aws-cdk-lib/aws-s3'
+import {
+  ArnPrincipal,
+  CanonicalUserPrincipal,
+  Effect,
+  PolicyStatement,
+  ServicePrincipal
+} from 'aws-cdk-lib/aws-iam'
+import {
+  BlockPublicAccess,
+  Bucket,
+  BucketAccessControl
+} from 'aws-cdk-lib/aws-s3'
 import { Construct } from 'constructs'
 
-export class ApiStack extends cdk.Stack {
+export class WebCodePipelineStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props)
+    super(scope, id, {
+      env: {
+        account: process.env.CDK_DEFAULT_ACCOUNT,
+        region: 'ap-northeast-1'
+      },
+      ...props
+    })
 
-    // S3 バケットの定義
+    // # --------------------------------------------------
+    //
+    // S3
+    //
+    // # --------------------------------------------------
+
     const bucket = new Bucket(this, 'VueJsBucket', {
-      bucketName: 'internal-web',
+      bucketName: '46ki75-internal-web-frontend',
       websiteIndexDocument: 'index.html',
+      websiteErrorDocument: '404.html',
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+      blockPublicAccess: BlockPublicAccess.BLOCK_ACLS,
       publicReadAccess: true
     })
 
-    // CodeBuild プロジェクトの定義
+    bucket.addToResourcePolicy(
+      new PolicyStatement({
+        actions: ['s3:GetObject'],
+        effect: Effect.ALLOW,
+        resources: [bucket.bucketArn + '/*'],
+        principals: [new ServicePrincipal('cloudfront.amazonaws.com')]
+      })
+    )
+
+    // # --------------------------------------------------
+    //
+    // CodeBuild
+    //
+    // # --------------------------------------------------
+
     const buildProject = new PipelineProject(this, 'VueJsBuild', {
       buildSpec: BuildSpec.fromObject({
         version: '0.2',
@@ -34,7 +75,7 @@ export class ApiStack extends cdk.Stack {
             commands: ['cd web', 'npm install']
           },
           build: {
-            commands: ['cd web', 'npm run build']
+            commands: ['npm run build']
           }
         },
         artifacts: {
@@ -43,17 +84,27 @@ export class ApiStack extends cdk.Stack {
         }
       }),
       environment: {
-        buildImage: LinuxBuildImage.STANDARD_5_0
+        buildImage: LinuxBuildImage.STANDARD_7_0
       }
     })
 
-    // CodePipeline の定義
+    // # --------------------------------------------------
+    //
+    // CodePipeline
+    //
+    // # --------------------------------------------------
+
     const pipeline = new Pipeline(this, 'VueJsPipeline', {
-      pipelineName: 'VueJsDeploymentPipeline',
+      pipelineName: 'internal-web-frontend',
       restartExecutionOnUpdate: true
     })
 
-    // ソースステージの追加
+    // # --------------------------------------------------
+    //
+    // Source
+    //
+    // # --------------------------------------------------
+
     const sourceOutput = new Artifact('SourceOutput')
     const buildOutput = new Artifact('BuildOutput')
     const sourceAction = new CodeStarConnectionsSourceAction({
@@ -62,7 +113,7 @@ export class ApiStack extends cdk.Stack {
       repo: 'internal',
       branch: 'main',
       connectionArn:
-        'arn:aws:codestar-connections:ap-northeast-1:173800583470:connection/3e72361f-5175-4169-b25a-e0a2e4a37317',
+        'arn:aws:codestar-connections:ap-northeast-1:173800583470:connection/01765c3a-868a-4a7b-b517-f86fee05274a',
       output: sourceOutput
     })
     pipeline.addStage({
@@ -70,7 +121,12 @@ export class ApiStack extends cdk.Stack {
       actions: [sourceAction]
     })
 
-    // ビルドステージの追加
+    // # --------------------------------------------------
+    //
+    // CodeBuild
+    //
+    // # --------------------------------------------------
+
     const buildStage = pipeline.addStage({
       stageName: 'Build',
       actions: [
@@ -83,7 +139,12 @@ export class ApiStack extends cdk.Stack {
       ]
     })
 
-    // デプロイステージの追加
+    // # --------------------------------------------------
+    //
+    // CodeDeploy
+    //
+    // # --------------------------------------------------
+
     const deployStage = pipeline.addStage({
       stageName: 'Deploy',
       actions: [

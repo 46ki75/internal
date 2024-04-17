@@ -3,9 +3,12 @@ import { Construct } from 'constructs'
 import {
   AllowedMethods,
   CachePolicy,
-  CloudFrontWebDistribution,
   Distribution,
-  OriginProtocolPolicy
+  OriginProtocolPolicy,
+  OriginRequestPolicy,
+  SSLMethod,
+  SecurityPolicyProtocol,
+  ViewerProtocolPolicy
 } from 'aws-cdk-lib/aws-cloudfront'
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins'
 import {
@@ -25,12 +28,6 @@ export class CloudFrontStack extends cdk.Stack {
       ...props
     })
 
-    // # --------------------------------------------------
-    //
-    // Route53 (fetch zone)
-    //
-    // # --------------------------------------------------
-
     const zone = HostedZone.fromLookup(this, 'Zone', {
       domainName: '46ki75.com'
     })
@@ -41,7 +38,7 @@ export class CloudFrontStack extends cdk.Stack {
     //
     // # --------------------------------------------------
 
-    const certificate = new Certificate(this, 'InternalCertificate', {
+    const certificate = new Certificate(this, 'APIInternalCertificate', {
       domainName: 'internal.46ki75.com',
       validation: CertificateValidation.fromDns(zone)
     })
@@ -53,18 +50,50 @@ export class CloudFrontStack extends cdk.Stack {
     // # --------------------------------------------------
 
     const distribution = new Distribution(this, 'distro', {
+      comment: 'internal CDN',
       defaultBehavior: {
-        origin: new origins.HttpOrigin('api.internal.46ki75.com', {
-          protocolPolicy: OriginProtocolPolicy.HTTPS_ONLY
-        }),
+        origin: new origins.HttpOrigin(
+          '46ki75-internal-web-frontend.s3-website-ap-northeast-1.amazonaws.com',
+          {
+            protocolPolicy: OriginProtocolPolicy.HTTPS_ONLY,
+            originId: 's3'
+          }
+        ),
+        viewerProtocolPolicy: ViewerProtocolPolicy.ALLOW_ALL,
         allowedMethods: AllowedMethods.ALLOW_ALL,
         cachePolicy: CachePolicy.CACHING_DISABLED
       },
+      // additionalBehaviors: ,
       enabled: true,
-      enableIpv6: false,
+      enableIpv6: true,
       domainNames: ['internal.46ki75.com'],
-      certificate
+      certificate,
+      defaultRootObject: 'index.html',
+      sslSupportMethod: SSLMethod.SNI,
+      minimumProtocolVersion: SecurityPolicyProtocol.TLS_V1_2_2019,
+      enableLogging: true,
+      errorResponses: [
+        {
+          httpStatus: 403,
+          responseHttpStatus: 404,
+          responsePagePath: '/404.html'
+        }
+      ]
     })
+
+    distribution.addBehavior(
+      '/api/*',
+      new origins.HttpOrigin('api.internal.46ki75.com', {
+        protocolPolicy: OriginProtocolPolicy.HTTPS_ONLY,
+        originId: 'api'
+      }),
+      {
+        viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        allowedMethods: AllowedMethods.ALLOW_ALL,
+        cachePolicy: CachePolicy.CACHING_DISABLED,
+        originRequestPolicy: OriginRequestPolicy.ALL_VIEWER
+      }
+    )
 
     // # --------------------------------------------------
     //

@@ -3,7 +3,7 @@ Resources:
   - MyLambdaFunction:
       Type: AWS::Lambda::Function
       Properties:
-        Name: 'internal-api'
+        Name: 'internal-web-api'
         Alias: 'prod'
         CurrentVersion: '%currentVersion%'
         TargetVersion: '%targetVersion%'

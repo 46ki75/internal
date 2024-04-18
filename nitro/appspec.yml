@@ -4,6 +4,6 @@ Resources:
       Type: AWS::Lambda::Function
       Properties:
         Name: 'internal-api'
-        Alias: 'dev'
+        Alias: 'prod'
         CurrentVersion: '6'
         TargetVersion: '7'

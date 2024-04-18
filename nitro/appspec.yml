@@ -4,3 +4,4 @@ Resources:
       Type: AWS::Lambda::Function
       Properties:
         Name: 'internal-api'
+        CurrentVersion: '$LATEST'

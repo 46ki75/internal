@@ -10,7 +10,7 @@ import {
   HttpLambdaIntegration,
   HttpUrlIntegration
 } from 'aws-cdk-lib/aws-apigatewayv2-integrations'
-import { Function, Code, Runtime } from 'aws-cdk-lib/aws-lambda'
+import { Function, Code, Runtime, Version, Alias } from 'aws-cdk-lib/aws-lambda'
 import { Construct } from 'constructs'
 import * as path from 'path'
 import {
@@ -57,12 +57,15 @@ export class ApiStack extends cdk.Stack {
     //
     // # --------------------------------------------------
 
-    // const lambda = new Function(this, 'Lambda', {
-    //   code: Code.fromAsset(path.join(__dirname, '../../nitro/.output/server')),
-    //   handler: 'index.handler',
-    //   runtime: Runtime.NODEJS_20_X,
-    //   environment: { JWT_SECRET: 'placeholders' }
-    // })
+    const lambda = new Function(this, 'Lambda', {
+      code: Code.fromAsset(path.join(__dirname, '../../nitro/.output/server')),
+      handler: 'index.handler',
+      runtime: Runtime.NODEJS_20_X,
+      environment: { JWT_SECRET: 'placeholders' },
+      functionName: 'internal-api'
+    })
+
+    const version = new Version(this, 'LambdaVersion', { lambda })
 
     // # --------------------------------------------------
     //
@@ -94,6 +97,11 @@ export class ApiStack extends cdk.Stack {
       disableExecuteApiEndpoint: false
     })
 
+    httpApi.addRoutes({
+      integration: new HttpLambdaIntegration('APILambda', lambda),
+      path: '/api/{all+}'
+    })
+
     // # --------------------------------------------------
     //
     // Route53 (Alias Record)
@@ -108,7 +116,7 @@ export class ApiStack extends cdk.Stack {
           domain.regionalHostedZoneId
         )
       ),
-      recordName: 'api.internal'
+      recordName: 'internal'
     })
   }
 }

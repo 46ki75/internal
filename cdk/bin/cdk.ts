@@ -3,6 +3,7 @@ import 'source-map-support/register'
 import * as cdk from 'aws-cdk-lib'
 import { ApiStack } from '../lib/api'
 import { WebCodePipelineStack } from '../lib/webpipeline'
+import { ApiCodePipelineStack } from '../lib/apipipeline'
 
 const app = new cdk.App()
 
@@ -12,4 +13,10 @@ const webCodePipelineStack = new WebCodePipelineStack(
   'internal-web-pipeline'
 )
 
-apiStack.addDependency(webCodePipelineStack)
+const apiCodePipelineStack = new ApiCodePipelineStack(
+  app,
+  'internal-api-pipeline'
+)
+
+webCodePipelineStack.addDependency(apiStack)
+apiCodePipelineStack.addDependency(apiStack)

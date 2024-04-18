@@ -5,5 +5,4 @@ Resources:
       Properties:
         Name: 'internal-api'
         Alias: 'prod'
-        CurrentVersion: '6'
-        TargetVersion: '$LATEST'
+        TargetVersion: '1'

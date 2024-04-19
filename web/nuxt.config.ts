@@ -14,7 +14,11 @@ export default defineNuxtConfig({
       }
     }
   },
-  css: ['~/static/global.scss', '@fortawesome/fontawesome-svg-core/styles.css'],
+  css: [
+    '~/static/global.scss',
+    '@fortawesome/fontawesome-svg-core/styles.css',
+    'elmethis/dist/style.css'
+  ],
   modules: [
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {

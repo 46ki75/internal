@@ -2,6 +2,10 @@
   <header>
     <div class="icon-container">
       <font-awesome-icon :icon="['fas', 'home']" @click="router.push('/')" />
+      <font-awesome-icon
+        :icon="['fas', 'tags']"
+        @click="router.push('/anki')"
+      />
     </div>
     <font-awesome-icon
       :icon="[

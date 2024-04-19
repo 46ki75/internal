@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import { factory } from '~~/utils/Factory'
 
 function verifyToken(token: string, secretKey: string): boolean {
   try {
@@ -9,8 +10,8 @@ function verifyToken(token: string, secretKey: string): boolean {
   }
 }
 
-export default defineEventHandler((event) => {
-  const JWT_SECRET = process.env.JWT_SECRET
+export default defineEventHandler(async (event) => {
+  const JWT_SECRET = await factory.getParameter('/internal/web/prod/jwt/secret')
 
   if (JWT_SECRET == null) {
     setResponseStatus(event, 500)

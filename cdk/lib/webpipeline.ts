@@ -66,7 +66,7 @@ export class WebCodePipelineStack extends cdk.Stack {
             commands: ['cd web', 'npm install']
           },
           build: {
-            commands: ['npm run build']
+            commands: ['npm run generate']
           }
         },
         artifacts: {

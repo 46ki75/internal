@@ -41,21 +41,6 @@ export class ApiCodePipelineStack extends cdk.Stack {
     //
     // # --------------------------------------------------
 
-    // const deployRole = new Role(this, 'CodeDeployLamdaRole', {
-    //   assumedBy: new CompositePrincipal(
-    //     new ServicePrincipal('codedeploy.amazonaws.com'),
-    //     new ServicePrincipal('codepipeline.amazonaws.com')
-    //   )
-    // })
-
-    // deployRole.addToPolicy(
-    //   new PolicyStatement({
-    //     actions: ['s3:*'],
-    //     resources: ['*'],
-    //     effect: Effect.ALLOW
-    //   })
-    // )
-
     const buildRole = new Role(this, 'CodeDeployLamdaRole', {
       assumedBy: new ServicePrincipal('codebuild.amazonaws.com')
     })
@@ -69,13 +54,6 @@ export class ApiCodePipelineStack extends cdk.Stack {
         effect: Effect.ALLOW
       })
     )
-
-    // const pipelineRole = new Role(this, 'CodePipelineRole', {
-    //   assumedBy: new CompositePrincipal(
-    //     new ServicePrincipal('codebuild.amazonaws.com'),
-    //     new ServicePrincipal('codepipeline.amazonaws.com')
-    //   )
-    // })
 
     // # --------------------------------------------------
     //
@@ -156,47 +134,5 @@ export class ApiCodePipelineStack extends cdk.Stack {
         })
       ]
     })
-
-    // # --------------------------------------------------
-    //
-    // CodeBuild
-    //
-    // # --------------------------------------------------
-
-    // const lambdaFunction = Function.fromFunctionName(
-    //   this,
-    //   'LambdaFunction',
-    //   'internal-api'
-    // )
-
-    // const alias = new Alias(this, 'LambdaAlias', {
-    //   aliasName: 'prod',
-    //   version: lambdaFunction.latestVersion
-    // })
-
-    // const deploymentGroup = new LambdaDeploymentGroup(
-    //   this,
-    //   'LambdaDeploymentGroup',
-    //   {
-    //     alias: alias,
-    //     role: deployRole,
-    //     deploymentConfig: new LambdaDeploymentConfig(
-    //       this,
-    //       'LambdaDeploymentConfig',
-    //       {}
-    //     )
-    //   }
-    // )
-
-    // const deployAction = new CodeDeployServerDeployAction({
-    //   actionName: 'Deploy',
-    //   input: buildOutput,
-    //   deploymentGroup: deploymentGroup
-    // })
-
-    // const deployStage = pipeline.addStage({
-    //   stageName: 'Deploy',
-    //   actions: [deployAction]
-    // })
   }
 }

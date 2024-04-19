@@ -19,6 +19,12 @@ import {
 } from 'aws-cdk-lib/aws-certificatemanager'
 import { HostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53'
 import { ApiGatewayv2DomainProperties } from 'aws-cdk-lib/aws-route53-targets'
+import {
+  Effect,
+  PolicyStatement,
+  Role,
+  ServicePrincipal
+} from 'aws-cdk-lib/aws-iam'
 
 export class ApiStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -57,12 +63,27 @@ export class ApiStack extends cdk.Stack {
     //
     // # --------------------------------------------------
 
+    const lambdaRole = new Role(this, 'LambdaRole', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com')
+    })
+
+    lambdaRole.addToPolicy(
+      new PolicyStatement({
+        actions: ['ssm:GetParameter'],
+        resources: [
+          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/*`
+        ],
+        effect: Effect.ALLOW
+      })
+    )
+
     const lambda = new Function(this, 'Lambda', {
       code: Code.fromAsset(path.join(__dirname, '../../nitro/.output/server')),
       handler: 'index.handler',
       runtime: Runtime.NODEJS_20_X,
       environment: { JWT_SECRET: 'placeholders' },
-      functionName: 'internal-api'
+      functionName: 'internal-api',
+      role: lambdaRole
     })
 
     const version = new Version(this, 'LambdaVersion', { lambda })

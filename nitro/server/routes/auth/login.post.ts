@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { factory } from '~~/utils/Factory'
 
 async function verifyPassword(
   password: string,
@@ -24,19 +25,19 @@ export default eventHandler(async (event) => {
 
   const { password }: { password: string } = body
 
-  // TODO: implement password fetching logic
-  const isPasswordValid = await verifyPassword(
-    password,
-    '$2b$10$Xv6CUXdioRNorkVQrTbVbOdMR77MQTUxJ.EGxi0szWd2EaelJM8B6'
+  const hashedPassword = await factory.getParameter(
+    `/internal/web/${process.env.NODE_ENV === 'development' ? 'dev' : 'prod'}/password`
   )
 
+  const isPasswordValid = await verifyPassword(password, hashedPassword)
+
   if (!isPasswordValid) {
-    setResponseStatus(event, 503)
+    setResponseStatus(event, 401)
     return { error: `Password is invalid.` }
   }
 
   const EXPERS_IN = 7 // [days]
-  const JWT_SECRET = process.env.JWT_SECRET
+  const JWT_SECRET = await factory.getParameter('/internal/web/prod/jwt/secret')
 
   if (JWT_SECRET == null) {
     setResponseStatus(event, 500)

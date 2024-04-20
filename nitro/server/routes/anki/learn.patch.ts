@@ -4,7 +4,8 @@ import {
   NotionClient,
   NumberPageProperty,
   RichTextPageProperty,
-  TitlePageProperty
+  TitlePageProperty,
+  p
 } from 'notion-markup-utils'
 import { factory } from '~~/utils/Factory'
 
@@ -35,9 +36,9 @@ export default eventHandler(async (event) => {
     }>({
       page_id: body.id,
       properties: {
-        nextReviewAt: body.nextReviewAt,
-        repetitionCount: body.repetitionCount,
-        easeFactor: body.easeFactor
+        nextReviewAt: p.date(body.nextReviewAt),
+        repetitionCount: p.number(body.repetitionCount),
+        easeFactor: p.number(body.easeFactor)
       }
     })
 

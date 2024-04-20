@@ -46,5 +46,18 @@ export default eventHandler(async (event) => {
     id: blocks.results[2].id
   })
 
-  return { ...properties, front, back, explanation }
+  return {
+    id: results[0].id,
+    front,
+    back,
+    explanation,
+    title: properties.title.simplify(),
+    tags: properties.tags.simplify(),
+    nextReviewAt: properties.nextReviewAt.simplify().start,
+    easeFactor: properties.easeFactor.simplify(),
+    repetitionCount: properties.repetitionCount.simplify(),
+    createdAt: properties.createdAt.simplify(),
+    updatedAt: properties.updatedAt.simplify(),
+    url: results[0].url
+  }
 })

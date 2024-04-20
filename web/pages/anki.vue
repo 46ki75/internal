@@ -3,7 +3,9 @@
     <div style="width: 100%">
       <Divider
         :text="
-          countQuery.isPending.value || countQuery.isFetching.value
+          countQuery.isError.value ||
+          countQuery.isPending.value ||
+          countQuery.isFetching.value
             ? '??? / ???'
             : `${countQuery.data.value!.shouldLearn} / ${countQuery.data.value!.all}`
         "

@@ -4,6 +4,7 @@ import {
   DomainName,
   HttpApi,
   HttpIntegration,
+  HttpMethod,
   HttpNoneAuthorizer
 } from 'aws-cdk-lib/aws-apigatewayv2'
 import {
@@ -21,6 +22,7 @@ import { HostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53'
 import { ApiGatewayv2DomainProperties } from 'aws-cdk-lib/aws-route53-targets'
 import {
   Effect,
+  ManagedPolicy,
   PolicyStatement,
   Role,
   ServicePrincipal
@@ -67,26 +69,33 @@ export class ApiStack extends cdk.Stack {
       assumedBy: new ServicePrincipal('lambda.amazonaws.com')
     })
 
-    lambdaRole.addToPolicy(
-      new PolicyStatement({
-        actions: ['ssm:GetParameter'],
-        resources: [
-          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/*`
-        ],
-        effect: Effect.ALLOW
-      })
+    // lambdaRole.addToPolicy(
+    //   new PolicyStatement({
+    //     actions: ['ssm:GetParameter', 'ssm:GetParametersByPath'],
+    //     resources: [
+    //       `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/jwt/secret`,
+    //       `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/notion/default/secret`,
+    //       `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/general/common/notion/database/anki/id`,
+    //       `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/password`
+    //     ],
+    //     effect: Effect.ALLOW
+    //   })
+    // )
+
+    lambdaRole.addManagedPolicy(
+      ManagedPolicy.fromAwsManagedPolicyName('AdministratorAccess')
     )
 
     const lambda = new Function(this, 'Lambda', {
       code: Code.fromAsset(path.join(__dirname, '../../nitro/.output/server')),
       handler: 'index.handler',
       runtime: Runtime.NODEJS_20_X,
-      environment: { JWT_SECRET: 'placeholders' },
+      environment: { NODE_ENV: 'production' },
       functionName: 'internal-api',
       role: lambdaRole
     })
 
-    const version = new Version(this, 'LambdaVersion', { lambda })
+    // const version = new Version(this, 'LambdaVersion', { lambda })
 
     // # --------------------------------------------------
     //
@@ -102,11 +111,6 @@ export class ApiStack extends cdk.Stack {
     const httpApi = new HttpApi(this, 'HttpApi', {
       apiName: 'internal-serverless-api',
       description: 'Internal HTTP API',
-      corsPreflight: {
-        allowCredentials: true,
-        allowOrigins: ['https://internal.46ki75.com'],
-        allowMethods: [CorsHttpMethod.ANY]
-      },
       createDefaultStage: true,
       defaultAuthorizationScopes: [],
       defaultAuthorizer: new HttpNoneAuthorizer(),
@@ -120,7 +124,8 @@ export class ApiStack extends cdk.Stack {
 
     httpApi.addRoutes({
       integration: new HttpLambdaIntegration('APILambda', lambda),
-      path: '/api/{all+}'
+      path: '/api/{all+}',
+      methods: [HttpMethod.ANY]
     })
 
     // # --------------------------------------------------

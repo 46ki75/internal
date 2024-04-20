@@ -11,7 +11,7 @@ import {
   HttpLambdaIntegration,
   HttpUrlIntegration
 } from 'aws-cdk-lib/aws-apigatewayv2-integrations'
-import { Function, Code, Runtime, Version, Alias } from 'aws-cdk-lib/aws-lambda'
+import { Function, Code, Runtime, Version } from 'aws-cdk-lib/aws-lambda'
 import { Construct } from 'constructs'
 import * as path from 'path'
 import {
@@ -69,21 +69,17 @@ export class ApiStack extends cdk.Stack {
       assumedBy: new ServicePrincipal('lambda.amazonaws.com')
     })
 
-    // lambdaRole.addToPolicy(
-    //   new PolicyStatement({
-    //     actions: ['ssm:GetParameter', 'ssm:GetParametersByPath'],
-    //     resources: [
-    //       `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/jwt/secret`,
-    //       `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/notion/default/secret`,
-    //       `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/general/common/notion/database/anki/id`,
-    //       `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/password`
-    //     ],
-    //     effect: Effect.ALLOW
-    //   })
-    // )
-
-    lambdaRole.addManagedPolicy(
-      ManagedPolicy.fromAwsManagedPolicyName('AdministratorAccess')
+    lambdaRole.addToPolicy(
+      new PolicyStatement({
+        actions: ['ssm:GetParameter'],
+        resources: [
+          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/jwt/secret`,
+          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/notion/default/secret`,
+          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/general/common/notion/database/anki/id`,
+          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/password`
+        ],
+        effect: Effect.ALLOW
+      })
     )
 
     const lambda = new Function(this, 'Lambda', {
@@ -92,10 +88,11 @@ export class ApiStack extends cdk.Stack {
       runtime: Runtime.NODEJS_20_X,
       environment: { NODE_ENV: 'production' },
       functionName: 'internal-api',
-      role: lambdaRole
+      role: lambdaRole,
+      timeout: cdk.Duration.seconds(29)
     })
 
-    // const version = new Version(this, 'LambdaVersion', { lambda })
+    const version = new Version(this, 'LambdaVersion', { lambda })
 
     // # --------------------------------------------------
     //

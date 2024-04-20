@@ -71,8 +71,7 @@ export class ApiStack extends cdk.Stack {
       new PolicyStatement({
         actions: ['ssm:GetParameter'],
         resources: [
-          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/*`,
-          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/general/*`
+          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/*`
         ],
         effect: Effect.ALLOW
       })

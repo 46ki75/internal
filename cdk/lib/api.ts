@@ -76,7 +76,8 @@ export class ApiStack extends cdk.Stack {
           `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/jwt/secret`,
           `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/notion/default/secret`,
           `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/general/common/notion/database/anki/id`,
-          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/password`
+          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/password`,
+          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/openai/secret`
         ],
         effect: Effect.ALLOW
       })

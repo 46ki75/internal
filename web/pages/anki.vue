@@ -31,10 +31,13 @@
       <v-btn
         @click="
           async () => {
-            await navigateTo(ankiCardQuery.data.value?.url, {
-              external: true,
-              open: { target: '_blank' }
-            })
+            await navigateTo(
+              ankiCardQuery.data.value?.url.replace('https://', 'notion://'),
+              {
+                external: true,
+                open: { target: '_blank' }
+              }
+            )
           }
         "
       >
@@ -165,7 +168,7 @@ const mutation = useMutation({
 const createAnkiCardMutation = useMutation({
   mutationFn: async () => (await axios.post('/api/anki')).data,
   onSuccess: async (data: any) => {
-    await navigateTo(data.url, {
+    await navigateTo(data.url.replace('https://', 'notion://'), {
       external: true,
       open: { target: '_blank' }
     })

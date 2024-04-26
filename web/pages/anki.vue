@@ -3,11 +3,16 @@
     <div style="width: 100%">
       <Divider
         :text="
-          countQuery.isError.value ||
-          countQuery.isPending.value ||
-          countQuery.isFetching.value
+          countQuery.isPending.value && countQuery.data.value == null
             ? '??? / ???'
             : `${countQuery.data.value!.shouldLearn} / ${countQuery.data.value!.all}`
+        "
+        :color="
+          countQuery.isPending.value && countQuery.data.value == null
+            ? 'rgba(0,0,0,0.15)'
+            : countQuery.data.value!.shouldLearn === 0
+              ? 'darkgreen'
+              : 'rgba(0,0,0,0.3)'
         "
       />
     </div>
@@ -114,6 +119,7 @@ import { useMutation, useQuery } from '@tanstack/vue-query'
 import axios from 'axios'
 import {
   NotionHTML,
+  Callout,
   Divider,
   GridLoadingIcon,
   TriangleLoadingIcon

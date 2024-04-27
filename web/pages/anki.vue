@@ -12,7 +12,9 @@
             ? 'rgba(0,0,0,0.15)'
             : countQuery.data.value!.shouldLearn === 0
               ? 'darkgreen'
-              : 'rgba(0,0,0,0.3)'
+              : isDark
+                ? 'rgba(255,255,255,0.3)'
+                : 'rgba(0,0,0,0.15)'
         "
       />
     </div>
@@ -116,14 +118,16 @@
 
 <script setup lang="ts">
 import { useMutation, useQuery } from '@tanstack/vue-query'
+import { useDark } from '@vueuse/core'
 import axios from 'axios'
 import {
   NotionHTML,
-  Callout,
   Divider,
   GridLoadingIcon,
   TriangleLoadingIcon
 } from 'elmethis'
+
+const isDark = useDark()
 
 interface AnkiCardResponse {
   id: string
@@ -281,6 +285,8 @@ async function updateAnkiCard(performanceRating: number) {
     animation-name: fadeIn;
     animation-fill-mode: both;
     animation-duration: 0.6s;
+
+    background-color: rgba($color: #ffffff, $alpha: 0.05);
   }
 
   .button-container {

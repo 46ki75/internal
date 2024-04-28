@@ -23,6 +23,10 @@
         :icon="['fas', 'language']"
         @click="router.push('/translate')"
       />
+      <font-awesome-icon
+        :icon="['fas', 'paint-roller']"
+        @click="router.push('/color')"
+      />
     </div>
     <font-awesome-icon
       :icon="[

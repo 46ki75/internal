@@ -13,14 +13,21 @@
       :loading="isPending"
       >convert
     </v-btn>
-    <CodeBlock v-if="data != null && 'result' in data" :code="data.result" />
+    <CodeBlock
+      v-if="data != null && 'result' in data"
+      :code="data.result"
+      :theme="isDark ? 'dark' : 'light'"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useMutation } from '@tanstack/vue-query'
+import { useDark } from '@vueuse/core'
 import axios from 'axios'
 import { CodeBlock } from 'elmethis'
+
+const isDark = useDark()
 
 const message = ref('')
 

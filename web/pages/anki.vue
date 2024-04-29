@@ -65,7 +65,11 @@
         <GridLoadingIcon :size="32" />
         <span>LOADING</span>
       </div>
-      <NotionHTML v-else :domjson="ankiCardQuery.data.value!.front" />
+      <NotionHTML
+        v-else
+        :domjson="ankiCardQuery.data.value!.front"
+        :theme="isDark ? 'dark' : 'light'"
+      />
     </div>
 
     <v-btn
@@ -84,7 +88,11 @@
         <GridLoadingIcon :size="32" />
         <span>LOADING</span>
       </div>
-      <NotionHTML v-else :domjson="ankiCardQuery.data.value!.back" />
+      <NotionHTML
+        v-else
+        :domjson="ankiCardQuery.data.value!.back"
+        :theme="isDark ? 'dark' : 'light'"
+      />
     </div>
 
     <div v-if="isShownAnswer" class="explanation">
@@ -94,7 +102,11 @@
         <GridLoadingIcon :size="32" />
         <span>LOADING</span>
       </div>
-      <NotionHTML v-else :domjson="ankiCardQuery.data.value!.explanation" />
+      <NotionHTML
+        v-else
+        :domjson="ankiCardQuery.data.value!.explanation"
+        :theme="isDark ? 'dark' : 'light'"
+      />
     </div>
 
     <div

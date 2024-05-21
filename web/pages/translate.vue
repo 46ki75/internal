@@ -10,12 +10,17 @@
       :loading="isPending"
       >translate
     </v-btn>
-    <CodeBlock v-if="data != null && 'result' in data" :code="data.result" />
+    <CodeBlock
+      v-if="data != null && 'result' in data"
+      :code="data.result"
+      :theme="isDark ? 'dark' : 'light'"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useMutation } from '@tanstack/vue-query'
+import { useDark } from '@vueuse/core'
 import axios from 'axios'
 import { CodeBlock } from 'elmethis'
 
@@ -25,6 +30,8 @@ const { mutate, data, isPending } = useMutation({
   mutationFn: async (message: string) =>
     (await axios.post('/api/translate', { message })).data
 })
+
+const isDark = useDark()
 </script>
 
 <style scoped lang="scss">

@@ -1,5 +1,9 @@
 <template>
-  <v-text-field label="password" v-model="password"></v-text-field>
+  <v-text-field
+    label="password"
+    type="password"
+    v-model="password"
+  ></v-text-field>
   <v-btn @click="mutate(password)">login</v-btn>
 </template>
 

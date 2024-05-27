@@ -1,10 +1,28 @@
 <template>
-  <v-text-field
-    label="password"
-    type="password"
-    v-model="password"
-  ></v-text-field>
-  <v-btn @click="mutate(password)">login</v-btn>
+  <div class="container">
+    <div class="login">
+      <v-text-field
+        label="username"
+        variant="underlined"
+        placeholder="example@46ki75.com"
+      ></v-text-field>
+
+      <v-text-field
+        label="password"
+        type="password"
+        variant="underlined"
+        v-model="password"
+      ></v-text-field>
+
+      <v-btn
+        width="100%"
+        :disabled="password.length <= 0"
+        :loading="isPending"
+        @click="mutate(password)"
+        >login
+      </v-btn>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -19,7 +37,7 @@ onMounted(() => {
   if (auth.isLogin) router.push('/')
 })
 
-const { mutate } = useMutation({
+const { mutate, isPending } = useMutation({
   mutationFn: async (password: string) => {
     auth.setIsLoading(true)
     await axios.post('/api/auth/login', { password })
@@ -37,4 +55,16 @@ const { mutate } = useMutation({
 })
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.container {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .login {
+    width: 520px;
+    max-width: 90%;
+  }
+}
+</style>

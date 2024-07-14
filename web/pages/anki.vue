@@ -4,18 +4,10 @@
       <Divider
         :text="
           countQuery.isPending.value && countQuery.data.value == null
-            ? '??? / ???'
-            : `${countQuery.data.value!.shouldLearn} / ${countQuery.data.value!.all}`
+            ? '???'
+            : `${countQuery.data.value!.count === 100 ? '100+' : countQuery.data.value!.count}`
         "
-        :color="
-          countQuery.isPending.value && countQuery.data.value == null
-            ? 'rgba(0,0,0,0.15)'
-            : countQuery.data.value!.shouldLearn === 0
-              ? 'darkgreen'
-              : isDark
-                ? 'rgba(255,255,255,0.3)'
-                : 'rgba(0,0,0,0.15)'
-        "
+        color="rgb(111,111,111)"
       />
     </div>
 
@@ -172,7 +164,7 @@ const ankiCardQuery = useQuery<AnkiCardResponse>({
   staleTime: 0
 })
 
-const countQuery = useQuery<{ all: number; shouldLearn: number }>({
+const countQuery = useQuery<{ count: number }>({
   queryKey: ['/api/anki/count'],
   queryFn: async () => (await axios.get('/api/anki/count')).data,
   staleTime: 0,

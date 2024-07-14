@@ -1,12 +1,4 @@
-import {
-  DatePageProperty,
-  MultiSelectPageProperty,
-  NotionClient,
-  NumberPageProperty,
-  RichTextPageProperty,
-  TitlePageProperty,
-  p
-} from 'notion-markup-utils'
+import { Client } from '@notionhq/client'
 import { factory } from '~~/utils/Factory'
 
 export default eventHandler(async (event) => {
@@ -14,7 +6,7 @@ export default eventHandler(async (event) => {
     `/internal/web/${process.env.NODE_ENV === 'development' ? 'dev' : 'prod'}/notion/default/secret`
   )
 
-  const notion = new NotionClient({ NOTION_API_KEY, stdTTL: 0 })
+  const client = new Client({ auth: NOTION_API_KEY })
 
   const body = await readBody(event)
 
@@ -24,21 +16,12 @@ export default eventHandler(async (event) => {
     'repetitionCount' in body &&
     'easeFactor' in body
   ) {
-    const res = await notion.pages.update<{
-      page: TitlePageProperty
-      title: RichTextPageProperty
-      tags: MultiSelectPageProperty
-      nextReviewAt: DatePageProperty
-      repetitionCount: NumberPageProperty
-      easeFactor: NumberPageProperty
-      updatedAt: DatePageProperty
-      createdAt: DatePageProperty
-    }>({
+    const res = await client.pages.update({
       page_id: body.id,
       properties: {
-        nextReviewAt: p.date(body.nextReviewAt),
-        repetitionCount: p.number(body.repetitionCount),
-        easeFactor: p.number(body.easeFactor)
+        nextReviewAt: { date: { start: body.nextReviewAt } },
+        repetitionCount: { number: body.repetitionCount },
+        easeFactor: { number: body.easeFactor }
       }
     })
 

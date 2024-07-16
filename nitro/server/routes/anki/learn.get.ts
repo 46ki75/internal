@@ -53,19 +53,22 @@ export default eventHandler(async (event) => {
         'explanation'
   )[0].id
 
-  const frontBlocks = await exclient.getDOMJSONFromBlockId(frontBlockId, {
+  const frontBlocksPromise = await exclient.getDOMJSONFromBlockId(
+    frontBlockId,
+    {
+      enableChildPage: true,
+      enableLinkPageRef: true,
+      enableSyncedBlock: true
+    }
+  )
+
+  const backBlocksPromise = await exclient.getDOMJSONFromBlockId(backBlockId, {
     enableChildPage: true,
     enableLinkPageRef: true,
     enableSyncedBlock: true
   })
 
-  const backBlocks = await exclient.getDOMJSONFromBlockId(backBlockId, {
-    enableChildPage: true,
-    enableLinkPageRef: true,
-    enableSyncedBlock: true
-  })
-
-  const explanationBlocks = await exclient.getDOMJSONFromBlockId(
+  const explanationBlocksPromise = await exclient.getDOMJSONFromBlockId(
     explanationBlockId,
     {
       enableChildPage: true,
@@ -73,6 +76,12 @@ export default eventHandler(async (event) => {
       enableSyncedBlock: true
     }
   )
+
+  const [frontBlocks, backBlocks, explanationBlocks] = await Promise.all([
+    frontBlocksPromise,
+    backBlocksPromise,
+    explanationBlocksPromise
+  ])
 
   if (
     'properties' in page &&

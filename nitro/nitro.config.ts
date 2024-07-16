@@ -3,5 +3,6 @@ export default defineNitroConfig({
   srcDir: 'server',
   inlineDynamicImports: true,
   preset: 'aws-lambda',
-  baseURL: '/api'
+  baseURL: '/api',
+  plugins: ['plugins/loadenv.ts']
 })

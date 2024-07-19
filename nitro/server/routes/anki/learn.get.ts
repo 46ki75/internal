@@ -1,13 +1,11 @@
 import { Client } from '@notionhq/client'
-import { NotionEXClient } from 'notion-ex'
+import { DOMJSON, NotionEXClient } from 'notion-ex'
 import { factory } from '~~/utils/Factory'
 
 export default eventHandler(async (event) => {
   const NOTION_API_KEY = await factory.getParameter(
     `/internal/web/${process.env.NODE_ENV === 'development' ? 'dev' : 'prod'}/notion/default/secret`
   )
-
-  // const notion = new NotionClient({ NOTION_API_KEY, stdTTL: 0 })
 
   const id = await factory.getParameter(
     '/internal/general/common/notion/database/anki/id'
@@ -27,61 +25,49 @@ export default eventHandler(async (event) => {
 
   const pageId = page.id
 
-  const blocks = await client.blocks.children.list({
-    block_id: pageId
-  })
+  const blocks = await exclient.getDOMJSONFromBlockId(pageId)
 
-  const frontBlockId = blocks.results.filter(
-    (block) =>
-      'type' in block &&
+  let section: string = 'none'
+  const frontBlocks: DOMJSON[] = []
+  const backBlocks: DOMJSON[] = []
+  const explanationBlocks: DOMJSON[] = []
+
+  for (const block of blocks) {
+    if (block.type === 'heading_1' && block.content.includes('front')) {
+      section = 'front'
+      continue
+    } else if (block.type === 'heading_1' && block.content.includes('back')) {
+      section = 'back'
+      continue
+    } else if (
       block.type === 'heading_1' &&
-      block.heading_1.rich_text.map((r) => r.plain_text).join('') === 'front'
-  )[0].id
-
-  const backBlockId = blocks.results.filter(
-    (block) =>
-      'type' in block &&
-      block.type === 'heading_1' &&
-      block.heading_1.rich_text.map((r) => r.plain_text).join('') === 'back'
-  )[0].id
-
-  const explanationBlockId = blocks.results.filter(
-    (block) =>
-      'type' in block &&
-      block.type === 'heading_1' &&
-      block.heading_1.rich_text.map((r) => r.plain_text).join('') ===
-        'explanation'
-  )[0].id
-
-  const frontBlocksPromise = await exclient.getDOMJSONFromBlockId(
-    frontBlockId,
-    {
-      enableChildPage: true,
-      enableLinkPageRef: true,
-      enableSyncedBlock: true
+      block.content.includes('explanation')
+    ) {
+      section = 'explanation'
+      continue
     }
-  )
 
-  const backBlocksPromise = await exclient.getDOMJSONFromBlockId(backBlockId, {
-    enableChildPage: true,
-    enableLinkPageRef: true,
-    enableSyncedBlock: true
-  })
+    switch (section) {
+      case 'front': {
+        frontBlocks.push(block)
+        break
+      }
 
-  const explanationBlocksPromise = await exclient.getDOMJSONFromBlockId(
-    explanationBlockId,
-    {
-      enableChildPage: true,
-      enableLinkPageRef: true,
-      enableSyncedBlock: true
+      case 'back': {
+        backBlocks.push(block)
+        break
+      }
+
+      case 'explanation': {
+        explanationBlocks.push(block)
+        break
+      }
+
+      default: {
+        break
+      }
     }
-  )
-
-  const [frontBlocks, backBlocks, explanationBlocks] = await Promise.all([
-    frontBlocksPromise,
-    backBlocksPromise,
-    explanationBlocksPromise
-  ])
+  }
 
   if (
     'properties' in page &&

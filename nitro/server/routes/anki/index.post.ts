@@ -46,9 +46,11 @@ export default eventHandler(async (event) => {
               },
               annotations: { color: 'brown' }
             }
-          ],
-          is_toggleable: true
+          ]
         }
+      },
+      {
+        paragraph: { rich_text: [] }
       },
       {
         heading_1: {
@@ -60,9 +62,11 @@ export default eventHandler(async (event) => {
               },
               annotations: { color: 'brown' }
             }
-          ],
-          is_toggleable: true
+          ]
         }
+      },
+      {
+        paragraph: { rich_text: [] }
       },
       {
         heading_1: {
@@ -74,9 +78,11 @@ export default eventHandler(async (event) => {
               },
               annotations: { color: 'brown' }
             }
-          ],
-          is_toggleable: true
+          ]
         }
+      },
+      {
+        paragraph: { rich_text: [] }
       }
     ]
   })

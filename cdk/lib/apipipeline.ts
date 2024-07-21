@@ -2,7 +2,9 @@ import * as cdk from 'aws-cdk-lib'
 import {
   PipelineProject,
   BuildSpec,
-  LinuxBuildImage
+  LinuxBuildImage,
+  ComputeType,
+  LinuxLambdaBuildImage
 } from 'aws-cdk-lib/aws-codebuild'
 import {
   LambdaDeploymentConfig,
@@ -99,7 +101,7 @@ export class ApiCodePipelineStack extends cdk.Stack {
         version: '0.2',
         phases: {
           install: {
-            commands: ['cd nitro', 'npm ci']
+            commands: ['cd nitro', 'npm i -g npm@latest', 'npm ci']
           },
           build: {
             commands: ['npm run build']
@@ -118,7 +120,8 @@ export class ApiCodePipelineStack extends cdk.Stack {
         }
       }),
       environment: {
-        buildImage: LinuxBuildImage.STANDARD_7_0
+        computeType: ComputeType.LAMBDA_1GB,
+        buildImage: LinuxLambdaBuildImage.AMAZON_LINUX_2023_NODE_20
       },
       role: buildRole
     })

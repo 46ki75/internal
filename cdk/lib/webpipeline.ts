@@ -3,7 +3,9 @@ import { OriginAccessIdentity } from 'aws-cdk-lib/aws-cloudfront'
 import {
   PipelineProject,
   BuildSpec,
-  LinuxBuildImage
+  LinuxBuildImage,
+  LinuxLambdaBuildImage,
+  ComputeType
 } from 'aws-cdk-lib/aws-codebuild'
 import { Pipeline, Artifact } from 'aws-cdk-lib/aws-codepipeline'
 import {
@@ -63,7 +65,7 @@ export class WebCodePipelineStack extends cdk.Stack {
         version: '0.2',
         phases: {
           install: {
-            commands: ['cd web', 'npm install']
+            commands: ['cd web', 'npm i -g npm@latest', 'npm ci']
           },
           build: {
             commands: ['npm run generate']
@@ -75,7 +77,8 @@ export class WebCodePipelineStack extends cdk.Stack {
         }
       }),
       environment: {
-        buildImage: LinuxBuildImage.STANDARD_7_0
+        computeType: ComputeType.LAMBDA_1GB,
+        buildImage: LinuxLambdaBuildImage.AMAZON_LINUX_2023_NODE_20
       }
     })
 

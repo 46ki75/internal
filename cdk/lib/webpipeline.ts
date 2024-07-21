@@ -43,7 +43,7 @@ export class WebCodePipelineStack extends cdk.Stack {
     // # --------------------------------------------------
 
     const bucket = new Bucket(this, 'VueJsBucket', {
-      bucketName: '46ki75-internal-web-frontend',
+      bucketName: `${cdk.Stack.of(this).account}-internal-web-frontend`,
       websiteIndexDocument: 'index.html',
       websiteErrorDocument: '404.html',
       removalPolicy: cdk.RemovalPolicy.DESTROY,
@@ -104,7 +104,7 @@ export class WebCodePipelineStack extends cdk.Stack {
       repo: 'internal',
       branch: 'main',
       connectionArn:
-        'arn:aws:codestar-connections:ap-northeast-1:173800583470:connection/01765c3a-868a-4a7b-b517-f86fee05274a',
+        'arn:aws:codestar-connections:ap-northeast-1:891377368344:connection/c73bd5de-f670-423f-a2d2-96ec0728ea48',
       output: sourceOutput
     })
     pipeline.addStage({

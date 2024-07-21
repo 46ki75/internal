@@ -45,7 +45,7 @@ export class ApiStack extends cdk.Stack {
     // # --------------------------------------------------
 
     const zone = HostedZone.fromLookup(this, 'Zone', {
-      domainName: '46ki75.com'
+      domainName: 'internal.46ki75.com'
     })
 
     // # --------------------------------------------------
@@ -114,7 +114,7 @@ export class ApiStack extends cdk.Stack {
       defaultAuthorizer: new HttpNoneAuthorizer(),
       defaultIntegration: new HttpUrlIntegration(
         'S3Integration',
-        'http://46ki75-internal-web-frontend.s3-website-ap-northeast-1.amazonaws.com/'
+        `http://${cdk.Stack.of(this).account}-internal-web-frontend.s3-website-ap-northeast-1.amazonaws.com/`
       ),
       defaultDomainMapping: { domainName: domain },
       disableExecuteApiEndpoint: false
@@ -140,7 +140,7 @@ export class ApiStack extends cdk.Stack {
           domain.regionalHostedZoneId
         )
       ),
-      recordName: 'internal'
+      recordName: ''
     })
   }
 }

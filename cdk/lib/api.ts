@@ -27,25 +27,38 @@ import {
   Role,
   ServicePrincipal
 } from 'aws-cdk-lib/aws-iam'
+import { BlockPublicAccess, Bucket } from 'aws-cdk-lib/aws-s3'
+
+interface ApiStackProps extends cdk.StackProps {
+  hostedZone: HostedZone
+}
 
 export class ApiStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  public readonly webS3Bucket: Bucket
+
+  constructor(scope: Construct, id: string, props: ApiStackProps) {
     super(scope, id, {
       env: {
         account: process.env.CDK_DEFAULT_ACCOUNT,
-        region: 'ap-northeast-1'
+        region: process.env.CDK_DEFAULT_REGION
       },
       ...props
     })
 
     // # --------------------------------------------------
     //
-    // Route53 (fetch zone)
+    // S3
     //
     // # --------------------------------------------------
 
-    const zone = HostedZone.fromLookup(this, 'Zone', {
-      domainName: 'internal.46ki75.com'
+    this.webS3Bucket = new Bucket(this, 'VueJsBucket', {
+      bucketName: `${cdk.Stack.of(this).account}-internal-web-frontend`,
+      websiteIndexDocument: 'index.html',
+      websiteErrorDocument: '404.html',
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteObjects: true,
+      blockPublicAccess: BlockPublicAccess.BLOCK_ACLS,
+      publicReadAccess: true
     })
 
     // # --------------------------------------------------
@@ -56,7 +69,7 @@ export class ApiStack extends cdk.Stack {
 
     const certificate = new Certificate(this, 'APIInternalCertificate', {
       domainName: 'internal.46ki75.com',
-      validation: CertificateValidation.fromDns(zone)
+      validation: CertificateValidation.fromDns(props.hostedZone)
     })
 
     // # --------------------------------------------------
@@ -114,7 +127,7 @@ export class ApiStack extends cdk.Stack {
       defaultAuthorizer: new HttpNoneAuthorizer(),
       defaultIntegration: new HttpUrlIntegration(
         'S3Integration',
-        `http://${cdk.Stack.of(this).account}-internal-web-frontend.s3-website-ap-northeast-1.amazonaws.com/`
+        this.webS3Bucket.bucketWebsiteUrl
       ),
       defaultDomainMapping: { domainName: domain },
       disableExecuteApiEndpoint: false
@@ -133,7 +146,7 @@ export class ApiStack extends cdk.Stack {
     // # --------------------------------------------------
 
     new ARecord(this, 'AliasRecord', {
-      zone,
+      zone: props.hostedZone,
       target: RecordTarget.fromAlias(
         new ApiGatewayv2DomainProperties(
           domain.regionalDomainName,

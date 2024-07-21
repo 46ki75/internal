@@ -10,10 +10,12 @@ const app = new cdk.App()
 
 const route53Stack = new Route53Stack(app, 'route53')
 
-const apiStack = new ApiStack(app, 'api')
-const webCodePipelineStack = new WebCodePipelineStack(app, 'webpipeline')
+const apiStack = new ApiStack(app, 'api', {
+  hostedZone: route53Stack.hostedZone
+})
+
+const webCodePipelineStack = new WebCodePipelineStack(app, 'webpipeline', {
+  webS3Bucket: apiStack.webS3Bucket
+})
 
 const apiCodePipelineStack = new ApiCodePipelineStack(app, 'apipipeline')
-
-webCodePipelineStack.addDependency(apiStack)
-apiCodePipelineStack.addDependency(apiStack)

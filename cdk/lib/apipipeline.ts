@@ -25,6 +25,7 @@ import {
   ServicePrincipal
 } from 'aws-cdk-lib/aws-iam'
 import { Alias, Function, Version } from 'aws-cdk-lib/aws-lambda'
+import { StringParameter } from 'aws-cdk-lib/aws-ssm'
 import { Construct } from 'constructs'
 
 export class ApiCodePipelineStack extends cdk.Stack {
@@ -32,7 +33,7 @@ export class ApiCodePipelineStack extends cdk.Stack {
     super(scope, id, {
       env: {
         account: process.env.CDK_DEFAULT_ACCOUNT,
-        region: 'ap-northeast-1'
+        region: process.env.CDK_DEFAULT_REGION
       },
       ...props
     })
@@ -81,8 +82,11 @@ export class ApiCodePipelineStack extends cdk.Stack {
       owner: '46ki75',
       repo: 'internal',
       branch: 'main',
-      connectionArn:
-        'arn:aws:codestar-connections:ap-northeast-1:891377368344:connection/c73bd5de-f670-423f-a2d2-96ec0728ea48',
+      connectionArn: StringParameter.fromStringParameterName(
+        this,
+        'connectionArn',
+        '/internal/web/prod/codestar/connection/arn'
+      ).stringValue,
       output: sourceOutput
     })
     pipeline.addStage({

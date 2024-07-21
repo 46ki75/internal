@@ -26,32 +26,21 @@ import {
   Bucket,
   BucketAccessControl
 } from 'aws-cdk-lib/aws-s3'
+import { StringParameter } from 'aws-cdk-lib/aws-ssm'
 import { Construct } from 'constructs'
 
+interface ApiStackProps extends cdk.StackProps {
+  webS3Bucket: Bucket
+}
+
 export class WebCodePipelineStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: ApiStackProps) {
     super(scope, id, {
       env: {
         account: process.env.CDK_DEFAULT_ACCOUNT,
-        region: 'ap-northeast-1'
+        region: process.env.CDK_DEFAULT_REGION
       },
       ...props
-    })
-
-    // # --------------------------------------------------
-    //
-    // S3
-    //
-    // # --------------------------------------------------
-
-    const bucket = new Bucket(this, 'VueJsBucket', {
-      bucketName: `${cdk.Stack.of(this).account}-internal-web-frontend`,
-      websiteIndexDocument: 'index.html',
-      websiteErrorDocument: '404.html',
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
-      autoDeleteObjects: true,
-      blockPublicAccess: BlockPublicAccess.BLOCK_ACLS,
-      publicReadAccess: true
     })
 
     // # --------------------------------------------------
@@ -106,8 +95,11 @@ export class WebCodePipelineStack extends cdk.Stack {
       owner: '46ki75',
       repo: 'internal',
       branch: 'main',
-      connectionArn:
-        'arn:aws:codestar-connections:ap-northeast-1:891377368344:connection/c73bd5de-f670-423f-a2d2-96ec0728ea48',
+      connectionArn: StringParameter.fromStringParameterName(
+        this,
+        'connectionArn',
+        '/internal/web/prod/codestar/connection/arn'
+      ).stringValue,
       output: sourceOutput
     })
     pipeline.addStage({
@@ -144,7 +136,7 @@ export class WebCodePipelineStack extends cdk.Stack {
       actions: [
         new S3DeployAction({
           actionName: 'S3Deploy',
-          bucket: bucket,
+          bucket: props?.webS3Bucket,
           input: buildOutput
         })
       ]

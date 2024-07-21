@@ -120,8 +120,7 @@ export class ApiCodePipelineStack extends cdk.Stack {
         }
       }),
       environment: {
-        computeType: ComputeType.LAMBDA_1GB,
-        buildImage: LinuxLambdaBuildImage.AMAZON_LINUX_2023_NODE_20
+        buildImage: LinuxBuildImage.STANDARD_7_0
       },
       role: buildRole
     })

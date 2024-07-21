@@ -2,34 +2,29 @@ import * as cdk from 'aws-cdk-lib'
 import {
   PipelineProject,
   BuildSpec,
-  LinuxBuildImage,
-  ComputeType,
-  LinuxLambdaBuildImage
+  LinuxBuildImage
 } from 'aws-cdk-lib/aws-codebuild'
-import {
-  LambdaDeploymentConfig,
-  LambdaDeploymentGroup
-} from 'aws-cdk-lib/aws-codedeploy'
 import { Pipeline, Artifact } from 'aws-cdk-lib/aws-codepipeline'
 import {
   CodeBuildAction,
-  CodeDeployServerDeployAction,
   CodeStarConnectionsSourceAction
 } from 'aws-cdk-lib/aws-codepipeline-actions'
 import {
-  CompositePrincipal,
   Effect,
-  PolicyDocument,
   PolicyStatement,
   Role,
   ServicePrincipal
 } from 'aws-cdk-lib/aws-iam'
-import { Alias, Function, Version } from 'aws-cdk-lib/aws-lambda'
+import { Function } from 'aws-cdk-lib/aws-lambda'
 import { StringParameter } from 'aws-cdk-lib/aws-ssm'
 import { Construct } from 'constructs'
 
+interface ApiStackProps extends cdk.StackProps {
+  apiLambdaFunction: Function
+}
+
 export class ApiCodePipelineStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: ApiStackProps) {
     super(scope, id, {
       env: {
         account: process.env.CDK_DEFAULT_ACCOUNT,
@@ -114,7 +109,7 @@ export class ApiCodePipelineStack extends cdk.Stack {
             commands: [
               'cd .output/server',
               'zip -r /tmp/lambda.zip .',
-              'aws lambda update-function-code --function-name internal-api --zip-file fileb:///tmp/lambda.zip'
+              `aws lambda update-function-code --function-name ${props.apiLambdaFunction.functionName} --zip-file fileb:///tmp/lambda.zip`
             ]
           }
         },

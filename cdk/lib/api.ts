@@ -1,9 +1,7 @@
 import * as cdk from 'aws-cdk-lib'
 import {
-  CorsHttpMethod,
   DomainName,
   HttpApi,
-  HttpIntegration,
   HttpMethod,
   HttpNoneAuthorizer
 } from 'aws-cdk-lib/aws-apigatewayv2'
@@ -11,26 +9,20 @@ import {
   HttpLambdaIntegration,
   HttpUrlIntegration
 } from 'aws-cdk-lib/aws-apigatewayv2-integrations'
-import { Function, Code, Runtime, Version } from 'aws-cdk-lib/aws-lambda'
+import { Function, Alias } from 'aws-cdk-lib/aws-lambda'
 import { Construct } from 'constructs'
-import * as path from 'path'
 import {
   Certificate,
   CertificateValidation
 } from 'aws-cdk-lib/aws-certificatemanager'
 import { HostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53'
 import { ApiGatewayv2DomainProperties } from 'aws-cdk-lib/aws-route53-targets'
-import {
-  Effect,
-  ManagedPolicy,
-  PolicyStatement,
-  Role,
-  ServicePrincipal
-} from 'aws-cdk-lib/aws-iam'
 import { BlockPublicAccess, Bucket } from 'aws-cdk-lib/aws-s3'
 
 interface ApiStackProps extends cdk.StackProps {
   hostedZone: HostedZone
+  apiLambdaFunction: Function
+  apiLambdaAlias: Alias
 }
 
 export class ApiStack extends cdk.Stack {
@@ -74,42 +66,6 @@ export class ApiStack extends cdk.Stack {
 
     // # --------------------------------------------------
     //
-    // AWS Lambda
-    //
-    // # --------------------------------------------------
-
-    const lambdaRole = new Role(this, 'LambdaRole', {
-      assumedBy: new ServicePrincipal('lambda.amazonaws.com')
-    })
-
-    lambdaRole.addToPolicy(
-      new PolicyStatement({
-        actions: ['ssm:GetParameter'],
-        resources: [
-          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/jwt/secret`,
-          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/notion/default/secret`,
-          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/general/common/notion/database/anki/id`,
-          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/password`,
-          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/openai/secret`
-        ],
-        effect: Effect.ALLOW
-      })
-    )
-
-    const lambda = new Function(this, 'Lambda', {
-      code: Code.fromAsset(path.join(__dirname, '../../nitro/.output/server')),
-      handler: 'index.handler',
-      runtime: Runtime.NODEJS_20_X,
-      environment: { NODE_ENV: 'production' },
-      functionName: 'internal-api',
-      role: lambdaRole,
-      timeout: cdk.Duration.seconds(29)
-    })
-
-    const version = new Version(this, 'LambdaVersion', { lambda })
-
-    // # --------------------------------------------------
-    //
     // Amazon API Gateway
     //
     // # --------------------------------------------------
@@ -134,7 +90,7 @@ export class ApiStack extends cdk.Stack {
     })
 
     httpApi.addRoutes({
-      integration: new HttpLambdaIntegration('APILambda', lambda),
+      integration: new HttpLambdaIntegration('APILambda', props.apiLambdaAlias),
       path: '/api/{all+}',
       methods: [HttpMethod.ANY]
     })

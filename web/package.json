@@ -21,7 +21,7 @@
     "@tanstack/vue-query": "^5.29.0",
     "@vueuse/core": "^10.9.0",
     "axios": "^1.6.8",
-    "elmethis": "^0.1.12",
+    "elmethis": "^0.1.13",
     "nuxt": "^3.11.2",
     "pinia": "^2.1.7",
     "polished": "^4.3.1",

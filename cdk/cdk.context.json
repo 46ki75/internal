@@ -10,5 +10,10 @@
   "hosted-zone:account=891377368344:domainName=internal.46ki75.com:region=ap-northeast-1": {
     "Id": "/hostedzone/Z06160005EK5H324JXLS",
     "Name": "internal.46ki75.com."
-  }
+  },
+  "availability-zones:account=891377368344:region=ap-northeast-1": [
+    "ap-northeast-1a",
+    "ap-northeast-1c",
+    "ap-northeast-1d"
+  ]
 }

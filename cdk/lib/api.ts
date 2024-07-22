@@ -3,7 +3,8 @@ import {
   DomainName,
   HttpApi,
   HttpMethod,
-  HttpNoneAuthorizer
+  HttpNoneAuthorizer,
+  VpcLink
 } from 'aws-cdk-lib/aws-apigatewayv2'
 import {
   HttpLambdaIntegration,
@@ -18,11 +19,14 @@ import {
 import { HostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53'
 import { ApiGatewayv2DomainProperties } from 'aws-cdk-lib/aws-route53-targets'
 import { BlockPublicAccess, Bucket } from 'aws-cdk-lib/aws-s3'
+import { Vpc } from 'aws-cdk-lib/aws-ec2'
+import { AnyPrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam'
 
 interface ApiStackProps extends cdk.StackProps {
   hostedZone: HostedZone
   apiLambdaFunction: Function
   apiLambdaAlias: Alias
+  vpc: Vpc
 }
 
 export class ApiStack extends cdk.Stack {
@@ -93,6 +97,12 @@ export class ApiStack extends cdk.Stack {
       integration: new HttpLambdaIntegration('APILambda', props.apiLambdaAlias),
       path: '/api/{all+}',
       methods: [HttpMethod.ANY]
+    })
+
+    httpApi.addVpcLink({
+      vpcLinkName: 'internal-vpc',
+      vpc: props.vpc,
+      subnets: { subnets: props.vpc.publicSubnets }
     })
 
     // # --------------------------------------------------

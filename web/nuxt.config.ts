@@ -6,6 +6,7 @@ export default defineNuxtConfig({
   build: { transpile: ['vuetify'] },
   devtools: { enabled: true },
   devServer: { port: 5000 },
+
   vite: {
     server: { proxy: { '/api': 'http://localhost:3000' } },
     vue: {
@@ -14,11 +15,13 @@ export default defineNuxtConfig({
       }
     }
   },
+
   css: [
     '~/static/global.scss',
     '@fortawesome/fontawesome-svg-core/styles.css',
     'elmethis/dist/style.css'
   ],
+
   modules: [
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
@@ -27,9 +30,12 @@ export default defineNuxtConfig({
     },
     '@pinia/nuxt'
   ],
+
   plugins: [
     '~/plugins/vuetify.ts',
     '~/plugins/auth.ts',
     '~/plugins/vue-query.ts'
-  ]
+  ],
+
+  compatibilityDate: '2024-08-03'
 })

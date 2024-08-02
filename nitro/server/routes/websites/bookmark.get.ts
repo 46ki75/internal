@@ -55,10 +55,20 @@ export default eventHandler(async (event) => {
       'tags' in r.properties &&
       r.properties.tags.type === 'multi_select'
     ) {
+      let icon: string | null = null
+      if (r.icon?.type === 'file') {
+        icon = r.icon.file.url
+      } else if (r.icon?.type === 'external') {
+        icon = r.icon.external.url
+      } else if (r.icon?.type === 'emoji') {
+        icon = r.icon.emoji
+      }
+
       return {
         name: r.properties.name.title.map((t) => t.plain_text).join(''),
         url: r.properties.url.url,
-        tags: r.properties.tags
+        tags: r.properties.tags.multi_select,
+        icon
       }
     }
   })

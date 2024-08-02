@@ -1,5 +1,5 @@
 <template>
-  <h1>INDEX</h1>
+  <Bookmark />
 </template>
 
 <script setup lang="ts"></script>

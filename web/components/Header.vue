@@ -65,11 +65,14 @@ header {
 
   position: sticky;
   top: 0;
+  z-index: 50;
 
   width: 100%;
   height: 3rem;
 
   box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.3);
+  background-color: rgba($color: #ffffff, $alpha: 0.5);
+  backdrop-filter: blur(1px);
 
   display: flex;
   justify-content: space-between;

@@ -8,25 +8,21 @@ Git commit messages must follow the Conventional Commits format and be in Englis
 The basic format of Conventional Commits is as follows:
 
 <type>[optional scope]: <description>
-
-## type
-- feat: New feature
-- fix: Bug fix
-- docs: Documentation update
-- style: Changes to code style and format
-- refactor: Refactoring
-- test: Addition or modification of tests
-- chore: Changes to the build process or auxiliary tools
-
-## scope
-Optionally, this part specifically indicates the range affected by the changes. For example, the name of a particular module or component might be included.
-
-## Description
-Briefly describe the contents of the commit.
 `
 
 export default eventHandler(async (event) => {
   const body = await readBody(event)
+
+  if (!('type' in body)) {
+    setResponseStatus(event, 400)
+    return { error: `The request body does not contain a 'type'.` }
+  }
+
+  if (!('scope' in body)) {
+    setResponseStatus(event, 400)
+    return { error: `The request body does not contain a 'type'.` }
+  }
+
   if (!('message' in body)) {
     setResponseStatus(event, 400)
     return { error: `The request body does not contain a 'message'.` }
@@ -43,10 +39,15 @@ export default eventHandler(async (event) => {
       { role: 'system', content: prompt },
       {
         role: 'user',
-        content: body.message
+        content: `
+        type: ${body.type}
+        scope: ${body.scope === '' ? 'NONE' : body.scope}
+        changes:
+        ${body.message}
+        `
       }
     ],
-    model: 'gpt-3.5-turbo'
+    model: 'gpt-4o'
   })
 
   const result = completion.choices[0].message.content

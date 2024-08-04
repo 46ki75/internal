@@ -24,7 +24,7 @@ export default eventHandler(async (event) => {
         content: body.message
       }
     ],
-    model: 'gpt-3.5-turbo'
+    model: 'gpt-4o'
   })
 
   const result = completion.choices[0].message.content

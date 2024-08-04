@@ -1,5 +1,7 @@
 <template>
-  <div class="bookmark-wrapper">
+  <Heading3 content="Bookmarks" />
+  <div v-if="isLoading">Fetching...</div>
+  <div v-else class="bookmark-wrapper">
     <div
       v-for="convertedBookmark in convertedBookmarks"
       class="bookmark-container"
@@ -22,7 +24,7 @@
 
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
-import { Linktext } from 'elmethis'
+import { Linktext, Heading3 } from 'elmethis'
 import _ from 'lodash'
 
 // # --------------------------------------------------------------------------------
@@ -54,7 +56,7 @@ function getFaviconURL(url: string): string {
   return `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`
 }
 
-const { data } = useQuery({
+const { data, isLoading } = useQuery({
   queryKey: ['Bookmarks'],
   queryFn: async () => $fetch<Bookmark[]>('/api/websites/bookmark'),
   staleTime: 3600
@@ -92,12 +94,15 @@ const convertedBookmarks = computed(() => {
 // # --------------------------------------------------------------------------------
 
 .bookmark-wrapper {
-  padding: 0.5rem;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   flex-wrap: wrap;
   gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+  }
 }
 
 .bookmark-container {
@@ -111,6 +116,10 @@ const convertedBookmarks = computed(() => {
   border-radius: 0.25rem;
   box-shadow: 0 0 0.25rem rgba($color: #000000, $alpha: 0.3);
   background-color: rgba($color: #888888, $alpha: 0.05);
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 }
 
 .bookmark {

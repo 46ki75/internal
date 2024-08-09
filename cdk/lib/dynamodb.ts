@@ -20,7 +20,7 @@ export class DynamoDBStack extends cdk.Stack {
     // # --------------------------------------------------------------------------------
 
     const JWTTable = new dynamodb.Table(this, 'JWTTable', {
-      tableName: 'jwt',
+      tableName: 'jwt-keystore',
       partitionKey: {
         name: 'PK',
         type: dynamodb.AttributeType.STRING

@@ -27,11 +27,10 @@ interface ApiStackProps extends cdk.StackProps {
   apiLambdaFunction: Function
   apiLambdaAlias: Alias
   vpc: Vpc
+  webS3Bucket: Bucket
 }
 
 export class ApiStack extends cdk.Stack {
-  public readonly webS3Bucket: Bucket
-
   constructor(scope: Construct, id: string, props: ApiStackProps) {
     super(scope, id, {
       env: {
@@ -39,22 +38,6 @@ export class ApiStack extends cdk.Stack {
         region: process.env.CDK_DEFAULT_REGION
       },
       ...props
-    })
-
-    // # --------------------------------------------------
-    //
-    // S3
-    //
-    // # --------------------------------------------------
-
-    this.webS3Bucket = new Bucket(this, 'VueJsBucket', {
-      bucketName: `${cdk.Stack.of(this).account}-internal-web-frontend`,
-      websiteIndexDocument: 'index.html',
-      websiteErrorDocument: '404.html',
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
-      autoDeleteObjects: true,
-      blockPublicAccess: BlockPublicAccess.BLOCK_ACLS,
-      publicReadAccess: true
     })
 
     // # --------------------------------------------------
@@ -87,7 +70,7 @@ export class ApiStack extends cdk.Stack {
       defaultAuthorizer: new HttpNoneAuthorizer(),
       defaultIntegration: new HttpUrlIntegration(
         'S3Integration',
-        this.webS3Bucket.bucketWebsiteUrl
+        props.webS3Bucket.bucketWebsiteUrl
       ),
       defaultDomainMapping: { domainName: domain },
       disableExecuteApiEndpoint: false

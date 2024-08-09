@@ -89,7 +89,7 @@ export class ApiStack extends cdk.Stack {
         'GraphQLLambda',
         props.graphqlLambdaAlias
       ),
-      path: '/graphql/{all+}',
+      path: '/graphql',
       methods: [HttpMethod.ANY]
     })
 

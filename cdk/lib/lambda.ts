@@ -103,7 +103,7 @@ export class LambdaStack extends cdk.Stack {
       new iam.PolicyStatement({
         actions: ['dynamodb:PutItem'],
         resources: [
-          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:table/jwt-keystore`
+          `arn:aws:dynamodb:ap-northeast-1:${cdk.Stack.of(this).account}:table/jwt-keystore`
         ],
         effect: iam.Effect.ALLOW
       })

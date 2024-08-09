@@ -7,6 +7,7 @@ import { LambdaStack } from '../lib/lambda'
 import { VPCStack } from '../lib/vpc'
 import { S3Stack } from '../lib/s3'
 import { DynamoDBStack } from '../lib/dynamodb'
+import { EventBridgeStack } from '../lib/events'
 
 const app = new cdk.App()
 
@@ -29,3 +30,8 @@ const apiStack = new ApiStack(app, 'api', {
 })
 
 const dynamoDBStack = new DynamoDBStack(app, 'dynamodb')
+
+const eventBridgeStack = new EventBridgeStack(app, 'events', {
+  generateJwtSecretLambdaFunction: lambdaStack.generateJwtSecretLambdaFunction,
+  generateJwtSecretLambdaAlias: lambdaStack.generateJwtSecretLambdaAlias
+})

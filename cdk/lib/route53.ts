@@ -1,4 +1,4 @@
-import { RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib'
+import { Stack, StackProps } from 'aws-cdk-lib'
 import { HostedZone } from 'aws-cdk-lib/aws-route53'
 import { Construct } from 'constructs'
 
@@ -14,10 +14,8 @@ export class Route53Stack extends Stack {
       ...props
     })
 
-    this.hostedZone = new HostedZone(this, 'InternalHostedZone', {
-      zoneName: 'internal.46ki75.com'
-    })
-
-    this.hostedZone.applyRemovalPolicy(RemovalPolicy.RETAIN)
+    this.hostedZone = HostedZone.fromLookup(this, 'InternalHostedZone', {
+      domainName: 'internal.46ki75.com'
+    }) as HostedZone
   }
 }

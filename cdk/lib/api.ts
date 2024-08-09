@@ -26,6 +26,8 @@ interface ApiStackProps extends cdk.StackProps {
   hostedZone: HostedZone
   apiLambdaFunction: Function
   apiLambdaAlias: Alias
+  graphqlLambdaFunction: Function
+  graphqlLambdaAlias: Alias
   vpc: Vpc
   webS3Bucket: Bucket
 }
@@ -79,6 +81,15 @@ export class ApiStack extends cdk.Stack {
     httpApi.addRoutes({
       integration: new HttpLambdaIntegration('APILambda', props.apiLambdaAlias),
       path: '/api/{all+}',
+      methods: [HttpMethod.ANY]
+    })
+
+    httpApi.addRoutes({
+      integration: new HttpLambdaIntegration(
+        'GraphQLLambda',
+        props.graphqlLambdaAlias
+      ),
+      path: '/graphql/{all+}',
       methods: [HttpMethod.ANY]
     })
 

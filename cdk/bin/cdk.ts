@@ -21,6 +21,8 @@ const apiStack = new ApiStack(app, 'api', {
   hostedZone: route53Stack.hostedZone,
   apiLambdaFunction: lambdaStack.apiLambdaFunction,
   apiLambdaAlias: lambdaStack.apiLambdaAlias,
+  graphqlLambdaFunction: lambdaStack.graphqlLambdaFunction,
+  graphqlLambdaAlias: lambdaStack.graphqlLambdaAlias,
   vpc: vpcStack.vpc,
   webS3Bucket: s3Stack.webS3Bucket
 })

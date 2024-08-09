@@ -14,6 +14,8 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs'
 export class LambdaStack extends cdk.Stack {
   public readonly apiLambdaFunction: Function
   public readonly apiLambdaAlias: Alias
+  public readonly graphqlLambdaFunction: Function
+  public readonly graphqlLambdaAlias: Alias
 
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, {
@@ -59,13 +61,32 @@ export class LambdaStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(29)
     })
 
-    const version = new Version(this, 'LambdaVersion', {
-      lambda: this.apiLambdaFunction
-    })
-
     this.apiLambdaAlias = new Alias(this, 'LambdaAlias', {
       aliasName: 'latest',
       version: this.apiLambdaFunction.latestVersion
+    })
+
+    // # --------------------------------------------------------------------------------
+    //
+    // GraphQL
+    //
+    // # --------------------------------------------------------------------------------
+
+    this.graphqlLambdaFunction = new Function(this, 'GraphQLLambda', {
+      code: Code.fromAsset(
+        path.join(__dirname, '../../graphql/target/lambda/graphql')
+      ),
+      handler: 'index.handler',
+      runtime: Runtime.PROVIDED_AL2023,
+      environment: { ENVIRONMENT: 'production' },
+      functionName: 'graphql',
+      role: lambdaRole,
+      timeout: cdk.Duration.seconds(29)
+    })
+
+    this.graphqlLambdaAlias = new Alias(this, 'GraphQLLambdaAlias', {
+      aliasName: 'latest',
+      version: this.graphqlLambdaFunction.latestVersion
     })
 
     // # --------------------------------------------------------------------------------

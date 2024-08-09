@@ -1,21 +1,17 @@
 import * as cdk from 'aws-cdk-lib'
-import { Function, Code, Runtime, Version, Alias } from 'aws-cdk-lib/aws-lambda'
+import * as lambda from 'aws-cdk-lib/aws-lambda'
 import { Construct } from 'constructs'
 import * as path from 'path'
-import * as kms from 'aws-cdk-lib/aws-kms'
-import {
-  Effect,
-  PolicyStatement,
-  Role,
-  ServicePrincipal
-} from 'aws-cdk-lib/aws-iam'
+import * as iam from 'aws-cdk-lib/aws-iam'
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs'
 
 export class LambdaStack extends cdk.Stack {
-  public readonly apiLambdaFunction: Function
-  public readonly apiLambdaAlias: Alias
-  public readonly graphqlLambdaFunction: Function
-  public readonly graphqlLambdaAlias: Alias
+  public readonly apiLambdaFunction: lambda.Function
+  public readonly apiLambdaAlias: lambda.Alias
+  public readonly graphqlLambdaFunction: lambda.Function
+  public readonly graphqlLambdaAlias: lambda.Alias
+  public readonly generateJwtSecretLambdaFunction: lambda.Function
+  public readonly generateJwtSecretLambdaAlias: lambda.Alias
 
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, {
@@ -32,12 +28,12 @@ export class LambdaStack extends cdk.Stack {
     //
     // # --------------------------------------------------
 
-    const lambdaRole = new Role(this, 'LambdaRole', {
-      assumedBy: new ServicePrincipal('lambda.amazonaws.com')
+    const lambdaRole = new iam.Role(this, 'LambdaRole', {
+      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com')
     })
 
     lambdaRole.addToPolicy(
-      new PolicyStatement({
+      new iam.PolicyStatement({
         actions: ['ssm:GetParameter'],
         resources: [
           `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/jwt/secret`,
@@ -47,21 +43,23 @@ export class LambdaStack extends cdk.Stack {
           `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/password`,
           `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/openai/secret`
         ],
-        effect: Effect.ALLOW
+        effect: iam.Effect.ALLOW
       })
     )
 
-    this.apiLambdaFunction = new Function(this, 'Lambda', {
-      code: Code.fromAsset(path.join(__dirname, '../../nitro/.output/server')),
+    this.apiLambdaFunction = new lambda.Function(this, 'Lambda', {
+      code: lambda.Code.fromAsset(
+        path.join(__dirname, '../../nitro/.output/server')
+      ),
       handler: 'index.handler',
-      runtime: Runtime.NODEJS_20_X,
+      runtime: lambda.Runtime.NODEJS_20_X,
       environment: { NODE_ENV: 'production' },
       functionName: 'internal-api',
       role: lambdaRole,
       timeout: cdk.Duration.seconds(29)
     })
 
-    this.apiLambdaAlias = new Alias(this, 'LambdaAlias', {
+    this.apiLambdaAlias = new lambda.Alias(this, 'LambdaAlias', {
       aliasName: 'latest',
       version: this.apiLambdaFunction.latestVersion
     })
@@ -72,22 +70,71 @@ export class LambdaStack extends cdk.Stack {
     //
     // # --------------------------------------------------------------------------------
 
-    this.graphqlLambdaFunction = new Function(this, 'GraphQLLambda', {
-      code: Code.fromAsset(
+    this.graphqlLambdaFunction = new lambda.Function(this, 'GraphQLLambda', {
+      code: lambda.Code.fromAsset(
         path.join(__dirname, '../../graphql/target/lambda/graphql')
       ),
       handler: 'index.handler',
-      runtime: Runtime.PROVIDED_AL2023,
+      runtime: lambda.Runtime.PROVIDED_AL2023,
       environment: { ENVIRONMENT: 'production' },
       functionName: 'graphql',
       role: lambdaRole,
       timeout: cdk.Duration.seconds(29)
     })
 
-    this.graphqlLambdaAlias = new Alias(this, 'GraphQLLambdaAlias', {
+    this.graphqlLambdaAlias = new lambda.Alias(this, 'GraphQLLambdaAlias', {
       aliasName: 'latest',
       version: this.graphqlLambdaFunction.latestVersion
     })
+
+    // # --------------------------------------------------------------------------------
+    //
+    // generate-jwt-secret
+    //
+    // # --------------------------------------------------------------------------------
+
+    const generateJwtSecretLambdaRole = new iam.Role(
+      this,
+      'GenerateJwtSecretLambdaRole',
+      { assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com') }
+    )
+
+    generateJwtSecretLambdaRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ['dynamodb:PutItem'],
+        resources: [
+          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:table/jwt-keystore`
+        ],
+        effect: iam.Effect.ALLOW
+      })
+    )
+
+    this.generateJwtSecretLambdaFunction = new lambda.Function(
+      this,
+      'GenerateJwtSecretLambda',
+      {
+        code: lambda.Code.fromAsset(
+          path.join(
+            __dirname,
+            '../../lambda/generate-jwt-secret/target/lambda/generate-jwt-secret'
+          )
+        ),
+        handler: 'index.handler',
+        runtime: lambda.Runtime.PROVIDED_AL2023,
+        environment: { ENVIRONMENT: 'production' },
+        functionName: 'generate-jwt-secret',
+        timeout: cdk.Duration.seconds(29)
+      }
+    )
+
+    this.generateJwtSecretLambdaAlias = new lambda.Alias(
+      this,
+      'GenerateJwtSecretLambdaAlias',
+      {
+        aliasName: 'latest',
+        version: this.generateJwtSecretLambdaFunction.latestVersion
+      }
+    )
 
     // # --------------------------------------------------------------------------------
     //
@@ -97,7 +144,7 @@ export class LambdaStack extends cdk.Stack {
 
     new NodejsFunction(this, 'notion-convert-block', {
       handler: 'index.handler',
-      runtime: Runtime.NODEJS_20_X,
+      runtime: lambda.Runtime.NODEJS_20_X,
       environment: { NODE_ENV: 'production' },
       functionName: 'notion-convert-block',
       timeout: cdk.Duration.seconds(29),

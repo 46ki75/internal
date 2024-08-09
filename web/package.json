@@ -7,7 +7,8 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "deploy": "aws s3 sync ./.output/public/ s3://891377368344-internal-web-frontend  --delete"
   },
   "prettier": "prettier-config-standard",
   "dependencies": {

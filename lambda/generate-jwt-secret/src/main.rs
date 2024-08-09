@@ -2,8 +2,7 @@ use lambda_runtime::{run, service_fn, tracing, Error, LambdaEvent};
 
 use serde::{Deserialize, Serialize};
 
-use aws_config::meta::region::RegionProviderChain;
-use aws_config::BehaviorVersion;
+use aws_config::{BehaviorVersion, Region};
 use aws_sdk_dynamodb::Client;
 
 use rand::rngs::OsRng;
@@ -23,9 +22,9 @@ struct Response {
 }
 
 async fn function_handler(event: LambdaEvent<Request>) -> Result<Response, Error> {
-    let region_proider = RegionProviderChain::default_provider().or_else("ap-northeast-1");
+    let region = Region::new("ap-northeast-1");
     let config = aws_config::defaults(BehaviorVersion::latest())
-        .region(region_proider)
+        .region(region)
         .load()
         .await;
 

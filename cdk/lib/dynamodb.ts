@@ -26,10 +26,10 @@ export class DynamoDBStack extends cdk.Stack {
         type: dynamodb.AttributeType.STRING
       },
       sortKey: {
-        name: 'createdAt',
+        name: 'SK',
         type: dynamodb.AttributeType.STRING
       },
-      timeToLiveAttribute: 'expireAt',
+      timeToLiveAttribute: 'TTL',
       billingMode: dynamodb.BillingMode.PROVISIONED,
       readCapacity: 1,
       writeCapacity: 1,

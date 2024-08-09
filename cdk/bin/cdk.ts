@@ -6,6 +6,7 @@ import { Route53Stack } from '../lib/route53'
 import { LambdaStack } from '../lib/lambda'
 import { VPCStack } from '../lib/vpc'
 import { S3Stack } from '../lib/s3'
+import { DynamoDBStack } from '../lib/dynamodb'
 
 const app = new cdk.App()
 
@@ -26,3 +27,5 @@ const apiStack = new ApiStack(app, 'api', {
   vpc: vpcStack.vpc,
   webS3Bucket: s3Stack.webS3Bucket
 })
+
+const dynamoDBStack = new DynamoDBStack(app, 'dynamodb')

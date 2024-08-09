@@ -2,13 +2,14 @@ import * as cdk from 'aws-cdk-lib'
 import { Function, Code, Runtime, Version, Alias } from 'aws-cdk-lib/aws-lambda'
 import { Construct } from 'constructs'
 import * as path from 'path'
-import { HostedZone } from 'aws-cdk-lib/aws-route53'
+import * as kms from 'aws-cdk-lib/aws-kms'
 import {
   Effect,
   PolicyStatement,
   Role,
   ServicePrincipal
 } from 'aws-cdk-lib/aws-iam'
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs'
 
 export class LambdaStack extends cdk.Stack {
   public readonly apiLambdaFunction: Function
@@ -65,6 +66,25 @@ export class LambdaStack extends cdk.Stack {
     this.apiLambdaAlias = new Alias(this, 'LambdaAlias', {
       aliasName: 'latest',
       version: this.apiLambdaFunction.latestVersion
+    })
+
+    // # --------------------------------------------------------------------------------
+    //
+    // notion-convert-block
+    //
+    // # --------------------------------------------------------------------------------
+
+    new NodejsFunction(this, 'notion-convert-block', {
+      handler: 'index.handler',
+      runtime: Runtime.NODEJS_20_X,
+      environment: { NODE_ENV: 'production' },
+      functionName: 'notion-convert-block',
+      timeout: cdk.Duration.seconds(29),
+      entry: path.resolve(
+        __dirname,
+        '../../lambda/notion-convert-block/src/index.ts'
+      ),
+      role: lambdaRole
     })
   }
 }

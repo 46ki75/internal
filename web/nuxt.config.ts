@@ -8,7 +8,12 @@ export default defineNuxtConfig({
   devServer: { port: 5000 },
 
   vite: {
-    server: { proxy: { '/api': 'http://localhost:3000' } },
+    server: {
+      proxy: {
+        '/api': 'http://localhost:3000',
+        '/graphql': 'http://localhost:9000'
+      }
+    },
     vue: {
       template: {
         transformAssetUrls

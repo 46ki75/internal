@@ -123,7 +123,8 @@ export class LambdaStack extends cdk.Stack {
         runtime: lambda.Runtime.PROVIDED_AL2023,
         environment: { ENVIRONMENT: 'production' },
         functionName: 'generate-jwt-secret',
-        timeout: cdk.Duration.seconds(29)
+        timeout: cdk.Duration.seconds(29),
+        role: generateJwtSecretLambdaRole
       }
     )
 

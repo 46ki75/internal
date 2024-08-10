@@ -1,8 +1,14 @@
-use aws_config::imds::client::error;
+#[derive(async_graphql::Enum, Copy, Clone, Eq, PartialEq)]
+pub enum Group {
+    /// Possess administrator privileges
+    Admin,
+    /// Member account
+    Member,
+}
 
 pub struct Login {
     pub username: String,
-    pub groups: Vec<String>,
+    pub groups: Vec<Group>,
 }
 
 impl Login {
@@ -80,9 +86,13 @@ impl Login {
             .as_l()
             .unwrap_or(&vec![])
             .iter()
-            .filter_map(|v| v.as_s().ok())
-            .cloned()
-            .collect::<Vec<String>>();
+            .filter_map(|v| v.as_s().ok()) // Option<&str>を取り出す
+            .filter_map(|s| match s.as_str() {
+                "ADMIN" => Some(Group::Admin),
+                "MEMBER" => Some(Group::Member),
+                _ => None,
+            })
+            .collect::<Vec<Group>>();
 
         // TODO: Implement the issuance of access tokens and refresh tokens.
 
@@ -96,15 +106,18 @@ impl Login {
 
 #[async_graphql::Object]
 impl Login {
+    /// Status Message
     pub async fn message(&self) -> &str {
         "Login successful."
     }
 
+    /// Username of the logged-in user
     pub async fn username(&self) -> &str {
         &self.username
     }
 
-    pub async fn groups(&self) -> &Vec<String> {
+    /// Name of the group to which one belongs
+    pub async fn groups(&self) -> &Vec<Group> {
         &self.groups
     }
 }

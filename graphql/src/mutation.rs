@@ -18,6 +18,9 @@ impl MutationRoot {
         resolvers::register::Register::new(ctx, username, password).await
     }
 
+    /// Log in with your username and password:
+    /// - `username`: The username to log in with
+    /// - `password`: The password
     pub async fn login(
         &self,
         ctx: &async_graphql::Context<'_>,

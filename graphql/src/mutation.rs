@@ -17,4 +17,13 @@ impl MutationRoot {
     ) -> Result<resolvers::register::Register, async_graphql::Error> {
         resolvers::register::Register::new(ctx, username, password).await
     }
+
+    pub async fn login(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+        username: String,
+        password: String,
+    ) -> Result<resolvers::login::Login, async_graphql::Error> {
+        resolvers::login::Login::new(ctx, username, password).await
+    }
 }

@@ -78,6 +78,7 @@ impl Register {
 
 #[async_graphql::Object]
 impl Register {
+    /// The username of the registered user
     pub async fn username(&self) -> String {
         self.username.to_string()
     }

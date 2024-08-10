@@ -70,6 +70,36 @@ export class LambdaStack extends cdk.Stack {
     //
     // # --------------------------------------------------------------------------------
 
+    const graphqlLambdaRole = new iam.Role(this, 'GraphQLLambdaRole', {
+      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com')
+    })
+
+    graphqlLambdaRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ['dynamodb:*'],
+        resources: [
+          `arn:aws:dynamodb:ap-northeast-1:${cdk.Stack.of(this).account}:table/primary-table`,
+          `arn:aws:dynamodb:ap-northeast-1:${cdk.Stack.of(this).account}:table/jwt-keystore`
+        ],
+        effect: iam.Effect.ALLOW
+      })
+    )
+
+    graphqlLambdaRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ['ssm:GetParameter'],
+        resources: [
+          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/jwt/secret`,
+          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/notion/default/secret`,
+          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/general/common/notion/database/anki/id`,
+          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/general/common/notion/database/websites/id`,
+          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/password`,
+          `arn:aws:ssm:ap-northeast-1:${cdk.Stack.of(this).account}:parameter/internal/web/prod/openai/secret`
+        ],
+        effect: iam.Effect.ALLOW
+      })
+    )
+
     this.graphqlLambdaFunction = new lambda.Function(this, 'GraphQLLambda', {
       code: lambda.Code.fromAsset(
         path.join(__dirname, '../../graphql/target/lambda/graphql')
@@ -78,7 +108,7 @@ export class LambdaStack extends cdk.Stack {
       runtime: lambda.Runtime.PROVIDED_AL2023,
       environment: { ENVIRONMENT: 'production' },
       functionName: 'graphql',
-      role: lambdaRole,
+      role: graphqlLambdaRole,
       timeout: cdk.Duration.seconds(29)
     })
 

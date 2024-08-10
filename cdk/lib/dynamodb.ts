@@ -15,6 +15,28 @@ export class DynamoDBStack extends cdk.Stack {
 
     // # --------------------------------------------------------------------------------
     //
+    // primary-table
+    //
+    // # --------------------------------------------------------------------------------
+
+    const primaryTable = new dynamodb.Table(this, 'PrimaryTable', {
+      tableName: 'primary-table',
+      partitionKey: {
+        name: 'PK',
+        type: dynamodb.AttributeType.STRING
+      },
+      sortKey: {
+        name: 'SK',
+        type: dynamodb.AttributeType.STRING
+      },
+      timeToLiveAttribute: 'TTL',
+      billingMode: dynamodb.BillingMode.PROVISIONED,
+      readCapacity: 10,
+      writeCapacity: 10
+    })
+
+    // # --------------------------------------------------------------------------------
+    //
     // JWT
     //
     // # --------------------------------------------------------------------------------

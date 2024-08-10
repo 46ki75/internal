@@ -1,4 +1,4 @@
-use juniper::graphql_object;
+use crate::context::GraphQLContext;
 
 pub(crate) mod greet;
 
@@ -10,7 +10,7 @@ pub struct Query;
 //
 // # --------------------------------------------------------------------------------
 
-#[graphql_object]
+#[juniper::graphql_object(Context = GraphQLContext)]
 impl Query {
     #[graphql(description = "Returns a GreetQuery object which contains greeting information")]
     fn greet(

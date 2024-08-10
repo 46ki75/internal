@@ -7,7 +7,10 @@ use query::Query;
 mod mutation;
 use mutation::Mutation;
 
-type Schema = RootNode<'static, Query, Mutation, EmptySubscription<()>>;
+mod context;
+use context::GraphQLContext;
+
+type Schema = RootNode<'static, Query, Mutation, EmptySubscription<GraphQLContext>>;
 
 async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     if event.method() == Method::GET {
@@ -19,11 +22,14 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
             .map_err(Box::new)?)
     } else if event.method() == Method::POST {
         let schema = Schema::new(Query, Mutation, EmptySubscription::new());
-        let context = ();
+
+        let headers = event.headers().clone();
+        let context = GraphQLContext::new(headers);
+
         let request_body = event.body().as_ref();
         let request: juniper::http::GraphQLRequest = serde_json::from_slice(request_body)?;
 
-        let response = request.execute_sync(&schema, &context);
+        let response = request.execute(&schema, &context).await;
         let response_body = serde_json::to_string(&response)?;
 
         Ok(Response::builder()

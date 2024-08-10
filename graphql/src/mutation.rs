@@ -1,15 +1,27 @@
-use juniper::graphql_object;
+use crate::context::GraphQLContext;
 
-pub mod create_user;
+pub mod login;
+pub mod register;
 
 pub struct Mutation;
 
-#[graphql_object]
+#[juniper::graphql_object(Context = GraphQLContext)]
 impl Mutation {
-    #[graphql(description = "Create an user.")]
-    fn create_user(
-        #[graphql(description = "The username for the new user.")] username: String,
-    ) -> create_user::CreateUserMutation {
-        create_user::CreateUserMutation::new(username)
+    #[graphql(description = "Login with password.")]
+    async fn login(
+        context: &GraphQLContext,
+        #[graphql(description = "your username")] username: String,
+        #[graphql(description = "your password")] password: String,
+    ) -> Result<login::LoginMutation, juniper::FieldError> {
+        login::LoginMutation::new(context, username, password).await
+    }
+
+    #[graphql(description = "Register user.")]
+    async fn register(
+        context: &GraphQLContext,
+        #[graphql(description = "your username")] username: String,
+        #[graphql(description = "your password")] password: String,
+    ) -> Result<register::RegisterMutation, juniper::FieldError> {
+        register::RegisterMutation::new(context, username, password).await
     }
 }

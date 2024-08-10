@@ -1,5 +1,3 @@
-use lambda_http::tracing::subscriber::field::debug;
-
 pub struct Register {
     pub username: String,
 }

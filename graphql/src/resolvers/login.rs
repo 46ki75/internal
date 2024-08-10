@@ -13,7 +13,7 @@ pub struct Login {
 
 impl Login {
     pub async fn new(
-        _: &async_graphql::Context<'_>,
+        ctx: &async_graphql::Context<'_>,
         username: String,
         password: String,
     ) -> Result<Self, async_graphql::Error> {
@@ -95,6 +95,7 @@ impl Login {
             .collect::<Vec<Group>>();
 
         // TODO: Implement the issuance of access tokens and refresh tokens.
+        ctx.append_http_header("x-46ki75-happy", "How to add a value to the header");
 
         if is_valid {
             Ok(Login { username, groups })

@@ -6,11 +6,23 @@ mod query;
 mod resolvers;
 
 async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
+    // # --------------------------------------------------------------------------------
+    //
+    // Schema creation and context injection
+    //
+    // # --------------------------------------------------------------------------------
+
     let schema = Schema::build(query::QueryRoot, mutation::MutationRoot, EmptySubscription)
         .data(event.headers().clone())
         .finish();
 
     if event.method() == "GET" {
+        // # --------------------------------------------------------------------------------
+        //
+        // playground
+        //
+        // # --------------------------------------------------------------------------------
+
         let playground_html = GraphiQLSource::build().finish();
         let response = Response::builder()
             .status(200)
@@ -19,6 +31,12 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
             .map_err(Box::new)?;
         Ok(response)
     } else if event.method() == "POST" {
+        // # --------------------------------------------------------------------------------
+        //
+        // GraphQL API Execution
+        //
+        // # --------------------------------------------------------------------------------
+
         let request_body = event.body();
 
         let gql_request = match serde_json::from_slice::<async_graphql::Request>(request_body) {
@@ -38,6 +56,8 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
 
         let gql_response = schema.execute(gql_request).await;
 
+        // Creating a Response in Lambda
+
         let response_body = match serde_json::to_string(&gql_response) {
             Ok(body) => body,
             Err(err) => {
@@ -53,12 +73,30 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
             }
         };
 
-        Ok(Response::builder()
+        let mut response_builder = Response::builder()
             .status(200)
-            .header("content-type", "application/json")
+            .header("content-type", "application/json");
+
+        // Inserting a Custom Header (Retrieved from Context)
+
+        let response_header = gql_response.http_headers;
+
+        for (key, value) in response_header {
+            if let Some(name) = key {
+                response_builder = response_builder.header(name, value);
+            }
+        }
+
+        Ok(response_builder
             .body(response_body.into())
             .map_err(Box::new)?)
     } else {
+        // # --------------------------------------------------------------------------------
+        //
+        // Handling Unauthorized Methods
+        //
+        // # --------------------------------------------------------------------------------
+
         let response = Response::builder()
             .status(405)
             .header("content-type", "application/json")

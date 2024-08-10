@@ -1,8 +1,8 @@
-pub struct Register {
+pub struct Signup {
     pub username: String,
 }
 
-impl Register {
+impl Signup {
     pub async fn new(
         _: &async_graphql::Context<'_>,
         username: String,
@@ -69,15 +69,15 @@ impl Register {
 
         request.send().await.map_err(|e| {
             println!("{:?}", e);
-            async_graphql::Error::new("A database error occurred during user registration.")
+            async_graphql::Error::new("The user is already signed up.")
         })?;
 
-        Ok(Register { username })
+        Ok(Signup { username })
     }
 }
 
 #[async_graphql::Object]
-impl Register {
+impl Signup {
     /// The username of the registered user
     pub async fn username(&self) -> String {
         self.username.to_string()

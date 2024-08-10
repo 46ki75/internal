@@ -6,16 +6,16 @@ use crate::resolvers;
 
 #[async_graphql::Object]
 impl MutationRoot {
-    /// Registering a new user.
+    /// Signuping a new user.
     /// - `username` You can use the following characters: A-Z, a-z, 0-9, "-", and "_".
     /// - `password` Blank spaces are not allowed.
-    pub async fn register(
+    pub async fn signup(
         &self,
         ctx: &async_graphql::Context<'_>,
         username: String,
         password: String,
-    ) -> Result<resolvers::register::Register, async_graphql::Error> {
-        resolvers::register::Register::new(ctx, username, password).await
+    ) -> Result<resolvers::signup::Signup, async_graphql::Error> {
+        resolvers::signup::Signup::new(ctx, username, password).await
     }
 
     /// Log in with your username and password:

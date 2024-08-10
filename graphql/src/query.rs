@@ -1,22 +1,16 @@
-use crate::context::GraphQLContext;
+use async_graphql::*;
 
-pub(crate) mod greet;
+pub struct QueryRoot;
 
-pub struct Query;
+use crate::resolvers;
 
-// # --------------------------------------------------------------------------------
-//
-// Query
-//
-// # --------------------------------------------------------------------------------
-
-#[juniper::graphql_object(Context = GraphQLContext)]
-impl Query {
-    #[graphql(description = "Returns a GreetQuery object which contains greeting information")]
-    fn greet(
-        #[graphql(description = "Your name (if not provided, it will display as 'GraphQL')")]
-        name: Option<String>,
-    ) -> greet::GreetQuery {
-        greet::GreetQuery::new(name)
+#[async_graphql::Object]
+impl QueryRoot {
+    /// Returns a greeting message along with the programming language.
+    pub async fn greet(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> Result<resolvers::greet::Greet, async_graphql::FieldError> {
+        resolvers::greet::Greet::new(ctx)
     }
 }

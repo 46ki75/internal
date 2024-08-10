@@ -1,3 +1,5 @@
+use lambda_http::tracing::subscriber::field::debug;
+
 pub struct Register {
     pub username: String,
 }
@@ -37,41 +39,6 @@ impl Register {
 
         let client = aws_sdk_dynamodb::Client::new(&config);
 
-        // confirmation of user existence
-
-        let request = client
-            .get_item()
-            .table_name("primary-table")
-            .key(
-                "PK",
-                aws_sdk_dynamodb::types::AttributeValue::S(format!("USER#{}#", username)),
-            )
-            .key(
-                "SK",
-                aws_sdk_dynamodb::types::AttributeValue::S(String::from("PROFILE#")),
-            );
-
-        let response = request.send().await;
-
-        let item = match response {
-            Err(_) => {
-                return Err(async_graphql::ServerError::new(
-                    "A database error occurred while retrieving user information.",
-                    None,
-                )
-                .into())
-            }
-            Ok(v) => v.item,
-        };
-
-        if item.is_some() {
-            return Err(async_graphql::FieldError::new(
-                "The requested username already exists.",
-            ));
-        }
-
-        // Create User
-
         let hashed_password = bcrypt::hash(password, bcrypt::DEFAULT_COST).map_err(|_| {
             async_graphql::ServerError::new(
                 "An error occurred while computing the password hash.",
@@ -82,6 +49,7 @@ impl Register {
         let request = client
             .put_item()
             .table_name("primary-table")
+            .condition_expression("attribute_not_exists(PK) AND attribute_not_exists(SK)")
             .item(
                 "PK",
                 aws_sdk_dynamodb::types::AttributeValue::S(format!("USER#{}#", username)),
@@ -101,7 +69,8 @@ impl Register {
                 aws_sdk_dynamodb::types::AttributeValue::S(hashed_password),
             );
 
-        request.send().await.map_err(|_| {
+        request.send().await.map_err(|e| {
+            println!("{:?}", e);
             async_graphql::Error::new("A database error occurred during user registration.")
         })?;
 

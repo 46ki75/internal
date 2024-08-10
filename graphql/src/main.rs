@@ -1,12 +1,12 @@
-use async_graphql::{http::GraphiQLSource, EmptyMutation, EmptySubscription, Schema};
+use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use lambda_http::{run, service_fn, tracing, Body, Error, Request, Response};
-use serde_json::json;
 
+mod mutation;
 mod query;
 mod resolvers;
 
 async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
-    let schema = Schema::build(query::QueryRoot, EmptyMutation, EmptySubscription)
+    let schema = Schema::build(query::QueryRoot, mutation::MutationRoot, EmptySubscription)
         .data(event.headers().clone())
         .finish();
 
@@ -28,7 +28,7 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
                     .status(400)
                     .header("content-type", "application/json")
                     .body(
-                        json!({"error": format!("Invalid request body: {}", err)})
+                        serde_json::json!({"error": format!("Invalid request body: {}", err)})
                             .to_string()
                             .into(),
                     )
@@ -45,7 +45,7 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
                     .status(500)
                     .header("content-type", "application/json")
                     .body(
-                        json!({"error": format!("Failed to serialize response: {}", err)})
+                        serde_json::json!({"error": format!("Failed to serialize response: {}", err)})
                             .to_string()
                             .into(),
                     )
@@ -62,7 +62,11 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
         let response = Response::builder()
             .status(405)
             .header("content-type", "application/json")
-            .body(json!({"error":"Method Not Allowed"}).to_string().into())
+            .body(
+                serde_json::json!({"error":"Method Not Allowed"})
+                    .to_string()
+                    .into(),
+            )
             .map_err(Box::new)?;
         Ok(response)
     }

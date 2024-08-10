@@ -1156,6 +1156,7 @@ dependencies = [
  "aws-sdk-dynamodb",
  "bcrypt",
  "lambda_http",
+ "regex",
  "serde",
  "serde_json",
  "tokio",

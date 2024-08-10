@@ -8,6 +8,27 @@ impl Register {
         username: String,
         password: String,
     ) -> Result<Self, async_graphql::Error> {
+        if username.is_empty() {
+            return Err(async_graphql::FieldError::new(
+                "The `username` field is empty.",
+            ));
+        }
+
+        if !regex::Regex::new(r"^[a-zA-Z0-9_\-]+$")
+            .unwrap()
+            .is_match(&username)
+        {
+            return Err(async_graphql::FieldError::new(
+                "Usernames can only contain alphanumeric characters.",
+            ));
+        }
+
+        if password.is_empty() {
+            return Err(async_graphql::FieldError::new(
+                "The `password` field is empty.",
+            ));
+        }
+
         let region = aws_config::Region::from_static("ap-northeast-1");
         let config = aws_config::defaults(aws_config::BehaviorVersion::latest())
             .region(region)

@@ -32,11 +32,12 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
         let response = request.execute(&schema, &context).await;
         let response_body = serde_json::to_string(&response)?;
 
-        Ok(Response::builder()
+        let response_body_builder = Response::builder()
             .status(200)
             .header("content-type", "application/json")
-            .body(Body::Text(response_body))
-            .map_err(Box::new)?)
+            .body(Body::Text(response_body));
+
+        Ok(response_body_builder.map_err(Box::new)?)
     } else {
         Ok(Response::builder()
             .status(405)

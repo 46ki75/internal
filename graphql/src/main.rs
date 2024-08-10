@@ -23,8 +23,8 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     } else if event.method() == Method::POST {
         let schema = Schema::new(Query, Mutation, EmptySubscription::new());
 
-        let headers = event.headers().clone();
-        let context = GraphQLContext::new(headers);
+        let request_headers = event.headers().clone();
+        let context = GraphQLContext::new(request_headers);
 
         let request_body = event.body().as_ref();
         let request: juniper::http::GraphQLRequest = serde_json::from_slice(request_body)?;

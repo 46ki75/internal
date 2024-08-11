@@ -134,8 +134,14 @@ impl Login {
             "internal.46ki75.com".to_string()
         };
 
-        let jwt_refresh_token =
-            jwt::Jwt::generate_refresh_token(&config, domain.clone(), username.clone()).await?;
+        let jwt_refresh_token = jwt::Jwt::generate_token(
+            &config,
+            "JWT_REFRESH_TOKEN".into(),
+            domain.clone(),
+            username.clone(),
+            60 * 24 * 7,
+        )
+        .await?;
 
         let jwt_refresh_token_cookie =
             cookie::Cookie::build(("JWT_REFRESH_TOKEN", jwt_refresh_token.value))

@@ -930,6 +930,25 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "40ecd4077b5ae9fd2e9e169b102c6c330d0605168eb0e8bf79952b256dbefffd"
 
 [[package]]
+name = "graphql"
+version = "0.1.0"
+dependencies = [
+ "async-graphql",
+ "aws-config",
+ "aws-sdk-dynamodb",
+ "bcrypt",
+ "chrono",
+ "cookie",
+ "jsonwebtoken",
+ "lambda_http",
+ "regex",
+ "serde",
+ "serde_json",
+ "tokio",
+ "uuid",
+]
+
+[[package]]
 name = "h2"
 version = "0.3.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1239,25 +1258,6 @@ dependencies = [
  "serde",
  "serde_json",
  "simple_asn1",
-]
-
-[[package]]
-name = "lambda-rust-graphql"
-version = "0.1.0"
-dependencies = [
- "async-graphql",
- "aws-config",
- "aws-sdk-dynamodb",
- "bcrypt",
- "chrono",
- "cookie",
- "jsonwebtoken",
- "lambda_http",
- "regex",
- "serde",
- "serde_json",
- "tokio",
- "uuid",
 ]
 
 [[package]]

@@ -1,6 +1,6 @@
 use async_graphql::ErrorExtensions;
 
-use crate::services::jwt;
+use crate::{context, services::jwt};
 
 #[derive(async_graphql::Enum, Copy, Clone, Eq, PartialEq)]
 pub enum Group {
@@ -21,6 +21,12 @@ impl Login {
         username: String,
         password: String,
     ) -> Result<Self, async_graphql::Error> {
+        // # --------------------------------------------------------------------------------
+        //
+        // 引数のバリデーション
+        //
+        // # --------------------------------------------------------------------------------
+
         if username.is_empty() {
             return Err(
                 async_graphql::FieldError::new("The `username` field is empty.")
@@ -44,6 +50,12 @@ impl Login {
                     .extend_with(|_, e| e.set("code", "VAL_400_001")),
             );
         }
+
+        // # --------------------------------------------------------------------------------
+        //
+        // ユーザー情報の取得
+        //
+        // # --------------------------------------------------------------------------------
 
         let region = aws_config::Region::from_static("ap-northeast-1");
         let config = aws_config::defaults(aws_config::BehaviorVersion::latest())
@@ -89,6 +101,12 @@ impl Login {
             })
         })?;
 
+        // # --------------------------------------------------------------------------------
+        //
+        // パスワードの検証
+        //
+        // # --------------------------------------------------------------------------------
+
         let is_valid = bcrypt::verify(password, hashed_password).map_err(|_| {
             async_graphql::ServerError::new(
                 "Failed to compare the password hash. The stored password hash might be invalid.",
@@ -107,6 +125,8 @@ impl Login {
             );
         }
 
+        // 追加情報のフィールドの取得
+
         let groups = item
             .get("groups")
             .unwrap_or(&aws_sdk_dynamodb::types::AttributeValue::L(vec![]))
@@ -123,16 +143,16 @@ impl Login {
 
         // # --------------------------------------------------------------------------------
         //
-        // Issuing a JWT
+        // JWT_REFRESH_TOKEN の発行
         //
         // # --------------------------------------------------------------------------------
 
-        let rust_env = std::env::var("ENVIRONMENT").unwrap_or(String::from("production"));
-        let domain = if rust_env == "development" {
-            "localhost".to_string()
-        } else {
-            "internal.46ki75.com".to_string()
-        };
+        let custom_context = ctx
+            .data::<context::CustomContext>()
+            .map_err(|_| async_graphql::Error::new("Failed to retrieve `CustomContext`."))?;
+
+        let environment = custom_context.environment.clone();
+        let domain = custom_context.domain.clone();
 
         let jwt_refresh_token = jwt::Jwt::generate_token(
             &config,
@@ -147,7 +167,7 @@ impl Login {
             cookie::Cookie::build(("JWT_REFRESH_TOKEN", jwt_refresh_token.value))
                 .domain(domain)
                 .path("/")
-                .secure(rust_env != "development")
+                .secure(environment != "development")
                 .same_site(cookie::SameSite::Strict)
                 .http_only(true)
                 .build();

@@ -1,6 +1,7 @@
 use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use lambda_http::{http::Method, run, service_fn, tracing, Body, Error, Request, Response};
 
+mod context;
 mod mutation;
 mod query;
 mod resolvers;
@@ -13,8 +14,11 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     //
     // # --------------------------------------------------------------------------------
 
+    let custom_context = context::CustomContext::new(event.clone());
+
     let schema = Schema::build(query::QueryRoot, mutation::MutationRoot, EmptySubscription)
         .data(event.headers().clone())
+        .data(custom_context)
         .finish();
 
     if event.method() == Method::GET {

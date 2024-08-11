@@ -35,12 +35,12 @@ impl Refresh {
         //
         // # --------------------------------------------------------------------------------
 
-        let rust_env = std::env::var("ENVIRONMENT").unwrap_or(String::from("production"));
-        let domain = if rust_env == "development" {
-            "localhost".to_string()
-        } else {
-            "internal.46ki75.com".to_string()
-        };
+        let custom_context = ctx
+            .data::<crate::context::CustomContext>()
+            .map_err(|_| async_graphql::Error::new("Failed to retrieve `CustomContext`."))?;
+
+        let environment = custom_context.environment.clone();
+        let domain = custom_context.domain.clone();
 
         let region = aws_config::Region::from_static("ap-northeast-1");
         let config = aws_config::defaults(aws_config::BehaviorVersion::latest())
@@ -65,7 +65,7 @@ impl Refresh {
             cookie::Cookie::build(("JWT_ACCESS_TOKEN", jwt_access_token.value))
                 .domain(domain)
                 .path("/")
-                .secure(rust_env != "development")
+                .secure(environment != "development")
                 .same_site(cookie::SameSite::Strict)
                 .http_only(true)
                 .build();

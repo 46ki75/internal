@@ -98,6 +98,7 @@ impl Jwt {
 
         let header = jsonwebtoken::Header {
             kid: Some(jwt_secret_kid.clone()),
+            alg: jsonwebtoken::Algorithm::HS256,
             ..Default::default()
         };
 

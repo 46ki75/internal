@@ -2,7 +2,7 @@ use async_graphql::*;
 
 pub struct MutationRoot;
 
-use crate::resolvers;
+use crate::resolvers::{self, refresh};
 
 #[async_graphql::Object]
 impl MutationRoot {
@@ -28,5 +28,15 @@ impl MutationRoot {
         password: String,
     ) -> Result<resolvers::login::Login, async_graphql::Error> {
         resolvers::login::Login::new(ctx, username, password).await
+    }
+
+    /// This method uses the `JWT_REFRESH_TOKEN` set
+    /// in the cookie to obtain a `JWT_ACCESS_TOKEN`,
+    /// which is then also set in the cookie.
+    pub async fn refresh(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> Result<resolvers::refresh::Refresh, async_graphql::Error> {
+        resolvers::refresh::Refresh::new(ctx).await
     }
 }

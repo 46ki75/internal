@@ -161,7 +161,10 @@ impl Jwt {
                 "The `{}` cookie is missing.",
                 key
             ))
-            .extend_with(|_, e| e.set("code", "AUTH_401_004")));
+            .extend_with(|_, e| {
+                e.set("code", "AUTH_401_004");
+                e.set("directive", "REFRESH_ACCESS_TOKEN");
+            }));
         }
 
         let header = jsonwebtoken::decode_header(&refresh_token).map_err(|_| {
@@ -210,7 +213,10 @@ impl Jwt {
                 "The secret key for the specified KID could not be found.",
                 None,
             )
-            .extend_with(|_, e| e.set("code", "AUTH_401_006")),
+            .extend_with(|_, e| {
+                e.set("code", "AUTH_401_006");
+                e.set("directive", "REFRESH_ACCESS_TOKEN");
+            }),
         )?;
 
         let secret = item
@@ -242,7 +248,10 @@ impl Jwt {
         )
         .map_err(|_| {
             async_graphql::ServerError::new("Failed to decode or validate the JWT.", None)
-                .extend_with(|_, e| e.set("code", "AUTH_401_007"))
+                .extend_with(|_, e| {
+                    e.set("code", "AUTH_401_007");
+                    e.set("directive", "REFRESH_ACCESS_TOKEN")
+                })
         })?;
 
         Ok(token_data)

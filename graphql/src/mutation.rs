@@ -39,4 +39,11 @@ impl MutationRoot {
     ) -> Result<resolvers::refresh::Refresh, async_graphql::Error> {
         resolvers::refresh::Refresh::new(ctx).await
     }
+
+    /// ログアウトを行う際、`JWT_REFRESH_TOKEN` と `JWT_REFRESH_TOKEN` の
+    /// 削除は2回の HTTP リクエストに分けて行う必要があります。
+    /// (`set-cookie` ヘッダーを同時に1つしか挿入できない async-graphql の仕様)
+    pub async fn logout(&self) -> Result<resolvers::logout::Logout, async_graphql::Error> {
+        resolvers::logout::Logout::new().await
+    }
 }

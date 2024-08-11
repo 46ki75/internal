@@ -76,7 +76,13 @@ impl Refresh {
                 aws_sdk_dynamodb::types::AttributeValue::S(kid.to_string()),
             );
 
-        let response = request.send().await?;
+        let response = request.send().await.map_err(|_| {
+            async_graphql::ServerError::new(
+                "An error occurred while executing the database query to retrieve the secret key for JWT validation.",
+                None,
+            )
+            .extend_with(|_, e| e.set("code", "AUTH_500_002"))
+        })?;
 
         let item = response.item.ok_or(
             async_graphql::ServerError::new(

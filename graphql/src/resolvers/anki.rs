@@ -6,7 +6,31 @@ pub struct Anki {
 }
 
 impl Anki {
-    pub async fn new() -> Result<Self, async_graphql::Error> {
+    pub async fn new(ctx: &async_graphql::Context<'_>) -> Result<Self, async_graphql::Error> {
+        // # --------------------------------------------------------------------------------
+        //
+        // 認可 (ネストされた下位クエリにも適用される)
+        //
+        // # --------------------------------------------------------------------------------
+
+        let raw_cookie = ctx
+            .data::<lambda_http::http::HeaderMap<lambda_http::http::HeaderValue>>()
+            .unwrap()
+            .get("cookie")
+            .ok_or(async_graphql::FieldError::new("Cookies are not enabled."))?
+            .to_str()
+            .map_err(|_| async_graphql::FieldError::new("Failed to parse the cookie."))?;
+
+        let token_data = crate::services::jwt::Jwt::validateand_decode_token(
+            raw_cookie.into(),
+            crate::services::jwt::TokenType::JwtAccessToken,
+        )
+        .await?;
+
+        if token_data.claims.sub != "shirayuki" {
+            return Err(async_graphql::Error::new("FORBIDDEN"));
+        }
+
         let region = aws_config::Region::from_static("ap-northeast-1");
         let config = aws_config::defaults(aws_config::BehaviorVersion::latest())
             .region(region)
@@ -53,10 +77,12 @@ impl Anki {
 
 #[async_graphql::Object]
 impl Anki {
+    /// AnkiデータベースのID
     pub async fn database_id(&self) -> Result<String, async_graphql::Error> {
         Ok(self.database_id.to_string())
     }
 
+    /// 次に学習するAnkiカードを取得するクエリ
     pub async fn learn(
         &self,
         ctx: &async_graphql::Context<'_>,

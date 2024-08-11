@@ -14,11 +14,12 @@ impl QueryRoot {
         resolvers::greet::Greet::new(ctx)
     }
 
-    /// Anki サービス
+    /// Anki クエリ
+    /// 最上位で認可を行い、子クエリはすべて認可が適用される。
     pub async fn anki(
         &self,
         ctx: &async_graphql::Context<'_>,
     ) -> Result<resolvers::anki::Anki, async_graphql::Error> {
-        resolvers::anki::Anki::new().await
+        resolvers::anki::Anki::new(ctx).await
     }
 }

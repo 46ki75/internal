@@ -1,3 +1,5 @@
+use std::io::Read;
+
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
@@ -28,7 +30,7 @@ pub struct Number {
 
 // MultiSelect
 
-#[derive(Deserialize, Serialize, Debug, Clone, async_graphql::SimpleObject)]
+#[derive(async_graphql::SimpleObject, Deserialize, Serialize, Debug, Clone)]
 pub struct MultiSelectProperty {
     id: String,
     color: String,
@@ -72,8 +74,15 @@ pub struct AnkiDatabaseResponse {
 //
 // # --------------------------------------------------------------------------------
 
+#[derive(async_graphql::SimpleObject, Deserialize, Serialize, Debug, Clone)]
+pub struct Blocks {
+    front: serde_json::Value,
+    back: serde_json::Value,
+    explanation: serde_json::Value,
+}
+
 pub struct Learn {
-    id: String,
+    page_id: String,
     next_review_at: String,
     created_at: String,
     updated_at: String,
@@ -88,7 +97,13 @@ impl Learn {
         notion_api_key: String,
         database_id: String,
     ) -> Result<Self, async_graphql::Error> {
-        let client = reqwest::Client::new();
+        // # --------------------------------------------------------------------------------
+        //
+        // Query Database
+        //
+        // # --------------------------------------------------------------------------------
+
+        let reqwest_client = reqwest::Client::new();
 
         let request_body = json!({
             "sorts": [
@@ -100,7 +115,7 @@ impl Learn {
             "page_size": 1
         });
 
-        let request = client
+        let request = reqwest_client
             .post(format!(
                 "https://api.notion.com/v1/databases/{}/query",
                 database_id
@@ -136,7 +151,7 @@ impl Learn {
         let tags = query_result.properties.tags.multi_select.clone();
 
         Ok(Learn {
-            id,
+            page_id: id,
             next_review_at,
             created_at,
             updated_at,
@@ -149,18 +164,22 @@ impl Learn {
 
 #[async_graphql::Object]
 impl Learn {
-    pub async fn id(&self) -> String {
-        self.id.to_string()
+    /// ページID
+    pub async fn page_id(&self) -> String {
+        self.page_id.to_string()
     }
 
+    /// 学習すべき日時
     pub async fn next_review_at(&self) -> String {
         self.next_review_at.to_string()
     }
 
+    /// 作成日
     pub async fn created_at(&self) -> String {
         self.created_at.to_string()
     }
 
+    /// 最終更新日
     pub async fn updated_at(&self) -> String {
         self.updated_at.to_string()
     }
@@ -175,5 +194,35 @@ impl Learn {
 
     pub async fn tags(&self) -> Vec<MultiSelectProperty> {
         self.tags.clone()
+    }
+
+    /// Lambda 関数を呼び出してブロックを取得するクエリ
+    /// すべてのブロックは一度に取得されるため、フィールドを制限してもパフォーマンスは変わらない。
+    pub async fn blocks(&self) -> Result<Blocks, async_graphql::Error> {
+        let region = aws_config::Region::from_static("ap-northeast-1");
+        let config = aws_config::defaults(aws_config::BehaviorVersion::latest())
+            .region(region)
+            .load()
+            .await;
+
+        let lambda_client = aws_sdk_lambda::Client::new(&config);
+
+        let payload = json!({
+            "block_id": self.page_id
+        })
+        .to_string();
+
+        let lambda_request = lambda_client
+            .invoke()
+            .function_name("notion-convert-block")
+            .payload(aws_sdk_lambda::primitives::Blob::new(payload.into_bytes()));
+
+        let lambda_response = lambda_request.send().await?;
+
+        let lambda_payload = String::from_utf8(lambda_response.payload.unwrap().as_ref().to_vec())?;
+
+        let blocks = serde_json::from_str::<Blocks>(&lambda_payload)?;
+
+        Ok(blocks)
     }
 }

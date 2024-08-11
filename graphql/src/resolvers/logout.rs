@@ -1,8 +1,6 @@
 // pub struct DeleteRefreshToken;
 // pub struct DeleteAccessToken;
 
-use cookie::time::OffsetDateTime;
-
 pub struct Logout;
 
 impl Logout {
@@ -35,7 +33,7 @@ impl Logout {
             .secure(environment != "development")
             .same_site(cookie::SameSite::Strict)
             .http_only(true)
-            .expires(OffsetDateTime::now_utc() - std::time::Duration::from_secs(60))
+            .expires(cookie::time::OffsetDateTime::now_utc() - std::time::Duration::from_secs(60))
             .build();
 
         ctx.insert_http_header("set-cookie", cookie.to_string());
@@ -65,7 +63,7 @@ impl Logout {
             .secure(environment != "development")
             .same_site(cookie::SameSite::Strict)
             .http_only(true)
-            .expires(OffsetDateTime::now_utc() - std::time::Duration::from_secs(60))
+            .expires(cookie::time::OffsetDateTime::now_utc() - std::time::Duration::from_secs(60))
             .build();
 
         ctx.insert_http_header("set-cookie", cookie.to_string());

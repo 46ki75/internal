@@ -35,6 +35,8 @@ impl Refresh {
         //
         // # --------------------------------------------------------------------------------
 
+        let lifetime = 10;
+
         let custom_context = ctx
             .data::<crate::context::CustomContext>()
             .map_err(|_| async_graphql::Error::new("Failed to retrieve `CustomContext`."))?;
@@ -55,7 +57,7 @@ impl Refresh {
             "JWT_ACCESS_TOKEN".into(),
             domain.clone(),
             username.clone(),
-            10,
+            lifetime,
         )
         .await?;
 
@@ -68,6 +70,10 @@ impl Refresh {
                 .secure(environment != "development")
                 .same_site(cookie::SameSite::Strict)
                 .http_only(true)
+                .expires(
+                    cookie::time::OffsetDateTime::now_utc()
+                        + std::time::Duration::from_secs((lifetime * 60).into()),
+                )
                 .build();
 
         ctx.insert_http_header("set-cookie", jwt_refresh_token_cookie.to_string());

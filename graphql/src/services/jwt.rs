@@ -158,7 +158,7 @@ impl Jwt {
 
         if refresh_token.is_empty() {
             return Err(async_graphql::FieldError::new(format!(
-                "The `{}` cookie is missing. Please log in again.",
+                "The `{}` cookie is missing.",
                 key
             ))
             .extend_with(|_, e| e.set("code", "AUTH_401_004")));

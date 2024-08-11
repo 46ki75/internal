@@ -1,5 +1,5 @@
 use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
-use lambda_http::{run, service_fn, tracing, Body, Error, Request, Response};
+use lambda_http::{http::Method, run, service_fn, tracing, Body, Error, Request, Response};
 
 mod models;
 mod mutation;
@@ -17,7 +17,7 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
         .data(event.headers().clone())
         .finish();
 
-    if event.method() == "GET" {
+    if event.method() == Method::GET {
         // # --------------------------------------------------------------------------------
         //
         // playground
@@ -31,7 +31,7 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
             .body(playground_html.into())
             .map_err(Box::new)?;
         Ok(response)
-    } else if event.method() == "POST" {
+    } else if event.method() == Method::POST {
         // # --------------------------------------------------------------------------------
         //
         // GraphQL API Execution

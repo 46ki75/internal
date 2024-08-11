@@ -1,3 +1,5 @@
+use crate::context;
+
 pub mod learn;
 
 pub struct Anki {
@@ -45,9 +47,17 @@ impl Anki {
         //
         // # --------------------------------------------------------------------------------
 
+        let custom_context = ctx.data::<context::CustomContext>()?;
+
+        let env_name = if custom_context.environment == "production" {
+            "prod"
+        } else {
+            "dev"
+        };
+
         let request = client
             .get_parameter()
-            .name("/internal/web/dev/notion/default/secret")
+            .name(format!("/internal/web/{}/notion/default/secret", env_name))
             .with_decryption(true);
 
         let response = request.send().await?;

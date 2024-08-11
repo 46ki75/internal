@@ -24,7 +24,7 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
         //
         // # --------------------------------------------------------------------------------
 
-        let playground_html = GraphiQLSource::build().finish();
+        let playground_html = GraphiQLSource::build().endpoint("/graphql").finish();
         let response = Response::builder()
             .status(200)
             .header("content-type", "text/html")

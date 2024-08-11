@@ -163,7 +163,9 @@ impl Jwt {
             ))
             .extend_with(|_, e| {
                 e.set("code", "AUTH_401_004");
-                e.set("directive", "REFRESH_ACCESS_TOKEN");
+                if key == "JWT_REFRESH_TOKEN" {
+                    e.set("directive", "REFRESH_ACCESS_TOKEN");
+                }
             }));
         }
 
@@ -194,7 +196,10 @@ impl Jwt {
         let request = client
             .get_item()
             .table_name("jwt-keystore")
-            .key("PK", aws_sdk_dynamodb::types::AttributeValue::S(key))
+            .key(
+                "PK",
+                aws_sdk_dynamodb::types::AttributeValue::S(key.clone()),
+            )
             .key(
                 "SK",
                 aws_sdk_dynamodb::types::AttributeValue::S(kid.to_string()),
@@ -215,7 +220,9 @@ impl Jwt {
             )
             .extend_with(|_, e| {
                 e.set("code", "AUTH_401_006");
-                e.set("directive", "REFRESH_ACCESS_TOKEN");
+                if key == "JWT_REFRESH_TOKEN" {
+                    e.set("directive", "REFRESH_ACCESS_TOKEN");
+                }
             }),
         )?;
 
@@ -250,7 +257,9 @@ impl Jwt {
             async_graphql::ServerError::new("Failed to decode or validate the JWT.", None)
                 .extend_with(|_, e| {
                     e.set("code", "AUTH_401_007");
-                    e.set("directive", "REFRESH_ACCESS_TOKEN")
+                    if key == "JWT_REFRESH_TOKEN" {
+                        e.set("directive", "REFRESH_ACCESS_TOKEN");
+                    }
                 })
         })?;
 

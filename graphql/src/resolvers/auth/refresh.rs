@@ -14,13 +14,17 @@ impl Refresh {
             .unwrap()
             .get("cookie")
             .ok_or(
-                async_graphql::FieldError::new("Cookies are not enabled.")
-                    .extend_with(|_, e| e.set("code", "AUTH_401_002")),
+                async_graphql::FieldError::new("Cookies are not enabled.").extend_with(|_, e| {
+                    e.set("code", "AUTH_401_002");
+                    e.set("directive", "LOGIN");
+                }),
             )?
             .to_str()
             .map_err(|_| {
-                async_graphql::FieldError::new("Failed to parse the cookie.")
-                    .extend_with(|_, e| e.set("code", "AUTH_401_003"))
+                async_graphql::FieldError::new("Failed to parse the cookie.").extend_with(|_, e| {
+                    e.set("code", "AUTH_401_003");
+                    e.set("directive", "LOGIN");
+                })
             })?;
 
         let token_data = services::jwt::Jwt::validateand_decode_token(

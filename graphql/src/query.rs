@@ -2,7 +2,7 @@ use async_graphql::*;
 
 pub struct QueryRoot;
 
-use crate::resolvers;
+use crate::resolvers::{self};
 
 #[async_graphql::Object]
 impl QueryRoot {
@@ -12,5 +12,13 @@ impl QueryRoot {
         ctx: &async_graphql::Context<'_>,
     ) -> Result<resolvers::greet::Greet, async_graphql::Error> {
         resolvers::greet::Greet::new(ctx)
+    }
+
+    /// Anki サービス
+    pub async fn anki(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> Result<resolvers::anki::Anki, async_graphql::Error> {
+        resolvers::anki::Anki::new().await
     }
 }

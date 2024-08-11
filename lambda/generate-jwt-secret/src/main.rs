@@ -44,10 +44,10 @@ async fn function_handler(event: LambdaEvent<Request>) -> Result<Response, Error
         .item(
             "PK",
             aws_sdk_dynamodb::types::AttributeValue::S({
-                if event.payload.kind == "JWT_ACCESS_KEY" {
-                    String::from("JWT_ACCESS_KEY")
-                } else if event.payload.kind == "JWT_REFRESH_KEY" {
-                    String::from("JWT_REFRESH_KEY")
+                if event.payload.kind == "JWT_ACCESS_TOKEN" {
+                    String::from("JWT_ACCESS_TOKEN")
+                } else if event.payload.kind == "JWT_REFRESH_TOKEN" {
+                    String::from("JWT_REFRESH_TOKEN")
                 } else {
                     panic!("Unexpected token type: {}", event.payload.kind)
                 }

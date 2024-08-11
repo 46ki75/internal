@@ -25,7 +25,7 @@ export class EventBridgeStack extends cdk.Stack {
       schedule: events.Schedule.cron({ minute: '0', hour: '3' }),
       targets: [
         new target.LambdaFunction(props.generateJwtSecretLambdaAlias, {
-          event: events.RuleTargetInput.fromObject({ kind: 'access_token' })
+          event: events.RuleTargetInput.fromObject({ kind: 'JWT_ACCESS_TOKEN' })
         })
       ]
     })
@@ -35,7 +35,9 @@ export class EventBridgeStack extends cdk.Stack {
       schedule: events.Schedule.cron({ minute: '0', hour: '3' }),
       targets: [
         new target.LambdaFunction(props.generateJwtSecretLambdaAlias, {
-          event: events.RuleTargetInput.fromObject({ kind: 'refresh_token' })
+          event: events.RuleTargetInput.fromObject({
+            kind: 'JWT_REFRESH_TOKEN'
+          })
         })
       ]
     })

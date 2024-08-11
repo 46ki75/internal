@@ -25,7 +25,7 @@ pub struct Jwt {
 
 impl Jwt {
     /// - `config`: AWS SDK のコンフィグ
-    /// - `key_name`: キーの名前。`JWT_REFRESH_SECRET` or `JWT_ACCESS_KEY`
+    /// - `key_name`: キーの名前。`JWT_REFRESH_SECRET` or `JWT_ACCESS_TOKEN`
     /// - `domain`: ドメイン名
     /// - `username`: ユーザ名
     /// - `minutes`: 有効期限 [分]

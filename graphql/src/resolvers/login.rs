@@ -1,3 +1,5 @@
+use crate::models::jwt;
+
 #[derive(async_graphql::Enum, Copy, Clone, Eq, PartialEq)]
 pub enum Group {
     /// Possess administrator privileges
@@ -94,8 +96,31 @@ impl Login {
             })
             .collect::<Vec<Group>>();
 
-        // TODO: Implement the issuance of access tokens and refresh tokens.
-        ctx.append_http_header("x-46ki75-happy", "How to add a value to the header");
+        // # --------------------------------------------------------------------------------
+        //
+        // Issuing a JWT
+        //
+        // # --------------------------------------------------------------------------------
+
+        let rust_env = std::env::var("RUST_ENV").unwrap_or(String::from("production"));
+        let domain = if rust_env == "development" {
+            "localhost".to_string()
+        } else {
+            "internal.46ki75.com".to_string()
+        };
+
+        let jwt_refresh_token = jwt::Jwt::generate_refresh_token(&config).await?;
+
+        let jwt_refresh_token_cookie =
+            cookie::Cookie::build(("JWT_REFRESH_TOKEN", jwt_refresh_token.value))
+                .domain(domain)
+                .path("/")
+                .secure(rust_env != "development")
+                .same_site(cookie::SameSite::Strict)
+                .http_only(true)
+                .build();
+
+        ctx.insert_http_header("set-cookie", jwt_refresh_token_cookie.to_string());
 
         if is_valid {
             Ok(Login { username, groups })

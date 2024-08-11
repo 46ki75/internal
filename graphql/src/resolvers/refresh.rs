@@ -1,6 +1,6 @@
 use async_graphql::ErrorExtensions;
 
-use crate::models;
+use crate::services;
 
 pub struct Refresh {
     kid: String,
@@ -90,7 +90,7 @@ impl Refresh {
         validation.validate_exp = true; // 有効期限のバリデーション
         validation.validate_aud = false;
 
-        let token_data = jsonwebtoken::decode::<models::jwt::Claims>(
+        let token_data = jsonwebtoken::decode::<services::jwt::Claims>(
             &refresh_token,
             &jsonwebtoken::DecodingKey::from_secret(secret.as_ref()),
             &validation,

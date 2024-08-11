@@ -1,10 +1,10 @@
 use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use lambda_http::{http::Method, run, service_fn, tracing, Body, Error, Request, Response};
 
-mod models;
 mod mutation;
 mod query;
 mod resolvers;
+mod services;
 
 async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     // # --------------------------------------------------------------------------------

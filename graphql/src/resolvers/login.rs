@@ -1,4 +1,4 @@
-use crate::models::jwt;
+use crate::services::jwt;
 
 #[derive(async_graphql::Enum, Copy, Clone, Eq, PartialEq)]
 pub enum Group {

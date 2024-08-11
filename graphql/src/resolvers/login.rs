@@ -1,3 +1,5 @@
+use async_graphql::ErrorExtensions;
+
 use crate::services::jwt;
 
 #[derive(async_graphql::Enum, Copy, Clone, Eq, PartialEq)]
@@ -20,9 +22,10 @@ impl Login {
         password: String,
     ) -> Result<Self, async_graphql::Error> {
         if username.is_empty() {
-            return Err(async_graphql::FieldError::new(
-                "The `username` field is empty.",
-            ));
+            return Err(
+                async_graphql::FieldError::new("The `username` field is empty.")
+                    .extend_with(|_, e| e.set("code", "VAL_400_001")),
+            );
         }
 
         if !regex::Regex::new(r"^[a-zA-Z0-9_\-]+$")
@@ -31,13 +34,15 @@ impl Login {
         {
             return Err(async_graphql::FieldError::new(
                 "Usernames can only contain alphanumeric characters.",
-            ));
+            )
+            .extend_with(|_, e| e.set("code", "VAL_400_002")));
         }
 
         if password.is_empty() {
-            return Err(async_graphql::FieldError::new(
-                "The `password` field is empty.",
-            ));
+            return Err(
+                async_graphql::FieldError::new("The `password` field is empty.")
+                    .extend_with(|_, e| e.set("code", "VAL_400_001")),
+            );
         }
 
         let region = aws_config::Region::from_static("ap-northeast-1");
@@ -62,25 +67,45 @@ impl Login {
 
         let response = request.send().await.map_err(|_| {
             async_graphql::ServerError::new("An error occurred during the database request.", None)
+                .extend_with(|_, e| e.set("code", "DB_500_001"))
         })?;
 
-        let item = response
-            .item
-            .ok_or(async_graphql::FieldError::new("No user found."))?;
+        let item = response.item.ok_or(
+            async_graphql::FieldError::new("No user found.")
+                .extend_with(|_, e| e.set("code", "DB_404_001")),
+        )?;
 
-        let hashed_password_map = item.get("password").ok_or(async_graphql::FieldError::new(
-            "The password has not been set.",
-        ))?;
+        let hashed_password_map = item.get("password").ok_or(
+            async_graphql::FieldError::new("The password has not been set.")
+                .extend_with(|_, e| e.set("code", "DB_500_002")),
+        )?;
 
         let hashed_password = hashed_password_map.as_s().map_err(|_| {
             async_graphql::FieldError::new(
                 "The format of the password stored in the database is incorrect.",
             )
+            .extend_with(|_, e: &mut async_graphql::ErrorExtensionValues| {
+                e.set("code", "DB_500_003")
+            })
         })?;
 
         let is_valid = bcrypt::verify(password, hashed_password).map_err(|_| {
-            async_graphql::ServerError::new("The password validation process failed.", None)
+            async_graphql::ServerError::new(
+                "Failed to compare the password hash. The stored password hash might be invalid.",
+                None,
+            )
+            .extend_with(|_, e: &mut async_graphql::ErrorExtensionValues| {
+                e.set("code", "AUTH_500_001")
+            })
         })?;
+
+        if !is_valid {
+            return Err(
+                async_graphql::FieldError::new("The password is incorrect.").extend_with(
+                    |_, e: &mut async_graphql::ErrorExtensionValues| e.set("code", "AUTH_401_001"),
+                ),
+            );
+        }
 
         let groups = item
             .get("groups")
@@ -123,11 +148,7 @@ impl Login {
 
         ctx.insert_http_header("set-cookie", jwt_refresh_token_cookie.to_string());
 
-        if is_valid {
-            Ok(Login { username, groups })
-        } else {
-            Err(async_graphql::FieldError::new("The password is incorrect."))
-        }
+        Ok(Login { username, groups })
     }
 }
 

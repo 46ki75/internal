@@ -1,3 +1,5 @@
+use async_graphql::ErrorExtensions;
+
 pub struct Signup {
     pub username: String,
 }
@@ -9,9 +11,10 @@ impl Signup {
         password: String,
     ) -> Result<Self, async_graphql::Error> {
         if username.is_empty() {
-            return Err(async_graphql::FieldError::new(
-                "The `username` field is empty.",
-            ));
+            return Err(
+                async_graphql::FieldError::new("The `username` field is empty.")
+                    .extend_with(|_, e| e.set("code", "VAL_400_001")),
+            );
         }
 
         if !regex::Regex::new(r"^[a-zA-Z0-9_\-]+$")
@@ -20,13 +23,15 @@ impl Signup {
         {
             return Err(async_graphql::FieldError::new(
                 "Usernames can only contain alphanumeric characters.",
-            ));
+            )
+            .extend_with(|_, e| e.set("code", "VAL_400_002")));
         }
 
         if password.is_empty() {
-            return Err(async_graphql::FieldError::new(
-                "The `password` field is empty.",
-            ));
+            return Err(
+                async_graphql::FieldError::new("The `password` field is empty.")
+                    .extend_with(|_, e| e.set("code", "VAL_400_001")),
+            );
         }
 
         let region = aws_config::Region::from_static("ap-northeast-1");
@@ -42,6 +47,7 @@ impl Signup {
                 "An error occurred while computing the password hash.",
                 None,
             )
+            .extend_with(|_, e| e.set("code", "AUTH_500_009"))
         })?;
 
         let request = client
@@ -70,6 +76,7 @@ impl Signup {
         request.send().await.map_err(|e| {
             println!("{:?}", e);
             async_graphql::Error::new("The user is already signed up.")
+                .extend_with(|_, e| e.set("code", "AUTH_400_001"))
         })?;
 
         Ok(Signup { username })

@@ -12,9 +12,15 @@ impl Refresh {
             .data::<lambda_http::http::HeaderMap<lambda_http::http::HeaderValue>>()
             .unwrap()
             .get("cookie")
-            .ok_or(async_graphql::FieldError::new("Cookies are not enabled."))?
+            .ok_or(
+                async_graphql::FieldError::new("Cookies are not enabled.")
+                    .extend_with(|_, e| e.set("code", "AUTH_401_002")),
+            )?
             .to_str()
-            .map_err(|_| async_graphql::FieldError::new("Failed to parse the cookie."))?;
+            .map_err(|_| {
+                async_graphql::FieldError::new("Failed to parse the cookie.")
+                    .extend_with(|_, e| e.set("code", "AUTH_401_003"))
+            })?;
 
         let raw_cookies = raw_cookie.split(';');
 
@@ -30,18 +36,23 @@ impl Refresh {
         if refresh_token.is_empty() {
             return Err(async_graphql::FieldError::new(
                 "The `JWT_REFRESH_TOKEN` cookie is missing. Please log in again.",
-            ));
+            )
+            .extend_with(|_, e| e.set("code", "AUTH_401_004")));
         }
 
         let header = jsonwebtoken::decode_header(&refresh_token).map_err(|_| {
             async_graphql::FieldError::new(
                 "The JWT header does not contain KID information. The token is invalid.",
             )
+            .extend_with(|_, e| e.set("code", "AUTH_401_005"))
         })?;
 
-        let kid = header.kid.ok_or(async_graphql::FieldError::new(
-            "The JWT header does not contain KID information. The token is invalid.",
-        ))?;
+        let kid = header.kid.ok_or(
+            async_graphql::FieldError::new(
+                "The JWT header does not contain KID information. The token is invalid.",
+            )
+            .extend_with(|_, e| e.set("code", "AUTH_401_005")),
+        )?;
 
         // KID に対応する JWT 秘密鍵を取得
 
@@ -67,23 +78,30 @@ impl Refresh {
 
         let response = request.send().await?;
 
-        let item = response.item.ok_or(async_graphql::ServerError::new(
-            "The secret key for the specified KID could not be found.",
-            None,
-        ))?;
+        let item = response.item.ok_or(
+            async_graphql::ServerError::new(
+                "The secret key for the specified KID could not be found.",
+                None,
+            )
+            .extend_with(|_, e| e.set("code", "AUTH_401_006")),
+        )?;
 
         let secret = item
             .get("secret")
-            .ok_or(async_graphql::ServerError::new(
-                "The `secret` column was not found in the record for the private key.",
-                None,
-            ))?
+            .ok_or(
+                async_graphql::ServerError::new(
+                    "The `secret` column was not found in the record for the private key.",
+                    None,
+                )
+                .extend_with(|_, e| e.set("code", "AUTH_500_004")),
+            )?
             .as_s()
             .map_err(|_| {
                 async_graphql::ServerError::new(
                     "The type of the private key was not a string.",
                     None,
                 )
+                .extend_with(|_, e| e.set("code", "AUTH_500_005"))
             })?;
 
         let mut validation = jsonwebtoken::Validation::new(jsonwebtoken::Algorithm::HS256);
@@ -97,6 +115,7 @@ impl Refresh {
         )
         .map_err(|_| {
             async_graphql::ServerError::new("Failed to decode or validate the JWT.", None)
+                .extend_with(|_, e| e.set("code", "AUTH_401_007"))
         })?;
 
         // # --------------------------------------------------------------------------------

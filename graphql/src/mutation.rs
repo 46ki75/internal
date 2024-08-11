@@ -2,7 +2,7 @@ use async_graphql::*;
 
 pub struct MutationRoot;
 
-use crate::resolvers::{self, refresh};
+use crate::resolvers::{self};
 
 #[async_graphql::Object]
 impl MutationRoot {

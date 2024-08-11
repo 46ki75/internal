@@ -1,3 +1,4 @@
+use async_graphql::ErrorExtensions;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -23,11 +24,17 @@ pub struct Jwt {
 }
 
 impl Jwt {
+    /// - `config`: AWS SDK のコンフィグ
+    /// - `key_name`: キーの名前。`JWT_REFRESH_SECRET` or `JWT_ACCESS_KEY`
+    /// - `domain`: ドメイン名
+    /// - `username`: ユーザ名
+    /// - `minutes`: 有効期限 [分]
     async fn generate_token(
         config: &aws_config::SdkConfig,
         key_name: String,
         domain: String,
         username: String,
+        minutes: u32,
     ) -> Result<Self, async_graphql::Error> {
         let client = aws_sdk_dynamodb::Client::new(config);
 
@@ -47,44 +54,55 @@ impl Jwt {
                 "An error occurred while retrieving the JWT secret key.",
                 None,
             )
+            .extend_with(|_, e: &mut async_graphql::ErrorExtensionValues| {
+                e.set("code", "AUTH_500_001")
+            })
         })?;
 
         let items = response
             .items
             .ok_or_else(|| async_graphql::ServerError::new("message", None))?;
 
-        let item = items.first().ok_or(async_graphql::ServerError::new(
-            "The JWT secret key is missing. Please check if the key is being regularly issued.",
-            None,
-        ))?;
+        let item = items.first().ok_or(
+            async_graphql::ServerError::new(
+                "The JWT secret key is missing. Please check if the key is being regularly issued.",
+                None,
+            )
+            .extend_with(|_, e: &mut async_graphql::ErrorExtensionValues| {
+                e.set("code", "AUTH_500_003")
+            }),
+        )?;
 
         let jwt_secret = item.get("secret").ok_or(async_graphql::ServerError::new(
             "The `secret` field in the JWT secret key record cannot be found. The record might be incorrect.",
             None,
-        ))?.as_s().map_err(|_|{
+        ).extend_with(|_, e: &mut async_graphql::ErrorExtensionValues| {
+                e.set("code", "AUTH_500_004")
+            }))?.as_s().map_err(|_|{
             async_graphql::ServerError::new(
             "The type of the `secret` field in the JWT secret key record is something other than String.",
             None,
-        )
+        ).extend_with(|_, e: &mut async_graphql::ErrorExtensionValues| {
+                e.set("code", "AUTH_500_005")
+            })
         })?;
 
         let jwt_secret_kid = item.get("SK").ok_or(async_graphql::ServerError::new(
             "The `SK` field in the JWT secret key record cannot be found. The record might be incorrect.",
             None,
-        ))?.as_s().map_err(|_|{
+        ).extend_with(|_, e: &mut async_graphql::ErrorExtensionValues| {
+                e.set("code", "AUTH_500_006")
+            }))?.as_s().map_err(|_|{
             async_graphql::ServerError::new(
             "The type of the `SK` field in the JWT secret key record is something other than String.",
             None,
-        )
+        ).extend_with(|_, e: &mut async_graphql::ErrorExtensionValues| {
+                e.set("code", "AUTH_500_007")
+            })
         })?;
 
         let utc_now = chrono::Utc::now();
-        let expire_at = utc_now
-            + if key_name == "JWT_REFRESH_SECRET" {
-                chrono::Duration::days(7)
-            } else {
-                chrono::Duration::minutes(10)
-            };
+        let expire_at = utc_now + chrono::Duration::minutes(minutes.into());
 
         let claims = Claims {
             iss: domain.clone(),
@@ -107,7 +125,10 @@ impl Jwt {
             &claims,
             &jsonwebtoken::EncodingKey::from_secret(jwt_secret.as_ref()),
         )
-        .map_err(|_| async_graphql::ServerError::new("Failed to encode the JWT.", None))?;
+        .map_err(|_| {
+            async_graphql::ServerError::new("Failed to encode the JWT.", None)
+                .extend_with(|_, e| e.set("code", "AUTH_500_008"))
+        })?;
 
         Ok(Jwt { value: token })
     }
@@ -117,7 +138,14 @@ impl Jwt {
         domain: String,
         username: String,
     ) -> Result<Self, async_graphql::Error> {
-        Self::generate_token(config, "JWT_ACCESS_SECRET".to_string(), domain, username).await
+        Self::generate_token(
+            config,
+            "JWT_ACCESS_SECRET".to_string(),
+            domain,
+            username,
+            60 * 24 * 7,
+        )
+        .await
     }
 
     pub async fn generate_refresh_token(
@@ -125,6 +153,13 @@ impl Jwt {
         domain: String,
         username: String,
     ) -> Result<Self, async_graphql::Error> {
-        Self::generate_token(config, "JWT_REFRESH_SECRET".to_string(), domain, username).await
+        Self::generate_token(
+            config,
+            "JWT_REFRESH_SECRET".to_string(),
+            domain,
+            username,
+            10,
+        )
+        .await
     }
 }

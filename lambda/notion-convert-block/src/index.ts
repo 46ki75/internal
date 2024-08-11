@@ -6,7 +6,9 @@ interface Payload {
   block_id: string
 }
 
-export const handler = async (event: Payload): Promise<DOMJSON[]> => {
+export const handler = async (
+  event: Payload
+): Promise<{ front: DOMJSON[]; back: DOMJSON[]; explanation: DOMJSON[] }> => {
   const ssm = new SSMClient()
   const res = await ssm.send(
     new GetParameterCommand({
@@ -26,5 +28,55 @@ export const handler = async (event: Payload): Promise<DOMJSON[]> => {
     enableSyncedBlock: true
   })
 
-  return result
+  // # --------------------------------------------------------------------------------
+  //
+  //
+  //
+  // # --------------------------------------------------------------------------------
+
+  const blocks = result
+
+  let section: string = 'none'
+  const front: DOMJSON[] = []
+  const back: DOMJSON[] = []
+  const explanation: DOMJSON[] = []
+
+  for (const block of blocks) {
+    if (block.type === 'heading_1' && block.content.includes('front')) {
+      section = 'front'
+      continue
+    } else if (block.type === 'heading_1' && block.content.includes('back')) {
+      section = 'back'
+      continue
+    } else if (
+      block.type === 'heading_1' &&
+      block.content.includes('explanation')
+    ) {
+      section = 'explanation'
+      continue
+    }
+
+    switch (section) {
+      case 'front': {
+        front.push(block)
+        break
+      }
+
+      case 'back': {
+        back.push(block)
+        break
+      }
+
+      case 'explanation': {
+        explanation.push(block)
+        break
+      }
+
+      default: {
+        break
+      }
+    }
+  }
+
+  return { front, back, explanation }
 }

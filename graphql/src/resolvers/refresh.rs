@@ -69,7 +69,7 @@ impl Refresh {
             .table_name("jwt-keystore")
             .key(
                 "PK",
-                aws_sdk_dynamodb::types::AttributeValue::S("JWT_REFRESH_SECRET#".into()),
+                aws_sdk_dynamodb::types::AttributeValue::S("JWT_REFRESH_TOKEN".into()),
             )
             .key(
                 "SK",

@@ -25,7 +25,7 @@ pub struct Jwt {
 
 impl Jwt {
     /// - `config`: AWS SDK のコンフィグ
-    /// - `key_name`: キーの名前。`JWT_REFRESH_SECRET` or `JWT_ACCESS_TOKEN`
+    /// - `key_name`: キーの名前。`JWT_REFRESH_TOKEN` or `JWT_ACCESS_TOKEN`
     /// - `domain`: ドメイン名
     /// - `username`: ユーザ名
     /// - `minutes`: 有効期限 [分]
@@ -45,7 +45,7 @@ impl Jwt {
             .expression_attribute_names("#PK", "PK")
             .expression_attribute_values(
                 ":PK",
-                aws_sdk_dynamodb::types::AttributeValue::S(format!("{}#", key_name)),
+                aws_sdk_dynamodb::types::AttributeValue::S(key_name),
             )
             .limit(1);
 
@@ -140,7 +140,7 @@ impl Jwt {
     ) -> Result<Self, async_graphql::Error> {
         Self::generate_token(
             config,
-            "JWT_ACCESS_SECRET".to_string(),
+            "JWT_ACCESS_TOKEN".to_string(),
             domain,
             username,
             60 * 24 * 7,
@@ -155,7 +155,7 @@ impl Jwt {
     ) -> Result<Self, async_graphql::Error> {
         Self::generate_token(
             config,
-            "JWT_REFRESH_SECRET".to_string(),
+            "JWT_REFRESH_TOKEN".to_string(),
             domain,
             username,
             10,

@@ -106,7 +106,7 @@ export class LambdaStack extends cdk.Stack {
       ),
       handler: 'index.handler',
       runtime: lambda.Runtime.PROVIDED_AL2023,
-      environment: { RUST_ENV: 'production' },
+      environment: { ENVIRONMENT: 'production' },
       functionName: 'graphql',
       role: graphqlLambdaRole,
       timeout: cdk.Duration.seconds(29)

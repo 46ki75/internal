@@ -19,9 +19,27 @@ pub struct Claims {
     pub jti: String,
 }
 
+// # --------------------------------------------------------------------------------
+//
+// トークンのタイプ
+//
+// # --------------------------------------------------------------------------------
+
+/// `to_string()` メソッドで文字列に変換できる。
 pub enum TokenType {
     JwtRefreshToken,
     JwtAccessToken,
+}
+
+// Display トレイトを実装することで `to_string_()` メソッドで文字列に変換できるようにする。
+impl std::fmt::Display for TokenType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s = match self {
+            TokenType::JwtRefreshToken => "JWT_REFRESH_TOKEN",
+            TokenType::JwtAccessToken => "JWT_ACCESS_TOKEN",
+        };
+        write!(f, "{}", s)
+    }
 }
 
 pub struct Jwt {
@@ -50,10 +68,7 @@ impl Jwt {
             .expression_attribute_names("#PK", "PK")
             .expression_attribute_values(
                 ":PK",
-                aws_sdk_dynamodb::types::AttributeValue::S(match token_type {
-                    TokenType::JwtAccessToken => "JWS_ACCESS_TOKEN".into(),
-                    TokenType::JwtRefreshToken => "JWS_REFRESH_TOKEN".into(),
-                }),
+                aws_sdk_dynamodb::types::AttributeValue::S(token_type.to_string()),
             )
             .limit(1);
 
@@ -157,10 +172,7 @@ impl Jwt {
 
         let mut refresh_token = String::new();
 
-        let token_key_name = match token_type {
-            TokenType::JwtAccessToken => "JWS_ACCESS_TOKEN".to_string(),
-            TokenType::JwtRefreshToken => "JWS_REFRESH_TOKEN".to_string(),
-        };
+        let token_key_name = token_type.to_string();
 
         for cookie_string in raw_cookies {
             let cookie = cookie::Cookie::parse(cookie_string).unwrap();

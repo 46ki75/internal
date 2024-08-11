@@ -19,6 +19,11 @@ pub struct Claims {
     pub jti: String,
 }
 
+pub enum TokenType {
+    JwtRefreshToken,
+    JwtAccessToken,
+}
+
 pub struct Jwt {
     pub value: String,
 }
@@ -31,7 +36,7 @@ impl Jwt {
     /// - `minutes`: 有効期限 \[分\]
     pub async fn generate_token(
         config: &aws_config::SdkConfig,
-        key_name: String,
+        token_type: TokenType,
         domain: String,
         username: String,
         minutes: u32,
@@ -45,7 +50,10 @@ impl Jwt {
             .expression_attribute_names("#PK", "PK")
             .expression_attribute_values(
                 ":PK",
-                aws_sdk_dynamodb::types::AttributeValue::S(key_name),
+                aws_sdk_dynamodb::types::AttributeValue::S(match token_type {
+                    TokenType::JwtAccessToken => "JWS_ACCESS_TOKEN".into(),
+                    TokenType::JwtRefreshToken => "JWS_REFRESH_TOKEN".into(),
+                }),
             )
             .limit(1);
 
@@ -143,15 +151,20 @@ impl Jwt {
     /// - `key`: 検証するJWTの名前。クッキーのキー名。 `JWT_REFRESH_TOKEN` or `JWT_ACCESS_TOKEN`
     pub async fn validateand_decode_token(
         raw_cookie: String,
-        key: String,
+        token_type: TokenType,
     ) -> Result<jsonwebtoken::TokenData<Claims>, async_graphql::Error> {
         let raw_cookies = raw_cookie.split(';');
 
         let mut refresh_token = String::new();
 
+        let token_key_name = match token_type {
+            TokenType::JwtAccessToken => "JWS_ACCESS_TOKEN".to_string(),
+            TokenType::JwtRefreshToken => "JWS_REFRESH_TOKEN".to_string(),
+        };
+
         for cookie_string in raw_cookies {
             let cookie = cookie::Cookie::parse(cookie_string).unwrap();
-            if cookie.name() == key {
+            if cookie.name() == token_key_name {
                 refresh_token = cookie.value().to_string()
             }
         }
@@ -159,12 +172,13 @@ impl Jwt {
         if refresh_token.is_empty() {
             return Err(async_graphql::FieldError::new(format!(
                 "The `{}` cookie is missing.",
-                key
+                token_key_name
             ))
             .extend_with(|_, e| {
                 e.set("code", "AUTH_401_004");
-                if key == "JWT_REFRESH_TOKEN" {
-                    e.set("directive", "REFRESH_ACCESS_TOKEN");
+                match token_type {
+                    TokenType::JwtAccessToken => e.set("directive", "REFRESH_ACCESS_TOKEN"),
+                    TokenType::JwtRefreshToken => e.set("directive", "LOGIN"),
                 }
             }));
         }
@@ -198,7 +212,7 @@ impl Jwt {
             .table_name("jwt-keystore")
             .key(
                 "PK",
-                aws_sdk_dynamodb::types::AttributeValue::S(key.clone()),
+                aws_sdk_dynamodb::types::AttributeValue::S(token_key_name.clone()),
             )
             .key(
                 "SK",
@@ -220,8 +234,9 @@ impl Jwt {
             )
             .extend_with(|_, e| {
                 e.set("code", "AUTH_401_006");
-                if key == "JWT_REFRESH_TOKEN" {
-                    e.set("directive", "REFRESH_ACCESS_TOKEN");
+                match token_type {
+                    TokenType::JwtAccessToken => e.set("directive", "REFRESH_ACCESS_TOKEN"),
+                    TokenType::JwtRefreshToken => e.set("directive", "LOGIN"),
                 }
             }),
         )?;
@@ -257,8 +272,9 @@ impl Jwt {
             async_graphql::ServerError::new("Failed to decode or validate the JWT.", None)
                 .extend_with(|_, e| {
                     e.set("code", "AUTH_401_007");
-                    if key == "JWT_REFRESH_TOKEN" {
-                        e.set("directive", "REFRESH_ACCESS_TOKEN");
+                    match token_type {
+                        TokenType::JwtAccessToken => e.set("directive", "REFRESH_ACCESS_TOKEN"),
+                        TokenType::JwtRefreshToken => e.set("directive", "LOGIN"),
                     }
                 })
         })?;

@@ -158,7 +158,7 @@ impl Login {
 
         let jwt_refresh_token = jwt::Jwt::generate_token(
             &config,
-            "JWT_REFRESH_TOKEN".into(),
+            crate::services::jwt::TokenType::JwtRefreshToken,
             domain.clone(),
             username.clone(),
             lifetime,

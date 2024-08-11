@@ -29,7 +29,7 @@ impl Refresh {
 
         let token_data = services::jwt::Jwt::validateand_decode_token(
             raw_cookie.into(),
-            "JWT_REFRESH_TOKEN".into(),
+            crate::services::jwt::TokenType::JwtRefreshToken,
         )
         .await?;
 
@@ -58,7 +58,7 @@ impl Refresh {
 
         let jwt_access_token = services::jwt::Jwt::generate_token(
             &config,
-            "JWT_ACCESS_TOKEN".into(),
+            crate::services::jwt::TokenType::JwtAccessToken,
             domain.clone(),
             username.clone(),
             lifetime,

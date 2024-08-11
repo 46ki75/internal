@@ -16,7 +16,7 @@ impl Session {
 
         let token_data = crate::services::jwt::Jwt::validateand_decode_token(
             raw_cookie.into(),
-            "JWT_ACCESS_TOKEN".into(),
+            crate::services::jwt::TokenType::JwtAccessToken,
         )
         .await?;
 

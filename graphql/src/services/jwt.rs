@@ -27,7 +27,10 @@ pub struct Claims {
 
 /// `to_string()` メソッドで文字列に変換できる。
 pub enum TokenType {
+    /// "JWT_REFRESH_TOKEN"
     JwtRefreshToken,
+
+    /// "JWT_ACCESS_TOKEN"
     JwtAccessToken,
 }
 

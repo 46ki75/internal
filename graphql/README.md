@@ -3,9 +3,9 @@
 ## environment variables
 
 ```ini
-RUST_ENV="development"
+ENVIRONMENT="development"
 ```
 
 ```bash
-RUST_ENV="development" cargo lambda watch
+ENVIRONMENT="development" cargo lambda watch
 ```

@@ -26,6 +26,8 @@ impl Jwt {
     async fn generate_token(
         config: &aws_config::SdkConfig,
         key_name: String,
+        domain: String,
+        username: String,
     ) -> Result<Self, async_graphql::Error> {
         let client = aws_sdk_dynamodb::Client::new(config);
 
@@ -85,9 +87,9 @@ impl Jwt {
             };
 
         let claims = Claims {
-            iss: String::from("https://internal.46ki75.com"),
-            sub: String::from("ID"),
-            aud: String::from("https://internal.46ki75.com"),
+            iss: domain.clone(),
+            sub: username,
+            aud: domain,
             exp: expire_at.timestamp(),
             nbf: utc_now.timestamp(),
             iat: utc_now.timestamp(),
@@ -111,13 +113,17 @@ impl Jwt {
 
     pub async fn generate_access_token(
         config: &aws_config::SdkConfig,
+        domain: String,
+        username: String,
     ) -> Result<Self, async_graphql::Error> {
-        Self::generate_token(config, "JWT_ACCESS_SECRET".to_string()).await
+        Self::generate_token(config, "JWT_ACCESS_SECRET".to_string(), domain, username).await
     }
 
     pub async fn generate_refresh_token(
         config: &aws_config::SdkConfig,
+        domain: String,
+        username: String,
     ) -> Result<Self, async_graphql::Error> {
-        Self::generate_token(config, "JWT_REFRESH_SECRET".to_string()).await
+        Self::generate_token(config, "JWT_REFRESH_SECRET".to_string(), domain, username).await
     }
 }

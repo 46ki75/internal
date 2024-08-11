@@ -102,14 +102,15 @@ impl Login {
         //
         // # --------------------------------------------------------------------------------
 
-        let rust_env = std::env::var("RUST_ENV").unwrap_or(String::from("production"));
+        let rust_env = std::env::var("ENVIRONMENT").unwrap_or(String::from("production"));
         let domain = if rust_env == "development" {
             "localhost".to_string()
         } else {
             "internal.46ki75.com".to_string()
         };
 
-        let jwt_refresh_token = jwt::Jwt::generate_refresh_token(&config).await?;
+        let jwt_refresh_token =
+            jwt::Jwt::generate_refresh_token(&config, domain.clone(), username.clone()).await?;
 
         let jwt_refresh_token_cookie =
             cookie::Cookie::build(("JWT_REFRESH_TOKEN", jwt_refresh_token.value))

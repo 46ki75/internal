@@ -1,6 +1,7 @@
 pub mod login;
 pub mod logout;
 pub mod refresh;
+pub mod session;
 pub mod signup;
 
 use async_graphql::*;
@@ -56,5 +57,13 @@ impl Auth {
         &self,
     ) -> Result<crate::resolvers::auth::logout::Logout, async_graphql::Error> {
         crate::resolvers::auth::logout::Logout::new().await
+    }
+
+    /// セッション情報を確認する。セッション切れの時はエラーを出す。
+    pub async fn session(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> Result<session::Session, async_graphql::Error> {
+        session::Session::new(ctx).await
     }
 }

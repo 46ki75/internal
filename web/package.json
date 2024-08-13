@@ -22,7 +22,7 @@
     "@tanstack/vue-query": "^5.29.0",
     "@vueuse/core": "^10.9.0",
     "axios": "^1.6.8",
-    "elmethis": "^0.2.4",
+    "elmethis": "^0.2.5",
     "json-component-spec": "^0.1.19",
     "lodash": "^4.17.21",
     "nuxt": "^3.11.2",

@@ -111,8 +111,8 @@
     </div>
 
     <div class="fallback" v-if="isShownAnswer && mutation.isPending.value">
-      <elm-grid-loading-icon :size="32" />
-      <span>UPDATING ANKI CARD</span>
+      <elm-dot-loading-icon :size="32" />
+      <elm-turn-text text="UPDATING ANKI CARD" :size="16" />
     </div>
   </div>
 </template>
@@ -122,6 +122,13 @@ import { useMutation, useQuery } from '@tanstack/vue-query'
 import { useDark } from '@vueuse/core'
 import axios from 'axios'
 import type { Component } from 'json-component-spec'
+
+import {
+  ElmDivider,
+  ElmJsonComponent,
+  ElmDotLoadingIcon,
+  ElmTurnText
+} from 'elmethis'
 
 const isDark = useDark()
 

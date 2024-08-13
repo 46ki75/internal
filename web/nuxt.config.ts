@@ -36,11 +36,5 @@ export default defineNuxtConfig({
     '@pinia/nuxt'
   ],
 
-  plugins: [
-    '~/plugins/vuetify.ts',
-    '~/plugins/auth.ts',
-    '~/plugins/vue-query.ts'
-  ],
-
   compatibilityDate: '2024-08-03'
 })

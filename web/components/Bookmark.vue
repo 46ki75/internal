@@ -1,5 +1,5 @@
 <template>
-  <Heading3 content="Bookmarks" />
+  <elm-heading-3 content="Bookmarks" />
   <div v-if="isLoading">Fetching...</div>
   <div v-else class="bookmark-wrapper">
     <div
@@ -16,7 +16,7 @@
           alt=""
           class="favicon"
         />
-        <Linktext :href="bookmark.url" :text="bookmark.name" />
+        <elm-link-text :href="bookmark.url" :text="bookmark.name" />
       </div>
     </div>
   </div>
@@ -24,7 +24,6 @@
 
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query'
-import { Linktext, Heading3 } from 'elmethis'
 import _ from 'lodash'
 
 // # --------------------------------------------------------------------------------

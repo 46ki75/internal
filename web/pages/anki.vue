@@ -1,7 +1,7 @@
 <template>
   <div class="card-container">
     <div style="width: 100%">
-      <Divider
+      <elm-divider
         :text="
           countQuery.isPending.value && countQuery.data.value == null
             ? '???'
@@ -21,7 +21,7 @@
       </div>
 
       <div v-else>
-        <TriangleLoadingIcon :size="16" />
+        <elm-triangle-loading-icon :size="16" />
         <div>LOADING</div>
       </div>
     </div>
@@ -52,15 +52,14 @@
 
     <div class="front">
       <h2>front</h2>
-      <Divider margin="0.5rem" />
+      <elm-divider margin="0.5rem" />
       <div class="fallback" v-if="ankiCardQuery.isPending.value">
-        <GridLoadingIcon :size="32" />
+        <elm-grid-loading-icon :size="32" />
         <span>LOADING</span>
       </div>
-      <NotionHTML
+      <elm-json-component
         v-else
-        :domjson="ankiCardQuery.data.value!.front"
-        :theme="isDark ? 'dark' : 'light'"
+        :components="ankiCardQuery.data.value!.front"
       />
     </div>
 
@@ -75,29 +74,24 @@
 
     <div v-if="isShownAnswer" class="back">
       <h2>back</h2>
-      <Divider margin="0.5rem" />
+      <elm-divider margin="0.5rem" />
       <div class="fallback" v-if="ankiCardQuery.isPending.value">
-        <GridLoadingIcon :size="32" />
+        <elm-grid-loading-icon :size="32" />
         <span>LOADING</span>
       </div>
-      <NotionHTML
-        v-else
-        :domjson="ankiCardQuery.data.value!.back"
-        :theme="isDark ? 'dark' : 'light'"
-      />
+      <elm-json-component v-else :components="ankiCardQuery.data.value!.back" />
     </div>
 
     <div v-if="isShownAnswer" class="explanation">
       <h2>explanation</h2>
-      <Divider margin="0.5rem" />
+      <elm-divider margin="0.5rem" />
       <div class="fallback" v-if="ankiCardQuery.isPending.value">
-        <GridLoadingIcon :size="32" />
+        <elm-grid-loading-icon :size="32" />
         <span>LOADING</span>
       </div>
-      <NotionHTML
+      <elm-json-component
         v-else
-        :domjson="ankiCardQuery.data.value!.explanation"
-        :theme="isDark ? 'dark' : 'light'"
+        :components="ankiCardQuery.data.value!.explanation"
       />
     </div>
 
@@ -114,7 +108,7 @@
     </div>
 
     <div class="fallback" v-if="isShownAnswer && mutation.isPending.value">
-      <GridLoadingIcon :size="32" />
+      <elm-grid-loading-icon :size="32" />
       <span>UPDATING ANKI CARD</span>
     </div>
   </div>
@@ -124,20 +118,15 @@
 import { useMutation, useQuery } from '@tanstack/vue-query'
 import { useDark } from '@vueuse/core'
 import axios from 'axios'
-import {
-  NotionHTML,
-  Divider,
-  GridLoadingIcon,
-  TriangleLoadingIcon
-} from 'elmethis'
+import type { Component } from 'json-component-spec'
 
 const isDark = useDark()
 
 interface AnkiCardResponse {
   id: string
-  front: any
-  back: any
-  explanation: any
+  front: Component[]
+  back: Component[]
+  explanation: Component[]
   title: string
   tags: Array<{
     id: string

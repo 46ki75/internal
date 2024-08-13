@@ -10,7 +10,7 @@
       :loading="isPending"
       >translate
     </v-btn>
-    <CodeBlock
+    <elm-code-block
       v-if="data != null && 'result' in data"
       :code="data.result"
       :theme="isDark ? 'dark' : 'light'"
@@ -22,7 +22,6 @@
 import { useMutation } from '@tanstack/vue-query'
 import { useDark } from '@vueuse/core'
 import axios from 'axios'
-import { CodeBlock } from 'elmethis'
 
 const message = ref('')
 

@@ -1,5 +1,6 @@
 import { Client } from '@notionhq/client'
-import { DOMJSON, NotionEXClient } from 'notion-ex'
+import type { Component } from 'json-component-spec'
+import { NotionEXClient } from 'notion-ex'
 import { factory } from '~~/utils/Factory'
 
 export default eventHandler(async (event) => {
@@ -27,38 +28,26 @@ export default eventHandler(async (event) => {
 
   const blocks = await exclient.getDOMJSONFromBlockId(pageId)
 
-  let section: string = 'none'
-  const frontBlocks: DOMJSON[] = []
-  const backBlocks: DOMJSON[] = []
-  const explanationBlocks: DOMJSON[] = []
+  let section = 0
+
+  const frontBlocks: Component[] = []
+  const backBlocks: Component[] = []
+  const explanationBlocks: Component[] = []
 
   for (const block of blocks) {
-    if (block.type === 'heading_1' && block.content.includes('front')) {
-      section = 'front'
-      continue
-    } else if (block.type === 'heading_1' && block.content.includes('back')) {
-      section = 'back'
-      continue
-    } else if (
-      block.type === 'heading_1' &&
-      block.content.includes('explanation')
-    ) {
-      section = 'explanation'
-      continue
-    }
+    if (block.component === 'heading' && block.heading.level === 1) section++
 
     switch (section) {
-      case 'front': {
+      case 1: {
         frontBlocks.push(block)
         break
       }
 
-      case 'back': {
+      case 2: {
         backBlocks.push(block)
-        break
       }
 
-      case 'explanation': {
+      case 3: {
         explanationBlocks.push(block)
         break
       }

@@ -45,6 +45,7 @@ export default eventHandler(async (event) => {
 
       case 2: {
         backBlocks.push(block)
+        break
       }
 
       case 3: {

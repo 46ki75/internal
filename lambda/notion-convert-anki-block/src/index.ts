@@ -1,6 +1,7 @@
 import { GetParameterCommand, SSMClient } from '@aws-sdk/client-ssm'
 import { Client } from '@notionhq/client'
-import { DOMJSON, NotionEXClient } from 'notion-ex'
+import { type Component } from 'json-component-spec'
+import { NotionEXClient } from 'notion-ex'
 
 interface Payload {
   block_id: string
@@ -8,7 +9,11 @@ interface Payload {
 
 export const handler = async (
   event: Payload
-): Promise<{ front: DOMJSON[]; back: DOMJSON[]; explanation: DOMJSON[] }> => {
+): Promise<{
+  front: Component[]
+  back: Component[]
+  explanation: Component[]
+}> => {
   const ssm = new SSMClient()
   const res = await ssm.send(
     new GetParameterCommand({
@@ -22,7 +27,7 @@ export const handler = async (
   const client = new Client({ auth: NOTION_API_KEY })
   const notion = new NotionEXClient(client)
 
-  const result = await notion.getDOMJSONFromBlockId(event.block_id, {
+  const blocks = await notion.getDOMJSONFromBlockId(event.block_id, {
     enableChildPage: true,
     enableLinkPageRef: true,
     enableSyncedBlock: true
@@ -34,41 +39,28 @@ export const handler = async (
   //
   // # --------------------------------------------------------------------------------
 
-  const blocks = result
+  let section = 0
 
-  let section: string = 'none'
-  const front: DOMJSON[] = []
-  const back: DOMJSON[] = []
-  const explanation: DOMJSON[] = []
+  const frontBlocks: Component[] = []
+  const backBlocks: Component[] = []
+  const explanationBlocks: Component[] = []
 
   for (const block of blocks) {
-    if (block.type === 'heading_1' && block.content.includes('front')) {
-      section = 'front'
-      continue
-    } else if (block.type === 'heading_1' && block.content.includes('back')) {
-      section = 'back'
-      continue
-    } else if (
-      block.type === 'heading_1' &&
-      block.content.includes('explanation')
-    ) {
-      section = 'explanation'
-      continue
-    }
+    if (block.component === 'heading' && block.heading.level === 1) section++
 
     switch (section) {
-      case 'front': {
-        front.push(block)
+      case 1: {
+        frontBlocks.push(block)
         break
       }
 
-      case 'back': {
-        back.push(block)
+      case 2: {
+        backBlocks.push(block)
         break
       }
 
-      case 'explanation': {
-        explanation.push(block)
+      case 3: {
+        explanationBlocks.push(block)
         break
       }
 
@@ -78,5 +70,9 @@ export const handler = async (
     }
   }
 
-  return { front, back, explanation }
+  return {
+    front: frontBlocks,
+    back: backBlocks,
+    explanation: explanationBlocks
+  }
 }

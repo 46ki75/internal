@@ -169,19 +169,19 @@ export class LambdaStack extends cdk.Stack {
 
     // # --------------------------------------------------------------------------------
     //
-    // notion-convert-block
+    // notion-convert-anki-block
     //
     // # --------------------------------------------------------------------------------
 
-    new NodejsFunction(this, 'notion-convert-block', {
+    new NodejsFunction(this, 'notion-convert-anki-block', {
       handler: 'index.handler',
       runtime: lambda.Runtime.NODEJS_20_X,
       environment: { NODE_ENV: 'production' },
-      functionName: 'notion-convert-block',
+      functionName: 'notion-convert-anki-block',
       timeout: cdk.Duration.seconds(29),
       entry: path.resolve(
         __dirname,
-        '../../lambda/notion-convert-block/src/index.ts'
+        '../../lambda/notion-convert-anki-block/src/index.ts'
       ),
       role: lambdaRole
     })

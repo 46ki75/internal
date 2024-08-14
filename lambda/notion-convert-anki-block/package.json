@@ -1,5 +1,5 @@
 {
-  "name": "notion-convert-block",
+  "name": "notion-convert-anki-block",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,8 @@
   "dependencies": {
     "@aws-sdk/client-ssm": "^3.624.0",
     "@notionhq/client": "^2.2.15",
-    "notion-ex": "^0.1.12"
+    "json-component-spec": "^0.1.19",
+    "notion-ex": "^0.2.0"
   },
   "devDependencies": {
     "@types/node": "^22.1.0",

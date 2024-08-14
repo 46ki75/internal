@@ -212,7 +212,7 @@ impl Learn {
 
         let lambda_request = lambda_client
             .invoke()
-            .function_name("notion-convert-block")
+            .function_name("notion-convert-anki-block")
             .payload(aws_sdk_lambda::primitives::Blob::new(payload.into_bytes()));
 
         let lambda_response = lambda_request.send().await?;

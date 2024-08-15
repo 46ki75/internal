@@ -72,7 +72,7 @@
     </v-btn>
     <elm-code-block
       v-if="data != null && 'result' in data"
-      :code="data.result"
+      :code="data.result.replace('```', '').trim()"
       :theme="isDark ? 'dark' : 'light'"
     />
   </div>

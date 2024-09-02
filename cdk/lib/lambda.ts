@@ -106,6 +106,7 @@ export class LambdaStack extends cdk.Stack {
       ),
       handler: 'index.handler',
       runtime: lambda.Runtime.PROVIDED_AL2023,
+      memorySize: 512,
       environment: { ENVIRONMENT: 'production' },
       functionName: 'graphql',
       role: graphqlLambdaRole,

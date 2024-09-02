@@ -26,7 +26,7 @@ export default eventHandler(async (event) => {
 
   const pageId = page.id
 
-  const blocks = await exclient.getDOMJSONFromBlockId(pageId)
+  const { components: blocks } = await exclient.getDOMJSONFromBlockId(pageId)
 
   let section = 0
 

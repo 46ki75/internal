@@ -35,7 +35,7 @@ export default eventHandler(async (event) => {
   const explanationBlocks: Component[] = []
 
   for (const block of blocks) {
-    if (block.component === 'heading' && block.heading.level === 1) section++
+    if (block.component === 'heading' && block.heading.level === 2) section++
 
     switch (section) {
       case 1: {

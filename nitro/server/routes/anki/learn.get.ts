@@ -75,9 +75,9 @@ export default eventHandler(async (event) => {
   ) {
     return {
       id: pageId,
-      front: frontBlocks,
-      back: backBlocks,
-      explanation: explanationBlocks,
+      front: frontBlocks.slice(1),
+      back: backBlocks.slice(1),
+      explanation: explanationBlocks.slice(1),
       title: page.properties.title.rich_text.map((r) => r.plain_text).join(''),
       tags: page.properties.tags.multi_select,
       nextReviewAt: page.properties.nextReviewAt.date.start,

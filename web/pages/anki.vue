@@ -59,7 +59,7 @@
       </div>
       <elm-json-component
         v-else
-        :components="ankiCardQuery.data.value!.front.slice(1)"
+        :components="ankiCardQuery.data.value!.front"
       />
     </div>
 
@@ -79,10 +79,7 @@
         <elm-grid-loading-icon :size="32" />
         <span>LOADING</span>
       </div>
-      <elm-json-component
-        v-else
-        :components="ankiCardQuery.data.value!.back.slice(1)"
-      />
+      <elm-json-component v-else :components="ankiCardQuery.data.value!.back" />
     </div>
 
     <div v-if="isShownAnswer" class="explanation">
@@ -94,7 +91,7 @@
       </div>
       <elm-json-component
         v-else
-        :components="ankiCardQuery.data.value!.explanation.slice(1)"
+        :components="ankiCardQuery.data.value!.explanation"
       />
     </div>
 

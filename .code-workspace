@@ -1,6 +1,10 @@
 {
   "folders": [
     {
+      "path": ".",
+      "name": "PROJECT ROOT"
+    },
+    {
       "path": "./terraform",
       "name": "terraform"
     }

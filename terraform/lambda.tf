@@ -36,7 +36,7 @@ resource "aws_iam_policy" "lambda_policy" {
 resource "aws_lambda_function" "mock" {
   function_name = "${var.environment}-lambda"
   role          = aws_iam_role.lambda_role.arn
-  filename      = "./bootstrap.zip"
+  filename      = "./assets/bootstrap.zip"
   handler       = "mock.handler"
   runtime       = "provided.al2023"
   architectures = ["x86_64"]

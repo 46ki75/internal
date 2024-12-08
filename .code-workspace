@@ -1,8 +1,8 @@
 {
   "folders": [
-    { "name": "root", "path": "." },
-    { "name": "nitro", "path": "./nitro" },
-    { "name": "cdk", "path": "./cdk" },
-    { "name": "web frontend", "path": "./web" }
+    {
+      "path": "./terraform",
+      "name": "terraform"
+    }
   ]
 }

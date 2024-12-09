@@ -36,7 +36,7 @@ output "user_pool_client_id" {
 }
 
 data "aws_ssm_parameter" "password" {
-  name            = "/dev/46ki75/internal/cognito/userpool/user/password"
+  name            = "/${terraform.workspace}/46ki75/internal/cognito/userpool/user/password"
   with_decryption = true
 }
 

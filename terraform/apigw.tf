@@ -47,7 +47,7 @@ resource "aws_apigatewayv2_api_mapping" "backend" {
 
 resource "aws_route53_record" "api_gateway" {
   zone_id = data.aws_route53_zone.internal.zone_id
-  name    = "dev-apigw.internal.46ki75.com"
+  name    = "${terraform.workspace}-apigw.internal.46ki75.com"
   type    = "A"
 
   alias {

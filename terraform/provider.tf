@@ -13,10 +13,11 @@ terraform {
   # RUN: terraform workspace list
   # RUN: terraform workspace select dev
   backend "s3" {
-    bucket  = "shared-46ki75-internal-s3-bucket-terraform-tfstate"
-    key     = "terraform.tfstate"
-    region  = "ap-northeast-1"
-    encrypt = true
+    bucket       = "shared-46ki75-internal-s3-bucket-terraform-tfstate"
+    key          = "terraform.tfstate"
+    region       = "ap-northeast-1"
+    encrypt      = true
+    use_lockfile = true
   }
 }
 

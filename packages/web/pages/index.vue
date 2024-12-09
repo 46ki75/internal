@@ -5,6 +5,8 @@
     <button @click="handleSignOut">Sign Out</button>
     <p>user id: {{ authStore.session.useId }}</p>
     <p>username: {{ authStore.session.username }}</p>
+    <p>ID Token: {{ authStore.session.idToken }}</p>
+    <p>Access Token: {{ authStore.session.accessToken }}</p>
     <p>
       remain:
       {{ authStore.remainSeconds }}

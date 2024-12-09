@@ -15,6 +15,10 @@ const handleSignOut = async () => {
   await authStore.signOut()
   router.push('/login')
 }
+
+onMounted(async () => {
+  await authStore.checkSession()
+})
 </script>
 
 <style scoped></style>

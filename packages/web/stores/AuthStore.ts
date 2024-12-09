@@ -26,6 +26,8 @@ interface AuthState {
     inSession?: boolean
     useId?: string
     username?: string
+    accessToken?: string
+    idToken?: string
     loading: boolean
     error: boolean
   }
@@ -47,6 +49,8 @@ export const useAuthStore = defineStore('auth', {
       inSession: undefined,
       useId: undefined,
       username: undefined,
+      accessToken: undefined,
+      idToken: undefined,
       loading: false,
       error: false
     },
@@ -101,7 +105,10 @@ export const useAuthStore = defineStore('auth', {
       configure()
 
       try {
-        await fetchAuthSession({ forceRefresh: true })
+        const session = await fetchAuthSession({ forceRefresh: true })
+        this.session.accessToken = session.tokens?.accessToken.toString()
+        this.session.idToken = session.tokens?.idToken?.toString()
+
         const response = await getCurrentUser()
         this.session.useId = response.userId
         this.session.username = response.username

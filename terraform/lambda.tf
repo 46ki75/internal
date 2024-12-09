@@ -53,3 +53,5 @@ resource "aws_lambda_alias" "graphql" {
   function_name    = aws_lambda_function.graphql.function_name
   function_version = aws_lambda_function.graphql.version
 }
+
+

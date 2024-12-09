@@ -27,12 +27,14 @@ provider "aws" {
 }
 
 locals {
-  # Crash if we try to use a disallowed workspace
-  config = local.configs[terraform.workspace]
+  environments = ["dev", "stg", "prod"]
+}
 
-  configs = {
-    dev  = {}
-    stg  = {}
-    prod = {}
+resource "null_resource" "validate_workspace" {
+  lifecycle {
+    postcondition {
+      condition     = contains(local.environments, terraform.workspace)
+      error_message = "Invalid workspace. Available workspaces: ${join(", ", local.environments)}"
+    }
   }
 }

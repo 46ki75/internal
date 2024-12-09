@@ -1,5 +1,5 @@
 resource "aws_iam_role" "lambda_role_graphql" {
-  name = "lambda_role"
+  name = "${terraform.workspace}-46ki75-iam-role-lambda-graphql"
   assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
@@ -15,7 +15,7 @@ resource "aws_iam_role" "lambda_role_graphql" {
 }
 
 resource "aws_iam_policy" "lambda_policy_graphql" {
-  name        = "lambda_policy"
+  name        = "${terraform.workspace}-46ki75-iam-policy-lambda-graphql"
   description = "Allow lambda to access cloudwatch logs"
   policy = jsonencode({
     "Version" : "2012-10-17",

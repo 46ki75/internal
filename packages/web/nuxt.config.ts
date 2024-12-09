@@ -36,6 +36,13 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
   devServer: { port: 20000 },
+  vite: {
+    server: {
+      proxy: {
+        '/graphql': { target: 'http://localhost:20010', changeOrigin: true }
+      }
+    }
+  },
   modules: ['@pinia/nuxt'],
   runtimeConfig: {
     public: {

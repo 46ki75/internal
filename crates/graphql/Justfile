@@ -1,0 +1,5 @@
+dev:
+    cargo lambda watch -p 20010
+
+build:
+    cargo lambda build --release

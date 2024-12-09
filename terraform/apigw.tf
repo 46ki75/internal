@@ -28,7 +28,33 @@ resource "aws_apigatewayv2_stage" "backend" {
     throttling_burst_limit = 100000
     throttling_rate_limit  = 100000
   }
+}
 
+resource "aws_apigatewayv2_domain_name" "backend" {
+  domain_name = aws_acm_certificate.api_cert.domain_name
+  domain_name_configuration {
+    certificate_arn = aws_acm_certificate.api_cert.arn
+    security_policy = "TLS_1_2"
+    endpoint_type   = "REGIONAL"
+  }
+}
+
+resource "aws_apigatewayv2_api_mapping" "backend" {
+  api_id      = aws_apigatewayv2_api.backend.id
+  domain_name = aws_apigatewayv2_domain_name.backend.domain_name
+  stage       = aws_apigatewayv2_stage.backend.name
+}
+
+resource "aws_route53_record" "api_gateway" {
+  zone_id = data.aws_route53_zone.internal.zone_id
+  name    = "dev-apigw.internal.46ki75.com"
+  type    = "A"
+
+  alias {
+    name                   = aws_apigatewayv2_domain_name.backend.domain_name_configuration[0].target_domain_name
+    zone_id                = aws_apigatewayv2_domain_name.backend.domain_name_configuration[0].hosted_zone_id
+    evaluate_target_health = false
+  }
 }
 
 resource "aws_lambda_permission" "apigwv2" {
@@ -40,5 +66,5 @@ resource "aws_lambda_permission" "apigwv2" {
 }
 
 output "backend_apigw_url" {
-  value = aws_apigatewayv2_api.backend.api_endpoint
+  value = "https://${aws_apigatewayv2_domain_name.backend.domain_name}"
 }

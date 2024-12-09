@@ -30,3 +30,15 @@ resource "aws_cognito_user_pool_client" "spa" {
 output "user_pool_client_id" {
   value = aws_cognito_user_pool_client.spa.id
 }
+
+data "aws_ssm_parameter" "password" {
+  name            = "/dev/46ki75/internal/cognito/userpool/user/password"
+  with_decryption = true
+}
+
+resource "aws_cognito_user" "shirayuki" {
+  user_pool_id = aws_cognito_user_pool.default.id
+  username     = "shirayuki"
+  password     = data.aws_ssm_parameter.password.value
+  enabled      = true
+}

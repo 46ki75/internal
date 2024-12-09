@@ -8,7 +8,7 @@
     <p>
       remain:
       {{ authStore.remainSeconds }}
-      ms
+      s
     </p>
   </div>
 </template>

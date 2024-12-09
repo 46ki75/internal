@@ -34,7 +34,7 @@ resource "aws_iam_policy" "lambda_policy" {
 }
 
 resource "aws_lambda_function" "mock" {
-  function_name = "${var.environment}-lambda"
+  function_name = "${terraform.workspace}-lambda"
   role          = aws_iam_role.lambda_role.arn
   filename      = "./assets/bootstrap.zip"
   handler       = "mock.handler"

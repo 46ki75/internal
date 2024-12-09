@@ -1,6 +1,11 @@
 <template>
   <nuxt-link to="/login">Login</nuxt-link>
-  <button @click="handleSignOut">Sign Out</button>
+
+  <div>
+    <button @click="handleSignOut">Sign Out</button>
+    <p>user id: {{ authStore.session.useId }}</p>
+    <p>username: {{ authStore.session.username }}</p>
+  </div>
 </template>
 
 <script setup lang="ts">

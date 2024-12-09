@@ -22,11 +22,10 @@ const configure = () => {
 }
 
 interface AuthState {
-  useId?: string
-  username?: string
-
   session: {
     inSession?: boolean
+    useId?: string
+    username?: string
     loading: boolean
     error: boolean
   }
@@ -44,11 +43,10 @@ interface AuthState {
 
 export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
-    useId: undefined,
-    username: undefined,
-
     session: {
       inSession: undefined,
+      useId: undefined,
+      username: undefined,
       loading: false,
       error: false
     },
@@ -105,12 +103,12 @@ export const useAuthStore = defineStore('auth', {
       try {
         await fetchAuthSession({ forceRefresh: true })
         const response = await getCurrentUser()
-        this.useId = response.userId
-        this.username = response.username
+        this.session.useId = response.userId
+        this.session.username = response.username
         this.session.inSession = true
       } catch {
-        this.useId = undefined
-        this.username = undefined
+        this.session.useId = undefined
+        this.session.username = undefined
         this.session.error = true
         this.session.inSession = false
       } finally {

@@ -7,6 +7,10 @@
     {
       "path": "./terraform",
       "name": "terraform"
+    },
+    {
+      "path": "./packages/web",
+      "name": "web"
     }
   ]
 }

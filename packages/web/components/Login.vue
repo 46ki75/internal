@@ -1,8 +1,10 @@
 <template>
   <div>
     <p>
-      <span v-if="authStore.inSession == undefined">Checking Sessin...</span>
-      <span v-else-if="authStore.inSession" :style="{ color: 'green' }"
+      <span v-if="authStore.session.inSession == undefined"
+        >Checking Sessin...</span
+      >
+      <span v-else-if="authStore.session.inSession" :style="{ color: 'green' }"
         >In Session
       </span>
       <span v-else :style="{ color: 'red' }">Not In Session</span>
@@ -13,7 +15,11 @@
     <p>password</p>
     <input type="password" ref="password" />
 
-    <p><button @click="handleSignIn">LOGIN</button></p>
+    <p>
+      <button @click="handleSignIn">
+        {{ authStore.signIn.loading ? '...' : 'LOGIN' }}
+      </button>
+    </p>
 
     <p v-if="error" :style="{ color: 'red' }">{{ error }}</p>
 

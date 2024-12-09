@@ -25,16 +25,21 @@ interface AuthState {
   useId?: string
   username?: string
 
-  inSession?: boolean
-  isCheckSessionLoading: boolean
-  isCheckSessionError: boolean
+  session: {
+    inSession?: boolean
+    loading: boolean
+    error: boolean
+  }
 
-  isSignInLoading: boolean
-  isSingInError: boolean
-  signInStep?: string
+  signIn: {
+    loading: boolean
+    error: boolean
+  }
 
-  isSignOutLoading: boolean
-  isSignOutError: boolean
+  signOut: {
+    loading: boolean
+    error: boolean
+  }
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -42,16 +47,21 @@ export const useAuthStore = defineStore('auth', {
     useId: undefined,
     username: undefined,
 
-    isCheckSessionLoading: false,
-    isCheckSessionError: false,
+    session: {
+      inSession: undefined,
+      loading: false,
+      error: false
+    },
 
-    isSignInLoading: false,
-    isSingInError: false,
-    signInStep: undefined,
+    signIn: {
+      loading: false,
+      error: false
+    },
 
-    inSession: undefined,
-    isSignOutLoading: false,
-    isSignOutError: false
+    signOut: {
+      loading: false,
+      error: false
+    }
   }),
   actions: {
     async signin({
@@ -61,36 +71,35 @@ export const useAuthStore = defineStore('auth', {
       username: string
       password: string
     }) {
-      this.isSignInLoading = true
-      this.isSingInError = false
+      this.signIn.loading = true
+      this.signIn.error = false
       try {
         configure()
-        const response = await signIn({ username, password })
-        this.signInStep = response.nextStep.signInStep
+        const _ = await signIn({ username, password })
       } catch (e: any) {
-        this.isSingInError = true
+        this.signIn.error = true
         throw new Error(e)
       } finally {
-        this.isSignInLoading = false
+        this.signIn.loading = false
       }
       await this.checkSession()
     },
     async signout() {
-      this.isSignOutLoading = true
-      this.isSignOutError = false
+      this.signOut.loading = true
+      this.signOut.error = false
       configure()
       try {
         await signOut()
       } catch {
-        this.isSignOutError = true
+        this.signOut.error = true
       } finally {
-        this.isSignOutLoading = false
+        this.signOut.loading = false
       }
       await this.checkSession()
     },
     async checkSession() {
-      this.isCheckSessionLoading = true
-      this.isCheckSessionError = false
+      this.session.loading = true
+      this.session.error = false
       configure()
 
       try {
@@ -98,14 +107,14 @@ export const useAuthStore = defineStore('auth', {
         const response = await getCurrentUser()
         this.useId = response.userId
         this.username = response.username
-        this.inSession = true
+        this.session.inSession = true
       } catch {
         this.useId = undefined
         this.username = undefined
-        this.isCheckSessionError = true
-        this.inSession = false
+        this.session.error = true
+        this.session.inSession = false
       } finally {
-        this.isCheckSessionLoading = false
+        this.session.loading = false
       }
     }
   }

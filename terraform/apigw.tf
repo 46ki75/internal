@@ -60,7 +60,8 @@ resource "aws_route53_record" "api_gateway" {
 resource "aws_lambda_permission" "apigwv2" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = "${aws_lambda_alias.graphql.function_name}:${aws_lambda_alias.graphql.name}"
+  function_name = aws_lambda_alias.graphql.function_name
+  qualifier     = aws_lambda_alias.graphql.name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.backend.execution_arn}/*/*/*"
 }

@@ -27,6 +27,7 @@ interface AuthState {
     useId?: string
     username?: string
     accessToken?: string
+    expiresAt?: number
     idToken?: string
     loading: boolean
     error: boolean
@@ -50,6 +51,7 @@ export const useAuthStore = defineStore('auth', {
       useId: undefined,
       username: undefined,
       accessToken: undefined,
+      expiresAt: undefined,
       idToken: undefined,
       loading: false,
       error: false
@@ -108,6 +110,7 @@ export const useAuthStore = defineStore('auth', {
         const session = await fetchAuthSession({ forceRefresh: true })
         this.session.accessToken = session.tokens?.accessToken.toString()
         this.session.idToken = session.tokens?.idToken?.toString()
+        this.session.expiresAt = session.tokens?.accessToken.payload.exp
 
         const response = await getCurrentUser()
         this.session.useId = response.userId
@@ -121,6 +124,13 @@ export const useAuthStore = defineStore('auth', {
       } finally {
         this.session.loading = false
       }
+    }
+  },
+  getters: {
+    remainSeconds(): number {
+      const expireAt: number | undefined = this.session?.expiresAt
+      if (!expireAt) return 0
+      return new Date(expireAt).getTime() - Date.now() / 1000
     }
   }
 })

@@ -69,3 +69,7 @@ resource "aws_lambda_permission" "apigwv2" {
 output "backend_apigw_url" {
   value = "https://${aws_apigatewayv2_domain_name.backend.domain_name}"
 }
+
+output "backend_apigw_url_graphql" {
+  value = "https://${aws_apigatewayv2_domain_name.backend.domain_name}/graphql"
+}

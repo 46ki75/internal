@@ -12,9 +12,11 @@ resource "aws_apigatewayv2_integration" "backend" {
 }
 
 resource "aws_apigatewayv2_route" "backend" {
-  api_id    = aws_apigatewayv2_api.backend.id
-  route_key = "ANY /graphql"
-  target    = "integrations/${aws_apigatewayv2_integration.backend.id}"
+  api_id             = aws_apigatewayv2_api.backend.id
+  route_key          = "ANY /graphql"
+  target             = "integrations/${aws_apigatewayv2_integration.backend.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.backend.id
 }
 
 resource "aws_apigatewayv2_stage" "backend" {
@@ -56,6 +58,20 @@ resource "aws_route53_record" "api_gateway" {
     evaluate_target_health = false
   }
 }
+
+# >>> Authorize
+resource "aws_apigatewayv2_authorizer" "backend" {
+  name             = "${terraform.workspace}-46ki75-apigwv2-http-backend-authorizer"
+  authorizer_type  = "JWT"
+  api_id           = aws_apigatewayv2_api.backend.id
+  identity_sources = ["$request.header.Authorization"]
+
+  jwt_configuration {
+    audience = [aws_cognito_user_pool_client.spa.id]
+    issuer   = "https://${aws_cognito_user_pool.default.endpoint}"
+  }
+}
+# <<< Authorize
 
 resource "aws_lambda_permission" "apigwv2" {
   statement_id  = "AllowExecutionFromAPIGateway"

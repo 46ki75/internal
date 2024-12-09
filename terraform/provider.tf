@@ -25,3 +25,14 @@ terraform {
 provider "aws" {
   region = "ap-northeast-1"
 }
+
+locals {
+  # Crash if we try to use a disallowed workspace
+  config = local.configs[terraform.workspace]
+
+  configs = {
+    dev  = {}
+    stg  = {}
+    prod = {}
+  }
+}

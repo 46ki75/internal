@@ -53,3 +53,12 @@ resource "aws_lambda_alias" "graphql" {
   function_name    = aws_lambda_function.graphql.function_name
   function_version = aws_lambda_function.graphql.version
 }
+
+resource "aws_lambda_function_url" "graphql" {
+  function_name      = aws_lambda_alias.graphql.function_name
+  authorization_type = "NONE"
+}
+
+output "graphql_url" {
+  value = aws_lambda_function_url.graphql.function_url
+}

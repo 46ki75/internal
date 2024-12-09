@@ -1,5 +1,8 @@
-dev:
+dev: 
     cargo lambda watch -p 20010
 
-build:
+build: 
     cargo lambda build --release
+
+deploy: build
+    cargo lambda deploy --binary-name graphql dev-46ki75-lambda-function-graphql

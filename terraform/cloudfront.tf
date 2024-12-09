@@ -56,5 +56,5 @@ resource "aws_cloudfront_distribution" "default" {
 }
 
 output "cloudfront_domain" {
-  value = aws_cloudfront_distribution.default.domain_name
+  value = "https://${aws_cloudfront_distribution.default.domain_name}"
 }

@@ -84,7 +84,7 @@ export const useAuthStore = defineStore('auth', {
       }
       await this.checkSession()
     },
-    async signout() {
+    async signOut() {
       this.signOut.loading = true
       this.signOut.error = false
       configure()

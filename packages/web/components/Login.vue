@@ -1,15 +1,5 @@
 <template>
   <div>
-    <p>
-      <span v-if="authStore.session.inSession == undefined"
-        >Checking Sessin...</span
-      >
-      <span v-else-if="authStore.session.inSession" :style="{ color: 'green' }"
-        >In Session
-      </span>
-      <span v-else :style="{ color: 'red' }">Not In Session</span>
-    </p>
-
     <p>username</p>
     <input type="text" ref="username" />
     <p>password</p>
@@ -25,12 +15,13 @@
 
     <hr />
 
-    <p><button @click="authStore.signout">Sign Out</button></p>
+    <p><button @click="authStore.signOut">Sign Out</button></p>
   </div>
 </template>
 
 <script setup lang="ts">
 const authStore = useAuthStore()
+const router = useRouter()
 
 const username = ref<HTMLInputElement>()
 const password = ref<HTMLInputElement>()
@@ -50,6 +41,10 @@ const handleSignIn = async () => {
       username: username.value.value,
       password: password.value.value
     })
+
+    if (authStore.session.inSession) {
+      router.push('/')
+    }
   }
 }
 

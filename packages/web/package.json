@@ -15,6 +15,7 @@
     "aws-amplify": "^6.10.2",
     "nuxt": "^3.14.1592",
     "pinia": "^2.3.0",
+    "sass": "^1.82.0",
     "vue": "latest",
     "vue-router": "latest"
   },

@@ -1,5 +1,11 @@
 import { SSMClient, GetParameterCommand } from '@aws-sdk/client-ssm'
 
+if (process.env.ENVIRONMENT == null) {
+  throw new Error('ENVIRONMENT is not set')
+} else {
+  console.log(`ENVIRONMENT: ${process.env.ENVIRONMENT}`)
+}
+
 export const fetchSSMParameter = async (name: string): Promise<string> => {
   const client = new SSMClient({ region: 'ap-northeast-1' })
 
@@ -18,11 +24,11 @@ export const fetchSSMParameter = async (name: string): Promise<string> => {
 }
 
 const USER_POOL_ID = await fetchSSMParameter(
-  '/dev/46ki75/internal/cognito/userpool/id'
+  `/${process.env.ENVIRONMENT}/46ki75/internal/cognito/userpool/id`
 )
 
 const USER_POOL_CLIENT_ID = await fetchSSMParameter(
-  '/dev/46ki75/internal/cognito/userpool/client/id'
+  `/${process.env.ENVIRONMENT}/46ki75/internal/cognito/userpool/client/id`
 )
 
 // https://nuxt.com/docs/api/configuration/nuxt-config

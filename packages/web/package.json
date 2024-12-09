@@ -7,7 +7,8 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "deploy": "aws s3 cp .output/public/ s3://dev-46ki75-internal-s3-bucket-web/ --recursive"
   },
   "dependencies": {
     "@aws-sdk/client-ssm": "^3.699.0",

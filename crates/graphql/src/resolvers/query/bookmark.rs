@@ -3,14 +3,6 @@ pub struct QueryBookmark {
     database_id: String,
 }
 
-#[derive(async_graphql::SimpleObject)]
-pub struct QueryBookmarkMeta {
-    id: String,
-    name: Option<String>,
-    url: Option<String>,
-    favicon: Option<String>,
-}
-
 impl QueryBookmark {
     pub fn new(_: &async_graphql::Context<'_>) -> Result<Self, async_graphql::Error> {
         let secret = std::env::var("NOTION_API_KEY")
@@ -32,7 +24,9 @@ impl QueryBookmark {
         "Hello, bookmark!".to_string()
     }
 
-    pub async fn list_bookmark(&self) -> Result<Vec<QueryBookmarkMeta>, async_graphql::Error> {
+    pub async fn list_bookmark(
+        &self,
+    ) -> Result<Vec<crate::models::bookmark::BookmarkMeta>, async_graphql::Error> {
         let client = notionrs::client::Client::new().secret(&self.secret);
 
         let request = client
@@ -87,14 +81,15 @@ impl QueryBookmark {
                     notionrs::Icon::Emoji(_) => None,
                 });
 
-                Ok(QueryBookmarkMeta {
+                Ok(crate::models::bookmark::BookmarkMeta {
                     id,
                     name,
                     url,
                     favicon,
                 })
             })
-            .collect::<Result<Vec<QueryBookmarkMeta>, async_graphql::Error>>()?;
+            .collect::<Result<Vec<crate::models::bookmark::BookmarkMeta>, async_graphql::Error>>(
+            )?;
 
         Ok(bookmarks)
     }

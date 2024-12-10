@@ -2,16 +2,14 @@ use async_graphql::*;
 
 pub struct MutationRoot;
 
-use crate::resolvers;
-
 #[async_graphql::Object]
 impl MutationRoot {
-    pub async fn bookmark(
+    pub async fn create_bookmark(
         &self,
         ctx: &async_graphql::Context<'_>,
         name: String,
         url: String,
-    ) -> Result<resolvers::mutation::bookmark::MutationBookmark, async_graphql::Error> {
-        resolvers::mutation::bookmark::MutationBookmark::new(ctx, name, url).await
+    ) -> Result<crate::models::bookmark::BookmarkMeta, async_graphql::Error> {
+        crate::models::bookmark::BookmarkMeta::new(ctx, name, url).await
     }
 }

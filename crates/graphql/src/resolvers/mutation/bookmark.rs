@@ -1,17 +1,9 @@
-#[derive(async_graphql::SimpleObject)]
-pub struct MutationBookmark {
-    id: String,
-    name: String,
-    url: String,
-    favicon: String,
-}
-
-impl MutationBookmark {
+impl crate::models::bookmark::BookmarkMeta {
     pub async fn new(
         _: &async_graphql::Context<'_>,
         name: String,
         url: String,
-    ) -> Result<MutationBookmark, async_graphql::Error> {
+    ) -> Result<crate::models::bookmark::BookmarkMeta, async_graphql::Error> {
         let secret = std::env::var("NOTION_API_KEY")?;
 
         let database_id = std::env::var("NOTION_BOOKMARK_DATABASE_ID")?;
@@ -56,11 +48,11 @@ impl MutationBookmark {
 
         let id = response.id;
 
-        Ok(MutationBookmark {
+        Ok(crate::models::bookmark::BookmarkMeta {
             id,
-            name,
-            url,
-            favicon,
+            name: Some(name.to_string()),
+            url: Some(url.to_string()),
+            favicon: Some(favicon),
         })
     }
 }

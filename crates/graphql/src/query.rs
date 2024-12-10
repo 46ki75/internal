@@ -38,4 +38,14 @@ impl QueryRoot {
             .list_bookmark(ctx)
             .await
     }
+
+    pub async fn translate(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+        input: crate::model::translation::query::TranslateInput,
+    ) -> Result<String, async_graphql::Error> {
+        crate::model::translation::query::TranslationQuery
+            .translate(ctx, input)
+            .await
+    }
 }

@@ -15,8 +15,11 @@ impl QueryRoot {
     pub async fn anki_list(
         &self,
         ctx: &async_graphql::Context<'_>,
+        input: Option<crate::model::anki::query::ListAnkiInput>,
     ) -> Result<Vec<crate::model::anki::Anki>, async_graphql::Error> {
-        crate::model::anki::query::AnkiQuery.list_anki(ctx).await
+        crate::model::anki::query::AnkiQuery
+            .list_anki(ctx, input)
+            .await
     }
 
     pub async fn bookmark_list(

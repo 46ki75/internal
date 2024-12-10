@@ -1,9 +1,18 @@
 #[derive(Default)]
 pub struct AnkiQuery;
 
+#[derive(async_graphql::InputObject)]
+pub struct ListAnkiInput {
+    pub page_size: Option<u32>,
+}
+
 #[async_graphql::Object]
 impl AnkiQuery {
-    pub async fn list_anki(&self) -> Result<Vec<super::Anki>, async_graphql::Error> {
+    pub async fn list_anki(
+        &self,
+        _ctx: &async_graphql::Context<'_>,
+        input: Option<ListAnkiInput>,
+    ) -> Result<Vec<super::Anki>, async_graphql::Error> {
         let secret = std::env::var("NOTION_API_KEY")
             .map_err(|_| async_graphql::Error::from("NOTION_API_KEY not found"))?;
 
@@ -14,11 +23,13 @@ impl AnkiQuery {
 
         let sorts = vec![notionrs::database::Sort::asc("nextReviewAt")];
 
+        let page_size = input.map_or(100, |input| input.page_size.unwrap_or(100));
+
         let request = client
             .query_database()
             .database_id(database_id)
             .sorts(sorts)
-            .page_size(50);
+            .page_size(page_size);
 
         let response = request.send().await?;
 

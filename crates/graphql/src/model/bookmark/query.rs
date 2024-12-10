@@ -1,8 +1,8 @@
 #[derive(Default)]
-pub struct QueryBookmark;
+pub struct BookmarkQuery;
 
 #[async_graphql::Object]
-impl QueryBookmark {
+impl BookmarkQuery {
     pub async fn list_bookmark(
         &self,
     ) -> Result<Vec<crate::model::bookmark::Bookmark>, async_graphql::Error> {

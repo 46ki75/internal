@@ -1,8 +1,8 @@
 #[derive(Default)]
-pub struct MutationBookmark;
+pub struct BookmarkMutation;
 
 #[async_graphql::Object]
-impl MutationBookmark {
+impl BookmarkMutation {
     pub async fn create_bookmark(
         &self,
         _ctx: &async_graphql::Context<'_>,

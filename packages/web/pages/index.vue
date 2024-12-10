@@ -14,22 +14,19 @@
         <ElmInlineText bold text="username" />
         <ElmInlineText :text="`: ${authStore.session.username}`" />
       </ElmListItem>
-
-      <ElmListItem>
-        <ElmInlineText bold text="Remain" />
-        <ElmInlineText :text="`: ${authStore.remainSeconds}[s]`" />
-      </ElmListItem>
     </ElmBulletedList>
 
-    <ElmHeading2 text="ID Token" />
+    <ElmHeading2 text="Session Token" />
     <ElmCodeBlock
       v-if="authStore.session.idToken != null"
+      :caption="`Remain: ${authStore.idTokenRemainSeconds}[s]`"
       :code="authStore.session.idToken"
     />
 
     <ElmHeading2 text="Access Token" />
     <ElmCodeBlock
       v-if="authStore.session.accessToken != null"
+      :caption="`Remain: ${authStore.accessTokenRemainSeconds}[s]`"
       :code="authStore.session.accessToken"
     />
   </div>
@@ -39,6 +36,7 @@
 import {
   ElmBulletedList,
   ElmCodeBlock,
+  ElmDivider,
   ElmHeading2,
   ElmInlineText,
   ElmListItem

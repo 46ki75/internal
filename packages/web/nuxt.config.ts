@@ -41,6 +41,13 @@ export default defineNuxtConfig({
       proxy: {
         '/api/graphql': { target: 'http://localhost:20010', changeOrigin: true }
       }
+    },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: 'modern-compiler'
+        }
+      }
     }
   },
   modules: ['@pinia/nuxt'],

@@ -146,6 +146,7 @@ impl AnkiQuery {
                 let id = page.id.to_string();
                 let created_at = page.created_time.to_rfc3339();
                 let updated_at = page.last_edited_time.to_rfc3339();
+                let url = page.url.to_string();
 
                 Ok(super::Anki {
                     id,
@@ -157,6 +158,7 @@ impl AnkiQuery {
                     created_at,
                     updated_at,
                     tags,
+                    url,
                 })
             })
             .collect::<Result<Vec<super::Anki>, async_graphql::Error>>()?;

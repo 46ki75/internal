@@ -12,6 +12,7 @@ pub struct Anki {
     created_at: String,
     updated_at: String,
     tags: Vec<AnkiTag>,
+    url: String,
 }
 
 #[derive(async_graphql::SimpleObject)]

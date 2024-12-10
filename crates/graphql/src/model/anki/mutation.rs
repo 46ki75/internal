@@ -73,6 +73,7 @@ impl AnkiMutation {
             created_at: response.created_time.to_rfc3339(),
             updated_at: response.last_edited_time.to_rfc3339(),
             tags: vec![],
+            url: response.url,
         };
 
         Ok(anki)

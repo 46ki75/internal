@@ -1,3 +1,6 @@
+.env
+.env.*
+
 # NodeJS
 node_modules/
 

@@ -10,6 +10,8 @@ impl MutationRoot {
         name: String,
         url: String,
     ) -> Result<crate::model::bookmark::Bookmark, async_graphql::Error> {
-        crate::model::bookmark::Bookmark::new(ctx, name, url).await
+        crate::model::bookmark::mutation::MutationBookmark
+            .create_bookmark(ctx, name, url)
+            .await
     }
 }

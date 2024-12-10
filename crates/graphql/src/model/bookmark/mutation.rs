@@ -1,6 +1,11 @@
-impl super::Bookmark {
-    pub async fn new(
-        _: &async_graphql::Context<'_>,
+#[derive(Default)]
+pub struct MutationBookmark;
+
+#[async_graphql::Object]
+impl MutationBookmark {
+    pub async fn create_bookmark(
+        &self,
+        _ctx: &async_graphql::Context<'_>,
         name: String,
         url: String,
     ) -> Result<crate::model::bookmark::Bookmark, async_graphql::Error> {

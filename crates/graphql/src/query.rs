@@ -14,14 +14,14 @@ impl QueryRoot {
         resolvers::query::greet::Greet::new(ctx)
     }
 
-    pub async fn anki(
+    pub async fn anki_list(
         &self,
         ctx: &async_graphql::Context<'_>,
-    ) -> Result<resolvers::query::anki::Anki, async_graphql::Error> {
-        resolvers::query::anki::Anki::new(ctx)
+    ) -> Result<Vec<crate::model::anki::Anki>, async_graphql::Error> {
+        crate::model::anki::query::AnkiQuery.list_anki(ctx).await
     }
 
-    pub async fn bookmarks(
+    pub async fn bookmark_list(
         &self,
         ctx: &async_graphql::Context<'_>,
     ) -> Result<Vec<crate::model::bookmark::Bookmark>, async_graphql::Error> {

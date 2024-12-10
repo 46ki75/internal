@@ -1,60 +1,22 @@
-pub struct Anki {
-    secret: String,
-    database_id: String,
-}
+#[derive(Default)]
+pub struct AnkiQuery;
 
-#[derive(async_graphql::SimpleObject)]
-pub struct AnkiMeta {
-    id: String,
-    title: Option<String>,
-    description: Option<String>,
-    ease_factor: f64,
-    repetition_count: u32,
-    next_review_at: String,
-    created_at: String,
-    updated_at: String,
-    tags: Vec<AnkiTag>,
-}
-
-#[derive(async_graphql::SimpleObject)]
-pub struct AnkiTag {
-    id: String,
-    name: String,
-    color: String,
-}
-
-#[derive(async_graphql::SimpleObject)]
-pub struct AnkiBlock {
-    front: serde_json::Value,
-    back: serde_json::Value,
-    explanation: serde_json::Value,
-}
-
-impl Anki {
-    pub fn new(_: &async_graphql::Context) -> Result<Self, async_graphql::Error> {
+#[async_graphql::Object]
+impl AnkiQuery {
+    pub async fn list_anki(&self) -> Result<Vec<super::Anki>, async_graphql::Error> {
         let secret = std::env::var("NOTION_API_KEY")
             .map_err(|_| async_graphql::Error::from("NOTION_API_KEY not found"))?;
 
         let database_id = std::env::var("NOTION_ANKI_DATABASE_ID")
             .map_err(|_| async_graphql::Error::from("NOTION_ANKI_DATABASE_ID not found"))?;
 
-        Ok(Anki {
-            secret,
-            database_id,
-        })
-    }
-}
-
-#[async_graphql::Object]
-impl Anki {
-    pub async fn list_anki(&self) -> Result<Vec<AnkiMeta>, async_graphql::Error> {
-        let client = notionrs::client::Client::new().secret(&self.secret);
+        let client = notionrs::client::Client::new().secret(secret);
 
         let sorts = vec![notionrs::database::Sort::asc("nextReviewAt")];
 
         let request = client
             .query_database()
-            .database_id(&self.database_id)
+            .database_id(database_id)
             .sorts(sorts)
             .page_size(50);
 
@@ -153,7 +115,7 @@ impl Anki {
                         .multi_select
                         .iter()
                         .map(|tag| {
-                            Ok(AnkiTag {
+                            Ok(super::AnkiTag {
                                 id: tag
                                     .clone()
                                     .id
@@ -165,7 +127,7 @@ impl Anki {
                                     .to_string(),
                             })
                         })
-                        .collect::<Result<Vec<AnkiTag>, async_graphql::Error>>(),
+                        .collect::<Result<Vec<super::AnkiTag>, async_graphql::Error>>(),
                     _ => return Err(async_graphql::Error::from("tags not found")),
                 }?;
                 // <<< tags
@@ -174,7 +136,7 @@ impl Anki {
                 let created_at = page.created_time.to_rfc3339();
                 let updated_at = page.last_edited_time.to_rfc3339();
 
-                Ok(AnkiMeta {
+                Ok(super::Anki {
                     id,
                     title,
                     description,
@@ -186,13 +148,19 @@ impl Anki {
                     tags,
                 })
             })
-            .collect::<Result<Vec<AnkiMeta>, async_graphql::Error>>()?;
+            .collect::<Result<Vec<super::Anki>, async_graphql::Error>>()?;
 
         Ok(anki_meta)
     }
 
-    pub async fn get_anki_block(&self, page_id: String) -> Result<AnkiBlock, async_graphql::Error> {
-        let mut client = elmethis_notion::client::Client::new(&self.secret);
+    pub async fn get_anki_block(
+        &self,
+        page_id: String,
+    ) -> Result<super::AnkiBlock, async_graphql::Error> {
+        let secret = std::env::var("NOTION_API_KEY")
+            .map_err(|_| async_graphql::Error::from("NOTION_API_KEY not found"))?;
+
+        let mut client = elmethis_notion::client::Client::new(secret);
 
         let blocks = client
             .convert_block(&page_id)
@@ -235,7 +203,7 @@ impl Anki {
             }
         }
 
-        Ok(AnkiBlock {
+        Ok(super::AnkiBlock {
             front: serde_json::to_value(front)?,
             back: serde_json::to_value(back)?,
             explanation: serde_json::to_value(explanation)?,

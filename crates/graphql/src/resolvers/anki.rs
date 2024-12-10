@@ -1,5 +1,6 @@
 pub struct Anki {
-    client: notionrs::client::Client,
+    secret: String,
+    database_id: String,
 }
 
 #[derive(async_graphql::SimpleObject)]
@@ -26,21 +27,26 @@ impl Anki {
         let secret = std::env::var("NOTION_API_KEY")
             .map_err(|_| async_graphql::Error::from("NOTION_API_KEY not found"))?;
 
-        let client = notionrs::client::Client::new().secret(secret);
+        let database_id = std::env::var("NOTION_ANKI_DATABASE_ID")
+            .map_err(|_| async_graphql::Error::from("NOTION_ANKI_DATABASE_ID not found"))?;
 
-        Ok(Anki { client })
+        Ok(Anki {
+            secret,
+            database_id,
+        })
     }
 }
 
 #[async_graphql::Object]
 impl Anki {
     pub async fn list_anki(&self) -> Result<Vec<AnkiMeta>, async_graphql::Error> {
+        let client = notionrs::client::Client::new().secret(&self.secret);
+
         let sorts = vec![notionrs::database::Sort::asc("nextReviewAt")];
 
-        let request = self
-            .client
+        let request = client
             .query_database()
-            .database_id("9d76029486c949fdb809c4aef6324645")
+            .database_id(&self.database_id)
             .sorts(sorts)
             .page_size(50);
 
@@ -152,10 +158,7 @@ impl Anki {
     }
 
     pub async fn get_anki_block(&self, page_id: String) -> Result<AnkiBlock, async_graphql::Error> {
-        let secret = std::env::var("NOTION_API_KEY")
-            .map_err(|_| async_graphql::Error::from("NOTION_API_KEY not found"))?;
-
-        let mut client = elmethis_notion::client::Client::new(secret);
+        let mut client = elmethis_notion::client::Client::new(&self.secret);
 
         let blocks = client
             .convert_block(&page_id)

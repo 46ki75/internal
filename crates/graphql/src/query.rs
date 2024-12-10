@@ -20,4 +20,11 @@ impl QueryRoot {
     ) -> Result<resolvers::anki::Anki, async_graphql::Error> {
         resolvers::anki::Anki::new(ctx)
     }
+
+    pub async fn bookmark(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> Result<resolvers::bookmark::Bookmark, async_graphql::Error> {
+        resolvers::bookmark::Bookmark::new(ctx)
+    }
 }

@@ -3,6 +3,14 @@ data "aws_ssm_parameter" "lambda_env_NOTION_API_KEY" {
   with_decryption = true
 }
 
+data "aws_ssm_parameter" "lambda_env_NOTION_ANKI_DATABASE_ID" {
+  name = "/shared/46ki75/internal/notion/anki/database/id"
+}
+
+data "aws_ssm_parameter" "lambda_env_NOTION_BOOKMARK_DATABASE_ID" {
+  name = "/shared/46ki75/internal/notion/bookmark/database/id"
+}
+
 resource "aws_iam_role" "lambda_role_graphql" {
   name = "${terraform.workspace}-46ki75-iam-role-lambda-graphql"
   assume_role_policy = jsonencode({
@@ -54,7 +62,9 @@ resource "aws_lambda_function" "graphql" {
 
   environment {
     variables = {
-      NOTION_API_KEY = data.aws_ssm_parameter.lambda_env_NOTION_API_KEY.value
+      NOTION_API_KEY              = data.aws_ssm_parameter.lambda_env_NOTION_API_KEY.value
+      NOTION_ANKI_DATABASE_ID     = data.aws_ssm_parameter.lambda_env_NOTION_ANKI_DATABASE_ID.value
+      NOTION_BOOKMARK_DATABASE_ID = data.aws_ssm_parameter.lambda_env_NOTION_BOOKMARK_DATABASE_ID.value
     }
   }
 }

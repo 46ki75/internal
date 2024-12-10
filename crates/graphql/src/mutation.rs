@@ -9,7 +9,7 @@ impl MutationRoot {
         ctx: &async_graphql::Context<'_>,
         name: String,
         url: String,
-    ) -> Result<crate::models::bookmark::BookmarkMeta, async_graphql::Error> {
-        crate::models::bookmark::BookmarkMeta::new(ctx, name, url).await
+    ) -> Result<crate::model::bookmark::BookmarkMeta, async_graphql::Error> {
+        crate::model::bookmark::BookmarkMeta::new(ctx, name, url).await
     }
 }

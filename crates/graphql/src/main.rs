@@ -2,7 +2,7 @@ use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use lambda_http::{http::Method, run, service_fn, tracing, Body, Error, Request, Response};
 use serde_json::json;
 
-mod models;
+mod model;
 mod mutation;
 mod query;
 mod resolvers;

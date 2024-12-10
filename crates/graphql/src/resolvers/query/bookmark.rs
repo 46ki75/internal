@@ -26,7 +26,7 @@ impl QueryBookmark {
 
     pub async fn list_bookmark(
         &self,
-    ) -> Result<Vec<crate::models::bookmark::BookmarkMeta>, async_graphql::Error> {
+    ) -> Result<Vec<crate::model::bookmark::BookmarkMeta>, async_graphql::Error> {
         let client = notionrs::client::Client::new().secret(&self.secret);
 
         let request = client
@@ -81,15 +81,14 @@ impl QueryBookmark {
                     notionrs::Icon::Emoji(_) => None,
                 });
 
-                Ok(crate::models::bookmark::BookmarkMeta {
+                Ok(crate::model::bookmark::BookmarkMeta {
                     id,
                     name,
                     url,
                     favicon,
                 })
             })
-            .collect::<Result<Vec<crate::models::bookmark::BookmarkMeta>, async_graphql::Error>>(
-            )?;
+            .collect::<Result<Vec<crate::model::bookmark::BookmarkMeta>, async_graphql::Error>>()?;
 
         Ok(bookmarks)
     }

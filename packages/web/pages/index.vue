@@ -1,9 +1,5 @@
 <template>
-  <nuxt-link to="/login">Login</nuxt-link>
-
   <div>
-    <button @click="handleSignOut">Sign Out</button>
-
     <ElmBulletedList>
       <ElmListItem>
         <ElmInlineText bold text="user id" />
@@ -44,13 +40,13 @@ import {
 
 const authStore = useAuthStore()
 const router = useRouter()
-const handleSignOut = async () => {
-  await authStore.signOut()
-  router.push('/login')
-}
 
 onMounted(async () => {
   await authStore.checkSession()
+
+  if (!authStore.session.inSession) {
+    router.push('/login')
+  }
 })
 </script>
 

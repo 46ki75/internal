@@ -85,10 +85,9 @@ impl Anki {
                     .ok_or(async_graphql::Error::from("easeFactor not found"))?;
 
                 let ease_factor = match ease_factor_property {
-                    notionrs::page::PageProperty::Number(ease_factor) => match ease_factor.number {
-                        Some(ease_factor) => ease_factor,
-                        None => return Err(async_graphql::Error::from("easeFactor not found")),
-                    },
+                    notionrs::page::PageProperty::Number(ease_factor) => ease_factor
+                        .number
+                        .ok_or(async_graphql::Error::from("easeFactor not found"))?,
                     _ => return Err(async_graphql::Error::from("easeFactor not found")),
                 };
                 // <<< ease_factor
@@ -99,35 +98,27 @@ impl Anki {
                     .ok_or(async_graphql::Error::from("repetitionCount not found"))?;
 
                 let repetition_count = match repetition_count_property {
-                    notionrs::page::PageProperty::Number(repetition_count) => {
-                        match repetition_count.number {
-                            Some(repetition_count) => repetition_count as u32,
-                            None => {
-                                return Err(async_graphql::Error::from("repetitionCount not found"))
-                            }
-                        }
-                    }
+                    notionrs::page::PageProperty::Number(repetition_count) => repetition_count
+                        .number
+                        .ok_or(async_graphql::Error::from("repetitionCount not found"))?
+                        as u32,
                     _ => return Err(async_graphql::Error::from("repetitionCount not found")),
                 };
                 // <<< repetition_count
 
                 // >>> next_review_at
-                let next_review_at_property = properties
+                let next_review_at_property = &properties
                     .get("nextReviewAt")
                     .ok_or(async_graphql::Error::from("nextReviewAt not found"))?;
 
                 let next_review_at = match next_review_at_property {
-                    notionrs::page::PageProperty::Date(next_review_at) => {
-                        match &next_review_at.date {
-                            Some(next_review_at) => next_review_at
-                                .start
-                                .ok_or(async_graphql::Error::from("nextReviewAt not found"))?
-                                .to_rfc3339(),
-                            None => {
-                                return Err(async_graphql::Error::from("nextReviewAt not found"))
-                            }
-                        }
-                    }
+                    notionrs::page::PageProperty::Date(next_review_at) => next_review_at
+                        .clone()
+                        .date
+                        .ok_or(async_graphql::Error::from("nextReviewAt not found"))?
+                        .start
+                        .ok_or(async_graphql::Error::from("nextReviewAt not found"))?
+                        .to_rfc3339(),
                     _ => return Err(async_graphql::Error::from("nextReviewAt not found")),
                 };
                 // <<< next_review_at

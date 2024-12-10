@@ -12,6 +12,14 @@ impl QueryRoot {
         Ok(String::from("Hello, GraphQL!"))
     }
 
+    pub async fn anki(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+        input: crate::model::anki::query::AnkiInput,
+    ) -> Result<crate::model::anki::Anki, async_graphql::Error> {
+        crate::model::anki::query::AnkiQuery.anki(ctx, input).await
+    }
+
     pub async fn anki_list(
         &self,
         ctx: &async_graphql::Context<'_>,

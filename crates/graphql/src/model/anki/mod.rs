@@ -1,5 +1,6 @@
 pub mod mutation;
 pub mod query;
+pub mod util;
 
 pub struct Anki {
     page_id: String,

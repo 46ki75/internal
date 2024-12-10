@@ -48,4 +48,14 @@ impl QueryRoot {
             .translate(ctx, input)
             .await
     }
+
+    pub async fn translate_usage(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> Result<crate::model::translation::query::TranslateUsageResponse, async_graphql::Error>
+    {
+        crate::model::translation::query::TranslationQuery
+            .translate_usage(ctx)
+            .await
+    }
 }

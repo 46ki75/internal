@@ -49,6 +49,12 @@ pub enum TargetLang {
     Japanese,
 }
 
+#[derive(async_graphql::SimpleObject, serde::Deserialize)]
+pub struct TranslateUsageResponse {
+    pub character_count: u64,
+    pub character_limit: u64,
+}
+
 #[async_graphql::Object]
 impl TranslationQuery {
     pub async fn translate(
@@ -89,5 +95,27 @@ impl TranslationQuery {
             .clone();
 
         Ok(result)
+    }
+
+    pub async fn translate_usage(
+        &self,
+        _ctx: &async_graphql::Context<'_>,
+    ) -> Result<TranslateUsageResponse, async_graphql::Error> {
+        let secret = std::env::var("DEEPL_API_KEY")?;
+
+        let client = reqwest::Client::new();
+
+        let request = client
+            .get("https://api-free.deepl.com/v2/usage")
+            .header("Authorization", format!("DeepL-Auth-Key {secret}"))
+            .header("Content-Type", "application/json");
+
+        let response = request.send().await?;
+
+        let response_body = response.text().await?;
+
+        let usage = serde_json::from_str::<TranslateUsageResponse>(&response_body)?;
+
+        Ok(usage)
     }
 }

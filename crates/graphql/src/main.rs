@@ -5,7 +5,6 @@ use serde_json::json;
 mod model;
 mod mutation;
 mod query;
-mod resolvers;
 
 async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     dotenvy::dotenv().ok();

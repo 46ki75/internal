@@ -2,16 +2,14 @@ use async_graphql::*;
 
 pub struct QueryRoot;
 
-use crate::resolvers;
-
 #[async_graphql::Object]
 impl QueryRoot {
     /// Returns a greeting message along with the programming language.
     pub async fn greet(
         &self,
-        ctx: &async_graphql::Context<'_>,
-    ) -> Result<resolvers::query::greet::Greet, async_graphql::Error> {
-        resolvers::query::greet::Greet::new(ctx)
+        _ctx: &async_graphql::Context<'_>,
+    ) -> Result<String, async_graphql::Error> {
+        Ok(String::from("Hello, GraphQL!"))
     }
 
     pub async fn anki_list(

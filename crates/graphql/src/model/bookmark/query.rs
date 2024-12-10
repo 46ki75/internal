@@ -1,37 +1,22 @@
-pub struct QueryBookmark {
-    secret: String,
-    database_id: String,
-}
+#[derive(Default)]
+pub struct QueryBookmark;
 
+#[async_graphql::Object]
 impl QueryBookmark {
-    pub fn new(_: &async_graphql::Context<'_>) -> Result<Self, async_graphql::Error> {
+    pub async fn list_bookmark(
+        &self,
+    ) -> Result<Vec<crate::model::bookmark::Bookmark>, async_graphql::Error> {
         let secret = std::env::var("NOTION_API_KEY")
             .map_err(|_| async_graphql::Error::from("NOTION_API_KEY not found"))?;
 
         let database_id = std::env::var("NOTION_BOOKMARK_DATABASE_ID")
             .map_err(|_| async_graphql::Error::from("NOTION_BOOKMARK_DATABASE_ID not found"))?;
 
-        Ok(QueryBookmark {
-            secret,
-            database_id,
-        })
-    }
-}
-
-#[async_graphql::Object]
-impl QueryBookmark {
-    pub async fn greeting(&self) -> String {
-        "Hello, bookmark!".to_string()
-    }
-
-    pub async fn list_bookmark(
-        &self,
-    ) -> Result<Vec<crate::model::bookmark::BookmarkMeta>, async_graphql::Error> {
-        let client = notionrs::client::Client::new().secret(&self.secret);
+        let client = notionrs::client::Client::new().secret(secret);
 
         let request = client
             .query_database()
-            .database_id(&self.database_id)
+            .database_id(database_id)
             .page_size(100);
 
         let response = request.send().await?;
@@ -81,14 +66,14 @@ impl QueryBookmark {
                     notionrs::Icon::Emoji(_) => None,
                 });
 
-                Ok(crate::model::bookmark::BookmarkMeta {
+                Ok(crate::model::bookmark::Bookmark {
                     id,
                     name,
                     url,
                     favicon,
                 })
             })
-            .collect::<Result<Vec<crate::model::bookmark::BookmarkMeta>, async_graphql::Error>>()?;
+            .collect::<Result<Vec<crate::model::bookmark::Bookmark>, async_graphql::Error>>()?;
 
         Ok(bookmarks)
     }

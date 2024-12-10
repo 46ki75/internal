@@ -21,10 +21,12 @@ impl QueryRoot {
         resolvers::query::anki::Anki::new(ctx)
     }
 
-    pub async fn bookmark(
+    pub async fn bookmarks(
         &self,
         ctx: &async_graphql::Context<'_>,
-    ) -> Result<crate::model::bookmark::query::QueryBookmark, async_graphql::Error> {
-        crate::model::bookmark::query::QueryBookmark::new(ctx)
+    ) -> Result<Vec<crate::model::bookmark::Bookmark>, async_graphql::Error> {
+        crate::model::bookmark::query::QueryBookmark
+            .list_bookmark(ctx)
+            .await
     }
 }

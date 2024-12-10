@@ -1,9 +1,9 @@
-impl super::BookmarkMeta {
+impl super::Bookmark {
     pub async fn new(
         _: &async_graphql::Context<'_>,
         name: String,
         url: String,
-    ) -> Result<crate::model::bookmark::BookmarkMeta, async_graphql::Error> {
+    ) -> Result<crate::model::bookmark::Bookmark, async_graphql::Error> {
         let secret = std::env::var("NOTION_API_KEY")?;
 
         let database_id = std::env::var("NOTION_BOOKMARK_DATABASE_ID")?;
@@ -48,7 +48,7 @@ impl super::BookmarkMeta {
 
         let id = response.id;
 
-        Ok(crate::model::bookmark::BookmarkMeta {
+        Ok(crate::model::bookmark::Bookmark {
             id,
             name: Some(name.to_string()),
             url: Some(url.to_string()),

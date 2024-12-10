@@ -13,6 +13,14 @@ pub struct AnkiMeta {
     next_review_at: String,
     created_at: String,
     updated_at: String,
+    tags: Vec<AnkiTag>,
+}
+
+#[derive(async_graphql::SimpleObject)]
+pub struct AnkiTag {
+    id: String,
+    name: String,
+    color: String,
 }
 
 #[derive(async_graphql::SimpleObject)]
@@ -137,6 +145,31 @@ impl Anki {
                 };
                 // <<< next_review_at
 
+                // >>> tags
+                let tags_property = &properties.get("tags").ok_or("tags not found")?;
+
+                let tags = match tags_property {
+                    notionrs::page::PageProperty::MultiSelect(tags) => tags
+                        .multi_select
+                        .iter()
+                        .map(|tag| {
+                            Ok(AnkiTag {
+                                id: tag
+                                    .clone()
+                                    .id
+                                    .ok_or(async_graphql::Error::from("tag id not found"))?,
+                                name: tag.name.to_string(),
+                                color: tag
+                                    .color
+                                    .ok_or(async_graphql::Error::from("tag color not found"))?
+                                    .to_string(),
+                            })
+                        })
+                        .collect::<Result<Vec<AnkiTag>, async_graphql::Error>>(),
+                    _ => return Err(async_graphql::Error::from("tags not found")),
+                }?;
+                // <<< tags
+
                 let id = page.id.to_string();
                 let created_at = page.created_time.to_rfc3339();
                 let updated_at = page.last_edited_time.to_rfc3339();
@@ -150,6 +183,7 @@ impl Anki {
                     next_review_at,
                     created_at,
                     updated_at,
+                    tags,
                 })
             })
             .collect::<Result<Vec<AnkiMeta>, async_graphql::Error>>()?;

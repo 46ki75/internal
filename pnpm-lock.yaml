@@ -11,6 +11,9 @@ importers:
       '@aws-sdk/client-ssm':
         specifier: ^3.699.0
         version: 3.699.0
+      '@elmethis/core':
+        specifier: 1.0.0-alpha.87
+        version: 1.0.0-alpha.87
       '@pinia/nuxt':
         specifier: 0.9.0
         version: 0.9.0(magicast@0.3.5)(pinia@2.3.0(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(rollup@4.28.1)
@@ -467,6 +470,9 @@ packages:
   '@cloudflare/kv-asset-handler@0.3.4':
     resolution: {integrity: sha512-YLPHc8yASwjNkmcDMQMY35yiWjoKAKnhUbPRszBRS0YgH+IXtsMp61j+yTcnCE3oO2DgP0U3iejLC8FTtKDC8Q==}
     engines: {node: '>=16.13'}
+
+  '@elmethis/core@1.0.0-alpha.87':
+    resolution: {integrity: sha512-SVe8GO9yIPmHB9wrgTuLuQk/eaJPEYeuwrQoaEwuKmzSRFkzzoPMj3A6N269PI002ykjtPreY0o9zVSmuE75cA==}
 
   '@esbuild/aix-ppc64@0.21.5':
     resolution: {integrity: sha512-1SDgH6ZSPTlggy1yI6+Dbkiz8xzpHJEVAlF/AM1tHPLsf5STom9rwtjE4hKAF20FfXXNTFqEYXyJNWh1GiZedQ==}
@@ -4811,6 +4817,10 @@ snapshots:
   '@cloudflare/kv-asset-handler@0.3.4':
     dependencies:
       mime: 3.0.0
+
+  '@elmethis/core@1.0.0-alpha.87':
+    dependencies:
+      nanoid: 5.0.9
 
   '@esbuild/aix-ppc64@0.21.5':
     optional: true

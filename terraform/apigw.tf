@@ -13,7 +13,7 @@ resource "aws_apigatewayv2_integration" "backend" {
 
 resource "aws_apigatewayv2_route" "backend" {
   api_id             = aws_apigatewayv2_api.backend.id
-  route_key          = "ANY /graphql"
+  route_key          = "ANY /api/graphql"
   target             = "integrations/${aws_apigatewayv2_integration.backend.id}"
   authorization_type = "JWT"
   authorizer_id      = aws_apigatewayv2_authorizer.backend.id
@@ -59,7 +59,7 @@ resource "aws_route53_record" "api_gateway" {
   }
 }
 
-# >>> Authorize
+# >>> Authorizer
 resource "aws_apigatewayv2_authorizer" "backend" {
   name             = "${terraform.workspace}-46ki75-apigwv2-http-backend-authorizer"
   authorizer_type  = "JWT"
@@ -71,7 +71,7 @@ resource "aws_apigatewayv2_authorizer" "backend" {
     issuer   = "https://${aws_cognito_user_pool.default.endpoint}"
   }
 }
-# <<< Authorize
+# <<< Authorizer
 
 resource "aws_lambda_permission" "apigwv2" {
   statement_id  = "AllowExecutionFromAPIGateway"

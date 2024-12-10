@@ -15,6 +15,8 @@ resource "aws_cloudfront_distribution" "default" {
     }
   }
 
+  default_root_object = "index.html"
+
   # >>> custom domain
   viewer_certificate {
     acm_certificate_arn      = aws_acm_certificate.cloudfront_cert.arn
@@ -25,6 +27,7 @@ resource "aws_cloudfront_distribution" "default" {
   aliases = [aws_acm_certificate.cloudfront_cert.domain_name]
   # <<< custom domain
 
+  # >>> [S3 web] origin
   default_cache_behavior {
     allowed_methods = [
       "DELETE",
@@ -52,8 +55,16 @@ resource "aws_cloudfront_distribution" "default" {
     }
   }
 
+  origin {
+    domain_name              = aws_s3_bucket.web.bucket_regional_domain_name
+    origin_id                = "s3-web"
+    origin_access_control_id = aws_cloudfront_origin_access_control.web.id
+  }
+  # <<< [S3 web] origin
+
+  # >>> [API GW] origin
   ordered_cache_behavior {
-    path_pattern = "/graphql"
+    path_pattern = "/api/graphql"
     allowed_methods = [
       "DELETE",
       "GET",
@@ -80,13 +91,6 @@ resource "aws_cloudfront_distribution" "default" {
     }
   }
 
-
-  origin {
-    domain_name              = aws_s3_bucket.web.bucket_regional_domain_name
-    origin_id                = "s3-web"
-    origin_access_control_id = aws_cloudfront_origin_access_control.web.id
-  }
-
   origin {
     domain_name = aws_apigatewayv2_domain_name.backend.domain_name
     origin_id   = "api-backend"
@@ -98,8 +102,7 @@ resource "aws_cloudfront_distribution" "default" {
       origin_ssl_protocols   = ["TLSv1.2"]
     }
   }
-
-  default_root_object = "index.html"
+  # <<< [API GW] origin
 }
 
 resource "aws_route53_record" "cloudfront" {

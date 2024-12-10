@@ -11,7 +11,7 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
         .finish();
 
     if event.method() == Method::GET {
-        let playground_html = GraphiQLSource::build().endpoint("/graphql").finish();
+        let playground_html = GraphiQLSource::build().endpoint("/api/graphql").finish();
         let response = Response::builder()
             .status(200)
             .header("content-type", "text/html")

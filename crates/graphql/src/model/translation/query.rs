@@ -4,15 +4,15 @@ pub struct TranslationQuery;
 #[derive(async_graphql::InputObject, serde::Serialize)]
 pub struct TranslateInput {
     pub text: String,
-    pub source_lang: Language,
-    pub target_lang: Language,
+    pub source_lang: SourceLang,
+    pub target_lang: TargetLang,
 }
 
 #[derive(serde::Serialize)]
 pub struct TranslateRequest {
     pub text: Vec<String>,
-    pub source_lang: Language,
-    pub target_lang: Language,
+    pub source_lang: SourceLang,
+    pub target_lang: TargetLang,
 }
 
 #[derive(serde::Deserialize)]
@@ -25,9 +25,22 @@ pub struct TranslateResponseParams {
     pub text: String,
 }
 
+/// [DeepL Docs](https://developers.deepl.com/docs/resources/supported-languages#source-languages)
 #[derive(async_graphql::Enum, Copy, Clone, Eq, PartialEq, serde::Serialize)]
-pub enum Language {
-    #[graphql(name = "EN-US")]
+pub enum SourceLang {
+    #[graphql(name = "EN")]
+    #[serde(rename = "EN")]
+    English,
+
+    #[graphql(name = "JA")]
+    #[serde(rename = "JA")]
+    Japanese,
+}
+
+/// [DeepL Docs](https://developers.deepl.com/docs/resources/supported-languages#target-languages)
+#[derive(async_graphql::Enum, Copy, Clone, Eq, PartialEq, serde::Serialize)]
+pub enum TargetLang {
+    #[graphql(name = "EN")]
     #[serde(rename = "EN-US")]
     EnglishUnitedStates,
 

@@ -1,12 +1,17 @@
-use async_graphql::{http::GraphiQLSource, EmptyMutation, EmptySubscription, Schema};
+use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use lambda_http::{http::Method, run, service_fn, tracing, Body, Error, Request, Response};
 use serde_json::json;
 
+mod model;
+mod mutation;
 mod query;
-mod resolvers;
 
 async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
-    let schema = Schema::build(query::QueryRoot, EmptyMutation, EmptySubscription)
+    dotenvy::dotenv().ok();
+
+    std::env::var("NOTION_API_KEY").map_err(|_| Error::from("NOTION_API_KEY not found"))?;
+
+    let schema = Schema::build(query::QueryRoot, mutation::MutationRoot, EmptySubscription)
         .data(event.headers().clone())
         .finish();
 

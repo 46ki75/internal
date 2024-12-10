@@ -1,6 +1,8 @@
 <template>
   <header class="header">
-    <div></div>
+    <div>
+      <NuxtLink to="/"><HomeIcon class="icon" /></NuxtLink>
+    </div>
 
     <div>
       <ArrowLeftStartOnRectangleIcon
@@ -18,7 +20,8 @@
 <script setup lang="ts">
 import {
   ArrowLeftEndOnRectangleIcon,
-  ArrowLeftStartOnRectangleIcon
+  ArrowLeftStartOnRectangleIcon,
+  HomeIcon
 } from '@heroicons/vue/24/solid'
 
 const router = useRouter()
@@ -64,6 +67,22 @@ const handleSignout = async () => {
   cursor: pointer;
   color: #c56565;
   transition: background-color 100ms;
+
+  &:hover {
+    background-color: rgba(gray, 0.25);
+  }
+}
+
+.icon {
+  width: 24px;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 100ms;
+  color: rgba(black, 0.7);
+  [data-theme='dark'] & {
+    color: rgba(white, 0.7);
+  }
 
   &:hover {
     background-color: rgba(gray, 0.25);

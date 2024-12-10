@@ -121,10 +121,21 @@ impl AnkiQuery {
                                     .id
                                     .ok_or(async_graphql::Error::from("tag id not found"))?,
                                 name: tag.name.to_string(),
-                                color: tag
+                                color: match tag
                                     .color
                                     .ok_or(async_graphql::Error::from("tag color not found"))?
-                                    .to_string(),
+                                {
+                                    notionrs::SelectColor::Default => super::AnkiTagColor::Default,
+                                    notionrs::SelectColor::Blue => super::AnkiTagColor::Blue,
+                                    notionrs::SelectColor::Brown => super::AnkiTagColor::Brown,
+                                    notionrs::SelectColor::Gray => super::AnkiTagColor::Gray,
+                                    notionrs::SelectColor::Green => super::AnkiTagColor::Green,
+                                    notionrs::SelectColor::Orange => super::AnkiTagColor::Orange,
+                                    notionrs::SelectColor::Pink => super::AnkiTagColor::Pink,
+                                    notionrs::SelectColor::Purple => super::AnkiTagColor::Purple,
+                                    notionrs::SelectColor::Red => super::AnkiTagColor::Red,
+                                    notionrs::SelectColor::Yellow => super::AnkiTagColor::Yellow,
+                                },
                             })
                         })
                         .collect::<Result<Vec<super::AnkiTag>, async_graphql::Error>>(),

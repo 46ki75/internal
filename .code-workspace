@@ -16,5 +16,11 @@
       "path": "./crates/graphql",
       "name": "GraphQL API (Lambda)"
     }
-  ]
+  ],
+  "settings": {
+    "terminal.integrated.env.linux": {
+      "ENVIRONMENT": "dev",
+      "AWS_PROFILE": "internal"
+    }
+  }
 }

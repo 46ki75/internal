@@ -1,25 +1,25 @@
-pub struct Bookmark {
+pub struct QueryBookmark {
     secret: String,
     database_id: String,
 }
 
 #[derive(async_graphql::SimpleObject)]
-pub struct BookmarkMeta {
+pub struct QueryBookmarkMeta {
     id: String,
     name: Option<String>,
     url: Option<String>,
     favicon: Option<String>,
 }
 
-impl Bookmark {
+impl QueryBookmark {
     pub fn new(_: &async_graphql::Context<'_>) -> Result<Self, async_graphql::Error> {
         let secret = std::env::var("NOTION_API_KEY")
             .map_err(|_| async_graphql::Error::from("NOTION_API_KEY not found"))?;
 
-        let database_id = std::env::var("NOTION_BOOKMARKS_DATABASE_ID")
-            .map_err(|_| async_graphql::Error::from("NOTION_BOOKMARKS_DATABASE_ID not found"))?;
+        let database_id = std::env::var("NOTION_BOOKMARK_DATABASE_ID")
+            .map_err(|_| async_graphql::Error::from("NOTION_BOOKMARK_DATABASE_ID not found"))?;
 
-        Ok(Bookmark {
+        Ok(QueryBookmark {
             secret,
             database_id,
         })
@@ -27,12 +27,12 @@ impl Bookmark {
 }
 
 #[async_graphql::Object]
-impl Bookmark {
+impl QueryBookmark {
     pub async fn greeting(&self) -> String {
         "Hello, bookmark!".to_string()
     }
 
-    pub async fn list_bookmark(&self) -> Result<Vec<BookmarkMeta>, async_graphql::Error> {
+    pub async fn list_bookmark(&self) -> Result<Vec<QueryBookmarkMeta>, async_graphql::Error> {
         let client = notionrs::client::Client::new().secret(&self.secret);
 
         let request = client
@@ -87,14 +87,14 @@ impl Bookmark {
                     notionrs::Icon::Emoji(_) => None,
                 });
 
-                Ok(BookmarkMeta {
+                Ok(QueryBookmarkMeta {
                     id,
                     name,
                     url,
                     favicon,
                 })
             })
-            .collect::<Result<Vec<BookmarkMeta>, async_graphql::Error>>()?;
+            .collect::<Result<Vec<QueryBookmarkMeta>, async_graphql::Error>>()?;
 
         Ok(bookmarks)
     }

@@ -1,0 +1,66 @@
+#[derive(async_graphql::SimpleObject)]
+pub struct MutationBookmark {
+    id: String,
+    name: String,
+    url: String,
+    favicon: String,
+}
+
+impl MutationBookmark {
+    pub async fn new(
+        _: &async_graphql::Context<'_>,
+        name: String,
+        url: String,
+    ) -> Result<MutationBookmark, async_graphql::Error> {
+        let secret = std::env::var("NOTION_API_KEY")?;
+
+        let database_id = std::env::var("NOTION_BOOKMARK_DATABASE_ID")?;
+
+        let client = notionrs::client::Client::new().secret(&secret);
+
+        let parsed_url = url::Url::parse(&url)?;
+        let fqdn = parsed_url.host_str().ok_or(async_graphql::Error::from(
+            "URL does not contain a valid host.",
+        ))?;
+
+        let favicon = format!("https://logo.clearbit.com/{}", fqdn);
+
+        let mut properties: std::collections::HashMap<
+            String,
+            notionrs::page::properties::PageProperty,
+        > = std::collections::HashMap::new();
+
+        properties.insert(
+            "name".to_string(),
+            notionrs::page::properties::PageProperty::Title(
+                notionrs::page::PageTitleProperty::from(&name),
+            ),
+        );
+
+        properties.insert(
+            "url".to_string(),
+            notionrs::page::properties::PageProperty::Url(notionrs::page::PageUrlProperty::from(
+                &url,
+            )),
+        );
+
+        let request = client
+            .create_page()
+            .database_id(database_id)
+            .properties(properties)
+            .icon(notionrs::others::icon::Icon::File(
+                notionrs::File::External(notionrs::others::file::ExternalFile::from(&favicon)),
+            ));
+
+        let response = request.send().await?;
+
+        let id = response.id;
+
+        Ok(MutationBookmark {
+            id,
+            name,
+            url,
+            favicon,
+        })
+    }
+}

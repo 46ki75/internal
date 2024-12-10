@@ -706,6 +706,7 @@ name = "graphql"
 version = "0.1.0"
 dependencies = [
  "async-graphql",
+ "chrono",
  "dotenvy",
  "elmethis-notion",
  "lambda_http",

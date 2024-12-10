@@ -14,4 +14,14 @@ impl MutationRoot {
             .create_bookmark(ctx, name, url)
             .await
     }
+
+    pub async fn create_anki(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+        input: crate::model::anki::mutation::CreateAnkiInput,
+    ) -> Result<crate::model::anki::Anki, async_graphql::Error> {
+        crate::model::anki::mutation::AnkiMutation
+            .create_anki(ctx, input)
+            .await
+    }
 }

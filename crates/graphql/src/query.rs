@@ -13,4 +13,11 @@ impl QueryRoot {
     ) -> Result<resolvers::greet::Greet, async_graphql::Error> {
         resolvers::greet::Greet::new(ctx)
     }
+
+    pub async fn anki(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> Result<resolvers::anki::Anki, async_graphql::Error> {
+        resolvers::anki::Anki::new(ctx)
+    }
 }

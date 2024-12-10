@@ -10,21 +10,21 @@ impl QueryRoot {
     pub async fn greet(
         &self,
         ctx: &async_graphql::Context<'_>,
-    ) -> Result<resolvers::greet::Greet, async_graphql::Error> {
-        resolvers::greet::Greet::new(ctx)
+    ) -> Result<resolvers::query::greet::Greet, async_graphql::Error> {
+        resolvers::query::greet::Greet::new(ctx)
     }
 
     pub async fn anki(
         &self,
         ctx: &async_graphql::Context<'_>,
-    ) -> Result<resolvers::anki::Anki, async_graphql::Error> {
-        resolvers::anki::Anki::new(ctx)
+    ) -> Result<resolvers::query::anki::Anki, async_graphql::Error> {
+        resolvers::query::anki::Anki::new(ctx)
     }
 
     pub async fn bookmark(
         &self,
         ctx: &async_graphql::Context<'_>,
-    ) -> Result<resolvers::bookmark::Bookmark, async_graphql::Error> {
-        resolvers::bookmark::Bookmark::new(ctx)
+    ) -> Result<resolvers::query::bookmark::Bookmark, async_graphql::Error> {
+        resolvers::query::bookmark::Bookmark::new(ctx)
     }
 }

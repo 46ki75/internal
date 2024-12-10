@@ -64,7 +64,7 @@ impl AnkiMutation {
         let response = request.send().await?;
 
         let anki = super::Anki {
-            id: response.id,
+            page_id: response.id,
             title: input.title,
             description: None,
             ease_factor,

@@ -139,13 +139,13 @@ impl AnkiQuery {
         }?;
         // <<< tags
 
-        let id = response.id.to_string();
+        let page_id = response.id.to_string();
         let created_at = response.created_time.to_rfc3339();
         let updated_at = response.last_edited_time.to_rfc3339();
         let url = response.url.to_string();
 
         Ok(super::Anki {
-            id,
+            page_id,
             title,
             description,
             ease_factor,
@@ -304,13 +304,13 @@ impl AnkiQuery {
                 }?;
                 // <<< tags
 
-                let id = page.id.to_string();
+                let page_id = page.id.to_string();
                 let created_at = page.created_time.to_rfc3339();
                 let updated_at = page.last_edited_time.to_rfc3339();
                 let url = page.url.to_string();
 
                 Ok(super::Anki {
-                    id,
+                    page_id,
                     title,
                     description,
                     ease_factor,
@@ -326,61 +326,4 @@ impl AnkiQuery {
 
         Ok(anki_meta)
     }
-
-    // pub async fn block_list(
-    //     &self,
-    //     page_id: String,
-    // ) -> Result<super::AnkiBlock, async_graphql::Error> {
-    //     let secret = std::env::var("NOTION_API_KEY")
-    //         .map_err(|_| async_graphql::Error::from("NOTION_API_KEY not found"))?;
-
-    //     let mut client = elmethis_notion::client::Client::new(secret);
-
-    //     let blocks = client
-    //         .convert_block(&page_id)
-    //         .await
-    //         .map_err(|e| async_graphql::Error::from(format!("Failed to get block: {}", e)))?;
-
-    //     let mut front: Vec<elmethis_notion::block::Block> = Vec::new();
-    //     let mut back: Vec<elmethis_notion::block::Block> = Vec::new();
-    //     let mut explanation: Vec<elmethis_notion::block::Block> = Vec::new();
-
-    //     enum Marker {
-    //         Front,
-    //         Back,
-    //         Explanation,
-    //     }
-
-    //     let mut marker = Marker::Front;
-
-    //     for block in blocks {
-    //         if let elmethis_notion::block::Block::ElmHeading1(
-    //             elmethis_notion::block::ElmHeading1 { props },
-    //         ) = &block
-    //         {
-    //             if props.text == "front" {
-    //                 marker = Marker::Front;
-    //                 continue;
-    //             } else if props.text == "back" {
-    //                 marker = Marker::Back;
-    //                 continue;
-    //             } else if props.text == "explanation" {
-    //                 marker = Marker::Explanation;
-    //                 continue;
-    //             }
-    //         }
-
-    //         match marker {
-    //             Marker::Front => front.push(block),
-    //             Marker::Back => back.push(block),
-    //             Marker::Explanation => explanation.push(block),
-    //         }
-    //     }
-
-    //     Ok(super::AnkiBlock {
-    //         front: serde_json::to_value(front)?,
-    //         back: serde_json::to_value(back)?,
-    //         explanation: serde_json::to_value(explanation)?,
-    //     })
-    // }
 }

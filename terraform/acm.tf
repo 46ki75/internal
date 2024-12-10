@@ -3,10 +3,6 @@ resource "aws_acm_certificate" "api_cert" {
   validation_method = "DNS"
 }
 
-data "aws_route53_zone" "internal" {
-  name = "internal.46ki75.com"
-}
-
 resource "aws_route53_record" "api_cert_validation" {
   for_each = {
     for dvo in aws_acm_certificate.api_cert.domain_validation_options :

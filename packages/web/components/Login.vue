@@ -1,11 +1,13 @@
 <template>
   <div class="wrapper">
     <div>
-      <p>username</p>
-      <input class="input" type="text" ref="username" />
+      <label for="username" class="label">username</label>
+      <input id="username" class="input" type="text" ref="username" />
+    </div>
 
-      <p>password</p>
-      <input class="input" type="password" ref="password" />
+    <div>
+      <label for="password" class="label">password</label>
+      <input id="password" class="input" type="password" ref="password" />
     </div>
 
     <ElmButton block :loading="authStore.signIn.loading" @click="handleSignIn">
@@ -13,10 +15,6 @@
     </ElmButton>
 
     <p v-if="error" :style="{ color: 'red' }">{{ error }}</p>
-
-    <hr />
-
-    <p><button @click="authStore.signOut">Sign Out</button></p>
   </div>
 </template>
 
@@ -66,11 +64,17 @@ onMounted(async () => {
 
   max-width: 400px;
   width: 100%;
+
+  div {
+    width: 100%;
+  }
 }
 
 .input {
   all: unset;
+  box-sizing: border-box;
   width: 100%;
+  padding: 0.5rem;
   border-bottom: solid 1px rgba(gray, 0.5);
 }
 </style>

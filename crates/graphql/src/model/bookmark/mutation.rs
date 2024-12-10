@@ -1,13 +1,18 @@
 #[derive(Default)]
 pub struct BookmarkMutation;
 
+#[derive(async_graphql::InputObject)]
+pub struct CreateBookmarkInput {
+    pub name: String,
+    pub url: String,
+}
+
 #[async_graphql::Object]
 impl BookmarkMutation {
     pub async fn create_bookmark(
         &self,
         _ctx: &async_graphql::Context<'_>,
-        name: String,
-        url: String,
+        input: CreateBookmarkInput,
     ) -> Result<crate::model::bookmark::Bookmark, async_graphql::Error> {
         let secret = std::env::var("NOTION_API_KEY")?;
 
@@ -15,7 +20,7 @@ impl BookmarkMutation {
 
         let client = notionrs::client::Client::new().secret(&secret);
 
-        let parsed_url = url::Url::parse(&url)?;
+        let parsed_url = url::Url::parse(&input.url)?;
         let fqdn = parsed_url.host_str().ok_or(async_graphql::Error::from(
             "URL does not contain a valid host.",
         ))?;
@@ -30,14 +35,14 @@ impl BookmarkMutation {
         properties.insert(
             "name".to_string(),
             notionrs::page::properties::PageProperty::Title(
-                notionrs::page::PageTitleProperty::from(&name),
+                notionrs::page::PageTitleProperty::from(&input.name),
             ),
         );
 
         properties.insert(
             "url".to_string(),
             notionrs::page::properties::PageProperty::Url(notionrs::page::PageUrlProperty::from(
-                &url,
+                &input.url,
             )),
         );
 
@@ -55,8 +60,8 @@ impl BookmarkMutation {
 
         Ok(crate::model::bookmark::Bookmark {
             id,
-            name: Some(name.to_string()),
-            url: Some(url.to_string()),
+            name: Some(input.name),
+            url: Some(input.url),
             favicon: Some(favicon),
         })
     }

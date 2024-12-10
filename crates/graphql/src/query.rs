@@ -24,7 +24,7 @@ impl QueryRoot {
     pub async fn bookmark(
         &self,
         ctx: &async_graphql::Context<'_>,
-    ) -> Result<resolvers::query::bookmark::QueryBookmark, async_graphql::Error> {
-        resolvers::query::bookmark::QueryBookmark::new(ctx)
+    ) -> Result<crate::model::bookmark::query::QueryBookmark, async_graphql::Error> {
+        crate::model::bookmark::query::QueryBookmark::new(ctx)
     }
 }

@@ -1,4 +1,4 @@
-impl crate::model::bookmark::BookmarkMeta {
+impl super::BookmarkMeta {
     pub async fn new(
         _: &async_graphql::Context<'_>,
         name: String,

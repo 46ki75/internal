@@ -18,19 +18,14 @@
       >
         <ElmHeading1 text="front" />
         <ElmJsonRendererAsync
-          :key="ankiStore.getCurrentAnki.pageId"
           :json="ankiStore.getCurrentAnki.blockList.front"
         />
 
         <ElmHeading1 text="back" />
-        <ElmJsonRendererAsync
-          :key="ankiStore.getCurrentAnki.pageId"
-          :json="ankiStore.getCurrentAnki.blockList.back"
-        />
+        <ElmJsonRendererAsync :json="ankiStore.getCurrentAnki.blockList.back" />
 
         <ElmHeading1 text="explanation" />
         <ElmJsonRendererAsync
-          :key="ankiStore.getCurrentAnki.pageId"
           :json="ankiStore.getCurrentAnki.blockList.explanation"
         />
 

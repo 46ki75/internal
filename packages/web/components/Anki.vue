@@ -135,6 +135,13 @@ onMounted(async () => {
     await ankiStore.init()
   }
 })
+
+watch(
+  () => ankiStore.getCurrentAnki?.pageId,
+  () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+)
 </script>
 
 <style scoped lang="scss">

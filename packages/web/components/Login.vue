@@ -50,7 +50,7 @@ const handleSignIn = async () => {
 }
 
 onMounted(async () => {
-  await authStore.checkSession()
+  await authStore.refreshAccessToken()
 })
 </script>
 

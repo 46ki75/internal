@@ -88,7 +88,7 @@ export const useAuthStore = defineStore('auth', {
       } finally {
         this.signIn.loading = false
       }
-      await this.checkSession()
+      await this.refreshAccessToken()
     },
     async signOut() {
       this.signOut.loading = true
@@ -101,9 +101,9 @@ export const useAuthStore = defineStore('auth', {
       } finally {
         this.signOut.loading = false
       }
-      await this.checkSession()
+      await this.refreshAccessToken()
     },
-    async checkSession() {
+    async refreshAccessToken() {
       this.session.loading = true
       this.session.error = false
       configure()

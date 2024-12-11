@@ -11,7 +11,7 @@ const authStore = useAuthStore()
 const router = useRouter()
 
 onMounted(async () => {
-  await authStore.checkSession()
+  await authStore.refreshAccessToken()
 
   if (!authStore.session.inSession) {
     router.push('/login')

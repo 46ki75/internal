@@ -34,7 +34,7 @@ export const useAnkiStore = defineStore('anki', {
     async init() {
       const authStore = useAuthStore()
       if (authStore.session.idToken == null) {
-        await authStore.checkSession()
+        await authStore.refreshAccessToken()
       }
 
       const response = await $fetch<{ data: { ankiList: Anki[] } }>(

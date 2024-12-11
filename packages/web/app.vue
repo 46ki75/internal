@@ -1,5 +1,6 @@
 <template>
   <NuxtLayout><NuxtPage /></NuxtLayout>
+  <StateManager />
 </template>
 
 <style lang="scss">

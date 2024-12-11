@@ -1,6 +1,20 @@
 <template>
   <div class="wrapper">
-    <ElmButton @click="ankiStore.create()" block>CREATE</ElmButton>
+    <div class="button-container">
+      <ElmButton
+        @click="ankiStore.editCurrentAnki()"
+        block
+        :loading="ankiStore.ankiList.length === 0"
+      >
+        <PencilSquareIcon class="icon" />
+        <ElmInlineText text="Edit" />
+      </ElmButton>
+
+      <ElmButton @click="ankiStore.create()" block>
+        <SparklesIcon class="icon" />
+        <ElmInlineText text="NEW" />
+      </ElmButton>
+    </div>
     <div v-if="ankiStore.ankiList.length === 0">LOADING</div>
 
     <template v-else>
@@ -90,7 +104,8 @@
           </template>
 
           <ElmButton v-else @click="ankiStore.setIsShowAnswer(true)" block>
-            SHOW ANSWER
+            <ElmInlineText text="SHOW ANSWER" />
+            <ArrowTurnDownLeftIcon class="icon" />
           </ElmButton>
         </div>
       </template>
@@ -105,7 +120,13 @@ import {
   ElmInlineText,
   ElmJsonRendererAsync
 } from '@elmethis/core'
-import { AcademicCapIcon, QueueListIcon } from '@heroicons/vue/24/solid'
+import {
+  AcademicCapIcon,
+  ArrowTurnDownLeftIcon,
+  PencilSquareIcon,
+  QueueListIcon,
+  SparklesIcon
+} from '@heroicons/vue/24/solid'
 
 const ankiStore = useAnkiStore()
 
@@ -121,6 +142,13 @@ onMounted(async () => {
   width: 100%;
   max-width: 800px;
   margin-bottom: 100vh;
+}
+
+.button-container {
+  box-sizing: border-box;
+  display: flex;
+  gap: 0.5rem;
+  margin-block: 1.5rem;
 }
 
 .queue {

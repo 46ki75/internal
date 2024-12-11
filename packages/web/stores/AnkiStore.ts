@@ -299,6 +299,15 @@ export const useAnkiStore = defineStore('anki', {
           nextReviewAt: this.getCurrentAnki.nextReviewAt
         })
       }
+    },
+    editCurrentAnki() {
+      const currentAnki = this.getCurrentAnki
+      if (currentAnki == null) {
+        throw new Error('No current learn')
+      } else {
+        const url = currentAnki.url.replace('https://', 'notion://')
+        window.open(url, '_blank')
+      }
     }
   },
   getters: {

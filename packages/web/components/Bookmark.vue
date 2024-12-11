@@ -2,7 +2,10 @@
   <ElmHeading1 text="Bookmarks" />
   <ElmInlineText v-if="bookmarkStore.loading" text="LOADING..." />
   <div v-else>
-    <div v-for="b in bookmarkStore.classifiedBookmarkList">
+    <div
+      v-for="b in bookmarkStore.classifiedBookmarkList"
+      :style="{ marginBlock: '1rem' }"
+    >
       <ElmTag :text="b.tag.name" color="gray" />
       <div class="bookmark-container">
         <template v-for="bookmark in b.bookmark">

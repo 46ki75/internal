@@ -45,9 +45,20 @@ export const useBookmarkStore = defineStore('bookmark', {
       this.loading = true
       this.error = false
 
+      const cache = window.localStorage.getItem('bookmarkList')
+
+      if (cache) {
+        this.bookmarkList = JSON.parse(cache)
+        this.loading = false
+      }
+
       const authStore = useAuthStore()
       if (authStore.session.idToken == null) {
         await authStore.checkSession()
+        if (authStore.session.idToken == null) {
+          this.loading = false
+          return
+        }
       }
 
       const response = await $fetch<Response>('/api/graphql', {
@@ -75,8 +86,10 @@ export const useBookmarkStore = defineStore('bookmark', {
       })
 
       this.bookmarkList = response.data.bookmarkList
-      console.log(response.data)
-      console.log(this.bookmarkList)
+      window.localStorage.setItem(
+        'bookmarkList',
+        JSON.stringify(this.bookmarkList)
+      )
 
       this.loading = false
     }

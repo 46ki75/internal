@@ -19,6 +19,15 @@ interface Response {
   }
 }
 
+type ClassifiedBookmarkList = Array<{
+  tag: {
+    id: string
+    name: string
+    color: string
+  }
+  bookmark: Array<Bookmark>
+}>
+
 interface BookmarkState {
   loading: boolean
   error: boolean
@@ -75,6 +84,24 @@ export const useBookmarkStore = defineStore('bookmark', {
       const tags = this.bookmarkList.flatMap((bookmark) => bookmark.tags)
       const uniqueTags = uniqBy(tags, (tag) => tag.id)
       return uniqueTags
+    },
+    classifiedBookmarkList(): ClassifiedBookmarkList {
+      const results: ClassifiedBookmarkList = []
+      const uniqueTags = this.tags
+
+      for (const tag of uniqueTags) {
+        results.push({ tag, bookmark: [] })
+      }
+
+      const bookmarkList = this.bookmarkList
+      for (const bookmark of bookmarkList) {
+        for (const tag of bookmark.tags) {
+          const index = results.findIndex((result) => result.tag.id === tag.id)
+          results[index].bookmark.push(bookmark)
+        }
+      }
+
+      return results
     }
   }
 })

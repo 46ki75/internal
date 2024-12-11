@@ -10,6 +10,8 @@ export const RelayConnection = <T>(schema: z.ZodType<T>) =>
     ),
     pageInfo: z.object({
       hasNextPage: z.boolean(),
+      hasPreviousPage: z.boolean(),
+      startCursor: z.string(),
       endCursor: z.string()
     })
   })

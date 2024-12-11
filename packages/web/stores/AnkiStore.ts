@@ -1,30 +1,9 @@
-import type { ElmJsonRendererProps } from '@elmethis/core'
+import { cloneDeep } from 'lodash-es'
 import { z } from 'zod'
-
-// interface Anki {
-//   pageId: string
-//   title: string | null
-//   description: string | null
-//   easeFactor: number
-//   repetitionCount: number
-//   nextReviewAt: string
-//   createdAt: string
-//   updatedAt: string
-//   tags: Array<{
-//     id: string
-//     name: string
-//     color: string
-//   }>
-//   url: string
-//   blockList?: {
-//     front: ElmJsonRendererProps['json']
-//     back: ElmJsonRendererProps['json']
-//     explanation: ElmJsonRendererProps['json']
-//   }
-// }
 
 interface AnkiStoreState {
   ankiList: AnkiResponse['edges'][number]['node'][]
+  nextCursor?: string
 }
 
 export const ankiResponseSchema = z.object({
@@ -127,9 +106,11 @@ export const useAnkiStore = defineStore('anki', {
       })
 
       this.ankiList = response.data.ankiList.edges.map((edge) => edge.node)
-      await this.fetchAnkiList()
+      this.nextCursor = response.data.ankiList.pageInfo.nextCursor ?? undefined
+      await this.fetchAnkiList({ pageSize: 2 })
+      await this.fetchAnkiList({ pageSize: 50 })
     },
-    async fetchAnkiList() {
+    async fetchAnkiList({ pageSize }: { pageSize: number }) {
       const authStore = useAuthStore()
       const response = await $fetch<{
         data: { ankiList: AnkiResponse }
@@ -172,20 +153,21 @@ export const useAnkiStore = defineStore('anki', {
               }
             }
             `,
-          variables: { pageSize: 30 }
+          variables: { pageSize, nextCursor: this.nextCursor }
         }
       })
 
       this.ankiList = [
         ...this.ankiList,
-        ...response.data.ankiList.edges.map((edge) => edge.node).slice(1)
+        ...response.data.ankiList.edges.map((edge) => edge.node)
       ]
+      this.nextCursor = response.data.ankiList.pageInfo.nextCursor ?? undefined
     },
     async next() {
       this.ankiList = this.ankiList.slice(1)
 
-      if (this.ankiList.length < 3) {
-        await this.fetchAnkiList()
+      if (this.ankiList.length < 5) {
+        await this.fetchAnkiList({ pageSize: 30 })
       }
     }
   },
@@ -200,7 +182,8 @@ export const useAnkiStore = defineStore('anki', {
         .length
     },
     getCurrentAnki(): AnkiResponse['edges'][number]['node'] {
-      return this.ankiList[0]
+      const [next] = this.ankiList
+      return next
     }
   }
 })

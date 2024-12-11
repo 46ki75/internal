@@ -12,22 +12,26 @@
         <ElmInlineText :text="`Queue: ${ankiStore.ankiList.length}`" />
       </div>
 
-      <template
-        v-if="ankiStore.getCurrentAnki?.blockList != null"
-        :key="ankiStore.getCurrentAnki.pageId"
-      >
-        <ElmHeading1 text="front" />
-        <ElmJsonRendererAsync
-          :json="ankiStore.getCurrentAnki.blockList.front"
-        />
+      <template v-if="ankiStore.getCurrentAnki?.blockList != null">
+        <div>
+          <ElmHeading1 text="front" />
+          <ElmJsonRendererAsync
+            :key="`${ankiStore.getCurrentAnki.pageId}:front`"
+            :json="ankiStore.getCurrentAnki.blockList.front"
+          />
 
-        <ElmHeading1 text="back" />
-        <ElmJsonRendererAsync :json="ankiStore.getCurrentAnki.blockList.back" />
+          <ElmHeading1 text="back" />
+          <ElmJsonRendererAsync
+            :key="`${ankiStore.getCurrentAnki.pageId}:back`"
+            :json="ankiStore.getCurrentAnki.blockList.back"
+          />
 
-        <ElmHeading1 text="explanation" />
-        <ElmJsonRendererAsync
-          :json="ankiStore.getCurrentAnki.blockList.explanation"
-        />
+          <ElmHeading1 text="explanation" />
+          <ElmJsonRendererAsync
+            :key="`${ankiStore.getCurrentAnki.pageId}:explanation`"
+            :json="ankiStore.getCurrentAnki.blockList.explanation"
+          />
+        </div>
 
         <ElmButton @click="handleNext">NEXT</ElmButton>
       </template>
@@ -46,8 +50,8 @@ import { AcademicCapIcon, QueueListIcon } from '@heroicons/vue/24/solid'
 
 const ankiStore = useAnkiStore()
 
-const handleNext = () => {
-  ankiStore.next()
+const handleNext = async () => {
+  await ankiStore.next()
 }
 
 onMounted(async () => {

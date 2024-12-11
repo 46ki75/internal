@@ -28,23 +28,33 @@ const query = `#graphql
   }
 `
 
-const bokmarkSchema = z.object({
-  id: z.string(),
-  name: z.string().nullable(),
-  url: z.string().nullable(),
-  favicon: z.string().nullable(),
-  tags: z.array(
+export const bookmarkResponseSchema = z.object({
+  edges: z.array(
     z.object({
-      id: z.string(),
-      name: z.string(),
-      color: z.string()
+      node: z.object({
+        id: z.string(),
+        name: z.string().nullable(),
+        url: z.string().nullable(),
+        favicon: z.string().nullable(),
+        tags: z.array(
+          z.object({
+            id: z.string(),
+            name: z.string(),
+            color: z.string()
+          })
+        )
+      }),
+      cursor: z.string()
     })
-  )
+  ),
+  pageInfo: z.object({
+    hasNextPage: z.boolean().optional().nullable(),
+    hasPreviousPage: z.boolean().optional().nullable(),
+    startCursor: z.string().optional().nullable(),
+    endCursor: z.string().optional().nullable(),
+    nextCursor: z.string().optional().nullable()
+  })
 })
-
-type Bookmark = z.infer<typeof bokmarkSchema>
-
-const bookmarkResponseSchema = relayConnectionSchema(bokmarkSchema)
 
 type BookmarkResponse = z.infer<typeof bookmarkResponseSchema>
 
@@ -54,13 +64,13 @@ type ClassifiedBookmarkList = Array<{
     name: string
     color: string
   }
-  bookmark: Array<Bookmark>
+  bookmarkList: BookmarkResponse['edges'][number]['node'][]
 }>
 
 interface BookmarkState {
   loading: boolean
   error: boolean
-  bookmarkList: Bookmark[]
+  bookmarkList: BookmarkResponse['edges'][number]['node'][]
 }
 
 export const useBookmarkStore = defineStore('bookmark', {
@@ -115,7 +125,7 @@ export const useBookmarkStore = defineStore('bookmark', {
     }
   },
   getters: {
-    tags(): Bookmark['tags'] {
+    tags(): BookmarkResponse['edges'][number]['node']['tags'] {
       const tags = this.bookmarkList.flatMap((bookmark) => bookmark.tags)
       const uniqueTags = uniqBy(tags, (tag) => tag.id)
       return uniqueTags
@@ -125,14 +135,14 @@ export const useBookmarkStore = defineStore('bookmark', {
       const uniqueTags = this.tags
 
       for (const tag of uniqueTags) {
-        results.push({ tag, bookmark: [] })
+        results.push({ tag, bookmarkList: [] })
       }
 
       const bookmarkList = this.bookmarkList
       for (const bookmark of bookmarkList) {
         for (const tag of bookmark.tags) {
           const index = results.findIndex((result) => result.tag.id === tag.id)
-          results[index].bookmark.push(bookmark)
+          results[index].bookmarkList.push(bookmark)
         }
       }
 

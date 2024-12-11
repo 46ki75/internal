@@ -8,7 +8,7 @@
     >
       <ElmTag :text="b.tag.name" color="gray" />
       <div class="bookmark-container">
-        <template v-for="bookmark in b.bookmark">
+        <template v-for="bookmark in b.bookmarkList">
           <ElmBookmarkIcon
             v-if="bookmark.url != null"
             :name="bookmark.name ?? bookmark.url ?? ''"

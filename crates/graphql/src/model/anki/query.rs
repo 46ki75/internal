@@ -9,6 +9,7 @@ pub struct AnkiInput {
 #[derive(async_graphql::InputObject)]
 pub struct ListAnkiInput {
     pub page_size: Option<u32>,
+    pub next_cursor: Option<String>,
 }
 
 #[async_graphql::Object]
@@ -41,13 +42,20 @@ impl AnkiQuery {
 
         let sorts = vec![notionrs::database::Sort::asc("nextReviewAt")];
 
-        let page_size = input.map_or(100, |input| input.page_size.unwrap_or(100));
+        let (page_size, next_cursor) = match input {
+            Some(input) => (input.page_size.unwrap_or(100), input.next_cursor),
+            None => (100, None),
+        };
 
-        let request = client
+        let mut request = client
             .query_database()
             .database_id(database_id)
             .sorts(sorts)
             .page_size(page_size);
+
+        if let Some(next_cursor) = next_cursor {
+            request = request.start_cursor(next_cursor);
+        }
 
         let response = request.send().await?;
 

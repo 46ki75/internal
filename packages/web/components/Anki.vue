@@ -1,6 +1,8 @@
 <template>
   <div class="wrapper">
+    <ElmButton @click="handleCreate" block>CREATE</ElmButton>
     <div v-if="ankiStore.ankiList.length === 0">LOADING</div>
+
     <template v-else>
       <div class="queue">
         <AcademicCapIcon class="icon" />
@@ -52,6 +54,10 @@ const ankiStore = useAnkiStore()
 
 const handleNext = async () => {
   await ankiStore.next()
+}
+
+const handleCreate = async () => {
+  await ankiStore.create()
 }
 
 onMounted(async () => {

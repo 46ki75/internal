@@ -169,6 +169,28 @@ export const useAnkiStore = defineStore('anki', {
       if (this.ankiList.length < 5) {
         await this.fetchAnkiList({ pageSize: 30 })
       }
+    },
+    async create() {
+      const response = await $fetch<{ data: { createAnki: { url: string } } }>(
+        '/api/graphql',
+        {
+          method: 'POST',
+          body: {
+            query: `#graphql
+              mutation CreateAnki($title: String!) {
+                createAnki(input: {title: $title}) {
+                  url
+                }
+              }
+          `,
+            variables: { title: '' }
+          }
+        }
+      )
+
+      const url = response.data.createAnki.url.replace('https://', 'notion://')
+
+      window.open(url, '_blank')
     }
   },
   getters: {

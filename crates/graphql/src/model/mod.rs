@@ -20,4 +20,5 @@ pub struct PageInfo {
     pub has_previous_page: bool,
     pub start_cursor: Option<String>,
     pub end_cursor: Option<String>,
+    pub next_cursor: Option<String>,
 }

@@ -33,9 +33,11 @@ impl QueryRoot {
     pub async fn bookmark_list(
         &self,
         ctx: &async_graphql::Context<'_>,
-    ) -> Result<Vec<crate::model::bookmark::Bookmark>, async_graphql::Error> {
+        input: Option<crate::model::bookmark::query::BookmarkListInput>,
+    ) -> Result<crate::model::RelayConnection<crate::model::bookmark::Bookmark>, async_graphql::Error>
+    {
         crate::model::bookmark::query::BookmarkQuery
-            .list_bookmark(ctx)
+            .list_bookmark(ctx, input)
             .await
     }
 

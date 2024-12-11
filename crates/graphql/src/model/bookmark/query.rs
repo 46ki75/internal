@@ -1,11 +1,20 @@
 #[derive(Default)]
 pub struct BookmarkQuery;
 
+#[derive(async_graphql::InputObject)]
+pub struct BookmarkListInput {
+    pub page_size: Option<u32>,
+    pub next_cursor: Option<String>,
+}
+
 #[async_graphql::Object]
 impl BookmarkQuery {
     pub async fn list_bookmark(
         &self,
-    ) -> Result<Vec<crate::model::bookmark::Bookmark>, async_graphql::Error> {
+        _ctx: &async_graphql::Context<'_>,
+        input: Option<BookmarkListInput>,
+    ) -> Result<crate::model::RelayConnection<crate::model::bookmark::Bookmark>, async_graphql::Error>
+    {
         let secret = std::env::var("NOTION_API_KEY")
             .map_err(|_| async_graphql::Error::from("NOTION_API_KEY not found"))?;
 
@@ -14,10 +23,19 @@ impl BookmarkQuery {
 
         let client = notionrs::client::Client::new().secret(secret);
 
-        let request = client
+        let (page_size, next_cursor) = match input {
+            Some(input) => (input.page_size.unwrap_or(100), input.next_cursor),
+            None => (100, None),
+        };
+
+        let mut request = client
             .query_database()
             .database_id(database_id)
-            .page_size(100);
+            .page_size(page_size);
+
+        if let Some(next_cursor) = next_cursor {
+            request = request.start_cursor(next_cursor);
+        }
 
         let response = request.send().await?;
 
@@ -122,16 +140,31 @@ impl BookmarkQuery {
                         _ => return Err(async_graphql::Error::from("tags not found")),
                     };
 
-                Ok(crate::model::bookmark::Bookmark {
-                    id,
-                    name,
-                    url,
-                    favicon,
-                    tags,
+                Ok(crate::model::RelayEdge {
+                    node: crate::model::bookmark::Bookmark {
+                        id: id.to_string(),
+                        name,
+                        url,
+                        favicon,
+                        tags,
+                    },
+                    cursor: id,
                 })
             })
-            .collect::<Result<Vec<crate::model::bookmark::Bookmark>, async_graphql::Error>>()?;
+            .collect::<Result<
+                Vec<crate::model::RelayEdge<crate::model::bookmark::Bookmark>>,
+                async_graphql::Error,
+            >>()?;
 
-        Ok(bookmarks)
+        Ok(crate::model::RelayConnection {
+            edges: bookmarks,
+            page_info: crate::model::PageInfo {
+                has_next_page: response.has_more.unwrap_or(false),
+                has_previous_page: false,
+                start_cursor: None,
+                end_cursor: None,
+                next_cursor: response.next_cursor.clone(),
+            },
+        })
     }
 }

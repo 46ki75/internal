@@ -1,23 +1,27 @@
 import { defineStore } from 'pinia'
 import { uniqBy } from 'lodash-es'
+import { z } from 'zod'
+import { relayConnectionSchema } from '~/utils/relay'
 
-interface Bookmark {
-  id: string
-  name: string | null
-  url: string | null
-  favicon: string | null
-  tags: Array<{
-    id: string
-    name: string
-    color: string
-  }>
-}
+const bokmarkSchema = z.object({
+  id: z.string(),
+  name: z.string().nullable(),
+  url: z.string().nullable(),
+  favicon: z.string().nullable(),
+  tags: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      color: z.string()
+    })
+  )
+})
 
-interface Response {
-  data: {
-    bookmarkList: Bookmark[]
-  }
-}
+type Bookmark = z.infer<typeof bokmarkSchema>
+
+const bookmarkResponseSchema = relayConnectionSchema(bokmarkSchema)
+
+type BookmarkResponse = z.infer<typeof bookmarkResponseSchema>
 
 type ClassifiedBookmarkList = Array<{
   tag: {
@@ -61,23 +65,36 @@ export const useBookmarkStore = defineStore('bookmark', {
         }
       }
 
-      const response = await $fetch<Response>('/api/graphql', {
+      const response = await $fetch<{
+        data: {
+          bookmarkList: BookmarkResponse
+        }
+      }>('/api/graphql', {
         method: 'POST',
         headers: {
           Authorization: `${authStore.session.idToken}`
         },
         body: {
           query: `#graphql
-            query BookmarkQuery {
-              bookmarkList {
-                id
-                name
-                url
-                favicon
-                tags {
-                  id
-                  name
-                  color
+            query Bookmark {
+              bookmarkList(input: {pageSize: 100}) {
+                edges {
+                  node {
+                    id
+                    name
+                    url
+                    favicon
+                    tags {
+                      id
+                      name
+                      color
+                    }
+                  }
+                  cursor
+                }
+                pageInfo {
+                  hasNextPage
+                  nextCursor
                 }
               }
             }
@@ -85,7 +102,10 @@ export const useBookmarkStore = defineStore('bookmark', {
         }
       })
 
-      this.bookmarkList = response.data.bookmarkList
+      this.bookmarkList = response.data.bookmarkList.edges.map(
+        (edge) => edge.node
+      )
+
       window.localStorage.setItem(
         'bookmarkList',
         JSON.stringify(this.bookmarkList)

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const RelayConnection = <T>(schema: z.ZodType<T>) =>
+export const relayConnectionSchema = <T>(schema: z.ZodType<T>) =>
   z.object({
     edges: z.array(
       z.object({
@@ -9,10 +9,10 @@ export const RelayConnection = <T>(schema: z.ZodType<T>) =>
       })
     ),
     pageInfo: z.object({
-      hasNextPage: z.boolean().optional(),
-      hasPreviousPage: z.boolean().optional(),
-      startCursor: z.string().optional(),
-      endCursor: z.string().optional(),
-      nextCursor: z.string().optional()
+      hasNextPage: z.boolean().optional().nullable(),
+      hasPreviousPage: z.boolean().optional().nullable(),
+      startCursor: z.string().optional().nullable(),
+      endCursor: z.string().optional().nullable(),
+      nextCursor: z.string().optional().nullable()
     })
   })

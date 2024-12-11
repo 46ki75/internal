@@ -34,8 +34,7 @@ impl QueryRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: Option<crate::model::bookmark::query::BookmarkListInput>,
-    ) -> Result<crate::model::RelayConnection<crate::model::bookmark::Bookmark>, async_graphql::Error>
-    {
+    ) -> Result<crate::model::bookmark::BookmarkConnection, async_graphql::Error> {
         crate::model::bookmark::query::BookmarkQuery
             .list_bookmark(ctx, input)
             .await

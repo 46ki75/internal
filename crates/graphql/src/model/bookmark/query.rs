@@ -13,8 +13,7 @@ impl BookmarkQuery {
         &self,
         _ctx: &async_graphql::Context<'_>,
         input: Option<BookmarkListInput>,
-    ) -> Result<crate::model::RelayConnection<crate::model::bookmark::Bookmark>, async_graphql::Error>
-    {
+    ) -> Result<crate::model::bookmark::BookmarkConnection, async_graphql::Error> {
         let secret = std::env::var("NOTION_API_KEY")
             .map_err(|_| async_graphql::Error::from("NOTION_API_KEY not found"))?;
 
@@ -140,7 +139,7 @@ impl BookmarkQuery {
                         _ => return Err(async_graphql::Error::from("tags not found")),
                     };
 
-                Ok(crate::model::RelayEdge {
+                Ok(crate::model::bookmark::BookmarkEdge {
                     node: crate::model::bookmark::Bookmark {
                         id: id.to_string(),
                         name,
@@ -151,12 +150,9 @@ impl BookmarkQuery {
                     cursor: id,
                 })
             })
-            .collect::<Result<
-                Vec<crate::model::RelayEdge<crate::model::bookmark::Bookmark>>,
-                async_graphql::Error,
-            >>()?;
+            .collect::<Result<Vec<crate::model::bookmark::BookmarkEdge>, async_graphql::Error>>()?;
 
-        Ok(crate::model::RelayConnection {
+        Ok(crate::model::bookmark::BookmarkConnection {
             edges: bookmarks,
             page_info: crate::model::PageInfo {
                 has_next_page: response.has_more.unwrap_or(false),

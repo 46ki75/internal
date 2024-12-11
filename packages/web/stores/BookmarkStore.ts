@@ -1,26 +1,28 @@
 import { defineStore } from 'pinia'
 import { uniqBy } from 'lodash-es'
 
+interface Bookmark {
+  id: string
+  name: string | null
+  url: string | null
+  favicon: string | null
+  tags: Array<{
+    id: string
+    name: string
+    color: string
+  }>
+}
+
 interface Response {
   data: {
-    bookmarkList: Array<{
-      id: string
-      name: string | null
-      url: string | null
-      favicon: string | null
-    }>
+    bookmarkList: Bookmark[]
   }
 }
 
 interface BookmarkState {
   loading: boolean
   error: boolean
-  bookmarkList: Array<{
-    id: string
-    name: string | null
-    url: string | null
-    favicon: string | null
-  }>
+  bookmarkList: Bookmark[]
 }
 
 export const useBookmarkStore = defineStore('bookmark', {
@@ -50,6 +52,11 @@ export const useBookmarkStore = defineStore('bookmark', {
                 name
                 url
                 favicon
+                tags {
+                  id
+                  name
+                  color
+                }
               }
             }
         `
@@ -63,5 +70,11 @@ export const useBookmarkStore = defineStore('bookmark', {
       this.loading = false
     }
   },
-  getters: {}
+  getters: {
+    tags(): Bookmark['tags'] {
+      const tags = this.bookmarkList.flatMap((bookmark) => bookmark.tags)
+      const uniqueTags = uniqBy(tags, (tag) => tag.id)
+      return uniqueTags
+    }
+  }
 })

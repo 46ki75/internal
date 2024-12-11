@@ -44,6 +44,9 @@ const handleSignout = async () => {
 
 <style scoped lang="scss">
 .header {
+  top: 0;
+  position: sticky;
+  z-index: 1;
   box-sizing: border-box;
   width: 100%;
   height: 3rem;
@@ -53,6 +56,12 @@ const handleSignout = async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  backdrop-filter: blur(2px);
+  background-color: rgba(white, 0.5);
+  [data-theme='dark'] & {
+    background-color: rgba(white, 0.1);
+  }
 }
 
 .signin {

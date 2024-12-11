@@ -3,6 +3,31 @@ import { uniqBy } from 'lodash-es'
 import { z } from 'zod'
 import { relayConnectionSchema } from '~/utils/relay'
 
+const query = `#graphql
+  query Bookmark {
+    bookmarkList(input: {pageSize: 100}) {
+      edges {
+        node {
+          id
+          name
+          url
+          favicon
+          tags {
+            id
+            name
+            color
+          }
+        }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+        nextCursor
+      }
+    }
+  }
+`
+
 const bokmarkSchema = z.object({
   id: z.string(),
   name: z.string().nullable(),
@@ -74,32 +99,7 @@ export const useBookmarkStore = defineStore('bookmark', {
         headers: {
           Authorization: `${authStore.session.idToken}`
         },
-        body: {
-          query: `#graphql
-            query Bookmark {
-              bookmarkList(input: {pageSize: 100}) {
-                edges {
-                  node {
-                    id
-                    name
-                    url
-                    favicon
-                    tags {
-                      id
-                      name
-                      color
-                    }
-                  }
-                  cursor
-                }
-                pageInfo {
-                  hasNextPage
-                  nextCursor
-                }
-              }
-            }
-        `
-        }
+        body: { query }
       })
 
       this.bookmarkList = response.data.bookmarkList.edges.map(

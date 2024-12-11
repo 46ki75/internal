@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { uniqBy } from 'lodash-es'
 import { z } from 'zod'
-import { relayConnectionSchema } from '~/utils/relay'
 
 const query = `#graphql
   query Bookmark {

@@ -45,14 +45,16 @@ export const useBookmarkStore = defineStore('bookmark', {
       this.loading = true
       this.error = false
 
-      // const authStore = useAuthStore()
-      // if (authStore.session.idToken == null) {
-      //   this.fetch.error = true
-      //   await authStore.checkSession()
-      // }
+      const authStore = useAuthStore()
+      if (authStore.session.idToken == null) {
+        await authStore.checkSession()
+      }
 
       const response = await $fetch<Response>('/api/graphql', {
         method: 'POST',
+        headers: {
+          Authorization: `${authStore.session.idToken}`
+        },
         body: {
           query: `#graphql
             query BookmarkQuery {

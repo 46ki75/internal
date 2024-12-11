@@ -6,6 +6,7 @@
     </div>
 
     <div>
+      <ElmToggleTheme />
       <ArrowLeftStartOnRectangleIcon
         v-if="authStore.session.inSession"
         class="signout"
@@ -19,6 +20,7 @@
 </template>
 
 <script setup lang="ts">
+import { ElmToggleTheme } from '@elmethis/core'
 import {
   ArrowLeftEndOnRectangleIcon,
   ArrowLeftStartOnRectangleIcon,

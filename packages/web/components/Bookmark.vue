@@ -20,7 +20,7 @@
     </div>
   </div>
 
-  <p v-if="bookmarkStore.error">ERROR</p>
+  <ElmParagraph v-if="bookmarkStore.error">ERROR</ElmParagraph>
 </template>
 
 <script setup lang="ts">
@@ -28,6 +28,7 @@ import {
   ElmBookmarkIcon,
   ElmHeading1,
   ElmInlineText,
+  ElmParagraph,
   ElmTag
 } from '@elmethis/core'
 

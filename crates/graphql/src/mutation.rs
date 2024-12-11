@@ -23,4 +23,14 @@ impl MutationRoot {
             .create_anki(ctx, input)
             .await
     }
+
+    pub async fn update_anki(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+        input: crate::model::anki::mutation::UpdateAnkiInput,
+    ) -> Result<crate::model::anki::Anki, async_graphql::Error> {
+        crate::model::anki::mutation::AnkiMutation
+            .update_anki(ctx, input)
+            .await
+    }
 }

@@ -1,7 +1,9 @@
 <template>
-  <div class="fix" v-if="refreshing">
-    <ElmDotLoadingIcon /> <ElmInlineText text="アクセストークンを更新中" />
-  </div>
+  <transition>
+    <div class="fix" v-if="refreshing">
+      <ElmDotLoadingIcon /> <ElmInlineText text="アクセストークンを更新中" />
+    </div>
+  </transition>
 </template>
 
 <script setup lang="ts">
@@ -29,6 +31,21 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+.v-enter-to,
+.v-leave-from {
+  opacity: 1;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 300ms;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+
 .fix {
   margin: 0.5rem;
   position: fixed;

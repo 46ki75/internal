@@ -1,5 +1,7 @@
 <template>
   <div>
+    <Bookmark />
+
     <ElmBulletedList>
       <ElmListItem>
         <ElmInlineText bold text="user id" />
@@ -12,7 +14,7 @@
       </ElmListItem>
     </ElmBulletedList>
 
-    <ElmHeading2 text="Session Token" />
+    <ElmHeading2 text="ID Token" />
     <ElmCodeBlock
       v-if="authStore.session.idToken != null"
       :caption="`Remain: ${authStore.idTokenRemainSeconds}[s]`"

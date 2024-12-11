@@ -2,6 +2,7 @@
   <header class="header">
     <div>
       <NuxtLink to="/"><HomeIcon class="icon" /></NuxtLink>
+      <a href="/api/graphql"><PlayIcon class="icon" /></a>
     </div>
 
     <div>
@@ -21,7 +22,8 @@
 import {
   ArrowLeftEndOnRectangleIcon,
   ArrowLeftStartOnRectangleIcon,
-  HomeIcon
+  HomeIcon,
+  PlayIcon
 } from '@heroicons/vue/24/solid'
 
 const router = useRouter()

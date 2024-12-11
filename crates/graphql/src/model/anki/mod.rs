@@ -2,6 +2,18 @@ pub mod mutation;
 pub mod query;
 pub mod util;
 
+#[derive(async_graphql::SimpleObject)]
+pub struct AnkiConnection {
+    edges: Vec<AnkiEdge>,
+    page_info: crate::model::PageInfo,
+}
+
+#[derive(async_graphql::SimpleObject)]
+pub struct AnkiEdge {
+    node: Anki,
+    cursor: String,
+}
+
 pub struct Anki {
     page_id: String,
     title: Option<String>,

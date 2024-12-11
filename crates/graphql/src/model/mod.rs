@@ -14,7 +14,7 @@ pub struct RelayEdge<T: async_graphql::OutputType> {
     pub cursor: String,
 }
 
-#[derive(async_graphql::SimpleObject)]
+#[derive(async_graphql::SimpleObject, Default)]
 pub struct PageInfo {
     pub has_next_page: bool,
     pub has_previous_page: bool,

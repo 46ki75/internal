@@ -31,7 +31,7 @@ impl AnkiQuery {
         &self,
         _ctx: &async_graphql::Context<'_>,
         input: Option<ListAnkiInput>,
-    ) -> Result<Vec<super::Anki>, async_graphql::Error> {
+    ) -> Result<crate::model::anki::AnkiConnection, async_graphql::Error> {
         let secret = std::env::var("NOTION_API_KEY")
             .map_err(|_| async_graphql::Error::from("NOTION_API_KEY not found"))?;
 
@@ -66,6 +66,20 @@ impl AnkiQuery {
             .map(super::util::try_convert)
             .collect::<Result<Vec<super::Anki>, async_graphql::Error>>()?;
 
-        Ok(anki_meta)
+        let relay_connection = crate::model::anki::AnkiConnection {
+            edges: anki_meta
+                .into_iter()
+                .map(|node| crate::model::anki::AnkiEdge {
+                    cursor: node.page_id.to_string(),
+                    node,
+                })
+                .collect(),
+            page_info: crate::model::PageInfo {
+                next_cursor: response.next_cursor,
+                ..Default::default()
+            },
+        };
+
+        Ok(relay_connection)
     }
 }

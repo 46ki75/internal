@@ -1,13 +1,28 @@
 import { defineNuxtPlugin } from '#app'
 import { provideApolloClient } from '@vue/apollo-composable'
-import { ApolloClient, InMemoryCache } from '@apollo/client/core'
+import {
+  ApolloClient,
+  InMemoryCache,
+  createHttpLink
+} from '@apollo/client/core'
+import { persistCache, LocalStorageWrapper } from 'apollo3-cache-persist'
 
-export const apolloClient = new ApolloClient({
-  uri: 'http://localhost:20000/api/graphql',
-  cache: new InMemoryCache()
-})
+const cache = new InMemoryCache()
 
-export default defineNuxtPlugin((nuxtApp) => {
-  // Provide the Apollo Client globally
-  provideApolloClient(apolloClient)
+export default defineNuxtPlugin(async (nuxtApp) => {
+  if (window?.localStorage != null) {
+    await persistCache({
+      cache,
+      storage: new LocalStorageWrapper(window.localStorage)
+    })
+
+    const apolloClient = new ApolloClient({
+      link: createHttpLink({
+        uri: 'http://localhost:20000/api/graphql'
+      }),
+      cache
+    })
+
+    provideApolloClient(apolloClient)
+  }
 })

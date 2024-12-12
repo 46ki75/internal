@@ -4,6 +4,7 @@
       <NuxtLink to="/"><HomeIcon class="icon" /></NuxtLink>
       <NuxtLink to="/anki"><TagIcon class="icon" /></NuxtLink>
       <NuxtLink to="/color"><SwatchIcon class="icon" /></NuxtLink>
+      <NuxtLink to="/translate"><LanguageIcon class="icon" /></NuxtLink>
       <a href="/api/graphql" target="_blank" rel="nopager noopener"
         ><PlayIcon class="icon" />
       </a>
@@ -29,6 +30,7 @@ import {
   ArrowLeftEndOnRectangleIcon,
   ArrowLeftStartOnRectangleIcon,
   HomeIcon,
+  LanguageIcon,
   PlayIcon,
   SwatchIcon,
   TagIcon

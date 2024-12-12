@@ -1,4 +1,3 @@
-import type { ApolloError, ApolloQueryResult } from '@apollo/client'
 import { useQuery } from '@vue/apollo-composable'
 import { graphql } from '~/graphql'
 

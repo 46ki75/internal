@@ -45,7 +45,7 @@ const handleInputChange = (e: Event) => {
 .wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   gap: 1rem;
 }

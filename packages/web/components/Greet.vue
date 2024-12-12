@@ -1,6 +1,6 @@
 <template>
   <div>Hello</div>
-  <div>{{ greetStore.result }}</div>
+  <div>{{ greetStore.result?.greet }}</div>
 </template>
 
 <script setup lang="ts">

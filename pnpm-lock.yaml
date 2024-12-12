@@ -17,6 +17,9 @@ importers:
       '@elmethis/core':
         specifier: 1.0.0-alpha.87
         version: 1.0.0-alpha.87
+      '@graphql-typed-document-node/core':
+        specifier: ^3.2.0
+        version: 3.2.0(graphql@15.8.0)
       '@heroicons/vue':
         specifier: ^2.2.0
         version: 2.2.0(vue@3.5.13(typescript@5.7.2))

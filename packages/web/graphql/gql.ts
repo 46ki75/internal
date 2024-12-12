@@ -16,6 +16,7 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
 const documents = {
     "\n  query Bookmark {\n    bookmarkList(input: { pageSize: 100 }) {\n      edges {\n        node {\n          id\n          name\n          url\n          favicon\n          tags {\n            id\n            name\n            color\n          }\n        }\n        cursor\n      }\n      pageInfo {\n        hasNextPage\n        nextCursor\n      }\n    }\n  }\n": types.BookmarkDocument,
     "\n  query SampleQuery {\n    greet\n  }\n": types.SampleQueryDocument,
+    "\n  query Translate(\n    $text: String!\n    $sourceLang: SourceLang!\n    $targetLang: TargetLang!\n  ) {\n    translate(\n      input: { text: $text, sourceLang: $sourceLang, targetLang: $targetLang }\n    )\n  }\n": types.TranslateDocument,
 };
 
 /**
@@ -40,6 +41,10 @@ export function graphql(source: "\n  query Bookmark {\n    bookmarkList(input: {
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query SampleQuery {\n    greet\n  }\n"): (typeof documents)["\n  query SampleQuery {\n    greet\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query Translate(\n    $text: String!\n    $sourceLang: SourceLang!\n    $targetLang: TargetLang!\n  ) {\n    translate(\n      input: { text: $text, sourceLang: $sourceLang, targetLang: $targetLang }\n    )\n  }\n"): (typeof documents)["\n  query Translate(\n    $text: String!\n    $sourceLang: SourceLang!\n    $targetLang: TargetLang!\n  ) {\n    translate(\n      input: { text: $text, sourceLang: $sourceLang, targetLang: $targetLang }\n    )\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

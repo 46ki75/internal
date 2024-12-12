@@ -1,97 +1,53 @@
-const query = `#graphql
-    query Translate($text: String!, $sourceLang: SourceLang!, $targetLang: TargetLang!) {
-        translate(
-            input: {text: $text, sourceLang: $sourceLang, targetLang: $targetLang}
-        )
-    }
-`
+import type { ApolloError, ApolloQueryResult } from '@apollo/client'
+import { useQuery } from '@vue/apollo-composable'
+import { graphql } from '~/graphql'
 
-const usageQuery = `#graphql
-    query Translate {
-        translateUsage {
-            characterCount
-            characterLimit
-        }
-    }
-`
+import { SourceLang, TargetLang, type TranslateQuery } from '~/graphql/graphql'
 
-interface TranslateStoreState {
-  input: string
-  translateLoading: boolean
-  translateError?: string
-  translateResponse?: string
-
-  usageLoading: boolean
-  characterCount?: number
-  characterLimit?: number
-}
+const TRANSLATE = graphql(`
+  query Translate(
+    $text: String!
+    $sourceLang: SourceLang!
+    $targetLang: TargetLang!
+  ) {
+    translate(
+      input: { text: $text, sourceLang: $sourceLang, targetLang: $targetLang }
+    )
+  }
+`)
 
 export const useTranslateStore = defineStore('translate', {
-  state: (): TranslateStoreState => ({
-    input: '',
-    translateLoading: false,
-    translateResponse: undefined,
-    translateError: undefined,
+  state: () => {
+    const { result, loading, error, refetch } = useQuery(
+      TRANSLATE,
+      {
+        text: '',
+        sourceLang: SourceLang.Ja,
+        targetLang: TargetLang.En
+      },
+      {
+        prefetch: false
+      }
+    )
 
-    usageLoading: false,
-    characterCount: undefined,
-    characterLimit: undefined
-  }),
+    return {
+      input: undefined as string | undefined,
+      translateLoading: loading,
+      translateResponse: result,
+      translateError: error,
+      _translate: refetch
+    }
+  },
   actions: {
     setInput(input: string) {
       this.input = input
     },
     async translate() {
-      this.translateLoading = true
-      try {
-        const authStore = useAuthStore()
-
-        const response = await $fetch<{ data: { translate: string } }>(
-          '/api/graphql',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `${authStore.session.accessToken}`
-            },
-            body: {
-              query,
-              variables: {
-                text: this.input,
-                sourceLang: 'EN',
-                targetLang: 'JA'
-              }
-            }
-          }
-        )
-
-        this.translateResponse = response.data.translate
-      } catch (e: unknown) {
-        this.translateError = (e as Error).message
-      } finally {
-        this.translateLoading = false
-      }
-    },
-    async fetchUsage() {
-      this.usageLoading = true
-      const authStore = useAuthStore()
-
-      const response = await $fetch<{
-        data: {
-          translateUsage: { characterCount: number; characterLimit: number }
-        }
-      }>('/api/graphql', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `${authStore.session.accessToken}`
-        },
-        body: { query: usageQuery }
+      this._translate({
+        text: this.input ?? '',
+        sourceLang: SourceLang.Ja,
+        targetLang: TargetLang.En
       })
-
-      this.characterCount = response.data.translateUsage.characterCount
-      this.characterLimit = response.data.translateUsage.characterLimit
-      this.usageLoading = false
     }
   }
 })

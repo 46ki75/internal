@@ -16,8 +16,8 @@
     </ElmButton>
 
     <ElmCodeBlock
-      v-if="translateStore.translateResponse"
-      :code="translateStore.translateResponse"
+      v-if="translateStore.translateResponse?.translate"
+      :code="translateStore.translateResponse.translate"
     />
   </div>
 </template>

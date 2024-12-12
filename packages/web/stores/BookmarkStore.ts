@@ -1,31 +1,10 @@
 import { defineStore } from 'pinia'
 import { uniqBy } from 'lodash-es'
 import { z } from 'zod'
+import { useQuery } from '@vue/apollo-composable'
+import { graphql } from '../graphql'
 
-const query = `#graphql
-  query Bookmark {
-    bookmarkList(input: {pageSize: 100}) {
-      edges {
-        node {
-          id
-          name
-          url
-          favicon
-          tags {
-            id
-            name
-            color
-          }
-        }
-        cursor
-      }
-      pageInfo {
-        hasNextPage
-        nextCursor
-      }
-    }
-  }
-`
+import type { BookmarkQuery } from '~/graphql/graphql'
 
 export const bookmarkResponseSchema = z.object({
   edges: z.array(
@@ -57,91 +36,78 @@ export const bookmarkResponseSchema = z.object({
 
 type BookmarkResponse = z.infer<typeof bookmarkResponseSchema>
 
-type ClassifiedBookmarkList = Array<{
-  tag: {
-    id: string
-    name: string
-    color: string
+const LIST_BOOKMARK = graphql(`
+  query Bookmark {
+    bookmarkList(input: { pageSize: 100 }) {
+      edges {
+        node {
+          id
+          name
+          url
+          favicon
+          tags {
+            id
+            name
+            color
+          }
+        }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+        nextCursor
+      }
+    }
   }
-  bookmarkList: BookmarkResponse['edges'][number]['node'][]
-}>
+`)
 
-interface BookmarkState {
+interface BookmarkStoreState {
   loading: boolean
   error: boolean
-  bookmarkList: BookmarkResponse['edges'][number]['node'][]
+  bookmarkList: Ref<BookmarkQuery | undefined, BookmarkQuery | undefined>
 }
 
+type Tag = BookmarkResponse['edges'][number]['node']['tags'][number]
+
+type ClassifiedBookmarkList = Array<{
+  tag: Tag
+  bookmarkListNodeList: BookmarkQuery['bookmarkList']['edges'][number]['node'][]
+}>
+
 export const useBookmarkStore = defineStore('bookmark', {
-  state: (): BookmarkState => ({
-    loading: false,
-    error: false,
-    bookmarkList: []
-  }),
-  actions: {
-    async fetch() {
-      this.loading = true
-      this.error = false
-
-      const cache = window.localStorage.getItem('bookmarkList')
-
-      if (cache) {
-        this.bookmarkList = JSON.parse(cache)
-        this.loading = false
-      }
-
-      const authStore = useAuthStore()
-      if (authStore.session.idToken == null) {
-        await authStore.refreshAccessToken()
-        if (authStore.session.idToken == null) {
-          this.loading = false
-          return
-        }
-      }
-
-      const response = await $fetch<{
-        data: {
-          bookmarkList: BookmarkResponse
-        }
-      }>('/api/graphql', {
-        method: 'POST',
-        headers: {
-          Authorization: `${authStore.session.idToken}`
-        },
-        body: { query }
-      })
-
-      this.bookmarkList = response.data.bookmarkList.edges.map(
-        (edge) => edge.node
-      )
-
-      window.localStorage.setItem(
-        'bookmarkList',
-        JSON.stringify(this.bookmarkList)
-      )
-
-      this.loading = false
+  state: (): BookmarkStoreState => {
+    const { result } = useQuery(LIST_BOOKMARK)
+    return {
+      loading: false,
+      error: false,
+      bookmarkList: result
     }
   },
+  actions: {},
   getters: {
-    tags(): BookmarkResponse['edges'][number]['node']['tags'] {
-      const tags = this.bookmarkList.flatMap((bookmark) => bookmark.tags)
+    tags(): Tag[] {
+      const tags = this.bookmarkList?.bookmarkList.edges
+        .map(({ node }) => node)
+        .flatMap((bookmark) => bookmark.tags)
       const uniqueTags = uniqBy(tags, (tag) => tag.id)
       return uniqueTags
     },
+
     classifiedBookmarkList(): ClassifiedBookmarkList {
       const results: ClassifiedBookmarkList = []
       const uniqueTags = this.tags
 
       for (const tag of uniqueTags) {
-        results.push({ tag, bookmarkList: [] })
+        results.push({ tag, bookmarkListNodeList: [] })
       }
 
-      const bookmarkList = this.bookmarkList
-      for (const bookmark of bookmarkList) {
+      const bookmarkListNodes =
+        this.bookmarkList?.bookmarkList.edges.map(({ node }) => node) ?? []
+
+      for (const bookmark of bookmarkListNodes) {
         for (const tag of bookmark.tags) {
           const index = results.findIndex((result) => result.tag.id === tag.id)
-          results[index].bookmarkList.push(bookmark)
+          results[index].bookmarkListNodeList.push(bookmark)
         }
       }
 

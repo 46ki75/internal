@@ -14,6 +14,7 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 const documents = {
+    "\n  query Bookmark {\n    bookmarkList(input: { pageSize: 100 }) {\n      edges {\n        node {\n          id\n          name\n          url\n          favicon\n          tags {\n            id\n            name\n            color\n          }\n        }\n        cursor\n      }\n      pageInfo {\n        hasNextPage\n        nextCursor\n      }\n    }\n  }\n": types.BookmarkDocument,
     "\n  query SampleQuery {\n    greet\n  }\n": types.SampleQueryDocument,
 };
 
@@ -31,6 +32,10 @@ const documents = {
  */
 export function graphql(source: string): unknown;
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query Bookmark {\n    bookmarkList(input: { pageSize: 100 }) {\n      edges {\n        node {\n          id\n          name\n          url\n          favicon\n          tags {\n            id\n            name\n            color\n          }\n        }\n        cursor\n      }\n      pageInfo {\n        hasNextPage\n        nextCursor\n      }\n    }\n  }\n"): (typeof documents)["\n  query Bookmark {\n    bookmarkList(input: { pageSize: 100 }) {\n      edges {\n        node {\n          id\n          name\n          url\n          favicon\n          tags {\n            id\n            name\n            color\n          }\n        }\n        cursor\n      }\n      pageInfo {\n        hasNextPage\n        nextCursor\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

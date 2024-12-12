@@ -229,10 +229,16 @@ export type UpdateAnkiInput = {
   repetitionCount: Scalars['Int']['input'];
 };
 
+export type BookmarkQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type BookmarkQuery = { __typename?: 'QueryRoot', bookmarkList: { __typename?: 'BookmarkConnection', edges: Array<{ __typename?: 'BookmarkEdge', cursor: string, node: { __typename?: 'Bookmark', id: string, name?: string | null, url?: string | null, favicon?: string | null, tags: Array<{ __typename?: 'BookmarkTag', id: string, name: string, color: BookmarkTagColor }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, nextCursor?: string | null } } };
+
 export type SampleQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type SampleQueryQuery = { __typename?: 'QueryRoot', greet: string };
 
 
+export const BookmarkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Bookmark"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"bookmarkList"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"pageSize"},"value":{"kind":"IntValue","value":"100"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"favicon"}},{"kind":"Field","name":{"kind":"Name","value":"tags"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"color"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"cursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"nextCursor"}}]}}]}}]}}]} as unknown as DocumentNode<BookmarkQuery, BookmarkQueryVariables>;
 export const SampleQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SampleQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"greet"}}]}}]} as unknown as DocumentNode<SampleQueryQuery, SampleQueryQueryVariables>;

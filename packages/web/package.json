@@ -3,12 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prebuild": "pnpm run codegen",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "codegen": "pnpm exec graphql-codegen",
     "codegen:watch": "pnpm exec graphql-codegen --watch",
-    "pregenerate": "pnpm run codegen",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",

@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <label for="translate">Translation Input</label>
+    <label for="translate"><ElmInlineText text="Translation Input" /></label>
     <textarea
       name="translate"
       id="translate"
@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmButton, ElmCodeBlock } from '@elmethis/core'
+import { ElmButton, ElmCodeBlock, ElmInlineText } from '@elmethis/core'
 
 const translateStore = useTranslateStore()
 

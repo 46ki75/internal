@@ -1,15 +1,17 @@
 import { useQuery } from '@vue/apollo-composable'
-import gql from 'graphql-tag'
+// import gql from 'graphql-tag'
+
+import { graphql } from '../graphql'
 
 export const useGreetStore = defineStore('greet', {
   state: () => {
-    const GET_HELLO = gql`
+    const GET_HELLO = graphql(`
       query SampleQuery {
         greet
       }
-    ` as unknown as any
+    `)
 
-    const { result } = useQuery<{ greet: string }>(GET_HELLO)
+    const { result } = useQuery(GET_HELLO)
 
     return { result }
   },

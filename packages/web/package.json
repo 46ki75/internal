@@ -17,7 +17,7 @@
   "dependencies": {
     "@apollo/client": "^3.12.2",
     "@aws-sdk/client-ssm": "^3.699.0",
-    "@elmethis/core": "1.0.0-alpha.87",
+    "@elmethis/core": "1.0.0-alpha.88",
     "@graphql-typed-document-node/core": "^3.2.0",
     "@heroicons/vue": "^2.2.0",
     "@pinia/nuxt": "0.9.0",

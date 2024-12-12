@@ -9,7 +9,7 @@ export const useGreetStore = defineStore('greet', {
       }
     ` as unknown as any
 
-    const { result } = useQuery(GET_HELLO)
+    const { result } = useQuery<{ greet: string }>(GET_HELLO)
 
     return { result }
   },

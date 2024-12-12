@@ -18,6 +18,7 @@ const usageQuery = `#graphql
 interface TranslateStoreState {
   input: string
   translateLoading: boolean
+  translateError?: string
   translateResponse?: string
 
   usageLoading: boolean
@@ -25,11 +26,12 @@ interface TranslateStoreState {
   characterLimit?: number
 }
 
-export const transleteStore = defineStore('translate', {
+export const useTranslateStore = defineStore('translate', {
   state: (): TranslateStoreState => ({
     input: '',
     translateLoading: false,
     translateResponse: undefined,
+    translateError: undefined,
 
     usageLoading: false,
     characterCount: undefined,
@@ -41,25 +43,34 @@ export const transleteStore = defineStore('translate', {
     },
     async translate() {
       this.translateLoading = true
-      const authStore = useAuthStore()
+      try {
+        const authStore = useAuthStore()
 
-      const response = await $fetch<{ data: { translate: string } }>(
-        'https://api.funtranslations.com/translate/yoda.json',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `${authStore.session.accessToken}`
-          },
-          body: {
-            query,
-            variables: { text: this.input, sourceLang: 'EN', targetLang: 'JA' }
+        const response = await $fetch<{ data: { translate: string } }>(
+          '/api/graphql',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `${authStore.session.accessToken}`
+            },
+            body: {
+              query,
+              variables: {
+                text: this.input,
+                sourceLang: 'EN',
+                targetLang: 'JA'
+              }
+            }
           }
-        }
-      )
+        )
 
-      this.translateResponse = response.data.translate
-      this.translateLoading = false
+        this.translateResponse = response.data.translate
+      } catch (e: unknown) {
+        this.translateError = (e as Error).message
+      } finally {
+        this.translateLoading = false
+      }
     },
     async fetchUsage() {
       this.usageLoading = true
@@ -69,7 +80,7 @@ export const transleteStore = defineStore('translate', {
         data: {
           translateUsage: { characterCount: number; characterLimit: number }
         }
-      }>('https://api.funtranslations.com/translate/yoda.json', {
+      }>('/api/graphql', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

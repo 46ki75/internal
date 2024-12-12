@@ -1,7 +1,18 @@
 <template>
-  <div>a</div>
+  <main class="main">
+    <Translate />
+  </main>
 </template>
 
 <script setup lang="ts"></script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.main {
+  display: flex;
+  justify-content: center;
+  div {
+    width: 100%;
+    max-width: 800px;
+  }
+}
+</style>

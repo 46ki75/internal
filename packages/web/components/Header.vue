@@ -3,6 +3,7 @@
     <div>
       <NuxtLink to="/"><HomeIcon class="icon" /></NuxtLink>
       <NuxtLink to="/anki"><TagIcon class="icon" /></NuxtLink>
+      <NuxtLink to="/color"><SwatchIcon class="icon" /></NuxtLink>
       <a href="/api/graphql" target="_blank" rel="nopager noopener"
         ><PlayIcon class="icon" />
       </a>
@@ -29,6 +30,7 @@ import {
   ArrowLeftStartOnRectangleIcon,
   HomeIcon,
   PlayIcon,
+  SwatchIcon,
   TagIcon
 } from '@heroicons/vue/24/solid'
 
@@ -49,7 +51,7 @@ const handleSignout = async () => {
   z-index: 1;
   box-sizing: border-box;
   width: 100%;
-  height: 3rem;
+  height: 3.5rem;
   margin: 0;
   padding: 0.5rem;
   box-shadow: 0 0 0.25rem rgba(black, 0.25);
@@ -58,14 +60,14 @@ const handleSignout = async () => {
   align-items: center;
 
   backdrop-filter: blur(2px);
-  background-color: rgba(white, 0.5);
+  background-color: rgba(black, 0.05);
   [data-theme='dark'] & {
     background-color: rgba(white, 0.1);
   }
 }
 
 .signin {
-  width: 24px;
+  width: 28px;
   padding: 0.25rem;
   border-radius: 0.25rem;
   cursor: pointer;
@@ -78,7 +80,7 @@ const handleSignout = async () => {
 }
 
 .signout {
-  width: 24px;
+  width: 28px;
   padding: 0.25rem;
   border-radius: 0.25rem;
   cursor: pointer;
@@ -91,7 +93,7 @@ const handleSignout = async () => {
 }
 
 .icon {
-  width: 24px;
+  width: 28px;
   padding: 0.25rem;
   border-radius: 0.25rem;
   cursor: pointer;

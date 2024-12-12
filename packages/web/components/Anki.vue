@@ -49,7 +49,9 @@
               :json="ankiStore.getCurrentAnki.blockList.explanation"
             />
 
-            <div class="update-button">
+            <ElmBlockFallback v-if="ankiStore.updateLoading" />
+
+            <div v-else class="update-button">
               <ElmButton
                 @click="ankiStore.updateAnkiByPerformanceRating(0)"
                 :loading="ankiStore.updateLoading"
@@ -118,7 +120,8 @@ import {
   ElmButton,
   ElmHeading1,
   ElmInlineText,
-  ElmJsonRendererAsync
+  ElmJsonRendererAsync,
+  ElmBlockFallback
 } from '@elmethis/core'
 import {
   AcademicCapIcon,
@@ -175,8 +178,8 @@ watch(
 
 .update-button {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3列の設定 */
-  grid-template-rows: repeat(2, auto); /* 2行の設定 */
-  gap: 10px; /* アイテム間の余白 */
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 0.5rem;
 }
 </style>

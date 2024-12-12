@@ -211,13 +211,15 @@ export const useAnkiStore = defineStore('anki', {
       nextReviewAt: string
     }) {
       this.updateLoading = true
-      const currentAnki = this.getCurrentAnki
-      const response = await $fetch<{
-        data: { updateAnki: { url: string } }
-      }>('/api/graphql', {
-        method: 'POST',
-        body: {
-          query: `#graphql
+
+      try {
+        const currentAnki = this.getCurrentAnki
+        const response = await $fetch<{
+          data: { updateAnki: { url: string } }
+        }>('/api/graphql', {
+          method: 'POST',
+          body: {
+            query: `#graphql
             mutation UpdateAnki($pageId: String!, $easeFactor: Float!, $repetitionCount: Int!, $nextReviewAt: String!) {
               updateAnki(
                 input: {pageId: $pageId, easeFactor: $easeFactor, repetitionCount: $repetitionCount, nextReviewAt: $nextReviewAt}
@@ -229,12 +231,14 @@ export const useAnkiStore = defineStore('anki', {
               }
             }
           `,
-          variables: { pageId, easeFactor, repetitionCount, nextReviewAt }
-        }
-      })
-
-      this.isShowAnswer = false
-      this.updateLoading = false
+            variables: { pageId, easeFactor, repetitionCount, nextReviewAt }
+          }
+        })
+      } catch (error) {
+      } finally {
+        this.isShowAnswer = false
+        this.updateLoading = false
+      }
 
       await this.next()
     },

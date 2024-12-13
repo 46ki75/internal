@@ -5,6 +5,9 @@
       <NuxtLink to="/anki"><TagIcon class="icon" /></NuxtLink>
       <NuxtLink to="/color"><SwatchIcon class="icon" /></NuxtLink>
       <NuxtLink to="/translate"><LanguageIcon class="icon" /></NuxtLink>
+      <a href="/api/graphql" target="_blank" rel="nopager noopener"
+        ><PlayIcon class="icon" />
+      </a>
     </div>
 
     <div>

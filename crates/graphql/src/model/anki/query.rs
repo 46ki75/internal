@@ -43,7 +43,7 @@ impl AnkiQuery {
         let sorts = vec![notionrs::database::Sort::asc("nextReviewAt")];
 
         let (page_size, next_cursor) = match input {
-            Some(input) => (input.page_size.unwrap_or(1), input.next_cursor),
+            Some(input) => (input.page_size.unwrap_or(100), input.next_cursor),
             None => (100, None),
         };
 
@@ -58,8 +58,6 @@ impl AnkiQuery {
         }
 
         let response = request.send().await?;
-
-        let end_cursor = response.results.last().map(|page| page.id.clone());
 
         let pages = response.results;
 
@@ -78,7 +76,6 @@ impl AnkiQuery {
                 .collect(),
             page_info: crate::model::PageInfo {
                 next_cursor: response.next_cursor,
-                end_cursor,
                 ..Default::default()
             },
         };

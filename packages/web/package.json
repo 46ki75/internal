@@ -5,25 +5,17 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
-    "codegen": "pnpm exec graphql-codegen",
-    "codegen:watch": "pnpm exec graphql-codegen --watch",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "deploy": "aws s3 cp .output/public/ s3://dev-46ki75-internal-s3-bucket-web/ --recursive"
   },
   "dependencies": {
-    "@apollo/client": "^3.12.2",
     "@aws-sdk/client-ssm": "^3.699.0",
-    "@elmethis/core": "1.0.0-alpha.88",
-    "@graphql-typed-document-node/core": "^3.2.0",
+    "@elmethis/core": "1.0.0-alpha.87",
     "@heroicons/vue": "^2.2.0",
     "@pinia/nuxt": "0.9.0",
-    "@vue/apollo-composable": "^4.2.1",
-    "apollo3-cache-persist": "^0.15.0",
     "aws-amplify": "^6.10.2",
-    "graphql": "^15.8.0",
-    "graphql-tag": "^2.12.6",
     "lodash-es": "^4.17.21",
     "nuxt": "^3.14.1592",
     "pinia": "^2.3.0",
@@ -34,8 +26,6 @@
   },
   "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee",
   "devDependencies": {
-    "@graphql-codegen/cli": "^5.0.3",
-    "@parcel/watcher": "^2.5.0",
     "@types/lodash-es": "^4.17.12"
   }
 }

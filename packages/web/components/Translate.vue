@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <label for="translate"><ElmInlineText text="Translation Input" /></label>
+    <label for="translate">Translation Input</label>
     <textarea
       name="translate"
       id="translate"
@@ -16,14 +16,14 @@
     </ElmButton>
 
     <ElmCodeBlock
-      v-if="translateStore.translateResponse?.translate"
-      :code="translateStore.translateResponse.translate"
+      v-if="translateStore.translateResponse"
+      :code="translateStore.translateResponse"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ElmButton, ElmCodeBlock, ElmInlineText } from '@elmethis/core'
+import { ElmButton, ElmCodeBlock } from '@elmethis/core'
 
 const translateStore = useTranslateStore()
 
@@ -45,7 +45,7 @@ const handleInputChange = (e: Event) => {
 .wrapper {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
   justify-content: center;
   gap: 1rem;
 }

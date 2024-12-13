@@ -56,6 +56,5 @@ export default defineNuxtConfig({
       USER_POOL_ID,
       USER_POOL_CLIENT_ID
     }
-  },
-  ssr: false
+  }
 })

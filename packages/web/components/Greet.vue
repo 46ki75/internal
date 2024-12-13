@@ -1,10 +1,7 @@
 <template>
   <div>Hello</div>
-  <div>{{ greetStore.result?.greet }}</div>
 </template>
 
-<script setup lang="ts">
-const greetStore = useGreetStore()
-</script>
+<script setup lang="ts"></script>
 
 <style scoped lang="scss"></style>

@@ -8,7 +8,7 @@
     >
       <ElmTag :text="b.tag.name" color="gray" />
       <div class="bookmark-container">
-        <template v-for="bookmark in b.bookmarkListNodeList">
+        <template v-for="bookmark in b.bookmarkList">
           <ElmBookmarkIcon
             v-if="bookmark.url != null"
             :name="bookmark.name ?? bookmark.url ?? ''"
@@ -36,6 +36,13 @@ import {
 } from '@elmethis/core'
 
 const bookmarkStore = useBookmarkStore()
+
+onMounted(async () => {
+  console.log('fetching bookmarks')
+  await bookmarkStore.fetch()
+})
+
+const convertColor = (color: string) => {}
 </script>
 
 <style scoped lang="scss">

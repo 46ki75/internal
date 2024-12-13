@@ -103,6 +103,14 @@ resource "aws_cloudfront_distribution" "default" {
     }
   }
   # <<< [API GW] origin
+
+
+  custom_error_response {
+    error_code            = 403
+    response_code         = 403
+    response_page_path    = "/403.html"
+    error_caching_min_ttl = 0
+  }
 }
 
 resource "aws_route53_record" "cloudfront" {

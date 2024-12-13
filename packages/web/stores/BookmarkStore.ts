@@ -125,7 +125,7 @@ export const useBookmarkStore = defineStore('bookmark', {
 
       window.localStorage.setItem(
         'bookmarkList',
-        JSON.stringify(this.bookmarkList)
+        JSON.stringify(response.data.bookmarkList)
       )
 
       this.loading = false

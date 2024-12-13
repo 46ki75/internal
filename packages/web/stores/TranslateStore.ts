@@ -1,4 +1,5 @@
 import { useQuery } from '@vue/apollo-composable'
+import { defineStore } from 'pinia'
 import { graphql } from '~/graphql'
 
 import { SourceLang, TargetLang, type TranslateQuery } from '~/graphql/graphql'

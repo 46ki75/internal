@@ -2,6 +2,7 @@ import { useQuery } from '@vue/apollo-composable'
 // import gql from 'graphql-tag'
 
 import { graphql } from '../graphql'
+import { defineStore } from 'pinia'
 
 const GET_HELLO = graphql(`
   query SampleQuery {

@@ -23,7 +23,9 @@
     </div>
   </div>
 
-  <ElmParagraph v-if="bookmarkStore.error">ERROR</ElmParagraph>
+  <ElmParagraph v-if="bookmarkStore.error != null">{{
+    bookmarkStore.error
+  }}</ElmParagraph>
 </template>
 
 <script setup lang="ts">
@@ -41,8 +43,6 @@ onMounted(async () => {
   console.log('fetching bookmarks')
   await bookmarkStore.fetch()
 })
-
-const convertColor = (color: string) => {}
 </script>
 
 <style scoped lang="scss">

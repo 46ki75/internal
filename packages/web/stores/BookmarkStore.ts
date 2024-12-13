@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia'
 import { uniqBy } from 'lodash-es'
 import { z } from 'zod'
+import Bookmark from '~/components/Bookmark.vue'
 
-const query = `#graphql
+const query = /* GraphQL */ `
   query Bookmark {
-    bookmarkList(input: {pageSize: 100}) {
+    bookmarkList(input: { pageSize: 100 }) {
       edges {
         node {
           id
@@ -68,26 +69,31 @@ type ClassifiedBookmarkList = Array<{
 
 interface BookmarkState {
   loading: boolean
-  error: boolean
+  error: string | null
   bookmarkList: BookmarkResponse['edges'][number]['node'][]
 }
 
 export const useBookmarkStore = defineStore('bookmark', {
   state: (): BookmarkState => ({
     loading: false,
-    error: false,
+    error: null,
     bookmarkList: []
   }),
   actions: {
     async fetch() {
       this.loading = true
-      this.error = false
+      this.error = null
 
       const cache = window.localStorage.getItem('bookmarkList')
 
       if (cache) {
-        this.bookmarkList = JSON.parse(cache)
-        this.loading = false
+        try {
+          this.bookmarkList = JSON.parse(cache)
+        } catch {
+          this.error = "Couldn't parse cache"
+        } finally {
+          this.loading = false
+        }
       }
 
       const authStore = useAuthStore()

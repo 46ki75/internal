@@ -75,9 +75,11 @@ export const useAnkiStore = defineStore('anki', {
           Authorization: `${authStore.session.idToken}`
         },
         body: {
-          query: `#graphql
+          query: /* GraphQL */ `
             query AnkiListQuery($pageSize: Int!, $nextCursor: String) {
-              ankiList(input: {pageSize: $pageSize, nextCursor: $nextCursor}) {
+              ankiList(
+                input: { pageSize: $pageSize, nextCursor: $nextCursor }
+              ) {
                 edges {
                   node {
                     pageId
@@ -94,7 +96,7 @@ export const useAnkiStore = defineStore('anki', {
                       color
                     }
                     url
-                    blockList{
+                    blockList {
                       front
                       back
                       explanation
@@ -127,9 +129,11 @@ export const useAnkiStore = defineStore('anki', {
           Authorization: `${authStore.session.idToken}`
         },
         body: {
-          query: `#graphql
+          query: /* GraphQL */ `
             query AnkiListQuery($pageSize: Int!, $nextCursor: String) {
-              ankiList(input: {pageSize: $pageSize, nextCursor: $nextCursor}) {
+              ankiList(
+                input: { pageSize: $pageSize, nextCursor: $nextCursor }
+              ) {
                 edges {
                   node {
                     pageId
@@ -146,7 +150,7 @@ export const useAnkiStore = defineStore('anki', {
                       color
                     }
                     url
-                    blockList{
+                    blockList {
                       front
                       back
                       explanation
@@ -159,7 +163,7 @@ export const useAnkiStore = defineStore('anki', {
                 }
               }
             }
-            `,
+          `,
           variables: { pageSize, nextCursor: this.nextCursor }
         }
       })

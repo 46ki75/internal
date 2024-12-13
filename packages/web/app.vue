@@ -15,6 +15,7 @@
 
 <style lang="scss">
 body {
+  font-family: ui-sans-serif, sans-serif;
   margin: 0;
   transition: background-color 300ms;
   background-color: rgba(black, 0.05);

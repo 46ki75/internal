@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { uniqBy } from 'lodash-es'
 import { z } from 'zod'
+import Bookmark from '~/components/Bookmark.vue'
 
 const query = /* GraphQL */ `
   query Bookmark {
@@ -86,8 +87,15 @@ export const useBookmarkStore = defineStore('bookmark', {
       const cache = window.localStorage.getItem('bookmarkList')
 
       if (cache) {
-        this.bookmarkList = JSON.parse(cache)
-        this.loading = false
+        try {
+          this.bookmarkList = bookmarkResponseSchema
+            .parse(JSON.parse(cache))
+            .edges.map((edge) => edge.node)
+        } catch {
+          this.error = true
+        } finally {
+          this.loading = false
+        }
       }
 
       const authStore = useAuthStore()

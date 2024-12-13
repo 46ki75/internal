@@ -69,30 +69,28 @@ type ClassifiedBookmarkList = Array<{
 
 interface BookmarkState {
   loading: boolean
-  error: boolean
+  error: string | null
   bookmarkList: BookmarkResponse['edges'][number]['node'][]
 }
 
 export const useBookmarkStore = defineStore('bookmark', {
   state: (): BookmarkState => ({
     loading: false,
-    error: false,
+    error: null,
     bookmarkList: []
   }),
   actions: {
     async fetch() {
       this.loading = true
-      this.error = false
+      this.error = null
 
       const cache = window.localStorage.getItem('bookmarkList')
 
       if (cache) {
         try {
-          this.bookmarkList = bookmarkResponseSchema
-            .parse(JSON.parse(cache))
-            .edges.map((edge) => edge.node)
+          this.bookmarkList = JSON.parse(cache)
         } catch {
-          this.error = true
+          this.error = "Couldn't parse cache"
         } finally {
           this.loading = false
         }
@@ -125,7 +123,7 @@ export const useBookmarkStore = defineStore('bookmark', {
 
       window.localStorage.setItem(
         'bookmarkList',
-        JSON.stringify(response.data.bookmarkList)
+        JSON.stringify(this.bookmarkList)
       )
 
       this.loading = false

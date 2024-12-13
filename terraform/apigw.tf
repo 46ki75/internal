@@ -9,6 +9,8 @@ resource "aws_apigatewayv2_integration" "backend" {
 
   connection_type = "INTERNET"
   integration_uri = aws_lambda_alias.graphql.invoke_arn
+
+  timeout_milliseconds = 29 * 1000
 }
 
 resource "aws_apigatewayv2_route" "backend" {

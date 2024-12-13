@@ -64,6 +64,7 @@ resource "aws_lambda_function" "graphql" {
   runtime       = "provided.al2023"
   architectures = ["x86_64"]
   publish       = true # Publish a new version
+  timeout       = 30
 
   environment {
     variables = {

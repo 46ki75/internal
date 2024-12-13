@@ -2,9 +2,9 @@ import { defineStore } from 'pinia'
 import { uniqBy } from 'lodash-es'
 import { z } from 'zod'
 
-const query = `#graphql
+const query = /* GraphQL */ `
   query Bookmark {
-    bookmarkList(input: {pageSize: 100}) {
+    bookmarkList(input: { pageSize: 100 }) {
       edges {
         node {
           id

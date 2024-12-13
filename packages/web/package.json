@@ -8,7 +8,9 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "deploy": "aws s3 cp .output/public/ s3://${ENVIRONMENT}-46ki75-internal-s3-bucket-web/ --recursive"
+    "predeploy": "nuxt generate",
+    "deploy": "aws s3 cp .output/public/ s3://${ENVIRONMENT}-46ki75-internal-s3-bucket-web/ --recursive",
+    "postdeploy": "tsx ./invalidate.ts"
   },
   "dependencies": {
     "@aws-sdk/client-ssm": "^3.699.0",

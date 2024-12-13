@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-ssm": "^3.699.0",
-    "@elmethis/core": "1.0.0-alpha.87",
+    "@elmethis/core": "1.0.0-alpha.88",
     "@heroicons/vue": "^2.2.0",
     "@pinia/nuxt": "0.9.0",
     "aws-amplify": "^6.10.2",

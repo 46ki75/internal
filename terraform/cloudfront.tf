@@ -53,6 +53,11 @@ resource "aws_cloudfront_distribution" "default" {
       }
       headers = ["etag"]
     }
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.rename_uri.arn
+    }
   }
 
   origin {
@@ -112,6 +117,17 @@ resource "aws_cloudfront_distribution" "default" {
     error_caching_min_ttl = 0
   }
 }
+
+
+# >>> CloudFront Function
+resource "aws_cloudfront_function" "rename_uri" {
+  name    = "${terraform.workspace}-46ki75-cloudfront-function-rename-uri"
+  runtime = "cloudfront-js-2.0"
+  comment = "Rename URI to index.html"
+  publish = true
+  code    = file("./assets/renameUri.js")
+}
+# <<< CloudFront Function
 
 resource "aws_route53_record" "cloudfront" {
   zone_id = data.aws_route53_zone.internal.zone_id

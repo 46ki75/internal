@@ -6,7 +6,7 @@ import {
 
 const ENVIRONMENT = process.env.ENVIRONMENT
 
-if (ENVIRONMENT == null || !['dev', 'stg', 'prd'].includes(ENVIRONMENT)) {
+if (ENVIRONMENT == null || !['dev', 'stg', 'prod'].includes(ENVIRONMENT)) {
   throw new Error('Invalid ENVIRONMENT')
 }
 

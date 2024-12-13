@@ -5,4 +5,4 @@ build:
     cargo lambda build --release
 
 deploy: build
-    cargo lambda deploy --binary-name graphql dev-46ki75-lambda-function-graphql
+    cargo lambda deploy --binary-name graphql ${ENVIRONMENT}-46ki75-lambda-function-graphql

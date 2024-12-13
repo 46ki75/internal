@@ -1,5 +1,4 @@
 <template>
-  <Greet />
   <main class="main">
     <div class="center">
       <Bookmark />

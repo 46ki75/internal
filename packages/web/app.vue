@@ -1,5 +1,15 @@
 <template>
-  <NuxtLayout><NuxtPage /></NuxtLayout>
+  <NuxtLayout>
+    <NuxtPage
+      :transition="{
+        enterActiveClass: 'fade-enter-active',
+        leaveActiveClass: 'fade-leave-active',
+        enterFromClass: 'fade-enter-from',
+        leaveToClass: 'fade-leave-to',
+        mode: 'out-in'
+      }"
+    />
+  </NuxtLayout>
   <StateManager />
 </template>
 
@@ -11,5 +21,14 @@ body {
   [data-theme='dark'] & {
     background-color: rgba(black, 0.85);
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 100ms;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

@@ -78,7 +78,7 @@ resource "aws_lambda_function" "graphql" {
 resource "aws_lambda_alias" "graphql" {
   name             = "stable"
   function_name    = aws_lambda_function.graphql.function_name
-  function_version = aws_lambda_function.graphql.version
+  function_version = "$LATEST"
 }
 
 

@@ -130,6 +130,7 @@ import {
   QueueListIcon,
   SparklesIcon
 } from '@heroicons/vue/24/solid'
+import { onKeyStroke } from '@vueuse/core'
 
 const ankiStore = useAnkiStore()
 
@@ -145,6 +146,11 @@ watch(
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 )
+
+onKeyStroke(['Enter', ' '], (e) => {
+  e.preventDefault()
+  ankiStore.setIsShowAnswer(true)
+})
 </script>
 
 <style scoped lang="scss">

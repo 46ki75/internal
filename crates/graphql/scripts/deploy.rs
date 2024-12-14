@@ -1,6 +1,9 @@
 use std::io::{Read, Write};
 
-fn main() {
+#[tokio::main]
+async fn main() {
+    let environment = std::env::var("ENVIRONMENT").expect("ENVIRONMENT must be set");
+
     let temp_dir = tempfile::tempdir().expect("Failed to create temp dir");
 
     println!(
@@ -41,6 +44,28 @@ fn main() {
 
     println!("ZIP file created at: {}", zip_path.display());
 
+    let zip_bytes = std::fs::read(&zip_path).expect("Failed to read zip file");
+
+    let zip_blob = aws_sdk_lambda::primitives::Blob::new(zip_bytes);
+
+    let config = aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
+
+    let client = aws_sdk_lambda::Client::new(&config);
+
+    let request = client
+        .update_function_code()
+        .function_name(format!("{environment}-46ki75-lambda-function-graphql"))
+        .publish(true)
+        .zip_file(zip_blob);
+
     println!("Deploying graphql service...");
+
+    let response = request
+        .send()
+        .await
+        .expect("Failed to update function code");
+
+    println!("Function ARN: {}", response.function_arn.unwrap());
+
     println!("Deployed graphql service!");
 }

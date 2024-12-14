@@ -39,7 +39,10 @@ export default defineNuxtConfig({
   vite: {
     server: {
       proxy: {
-        '/api/graphql': { target: 'http://localhost:20010', changeOrigin: true }
+        '/api/graphql': {
+          target: 'http://localhost:20010/lambda-url/graphql',
+          changeOrigin: true
+        }
       }
     },
     css: {

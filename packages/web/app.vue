@@ -14,6 +14,10 @@
 </template>
 
 <style lang="scss">
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: ui-sans-serif, sans-serif;
   margin: 0;

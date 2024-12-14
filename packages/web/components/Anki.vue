@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <div class="button-container">
+    <div class="button-container" id="button-container">
       <ElmButton
         @click="ankiStore.editCurrentAnki()"
         block
@@ -18,7 +18,7 @@
     <div v-if="ankiStore.ankiList.length === 0">LOADING</div>
 
     <template v-else>
-      <div class="queue">
+      <div class="queue" id="queue">
         <AcademicCapIcon class="icon" />
         <ElmInlineText
           :text="`Should Learn: ${ankiStore.getShouldLearnCount}`"
@@ -30,20 +30,20 @@
 
       <template v-if="ankiStore.getCurrentAnki?.blockList != null">
         <div>
-          <ElmHeading1 text="front" />
+          <ElmHeading1 text="front" id="front" />
           <ElmJsonRendererAsync
             :key="`${ankiStore.getCurrentAnki.pageId}:front`"
             :json="ankiStore.getCurrentAnki.blockList.front"
           />
 
           <template v-if="ankiStore.isShowAnswer">
-            <ElmHeading1 text="back" />
+            <ElmHeading1 text="back" id="back" />
             <ElmJsonRendererAsync
               :key="`${ankiStore.getCurrentAnki.pageId}:back`"
               :json="ankiStore.getCurrentAnki.blockList.back"
             />
 
-            <ElmHeading1 text="explanation" />
+            <ElmHeading1 text="explanation" id="explanation" />
             <ElmJsonRendererAsync
               :key="`${ankiStore.getCurrentAnki.pageId}:explanation`"
               :json="ankiStore.getCurrentAnki.blockList.explanation"
@@ -57,7 +57,9 @@
                 :loading="ankiStore.updateLoading"
                 block
               >
-                × FORGETFUL
+                <span>
+                  {{ `× FORGETFUL${shift ? ' [A]' : ''}` }}
+                </span>
               </ElmButton>
 
               <ElmButton
@@ -65,7 +67,9 @@
                 :loading="ankiStore.updateLoading"
                 block
               >
-                × INCORRECT
+                <span>
+                  {{ `× INCORRECT${shift ? ' [S]' : ''}` }}
+                </span>
               </ElmButton>
 
               <ElmButton
@@ -73,7 +77,8 @@
                 :loading="ankiStore.updateLoading"
                 block
               >
-                × ALMOST
+                <span> </span>
+                {{ `× ALMOST${shift ? ' [D]' : ''}` }}
               </ElmButton>
 
               <ElmButton
@@ -82,7 +87,9 @@
                 block
                 primary
               >
-                ✓ LUCKY
+                <span>
+                  {{ `✓ LUCKY${!shift ? ' [a]' : ''}` }}
+                </span>
               </ElmButton>
 
               <ElmButton
@@ -91,7 +98,9 @@
                 block
                 primary
               >
-                ✓ CORRECT
+                <span>
+                  {{ `✓ CORRECT${!shift ? ' [s]' : ''}` }}
+                </span>
               </ElmButton>
 
               <ElmButton
@@ -100,7 +109,9 @@
                 block
                 primary
               >
-                ✓ CONFIDENT
+                <span>
+                  {{ `✓ CONFIDENT${!shift ? ' [d]' : ''}` }}
+                </span>
               </ElmButton>
             </div>
           </template>
@@ -130,8 +141,9 @@ import {
   QueueListIcon,
   SparklesIcon
 } from '@heroicons/vue/24/solid'
-import { onKeyStroke } from '@vueuse/core'
+import { onKeyStroke, useMagicKeys } from '@vueuse/core'
 
+const router = useRouter()
 const ankiStore = useAnkiStore()
 
 onMounted(async () => {
@@ -143,13 +155,26 @@ onMounted(async () => {
 watch(
   () => ankiStore.getCurrentAnki?.pageId,
   () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    router.push({ hash: '#button-container' })
   }
 )
 
 onKeyStroke(['Enter', ' '], (e) => {
   e.preventDefault()
   ankiStore.setIsShowAnswer(true)
+})
+
+const { shift } = useMagicKeys()
+
+onKeyStroke(['a', 's', 'd'], (e) => {
+  e.preventDefault()
+  if (shift.value) {
+    const rating = e.key === 'a' ? 0 : e.key === 's' ? 1 : 2
+    ankiStore.updateAnkiByPerformanceRating(rating)
+  } else {
+    const rating = e.key === 'a' ? 4 : e.key === 's' ? 3 : 5
+    ankiStore.updateAnkiByPerformanceRating(rating)
+  }
 })
 </script>
 
@@ -183,9 +208,11 @@ onKeyStroke(['Enter', ' '], (e) => {
 }
 
 .update-button {
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(2, auto);
   gap: 0.5rem;
+  font-size: 0.85rem !important;
 }
 </style>

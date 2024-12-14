@@ -58,8 +58,8 @@ export const useTranslateStore = defineStore('translate', {
               query,
               variables: {
                 text: this.input,
-                sourceLang: 'EN',
-                targetLang: 'JA'
+                sourceLang: 'JA',
+                targetLang: 'EN'
               }
             }
           }

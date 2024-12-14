@@ -47,8 +47,11 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 .bookmark-container {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(5rem, 1fr));
+  grid-template-rows: repeat(auto-fill, minmax(2rem, 1fr));
+  grid-template-areas:
+    'header header'
+    'main sidebar';
 }
 </style>

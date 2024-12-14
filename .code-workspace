@@ -21,6 +21,10 @@
     "terminal.integrated.env.linux": {
       "ENVIRONMENT": "dev",
       "AWS_PROFILE": "internal"
+    },
+    "editor.defaultFormatter": "biomejs.biome",
+    "[rust]": {
+      "editor.defaultFormatter": "rust-lang.rust-analyzer"
     }
   }
 }

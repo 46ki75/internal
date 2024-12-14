@@ -6,7 +6,7 @@
       v-for="b in bookmarkStore.classifiedBookmarkList"
       :style="{ marginBlock: '1rem' }"
     >
-      <ElmTag :text="b.tag.name" color="gray" />
+      <ElmTag :text="b.tag.name" :color="b.tag.color" />
       <div class="bookmark-container">
         <template v-for="bookmark in b.bookmarkList">
           <ElmBookmarkIcon

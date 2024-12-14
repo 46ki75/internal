@@ -146,6 +146,7 @@ impl BookmarkQuery {
                         url,
                         favicon,
                         tags,
+                        notion_url: bookmark.url.to_string(),
                     },
                     cursor: id,
                 })

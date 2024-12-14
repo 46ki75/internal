@@ -20,6 +20,7 @@ pub struct Bookmark {
     pub url: Option<String>,
     pub favicon: Option<String>,
     pub tags: Vec<BookmarkTag>,
+    pub notion_url: String,
 }
 
 #[derive(async_graphql::SimpleObject)]

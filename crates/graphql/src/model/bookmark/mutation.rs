@@ -117,6 +117,7 @@ impl BookmarkMutation {
             url: Some(input.url),
             favicon: Some(favicon),
             tags,
+            notion_url: response.url,
         })
     }
 }

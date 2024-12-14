@@ -99,17 +99,18 @@ pub fn try_convert(
                         .color
                         .ok_or(async_graphql::Error::from("tag color not found"))?
                     {
-                        notionrs::SelectColor::Default => super::AnkiTagColor::Default,
-                        notionrs::SelectColor::Blue => super::AnkiTagColor::Blue,
-                        notionrs::SelectColor::Brown => super::AnkiTagColor::Brown,
-                        notionrs::SelectColor::Gray => super::AnkiTagColor::Gray,
-                        notionrs::SelectColor::Green => super::AnkiTagColor::Green,
-                        notionrs::SelectColor::Orange => super::AnkiTagColor::Orange,
-                        notionrs::SelectColor::Pink => super::AnkiTagColor::Pink,
-                        notionrs::SelectColor::Purple => super::AnkiTagColor::Purple,
-                        notionrs::SelectColor::Red => super::AnkiTagColor::Red,
-                        notionrs::SelectColor::Yellow => super::AnkiTagColor::Yellow,
-                    },
+                        notionrs::others::select::SelectColor::Default => "#868e9c",
+                        notionrs::others::select::SelectColor::Blue => "#6987b8",
+                        notionrs::others::select::SelectColor::Brown => "#a17c5b",
+                        notionrs::others::select::SelectColor::Gray => "#59b57c",
+                        notionrs::others::select::SelectColor::Green => "#59b57c",
+                        notionrs::others::select::SelectColor::Orange => "#d48b70",
+                        notionrs::others::select::SelectColor::Pink => "#c9699e",
+                        notionrs::others::select::SelectColor::Purple => "#9771bd",
+                        notionrs::others::select::SelectColor::Red => "#c56565",
+                        notionrs::others::select::SelectColor::Yellow => "#cdb57b",
+                    }
+                    .to_string(),
                 })
             })
             .collect::<Result<Vec<super::AnkiTag>, async_graphql::Error>>(),

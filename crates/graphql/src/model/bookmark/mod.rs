@@ -27,38 +27,5 @@ pub struct Bookmark {
 pub struct BookmarkTag {
     id: String,
     name: String,
-    color: BookmarkTagColor,
-}
-
-#[derive(async_graphql::Enum, Copy, Clone, Eq, PartialEq)]
-pub enum BookmarkTagColor {
-    #[graphql(name = "default")]
-    Default,
-
-    #[graphql(name = "blue")]
-    Blue,
-
-    #[graphql(name = "brown")]
-    Brown,
-
-    #[graphql(name = "gray")]
-    Gray,
-
-    #[graphql(name = "green")]
-    Green,
-
-    #[graphql(name = "orange")]
-    Orange,
-
-    #[graphql(name = "pink")]
-    Pink,
-
-    #[graphql(name = "purple")]
-    Purple,
-
-    #[graphql(name = "red")]
-    Red,
-
-    #[graphql(name = "yellow")]
-    Yellow,
+    color: String,
 }

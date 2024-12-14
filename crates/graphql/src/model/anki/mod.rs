@@ -31,40 +31,7 @@ pub struct Anki {
 pub struct AnkiTag {
     id: String,
     name: String,
-    color: AnkiTagColor,
-}
-
-#[derive(async_graphql::Enum, Copy, Clone, Eq, PartialEq)]
-pub enum AnkiTagColor {
-    #[graphql(name = "default")]
-    Default,
-
-    #[graphql(name = "blue")]
-    Blue,
-
-    #[graphql(name = "brown")]
-    Brown,
-
-    #[graphql(name = "gray")]
-    Gray,
-
-    #[graphql(name = "green")]
-    Green,
-
-    #[graphql(name = "orange")]
-    Orange,
-
-    #[graphql(name = "pink")]
-    Pink,
-
-    #[graphql(name = "purple")]
-    Purple,
-
-    #[graphql(name = "red")]
-    Red,
-
-    #[graphql(name = "yellow")]
-    Yellow,
+    color: String,
 }
 
 #[derive(async_graphql::SimpleObject)]

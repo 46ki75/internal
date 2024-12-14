@@ -73,37 +73,18 @@ impl BookmarkMutation {
                         id,
                         name,
                         color: match color.ok_or("color not found")? {
-                            notionrs::others::select::SelectColor::Default => {
-                                crate::model::bookmark::BookmarkTagColor::Default
-                            }
-                            notionrs::others::select::SelectColor::Blue => {
-                                crate::model::bookmark::BookmarkTagColor::Blue
-                            }
-                            notionrs::others::select::SelectColor::Brown => {
-                                crate::model::bookmark::BookmarkTagColor::Brown
-                            }
-                            notionrs::others::select::SelectColor::Gray => {
-                                crate::model::bookmark::BookmarkTagColor::Gray
-                            }
-                            notionrs::others::select::SelectColor::Green => {
-                                crate::model::bookmark::BookmarkTagColor::Green
-                            }
-                            notionrs::others::select::SelectColor::Orange => {
-                                crate::model::bookmark::BookmarkTagColor::Orange
-                            }
-                            notionrs::others::select::SelectColor::Pink => {
-                                crate::model::bookmark::BookmarkTagColor::Pink
-                            }
-                            notionrs::others::select::SelectColor::Purple => {
-                                crate::model::bookmark::BookmarkTagColor::Purple
-                            }
-                            notionrs::others::select::SelectColor::Red => {
-                                crate::model::bookmark::BookmarkTagColor::Red
-                            }
-                            notionrs::others::select::SelectColor::Yellow => {
-                                crate::model::bookmark::BookmarkTagColor::Yellow
-                            }
-                        },
+                            notionrs::others::select::SelectColor::Default => "#868e9c",
+                            notionrs::others::select::SelectColor::Blue => "#6987b8",
+                            notionrs::others::select::SelectColor::Brown => "#a17c5b",
+                            notionrs::others::select::SelectColor::Gray => "#59b57c",
+                            notionrs::others::select::SelectColor::Green => "#59b57c",
+                            notionrs::others::select::SelectColor::Orange => "#d48b70",
+                            notionrs::others::select::SelectColor::Pink => "#c9699e",
+                            notionrs::others::select::SelectColor::Purple => "#9771bd",
+                            notionrs::others::select::SelectColor::Red => "#c56565",
+                            notionrs::others::select::SelectColor::Yellow => "#cdb57b",
+                        }
+                        .to_string(),
                     })
                 })
                 .collect::<Result<Vec<crate::model::bookmark::BookmarkTag>, async_graphql::Error>>(

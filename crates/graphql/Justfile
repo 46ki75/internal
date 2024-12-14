@@ -5,8 +5,4 @@ build:
     cargo lambda build --release
 
 deploy: build
-    cd ../../target/lambda/graphql/ && \
-    zip bootstrap.zip bootstrap && \
-    aws lambda update-function-code --function-name "${ENVIRONMENT}-46ki75-lambda-function-graphql" --zip-file fileb://bootstrap.zip 1>/dev/null && \
-    sleep 15 && \
-    aws lambda publish-version --function-name "${ENVIRONMENT}-46ki75-lambda-function-graphql" 1>/dev/null
+    cargo run --bin deploy

@@ -21,9 +21,9 @@ reqwest = { version = "0.12.9", features = [
 async-graphql = "7.0.7"
 chrono = "0.4.39"
 dotenvy = "0.15.7"
-elmethis-notion = { version = "1.0.0-alpha.4", features = ["rustls-tls"] }
+elmethis-notion = { version = "1.0.0-alpha.5", features = ["rustls-tls"] }
 lambda_http = "0.13.0"
-notionrs = { version = "1.0.0-alpha.21", features = ["rustls-tls"] }
+notionrs = { version = "1.0.0-alpha.22", features = ["rustls-tls"] }
 serde = { version = "1.0.205", features = ["derive"] }
 serde_json = "1.0.122"
 tokio = { version = "1.42.0", features = ["macros"] }

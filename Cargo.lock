@@ -964,9 +964,9 @@ checksum = "60b1af1c220855b6ceac025d3f6ecdd2b7c4894bfe9cd9bda4fbb4bc7c0d4cf0"
 
 [[package]]
 name = "elmethis-notion"
-version = "1.0.0-alpha.4"
+version = "1.0.0-alpha.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0582803b05ff3580da528cc76507480f97b765b71a261d06f2f0a2493606dc48"
+checksum = "515382394dd8928b66ea18590702245b17f0a41a21d992f2889d07f650ecbea4"
 dependencies = [
  "async-recursion",
  "dotenvy",
@@ -1902,9 +1902,9 @@ checksum = "650eef8c711430f1a879fdd01d4745a7deea475becfb90269c06775983bbf086"
 
 [[package]]
 name = "notionrs"
-version = "1.0.0-alpha.21"
+version = "1.0.0-alpha.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dca113cdbdb36a01df8f14c719757179f8947b253f944822589ea809ae330e58"
+checksum = "2027672e733c35670edf6aa92f13da2f3be10ba1a5852171e88ae49e8916b099"
 dependencies = [
  "chrono",
  "reqwest",

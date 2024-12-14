@@ -15,18 +15,18 @@ const authStore = useAuthStore();
 const refreshing = ref(false);
 
 onMounted(() => {
-  window.setInterval(async () => {
-    try {
-      refreshing.value = true;
-      await authStore.refreshAccessToken();
-      console.log("Access token refreshed.");
-    } catch {
-      window.alert("Session expired. Please sign in again.");
-      router.push("/login");
-    } finally {
-      refreshing.value = false;
-    }
-  }, 1000 * 60);
+	window.setInterval(async () => {
+		try {
+			refreshing.value = true;
+			await authStore.refreshAccessToken();
+			console.log("Access token refreshed.");
+		} catch {
+			window.alert("Session expired. Please sign in again.");
+			router.push("/login");
+		} finally {
+			refreshing.value = false;
+		}
+	}, 1000 * 60);
 });
 </script>
 

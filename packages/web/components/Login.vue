@@ -29,28 +29,28 @@ const password = ref<HTMLInputElement>();
 const error = ref<string | null>(null);
 
 const handleSignIn = async () => {
-  if (
-    username.value?.value == null ||
-    password.value?.value == null ||
-    username.value.value === "" ||
-    password.value.value === ""
-  ) {
-    console.log("password is empty");
-    error.value = "Please enter username and password";
-  } else {
-    await authStore.signin({
-      username: username.value.value,
-      password: password.value.value,
-    });
+	if (
+		username.value?.value == null ||
+		password.value?.value == null ||
+		username.value.value === "" ||
+		password.value.value === ""
+	) {
+		console.log("password is empty");
+		error.value = "Please enter username and password";
+	} else {
+		await authStore.signin({
+			username: username.value.value,
+			password: password.value.value,
+		});
 
-    if (authStore.session.inSession) {
-      router.push("/");
-    }
-  }
+		if (authStore.session.inSession) {
+			router.push("/");
+		}
+	}
 };
 
 onMounted(async () => {
-  await authStore.refreshAccessToken();
+	await authStore.refreshAccessToken();
 });
 </script>
 

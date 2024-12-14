@@ -12,11 +12,11 @@ const authStore = useAuthStore();
 const router = useRouter();
 
 onMounted(async () => {
-  await authStore.refreshAccessToken();
+	await authStore.refreshAccessToken();
 
-  if (!authStore.session.inSession) {
-    router.push("/login");
-  }
+	if (!authStore.session.inSession) {
+		router.push("/login");
+	}
 });
 </script>
 

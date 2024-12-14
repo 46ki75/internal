@@ -128,18 +128,18 @@
 
 <script setup lang="ts">
 import {
-  ElmBlockFallback,
-  ElmButton,
-  ElmHeading1,
-  ElmInlineText,
-  ElmJsonRendererAsync,
+	ElmBlockFallback,
+	ElmButton,
+	ElmHeading1,
+	ElmInlineText,
+	ElmJsonRendererAsync,
 } from "@elmethis/core";
 import {
-  AcademicCapIcon,
-  ArrowTurnDownLeftIcon,
-  PencilSquareIcon,
-  QueueListIcon,
-  SparklesIcon,
+	AcademicCapIcon,
+	ArrowTurnDownLeftIcon,
+	PencilSquareIcon,
+	QueueListIcon,
+	SparklesIcon,
 } from "@heroicons/vue/24/solid";
 import { onKeyStroke, useMagicKeys } from "@vueuse/core";
 
@@ -147,34 +147,34 @@ const router = useRouter();
 const ankiStore = useAnkiStore();
 
 onMounted(async () => {
-  if (ankiStore.ankiList.length === 0) {
-    await ankiStore.init();
-  }
+	if (ankiStore.ankiList.length === 0) {
+		await ankiStore.init();
+	}
 });
 
 watch(
-  () => ankiStore.getCurrentAnki?.pageId,
-  () => {
-    router.push({ hash: "#button-container" });
-  },
+	() => ankiStore.getCurrentAnki?.pageId,
+	() => {
+		router.push({ hash: "#button-container" });
+	},
 );
 
 onKeyStroke(["Enter", " "], (e) => {
-  e.preventDefault();
-  ankiStore.setIsShowAnswer(true);
+	e.preventDefault();
+	ankiStore.setIsShowAnswer(true);
 });
 
 const { shift } = useMagicKeys();
 
 onKeyStroke(["a", "s", "d"], (e) => {
-  e.preventDefault();
-  if (shift.value) {
-    const rating = e.key === "a" ? 0 : e.key === "s" ? 1 : 2;
-    ankiStore.updateAnkiByPerformanceRating(rating);
-  } else {
-    const rating = e.key === "a" ? 4 : e.key === "s" ? 3 : 5;
-    ankiStore.updateAnkiByPerformanceRating(rating);
-  }
+	e.preventDefault();
+	if (shift.value) {
+		const rating = e.key === "a" ? 0 : e.key === "s" ? 1 : 2;
+		ankiStore.updateAnkiByPerformanceRating(rating);
+	} else {
+		const rating = e.key === "a" ? 4 : e.key === "s" ? 3 : 5;
+		ankiStore.updateAnkiByPerformanceRating(rating);
+	}
 });
 </script>
 

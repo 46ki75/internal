@@ -59,12 +59,12 @@
 <script setup lang="ts">
 import { ElmToggleTheme, ElmTooltip } from "@elmethis/core";
 import {
-  ArrowLeftEndOnRectangleIcon,
-  ArrowLeftStartOnRectangleIcon,
-  HomeIcon,
-  LanguageIcon,
-  SwatchIcon,
-  TagIcon,
+	ArrowLeftEndOnRectangleIcon,
+	ArrowLeftStartOnRectangleIcon,
+	HomeIcon,
+	LanguageIcon,
+	SwatchIcon,
+	TagIcon,
 } from "@heroicons/vue/24/solid";
 
 const router = useRouter();
@@ -72,8 +72,8 @@ const router = useRouter();
 const authStore = useAuthStore();
 
 const handleSignout = async () => {
-  await authStore.signOut();
-  router.push("/login");
+	await authStore.signOut();
+	router.push("/login");
 };
 </script>
 

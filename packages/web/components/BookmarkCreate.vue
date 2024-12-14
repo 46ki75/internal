@@ -28,12 +28,12 @@ const name = ref<string | null>();
 const url = ref<string | null>();
 
 const handleCreate = async () => {
-  if (name.value != null && url.value != null) {
-    await bookmarkStore.create({
-      name: name.value,
-      url: url.value,
-    });
-  }
+	if (name.value != null && url.value != null) {
+		await bookmarkStore.create({
+			name: name.value,
+			url: url.value,
+		});
+	}
 };
 </script>
 

@@ -1,36 +1,36 @@
 {
-  "name": "nuxt-app",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
-    "predeploy": "nuxt generate",
-    "deploy": "aws s3 cp .output/public/ s3://${ENVIRONMENT}-46ki75-internal-s3-bucket-web/ --recursive",
-    "postdeploy": "tsx ./invalidate.ts"
-  },
-  "dependencies": {
-    "@aws-sdk/client-ssm": "^3.699.0",
-    "@elmethis/core": "1.0.0-alpha.88",
-    "@heroicons/vue": "^2.2.0",
-    "@pinia/nuxt": "0.9.0",
-    "@vueuse/core": "^12.0.0",
-    "aws-amplify": "^6.10.2",
-    "lodash-es": "^4.17.21",
-    "nuxt": "^3.14.1592",
-    "pinia": "^2.3.0",
-    "sass": "^1.82.0",
-    "vue": "latest",
-    "vue-router": "latest",
-    "zod": "^3.24.1"
-  },
-  "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee",
-  "devDependencies": {
-    "@aws-sdk/client-cloudfront": "^3.709.0",
-    "@types/lodash-es": "^4.17.12",
-    "tsx": "^4.19.2"
-  }
+	"name": "nuxt-app",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "nuxt build",
+		"dev": "nuxt dev",
+		"generate": "nuxt generate",
+		"preview": "nuxt preview",
+		"postinstall": "nuxt prepare",
+		"predeploy": "nuxt generate",
+		"deploy": "aws s3 cp .output/public/ s3://${ENVIRONMENT}-46ki75-internal-s3-bucket-web/ --recursive",
+		"postdeploy": "tsx ./invalidate.ts"
+	},
+	"dependencies": {
+		"@aws-sdk/client-ssm": "^3.699.0",
+		"@elmethis/core": "1.0.0-alpha.88",
+		"@heroicons/vue": "^2.2.0",
+		"@pinia/nuxt": "0.9.0",
+		"@vueuse/core": "^12.0.0",
+		"aws-amplify": "^6.10.2",
+		"lodash-es": "^4.17.21",
+		"nuxt": "^3.14.1592",
+		"pinia": "^2.3.0",
+		"sass": "^1.82.0",
+		"vue": "latest",
+		"vue-router": "latest",
+		"zod": "^3.24.1"
+	},
+	"packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee",
+	"devDependencies": {
+		"@aws-sdk/client-cloudfront": "^3.709.0",
+		"@types/lodash-es": "^4.17.12",
+		"tsx": "^4.19.2"
+	}
 }

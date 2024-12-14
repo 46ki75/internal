@@ -28,8 +28,8 @@ import { ElmButton, ElmCodeBlock } from "@elmethis/core";
 const translateStore = useTranslateStore();
 
 const handleInputChange = (e: Event) => {
-  const inputVal = (e.target as HTMLTextAreaElement).value;
-  translateStore.setInput(inputVal);
+	const inputVal = (e.target as HTMLTextAreaElement).value;
+	translateStore.setInput(inputVal);
 };
 </script>
 

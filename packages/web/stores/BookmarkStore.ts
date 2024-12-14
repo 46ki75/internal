@@ -17,6 +17,7 @@ const query = /* GraphQL */ `
             name
             color
           }
+          notionUrl
         }
         cursor
       }
@@ -42,7 +43,8 @@ export const bookmarkResponseSchema = z.object({
             name: z.string(),
             color: z.string()
           })
-        )
+        ),
+        notionUrl: z.string()
       }),
       cursor: z.string()
     })
@@ -71,13 +73,18 @@ interface BookmarkState {
   loading: boolean
   error: string | null
   bookmarkList: BookmarkResponse['edges'][number]['node'][]
+
+  createLoading: boolean
+  createError: string | null
 }
 
 export const useBookmarkStore = defineStore('bookmark', {
   state: (): BookmarkState => ({
     loading: false,
     error: null,
-    bookmarkList: []
+    bookmarkList: [],
+    createLoading: false,
+    createError: null
   }),
   actions: {
     async fetch() {
@@ -127,6 +134,60 @@ export const useBookmarkStore = defineStore('bookmark', {
       )
 
       this.loading = false
+    },
+    async create({ name, url }: { name: string; url: string }) {
+      this.createLoading = true
+
+      const authStore = useAuthStore()
+      if (authStore.session.idToken == null) {
+        await authStore.refreshAccessToken()
+        if (authStore.session.idToken == null) {
+          return
+        }
+      }
+
+      try {
+        const response = await $fetch<{
+          data: {
+            createBookmark: BookmarkResponse['edges'][number]['node']
+          }
+        }>('/api/graphql', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${authStore.session.idToken}`
+          },
+          body: {
+            query: /* GraphQL */ `
+              mutation CreateBookmark($name: String!, $url: String!) {
+                createBookmark(input: { name: $name, url: $url }) {
+                  id
+                  name
+                  url
+                  favicon
+                  tags {
+                    id
+                    name
+                    color
+                  }
+                  notionUrl
+                }
+              }
+            `,
+            variables: { name, url }
+          }
+        })
+
+        this.bookmarkList.push(response.data.createBookmark)
+
+        const { notionUrl } = response.data.createBookmark
+
+        window.open(notionUrl.replace('https://', 'notion://'), '_blank')
+      } catch {
+        this.createError = "Couldn't create bookmark"
+      } finally {
+        this.createLoading = false
+      }
     }
   },
   getters: {

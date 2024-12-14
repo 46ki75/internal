@@ -2,6 +2,7 @@
   <main class="main">
     <div class="center">
       <Bookmark />
+      <BookmarkCreate />
     </div>
   </main>
 </template>

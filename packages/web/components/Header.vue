@@ -1,10 +1,45 @@
 <template>
   <header class="header">
     <div>
-      <NuxtLink to="/"><HomeIcon class="icon" /></NuxtLink>
-      <NuxtLink to="/anki"><TagIcon class="icon" /></NuxtLink>
-      <NuxtLink to="/color"><SwatchIcon class="icon" /></NuxtLink>
-      <NuxtLink to="/translate"><LanguageIcon class="icon" /></NuxtLink>
+      <ElmTooltip>
+        <template #original>
+          <NuxtLink to="/"><HomeIcon class="icon" /></NuxtLink>
+        </template>
+
+        <template #tooltip>
+          <span>HOME</span>
+        </template>
+      </ElmTooltip>
+
+      <ElmTooltip>
+        <template #original>
+          <NuxtLink to="/anki"><TagIcon class="icon" /></NuxtLink>
+        </template>
+
+        <template #tooltip>
+          <span>anki</span>
+        </template>
+      </ElmTooltip>
+
+      <ElmTooltip>
+        <template #original>
+          <NuxtLink to="/translate"><LanguageIcon class="icon" /></NuxtLink>
+        </template>
+
+        <template #tooltip>
+          <span>Translate</span>
+        </template>
+      </ElmTooltip>
+
+      <ElmTooltip>
+        <template #original>
+          <NuxtLink to="/color"><SwatchIcon class="icon" /></NuxtLink>
+        </template>
+
+        <template #tooltip>
+          <span>Color</span>
+        </template>
+      </ElmTooltip>
     </div>
 
     <div>
@@ -22,13 +57,12 @@
 </template>
 
 <script setup lang="ts">
-import { ElmToggleTheme } from '@elmethis/core'
+import { ElmToggleTheme, ElmTooltip } from '@elmethis/core'
 import {
   ArrowLeftEndOnRectangleIcon,
   ArrowLeftStartOnRectangleIcon,
   HomeIcon,
   LanguageIcon,
-  PlayIcon,
   SwatchIcon,
   TagIcon
 } from '@heroicons/vue/24/solid'

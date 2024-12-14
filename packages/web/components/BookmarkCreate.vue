@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmHeading1, ElmButton, ElmInlineText } from '@elmethis/core'
+import { ElmButton, ElmHeading1, ElmInlineText } from '@elmethis/core'
 
 const bookmarkStore = useBookmarkStore()
 

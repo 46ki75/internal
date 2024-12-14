@@ -82,9 +82,9 @@ export const useAuthStore = defineStore('auth', {
       try {
         configure()
         const _ = await signIn({ username, password })
-      } catch (e: any) {
+      } catch (e: unknown) {
         this.signIn.error = true
-        throw new Error(e)
+        throw new Error(e instanceof Error ? e.message : String(e))
       } finally {
         this.signIn.loading = false
       }

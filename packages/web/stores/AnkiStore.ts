@@ -268,71 +268,66 @@ export const useAnkiStore = defineStore('anki', {
     ) {
       if (this.getCurrentAnki == null) {
         throw new Error('No current learn')
-      } else {
-        const maxInterval = 365 / 4
-        const minInterval = 0.5
-
-        if (performanceRating < 3) {
-          this.getCurrentAnki.easeFactor = Math.max(
-            1.3,
-            this.getCurrentAnki.easeFactor * 0.85
-          )
-          this.getCurrentAnki.repetitionCount = 0
-        } else {
-          this.getCurrentAnki.easeFactor +=
-            0.1 -
-            (5 - performanceRating) * (0.08 + (5 - performanceRating) * 0.02)
-          this.getCurrentAnki.repetitionCount += 1
-        }
-
-        let newInterval
-        if (performanceRating === 0) {
-          newInterval = minInterval
-        } else if (performanceRating === 1) {
-          newInterval = minInterval
-        } else if (performanceRating === 2) {
-          newInterval = Math.max(
-            minInterval,
-            this.getCurrentAnki.repetitionCount
-          )
-        } else {
-          let multiplier = 1
-          if (performanceRating === 3) {
-            multiplier = 1
-          } else if (performanceRating === 4) {
-            multiplier = 1.5
-          } else if (performanceRating === 5) {
-            multiplier = 2
-          }
-          newInterval = Math.min(
-            maxInterval,
-            Math.pow(
-              this.getCurrentAnki.easeFactor,
-              this.getCurrentAnki.repetitionCount
-            ) * multiplier
-          )
-        }
-
-        this.getCurrentAnki.nextReviewAt = new Date(
-          Date.now() + newInterval * 24 * 60 * 60 * 1000
-        ).toISOString()
-
-        await this.update({
-          pageId: this.getCurrentAnki.pageId,
-          easeFactor: this.getCurrentAnki.easeFactor,
-          repetitionCount: this.getCurrentAnki.repetitionCount,
-          nextReviewAt: this.getCurrentAnki.nextReviewAt
-        })
       }
+      const maxInterval = 365 / 4
+      const minInterval = 0.5
+
+      if (performanceRating < 3) {
+        this.getCurrentAnki.easeFactor = Math.max(
+          1.3,
+          this.getCurrentAnki.easeFactor * 0.85
+        )
+        this.getCurrentAnki.repetitionCount = 0
+      } else {
+        this.getCurrentAnki.easeFactor +=
+          0.1 -
+          (5 - performanceRating) * (0.08 + (5 - performanceRating) * 0.02)
+        this.getCurrentAnki.repetitionCount += 1
+      }
+
+      let newInterval: number
+      if (performanceRating === 0) {
+        newInterval = minInterval
+      } else if (performanceRating === 1) {
+        newInterval = minInterval
+      } else if (performanceRating === 2) {
+        newInterval = Math.max(minInterval, this.getCurrentAnki.repetitionCount)
+      } else {
+        let multiplier = 1
+        if (performanceRating === 3) {
+          multiplier = 1
+        } else if (performanceRating === 4) {
+          multiplier = 1.5
+        } else if (performanceRating === 5) {
+          multiplier = 2
+        }
+        newInterval = Math.min(
+          maxInterval,
+
+          this.getCurrentAnki.easeFactor **
+            this.getCurrentAnki.repetitionCount *
+            multiplier
+        )
+      }
+
+      this.getCurrentAnki.nextReviewAt = new Date(
+        Date.now() + newInterval * 24 * 60 * 60 * 1000
+      ).toISOString()
+
+      await this.update({
+        pageId: this.getCurrentAnki.pageId,
+        easeFactor: this.getCurrentAnki.easeFactor,
+        repetitionCount: this.getCurrentAnki.repetitionCount,
+        nextReviewAt: this.getCurrentAnki.nextReviewAt
+      })
     },
     editCurrentAnki() {
       const currentAnki = this.getCurrentAnki
       if (currentAnki == null) {
         throw new Error('No current learn')
-      } else {
-        const url = currentAnki.url.replace('https://', 'notion://')
-        window.open(url, '_blank')
       }
+      const url = currentAnki.url.replace('https://', 'notion://')
+      window.open(url, '_blank')
     }
   },
   getters: {

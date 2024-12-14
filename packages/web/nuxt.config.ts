@@ -1,10 +1,10 @@
-import { SSMClient, GetParameterCommand } from '@aws-sdk/client-ssm'
+import { GetParameterCommand, SSMClient } from '@aws-sdk/client-ssm'
 
 if (process.env.ENVIRONMENT == null) {
   throw new Error('ENVIRONMENT is not set')
-} else {
-  console.log(`ENVIRONMENT: ${process.env.ENVIRONMENT}`)
 }
+
+console.log(`ENVIRONMENT: ${process.env.ENVIRONMENT}`)
 
 export const fetchSSMParameter = async (name: string): Promise<string> => {
   const client = new SSMClient({ region: 'ap-northeast-1' })

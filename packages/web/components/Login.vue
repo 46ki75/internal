@@ -32,8 +32,8 @@ const handleSignIn = async () => {
   if (
     username.value?.value == null ||
     password.value?.value == null ||
-    username.value.value == '' ||
-    password.value.value == ''
+    username.value.value === '' ||
+    password.value.value === ''
   ) {
     console.log('password is empty')
     error.value = 'Please enter username and password'

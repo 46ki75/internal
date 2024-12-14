@@ -1,7 +1,7 @@
 import {
   CloudFrontClient,
-  ListDistributionsCommand,
-  CreateInvalidationCommand
+  CreateInvalidationCommand,
+  ListDistributionsCommand
 } from '@aws-sdk/client-cloudfront'
 
 const ENVIRONMENT = process.env.ENVIRONMENT

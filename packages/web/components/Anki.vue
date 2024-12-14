@@ -128,11 +128,11 @@
 
 <script setup lang="ts">
 import {
+  ElmBlockFallback,
   ElmButton,
   ElmHeading1,
   ElmInlineText,
-  ElmJsonRendererAsync,
-  ElmBlockFallback
+  ElmJsonRendererAsync
 } from '@elmethis/core'
 import {
   AcademicCapIcon,

@@ -256,6 +256,7 @@ export const useAnkiStore = defineStore("anki", {
 					},
 				});
 			} catch (error) {
+				this.updateLoading = false;
 			} finally {
 				this.isShowAnswer = false;
 				this.updateLoading = false;

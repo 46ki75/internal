@@ -31,9 +31,7 @@
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "single",
-      "semicolons": "asNeeded",
-      "trailingCommas": "none"
+      "quoteStyle": "double"
     }
   }
 }

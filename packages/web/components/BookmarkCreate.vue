@@ -20,21 +20,21 @@
 </template>
 
 <script setup lang="ts">
-import { ElmButton, ElmHeading1, ElmInlineText } from '@elmethis/core'
+import { ElmButton, ElmHeading1, ElmInlineText } from "@elmethis/core";
 
-const bookmarkStore = useBookmarkStore()
+const bookmarkStore = useBookmarkStore();
 
-const name = ref<string | null>()
-const url = ref<string | null>()
+const name = ref<string | null>();
+const url = ref<string | null>();
 
 const handleCreate = async () => {
   if (name.value != null && url.value != null) {
     await bookmarkStore.create({
       name: name.value,
-      url: url.value
-    })
+      url: url.value,
+    });
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

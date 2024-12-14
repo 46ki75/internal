@@ -1,10 +1,10 @@
-import { z } from 'zod'
+import { z } from "zod";
 
 interface AnkiStoreState {
-  ankiList: AnkiResponse['edges'][number]['node'][]
-  nextCursor?: string
-  isShowAnswer: boolean
-  updateLoading: boolean
+  ankiList: AnkiResponse["edges"][number]["node"][];
+  nextCursor?: string;
+  isShowAnswer: boolean;
+  updateLoading: boolean;
 }
 
 export const ankiResponseSchema = z.object({
@@ -23,56 +23,56 @@ export const ankiResponseSchema = z.object({
           z.object({
             id: z.string(),
             name: z.string(),
-            color: z.string()
-          })
+            color: z.string(),
+          }),
         ),
         url: z.string(),
         blockList: z
           .object({
             front: z.any(),
             back: z.any(),
-            explanation: z.any()
+            explanation: z.any(),
           })
           .optional()
-          .nullable()
+          .nullable(),
       }),
-      cursor: z.string()
-    })
+      cursor: z.string(),
+    }),
   ),
   pageInfo: z.object({
     hasNextPage: z.boolean().optional().nullable(),
     hasPreviousPage: z.boolean().optional().nullable(),
     startCursor: z.string().optional().nullable(),
     endCursor: z.string().optional().nullable(),
-    nextCursor: z.string().optional().nullable()
-  })
-})
+    nextCursor: z.string().optional().nullable(),
+  }),
+});
 
-type AnkiResponse = z.infer<typeof ankiResponseSchema>
+type AnkiResponse = z.infer<typeof ankiResponseSchema>;
 
-export const useAnkiStore = defineStore('anki', {
+export const useAnkiStore = defineStore("anki", {
   state: (): AnkiStoreState => ({
     ankiList: [],
     nextCursor: undefined,
     isShowAnswer: false,
-    updateLoading: false
+    updateLoading: false,
   }),
   actions: {
     setIsShowAnswer(isShowAnswer: boolean) {
-      this.isShowAnswer = isShowAnswer
+      this.isShowAnswer = isShowAnswer;
     },
     async init() {
-      const authStore = useAuthStore()
+      const authStore = useAuthStore();
       if (authStore.session.idToken == null) {
-        await authStore.refreshAccessToken()
+        await authStore.refreshAccessToken();
       }
 
       const response = await $fetch<{
-        data: { ankiList: AnkiResponse }
-      }>('/api/graphql', {
-        method: 'POST',
+        data: { ankiList: AnkiResponse };
+      }>("/api/graphql", {
+        method: "POST",
         headers: {
-          Authorization: `${authStore.session.idToken}`
+          Authorization: `${authStore.session.idToken}`,
         },
         body: {
           query: /* GraphQL */ `
@@ -110,23 +110,23 @@ export const useAnkiStore = defineStore('anki', {
               }
             }
           `,
-          variables: { pageSize: 1 }
-        }
-      })
+          variables: { pageSize: 1 },
+        },
+      });
 
-      this.ankiList = response.data.ankiList.edges.map((edge) => edge.node)
-      this.nextCursor = response.data.ankiList.pageInfo.nextCursor ?? undefined
-      await this.fetchAnkiList({ pageSize: 2 })
-      await this.fetchAnkiList({ pageSize: 50 })
+      this.ankiList = response.data.ankiList.edges.map((edge) => edge.node);
+      this.nextCursor = response.data.ankiList.pageInfo.nextCursor ?? undefined;
+      await this.fetchAnkiList({ pageSize: 2 });
+      await this.fetchAnkiList({ pageSize: 50 });
     },
     async fetchAnkiList({ pageSize }: { pageSize: number }) {
-      const authStore = useAuthStore()
+      const authStore = useAuthStore();
       const response = await $fetch<{
-        data: { ankiList: AnkiResponse }
-      }>('/api/graphql', {
-        method: 'POST',
+        data: { ankiList: AnkiResponse };
+      }>("/api/graphql", {
+        method: "POST",
         headers: {
-          Authorization: `${authStore.session.idToken}`
+          Authorization: `${authStore.session.idToken}`,
         },
         body: {
           query: /* GraphQL */ `
@@ -164,35 +164,35 @@ export const useAnkiStore = defineStore('anki', {
               }
             }
           `,
-          variables: { pageSize, nextCursor: this.nextCursor }
-        }
-      })
+          variables: { pageSize, nextCursor: this.nextCursor },
+        },
+      });
 
       this.ankiList = [
         ...this.ankiList,
-        ...response.data.ankiList.edges.map((edge) => edge.node)
-      ]
-      this.nextCursor = response.data.ankiList.pageInfo.nextCursor ?? undefined
+        ...response.data.ankiList.edges.map((edge) => edge.node),
+      ];
+      this.nextCursor = response.data.ankiList.pageInfo.nextCursor ?? undefined;
     },
     async next() {
-      this.ankiList = this.ankiList.slice(1)
+      this.ankiList = this.ankiList.slice(1);
 
       if (this.ankiList.length < 5) {
-        await this.fetchAnkiList({ pageSize: 30 })
+        await this.fetchAnkiList({ pageSize: 30 });
       }
     },
     async create() {
-      const authStore = useAuthStore()
+      const authStore = useAuthStore();
       if (authStore.session.idToken == null) {
-        await authStore.refreshAccessToken()
+        await authStore.refreshAccessToken();
       }
 
       const response = await $fetch<{ data: { createAnki: { url: string } } }>(
-        '/api/graphql',
+        "/api/graphql",
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            Authorization: `${authStore.session.idToken}`
+            Authorization: `${authStore.session.idToken}`,
           },
           body: {
             query: `#graphql
@@ -202,42 +202,42 @@ export const useAnkiStore = defineStore('anki', {
                 }
               }
           `,
-            variables: { title: '' }
-          }
-        }
-      )
+            variables: { title: "" },
+          },
+        },
+      );
 
-      const url = response.data.createAnki.url.replace('https://', 'notion://')
+      const url = response.data.createAnki.url.replace("https://", "notion://");
 
-      window.open(url, '_blank')
+      window.open(url, "_blank");
     },
     async update({
       pageId,
       easeFactor,
       repetitionCount,
-      nextReviewAt
+      nextReviewAt,
     }: {
-      pageId: string
-      easeFactor: number
-      repetitionCount: number
-      nextReviewAt: string
+      pageId: string;
+      easeFactor: number;
+      repetitionCount: number;
+      nextReviewAt: string;
     }) {
-      this.updateLoading = true
+      this.updateLoading = true;
 
       try {
-        const currentAnki = this.getCurrentAnki
+        const currentAnki = this.getCurrentAnki;
 
-        const authStore = useAuthStore()
+        const authStore = useAuthStore();
         if (authStore.session.idToken == null) {
-          await authStore.refreshAccessToken()
+          await authStore.refreshAccessToken();
         }
 
         const response = await $fetch<{
-          data: { updateAnki: { url: string } }
-        }>('/api/graphql', {
-          method: 'POST',
+          data: { updateAnki: { url: string } };
+        }>("/api/graphql", {
+          method: "POST",
           headers: {
-            Authorization: `${authStore.session.idToken}`
+            Authorization: `${authStore.session.idToken}`,
           },
           body: {
             query: `#graphql
@@ -252,97 +252,100 @@ export const useAnkiStore = defineStore('anki', {
               }
             }
           `,
-            variables: { pageId, easeFactor, repetitionCount, nextReviewAt }
-          }
-        })
+            variables: { pageId, easeFactor, repetitionCount, nextReviewAt },
+          },
+        });
       } catch (error) {
       } finally {
-        this.isShowAnswer = false
-        this.updateLoading = false
+        this.isShowAnswer = false;
+        this.updateLoading = false;
       }
 
-      await this.next()
+      await this.next();
     },
     async updateAnkiByPerformanceRating(
-      performanceRating: 0 | 1 | 2 | 3 | 4 | 5 | number
+      performanceRating: 0 | 1 | 2 | 3 | 4 | 5 | number,
     ) {
       if (this.getCurrentAnki == null) {
-        throw new Error('No current learn')
+        throw new Error("No current learn");
       }
-      const maxInterval = 365 / 4
-      const minInterval = 0.5
+      const maxInterval = 365 / 4;
+      const minInterval = 0.5;
 
       if (performanceRating < 3) {
         this.getCurrentAnki.easeFactor = Math.max(
           1.3,
-          this.getCurrentAnki.easeFactor * 0.85
-        )
-        this.getCurrentAnki.repetitionCount = 0
+          this.getCurrentAnki.easeFactor * 0.85,
+        );
+        this.getCurrentAnki.repetitionCount = 0;
       } else {
         this.getCurrentAnki.easeFactor +=
           0.1 -
-          (5 - performanceRating) * (0.08 + (5 - performanceRating) * 0.02)
-        this.getCurrentAnki.repetitionCount += 1
+          (5 - performanceRating) * (0.08 + (5 - performanceRating) * 0.02);
+        this.getCurrentAnki.repetitionCount += 1;
       }
 
-      let newInterval: number
+      let newInterval: number;
       if (performanceRating === 0) {
-        newInterval = minInterval
+        newInterval = minInterval;
       } else if (performanceRating === 1) {
-        newInterval = minInterval
+        newInterval = minInterval;
       } else if (performanceRating === 2) {
-        newInterval = Math.max(minInterval, this.getCurrentAnki.repetitionCount)
+        newInterval = Math.max(
+          minInterval,
+          this.getCurrentAnki.repetitionCount,
+        );
       } else {
-        let multiplier = 1
+        let multiplier = 1;
         if (performanceRating === 3) {
-          multiplier = 1
+          multiplier = 1;
         } else if (performanceRating === 4) {
-          multiplier = 1.5
+          multiplier = 1.5;
         } else if (performanceRating === 5) {
-          multiplier = 2
+          multiplier = 2;
         }
         newInterval = Math.min(
           maxInterval,
 
           this.getCurrentAnki.easeFactor **
             this.getCurrentAnki.repetitionCount *
-            multiplier
-        )
+            multiplier,
+        );
       }
 
       this.getCurrentAnki.nextReviewAt = new Date(
-        Date.now() + newInterval * 24 * 60 * 60 * 1000
-      ).toISOString()
+        Date.now() + newInterval * 24 * 60 * 60 * 1000,
+      ).toISOString();
 
       await this.update({
         pageId: this.getCurrentAnki.pageId,
         easeFactor: this.getCurrentAnki.easeFactor,
         repetitionCount: this.getCurrentAnki.repetitionCount,
-        nextReviewAt: this.getCurrentAnki.nextReviewAt
-      })
+        nextReviewAt: this.getCurrentAnki.nextReviewAt,
+      });
     },
     editCurrentAnki() {
-      const currentAnki = this.getCurrentAnki
+      const currentAnki = this.getCurrentAnki;
       if (currentAnki == null) {
-        throw new Error('No current learn')
+        throw new Error("No current learn");
       }
-      const url = currentAnki.url.replace('https://', 'notion://')
-      window.open(url, '_blank')
-    }
+      const url = currentAnki.url.replace("https://", "notion://");
+      window.open(url, "_blank");
+    },
   },
   getters: {
     getShouldLearnCount(): number {
       const nextReviewAtList = this.ankiList.map(
-        (anki) => new Date(anki.nextReviewAt)
-      )
-      const now = new Date()
+        (anki) => new Date(anki.nextReviewAt),
+      );
+      const now = new Date();
 
       return nextReviewAtList.filter((nextReviewAt) => nextReviewAt < now)
-        .length
+        .length;
     },
-    getCurrentAnki(): AnkiResponse['edges'][number]['node'] {
-      const [next] = this.ankiList
-      return next
-    }
-  }
-})
+    getCurrentAnki(): AnkiResponse["edges"][number]["node"] {
+      const [next] = this.ankiList;
+      return next;
+    },
+  },
+});

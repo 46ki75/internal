@@ -1,31 +1,31 @@
 import {
   CloudFrontClient,
   CreateInvalidationCommand,
-  ListDistributionsCommand
-} from '@aws-sdk/client-cloudfront'
+  ListDistributionsCommand,
+} from "@aws-sdk/client-cloudfront";
 
-const ENVIRONMENT = process.env.ENVIRONMENT
+const ENVIRONMENT = process.env.ENVIRONMENT;
 
-if (ENVIRONMENT == null || !['dev', 'stg', 'prod'].includes(ENVIRONMENT)) {
-  throw new Error('Invalid ENVIRONMENT')
+if (ENVIRONMENT == null || !["dev", "stg", "prod"].includes(ENVIRONMENT)) {
+  throw new Error("Invalid ENVIRONMENT");
 }
 
-console.log('ENVIRONMENT:', ENVIRONMENT)
+console.log("ENVIRONMENT:", ENVIRONMENT);
 
-const client = new CloudFrontClient({ region: 'ap-northeast-1' })
+const client = new CloudFrontClient({ region: "ap-northeast-1" });
 
-const { DistributionList } = await client.send(new ListDistributionsCommand())
+const { DistributionList } = await client.send(new ListDistributionsCommand());
 
 const distributionId = DistributionList?.Items?.find((distribution) =>
   distribution.Aliases?.Items?.includes(
-    ENVIRONMENT === 'prod'
-      ? 'internal.46ki75.com'
-      : `${ENVIRONMENT}.internal.46ki75.com`
-  )
-)?.Id
+    ENVIRONMENT === "prod"
+      ? "internal.46ki75.com"
+      : `${ENVIRONMENT}.internal.46ki75.com`,
+  ),
+)?.Id;
 
 if (distributionId == null) {
-  throw new Error('Distribution not found')
+  throw new Error("Distribution not found");
 }
 
 const { Invalidation } = await client.send(
@@ -35,11 +35,11 @@ const { Invalidation } = await client.send(
       CallerReference: Date.now().toString(),
       Paths: {
         Quantity: 1,
-        Items: ['/*']
-      }
-    }
-  })
-)
+        Items: ["/*"],
+      },
+    },
+  }),
+);
 
-console.log('Invalidate CloudFront Distribution:', Invalidation?.Id)
-console.log(Invalidation)
+console.log("Invalidate CloudFront Distribution:", Invalidation?.Id);
+console.log(Invalidation);

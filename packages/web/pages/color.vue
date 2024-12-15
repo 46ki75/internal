@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmColorTable } from "@elmethis/core";
+import { ElmColorTable } from '@elmethis/core'
 </script>
 
 <style scoped lang="scss">

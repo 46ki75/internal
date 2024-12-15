@@ -1,5 +1,4 @@
 {
-	"scripts": { "check": "biome check" },
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4"
 	}

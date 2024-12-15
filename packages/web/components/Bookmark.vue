@@ -30,19 +30,19 @@
 
 <script setup lang="ts">
 import {
-	ElmBookmarkIcon,
-	ElmHeading1,
-	ElmInlineText,
-	ElmParagraph,
-	ElmTag,
-} from "@elmethis/core";
+  ElmBookmarkIcon,
+  ElmHeading1,
+  ElmInlineText,
+  ElmParagraph,
+  ElmTag
+} from '@elmethis/core'
 
-const bookmarkStore = useBookmarkStore();
+const bookmarkStore = useBookmarkStore()
 
 onMounted(async () => {
-	console.log("fetching bookmarks");
-	await bookmarkStore.fetch();
-});
+  console.log('fetching bookmarks')
+  await bookmarkStore.fetch()
+})
 </script>
 
 <style scoped lang="scss">

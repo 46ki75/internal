@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmToggle } from "@elmethis/core";
+import { ElmToggle } from '@elmethis/core'
 </script>
 
 <style scoped lang="scss">

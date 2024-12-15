@@ -19,39 +19,39 @@
 </template>
 
 <script setup lang="ts">
-import { ElmButton, ElmInlineText } from "@elmethis/core";
+import { ElmButton, ElmInlineText } from '@elmethis/core'
 
-const authStore = useAuthStore();
-const router = useRouter();
+const authStore = useAuthStore()
+const router = useRouter()
 
-const username = ref<HTMLInputElement>();
-const password = ref<HTMLInputElement>();
-const error = ref<string | null>(null);
+const username = ref<HTMLInputElement>()
+const password = ref<HTMLInputElement>()
+const error = ref<string | null>(null)
 
 const handleSignIn = async () => {
-	if (
-		username.value?.value == null ||
-		password.value?.value == null ||
-		username.value.value === "" ||
-		password.value.value === ""
-	) {
-		console.log("password is empty");
-		error.value = "Please enter username and password";
-	} else {
-		await authStore.signin({
-			username: username.value.value,
-			password: password.value.value,
-		});
+  if (
+    username.value?.value == null ||
+    password.value?.value == null ||
+    username.value.value == '' ||
+    password.value.value == ''
+  ) {
+    console.log('password is empty')
+    error.value = 'Please enter username and password'
+  } else {
+    await authStore.signin({
+      username: username.value.value,
+      password: password.value.value
+    })
 
-		if (authStore.session.inSession) {
-			router.push("/");
-		}
-	}
-};
+    if (authStore.session.inSession) {
+      router.push('/')
+    }
+  }
+}
 
 onMounted(async () => {
-	await authStore.refreshAccessToken();
-});
+  await authStore.refreshAccessToken()
+})
 </script>
 
 <style scoped lang="scss">

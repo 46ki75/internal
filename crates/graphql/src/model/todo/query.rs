@@ -5,8 +5,8 @@ pub struct ToDoQuery;
 pub struct GitHubNotification {
     pub id: String,
     pub unread: bool,
-    pub updated_at: String,
-    pub last_read_at: String,
+    pub updated_at: Option<String>,
+    pub last_read_at: Option<String>,
     pub subject: GitHubNotioncationSubject,
 }
 
@@ -87,8 +87,8 @@ impl ToDoQuery {
 
                 let severity = super::Sevelity::Unknown;
 
-                let created_at = result.created_time.to_rfc3339();
-                let updated_at = result.last_edited_time.to_rfc3339();
+                let created_at = Some(result.created_time.to_rfc3339());
+                let updated_at = Some(result.last_edited_time.to_rfc3339());
 
                 Ok(crate::model::todo::ToDo {
                     id,

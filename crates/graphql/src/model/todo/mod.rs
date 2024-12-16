@@ -10,8 +10,8 @@ pub struct ToDo {
     pub is_done: bool,
     pub deadline: Option<String>,
     pub severity: Sevelity,
-    pub created_at: String,
-    pub updated_at: String,
+    pub created_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 #[derive(async_graphql::Enum, Default, Debug, Clone, Copy, PartialEq, Eq)]

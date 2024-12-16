@@ -1,5 +1,7 @@
 <template>
   <div>
+    <ElmHeading1 text="ToDo" />
+
     <table
       class="todo"
       v-if="!todoStore.loading && todoStore.todoList.length > 0"
@@ -85,6 +87,7 @@
 import {
   ElmBadge,
   ElmCheckbox,
+  ElmHeading1,
   ElmInlineLink,
   ElmInlineText
 } from '@elmethis/core'

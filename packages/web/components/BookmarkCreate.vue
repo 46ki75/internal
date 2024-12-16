@@ -43,7 +43,6 @@ const handleCreate = async () => {
   flex-direction: column;
   gap: 0.5rem;
   margin-block-start: 1rem;
-  margin-block-end: 20rem;
 }
 
 .input {

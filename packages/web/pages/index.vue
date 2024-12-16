@@ -1,9 +1,9 @@
 <template>
   <main class="main">
     <div class="center">
-      <ToDo />
       <Bookmark />
       <BookmarkCreate />
+      <ToDo />
     </div>
   </main>
 </template>
@@ -30,5 +30,6 @@ onMounted(async () => {
 .center {
   width: 100%;
   max-width: 1000px;
+  margin-block-end: 20rem;
 }
 </style>

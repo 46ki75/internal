@@ -1,9 +1,14 @@
 <template>
   <main class="main">
     <div class="center">
-      <Bookmark />
-      <BookmarkCreate />
-      <ToDo />
+      <div>
+        <Bookmark />
+        <BookmarkCreate />
+      </div>
+
+      <div>
+        <ToDo />
+      </div>
     </div>
   </main>
 </template>
@@ -28,8 +33,20 @@ onMounted(async () => {
 }
 
 .center {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: wrap;
   width: 100%;
-  max-width: 1000px;
   margin-block-end: 20rem;
+  gap: 0.5rem;
+
+  @media screen and (max-width: 1200px) {
+    flex-direction: column;
+  }
+
+  div {
+    flex: 1;
+  }
 }
 </style>

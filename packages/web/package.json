@@ -22,7 +22,7 @@
     "lodash-es": "^4.17.21",
     "nuxt": "^3.14.1592",
     "pinia": "^2.3.0",
-    "sass": "^1.82.0",
+    "sass": "^1.83.0",
     "vue": "latest",
     "vue-router": "latest",
     "zod": "^3.24.1"

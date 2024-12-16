@@ -1,6 +1,7 @@
 <template>
   <main class="main">
     <div class="center">
+      <ToDo />
       <Bookmark />
       <BookmarkCreate />
     </div>

@@ -31,6 +31,8 @@ impl ToDoQuery {
             .map(|result| {
                 let id = result.id.clone();
 
+                let url = result.url.clone();
+
                 let source = String::from("Notion:todo");
 
                 let title = result
@@ -67,6 +69,7 @@ impl ToDoQuery {
 
                 Ok(crate::model::todo::ToDo {
                     id,
+                    url,
                     source,
                     title,
                     description,

@@ -3,6 +3,7 @@ pub mod query;
 #[derive(async_graphql::SimpleObject, Default)]
 pub struct ToDo {
     pub id: String,
+    pub url: String,
     pub source: String,
     pub title: String,
     pub description: Option<String>,

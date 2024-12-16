@@ -1,5 +1,6 @@
 pub mod anki;
 pub mod bookmark;
+pub mod todo;
 pub mod translation;
 
 #[derive(async_graphql::SimpleObject, Default)]

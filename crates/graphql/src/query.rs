@@ -59,4 +59,11 @@ impl QueryRoot {
             .translate_usage(ctx)
             .await
     }
+
+    pub async fn todo_list(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> Result<crate::model::todo::ToDoConnection, async_graphql::Error> {
+        crate::model::todo::query::ToDoQuery.list_to_do(ctx).await
+    }
 }

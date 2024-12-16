@@ -13,12 +13,15 @@ pub struct GitHubNotification {
 #[derive(serde::Deserialize, Debug)]
 pub struct GitHubNotioncationSubject {
     pub title: String,
+
+    #[allow(dead_code)]
     pub url: String,
 
     #[allow(dead_code)]
     pub latest_comment_url: String,
-    // #[allow(dead_code)]
-    // pub r#type: String,
+
+    #[allow(dead_code)]
+    pub r#type: String,
 }
 
 #[async_graphql::Object]
@@ -148,7 +151,7 @@ impl ToDoQuery {
             .map(|notification| {
                 let id = notification.id.clone();
 
-                let url = notification.subject.url.clone();
+                let url = String::from("https://github.com/notifications");
 
                 let source = String::from("GitHub:notification");
 

@@ -10,6 +10,9 @@ impl ToDoQuery {
         let secret = std::env::var("NOTION_API_KEY")
             .map_err(|_| async_graphql::Error::from("NOTION_API_KEY not found"))?;
 
+        let database_id = std::env::var("NOTION_TODO_DATABASE_ID")
+            .map_err(|_| async_graphql::Error::from("NOTION_TODO_DATABASE_ID not found"))?;
+
         let client = notionrs::client::Client::new().secret(secret);
 
         let request = client
@@ -18,7 +21,7 @@ impl ToDoQuery {
                 notionrs::filter::Filter::select_equals("Type", "todo"),
                 notionrs::filter::Filter::checkbox_is_not_checked("IsDone"),
             ]))
-            .database_id("0efebbe50ed043d3b8aeb38ae0044338");
+            .database_id(database_id);
 
         let response = request.send().await?;
 

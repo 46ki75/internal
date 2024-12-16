@@ -3,7 +3,7 @@ pub struct ToDoQuery;
 
 #[async_graphql::Object]
 impl ToDoQuery {
-    pub async fn list_to_do(
+    pub async fn list_notion_to_do(
         &self,
         _ctx: &async_graphql::Context<'_>,
     ) -> Result<super::ToDoConnection, async_graphql::Error> {

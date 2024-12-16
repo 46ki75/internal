@@ -37,7 +37,7 @@ type Connection = z.infer<typeof ConnectionScema>
 
 const query = /* GraphQL */ `
   query ToDo {
-    todoList {
+    notionTodoList {
       edges {
         node {
           id
@@ -81,7 +81,7 @@ export const useToDoStore = defineStore('todo', {
       }
 
       try {
-        const response = await $fetch<{ data: { todoList: Connection } }>(
+        const response = await $fetch<{ data: { notionTodoList: Connection } }>(
           '/api/graphql',
           {
             method: 'POST',
@@ -93,7 +93,9 @@ export const useToDoStore = defineStore('todo', {
           }
         )
 
-        this.todoList = response.data.todoList.edges.map((edge) => edge.node)
+        this.todoList = response.data.notionTodoList.edges.map(
+          (edge) => edge.node
+        )
       } catch (error: unknown) {
         this.error = (error as Error)?.message
       } finally {

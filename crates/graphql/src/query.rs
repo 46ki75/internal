@@ -60,10 +60,12 @@ impl QueryRoot {
             .await
     }
 
-    pub async fn todo_list(
+    pub async fn notion_todo_list(
         &self,
         ctx: &async_graphql::Context<'_>,
     ) -> Result<crate::model::todo::ToDoConnection, async_graphql::Error> {
-        crate::model::todo::query::ToDoQuery.list_to_do(ctx).await
+        crate::model::todo::query::ToDoQuery
+            .list_notion_to_do(ctx)
+            .await
     }
 }

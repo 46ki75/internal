@@ -3,7 +3,7 @@ pub mod bookmark;
 pub mod todo;
 pub mod translation;
 
-#[derive(async_graphql::SimpleObject, Default)]
+#[derive(async_graphql::SimpleObject, Default, Debug)]
 pub struct PageInfo {
     pub has_next_page: bool,
     pub has_previous_page: bool,

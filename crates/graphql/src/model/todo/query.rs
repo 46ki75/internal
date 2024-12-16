@@ -1,6 +1,26 @@
 #[derive(Default)]
 pub struct ToDoQuery;
 
+#[derive(serde::Deserialize, Debug)]
+pub struct GitHubNotification {
+    pub id: String,
+    pub unread: bool,
+    pub updated_at: String,
+    pub last_read_at: String,
+    pub subject: GitHubNotioncationSubject,
+}
+
+#[derive(serde::Deserialize, Debug)]
+pub struct GitHubNotioncationSubject {
+    pub title: String,
+    pub url: String,
+
+    #[allow(dead_code)]
+    pub latest_comment_url: String,
+    // #[allow(dead_code)]
+    // pub r#type: String,
+}
+
 #[async_graphql::Object]
 impl ToDoQuery {
     pub async fn list_notion_to_do(
@@ -96,6 +116,80 @@ impl ToDoQuery {
                 has_next_page: response.has_more.unwrap_or(false),
                 end_cursor,
                 next_cursor: response.next_cursor.clone(),
+                ..Default::default()
+            },
+        };
+
+        Ok(connection)
+    }
+
+    pub async fn list_github_todo(
+        &self,
+        _ctx: &async_graphql::Context<'_>,
+    ) -> Result<super::ToDoConnection, async_graphql::Error> {
+        let client = reqwest::Client::new();
+
+        let token = std::env::var("GITHUB_TOKEN")
+            .map_err(|_| async_graphql::Error::from("GITHUB_TOKEN not found"))?;
+
+        let url = "https://api.github.com/notifications";
+
+        let request = client
+            .get(url)
+            .header("Authorization", format!("Bearer {}", token))
+            .header("User-Agent", "Rust - reqwest/0.12.9");
+
+        let response = request.send().await?.text().await?;
+
+        let notifications: Vec<GitHubNotification> = serde_json::from_str(&response)?;
+
+        let todos = notifications
+            .iter()
+            .map(|notification| {
+                let id = notification.id.clone();
+
+                let url = notification.subject.url.clone();
+
+                let source = String::from("GitHub:notification");
+
+                let title = notification.subject.title.clone();
+
+                let description = None;
+
+                let is_done = !notification.unread;
+
+                let deadline = None;
+
+                let severity = super::Sevelity::Unknown;
+
+                let created_at = notification.last_read_at.clone();
+
+                let updated_at = notification.updated_at.clone();
+
+                crate::model::todo::ToDo {
+                    id,
+                    url,
+                    source,
+                    title,
+                    description,
+                    is_done,
+                    deadline,
+                    severity,
+                    created_at,
+                    updated_at,
+                }
+            })
+            .collect::<Vec<crate::model::todo::ToDo>>();
+
+        let connection = crate::model::todo::ToDoConnection {
+            edges: todos
+                .into_iter()
+                .map(|node| crate::model::todo::ToDoEdge {
+                    cursor: node.id.clone(),
+                    node,
+                })
+                .collect::<Vec<crate::model::todo::ToDoEdge>>(),
+            page_info: crate::model::PageInfo {
                 ..Default::default()
             },
         };

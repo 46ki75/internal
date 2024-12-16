@@ -1,6 +1,6 @@
 pub mod query;
 
-#[derive(async_graphql::SimpleObject, Default)]
+#[derive(async_graphql::SimpleObject, Default, Debug)]
 pub struct ToDo {
     pub id: String,
     pub url: String,
@@ -14,7 +14,7 @@ pub struct ToDo {
     pub updated_at: String,
 }
 
-#[derive(async_graphql::Enum, Default, Clone, Copy, PartialEq, Eq)]
+#[derive(async_graphql::Enum, Default, Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Sevelity {
     #[default]
     Unknown,
@@ -24,13 +24,13 @@ pub enum Sevelity {
     Fatal,
 }
 
-#[derive(async_graphql::SimpleObject, Default)]
+#[derive(async_graphql::SimpleObject, Default, Debug)]
 pub struct ToDoConnection {
     pub edges: Vec<ToDoEdge>,
     pub page_info: crate::model::PageInfo,
 }
 
-#[derive(async_graphql::SimpleObject, Default)]
+#[derive(async_graphql::SimpleObject, Default, Debug)]
 pub struct ToDoEdge {
     pub node: ToDo,
     pub cursor: String,

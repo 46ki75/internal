@@ -68,4 +68,13 @@ impl QueryRoot {
             .list_notion_to_do(ctx)
             .await
     }
+
+    pub async fn github_notification_list(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> Result<crate::model::todo::ToDoConnection, async_graphql::Error> {
+        crate::model::todo::query::ToDoQuery
+            .list_github_todo(ctx)
+            .await
+    }
 }

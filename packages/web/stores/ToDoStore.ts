@@ -11,8 +11,8 @@ const ToDoSchema = z.object({
   severity: z
     .enum(['UNKNOWN', 'INFO', 'WARN', 'ERROR', 'FATAL'])
     .default('UNKNOWN'),
-  createdAt: z.string(),
-  updatedAt: z.string()
+  createdAt: z.string().nullable().optional(),
+  updatedAt: z.string().nullable().optional()
 })
 
 const PageInforSchema = z.object({

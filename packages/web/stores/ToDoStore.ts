@@ -37,6 +37,22 @@ type Connection = z.infer<typeof ConnectionScema>
 
 const query = /* GraphQL */ `
   query ToDo {
+    githubNotificationList {
+      edges {
+        node {
+          id
+          url
+          source
+          title
+          description
+          isDone
+          deadline
+          severity
+          createdAt
+          updatedAt
+        }
+      }
+    }
     notionTodoList {
       edges {
         node {
@@ -51,10 +67,6 @@ const query = /* GraphQL */ `
           createdAt
           updatedAt
         }
-        cursor
-      }
-      pageInfo {
-        nextCursor
       }
     }
   }
@@ -81,21 +93,25 @@ export const useToDoStore = defineStore('todo', {
       }
 
       try {
-        const response = await $fetch<{ data: { notionTodoList: Connection } }>(
-          '/api/graphql',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: authStore.session.idToken
-            },
-            body: JSON.stringify({ query })
+        const response = await $fetch<{
+          data: {
+            githubNotificationList: Connection
+            notionTodoList: Connection
           }
-        )
+        }>('/api/graphql', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: authStore.session.idToken
+          },
+          body: JSON.stringify({ query })
+        })
 
-        this.todoList = response.data.notionTodoList.edges.map(
-          (edge) => edge.node
-        )
+        this.todoList = response.data.notionTodoList.edges
+          .map((edge) => edge.node)
+          .concat(
+            response.data.githubNotificationList.edges.map((edge) => edge.node)
+          )
       } catch (error: unknown) {
         this.error = (error as Error)?.message
       } finally {

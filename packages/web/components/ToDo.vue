@@ -7,13 +7,13 @@
       <thead>
         <tr>
           <th>
+            <ElmInlineText text="SRC" />
+          </th>
+          <th>
             <ElmInlineText text="Title" />
           </th>
           <th>
             <ElmInlineText text="Is Done" />
-          </th>
-          <th>
-            <ElmInlineText text="Source" />
           </th>
           <th>
             <ElmInlineText text="Severity" />
@@ -24,9 +24,29 @@
       <tbody>
         <tr v-for="todo in todoStore.todoList" :key="todo.id">
           <td>
+            <img
+              v-if="todo.source.toLocaleLowerCase().includes('notion')"
+              class="favicon"
+              src="https://www.notion.so/images/favicon.ico"
+              alt="notion"
+            />
+
+            <img
+              v-else-if="todo.source.toLocaleLowerCase().includes('github')"
+              class="favicon"
+              src="https://github.githubassets.com/favicons/favicon.svg"
+              alt="notion"
+            />
+          </td>
+
+          <td>
             <div>
               <ElmInlineLink
-                :text="todo.title"
+                :text="
+                  todo.title.length > 50
+                    ? todo.title.slice(0, 50) + '...'
+                    : todo.title
+                "
                 :href="
                   todo.source.toLocaleLowerCase().includes('notion')
                     ? todo.url.replace('https://', 'notion://')
@@ -35,6 +55,7 @@
               />
             </div>
           </td>
+
           <td>
             <ElmCheckbox
               v-if="todo.source === 'Notion:todo'"
@@ -43,14 +64,7 @@
             />
             <ElmInlineText v-else text="-" />
           </td>
-          <td>
-            <img
-              v-if="todo.source.toLocaleLowerCase().includes('notion')"
-              class="favicon"
-              src="https://www.notion.so/images/favicon.ico"
-              alt="notion"
-            />
-          </td>
+
           <td>
             <ElmBadge :color="colorMap[todo.severity]">
               <template #left>
@@ -107,6 +121,10 @@ const colorMap: Record<
 .favicon {
   height: 24px;
   opacity: 0.8;
+  color: black;
+  [data-theme='dark'] & {
+    filter: invert(1);
+  }
 }
 
 .icon {

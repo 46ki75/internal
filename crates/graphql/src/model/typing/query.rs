@@ -28,11 +28,7 @@ impl TypingQuery {
 
         let response = request.send().await?;
 
-        println!("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-
         let items = response.items.ok_or("No items found")?;
-
-        println!("{:?}", items);
 
         let typings = items
             .iter()

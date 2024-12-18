@@ -36,7 +36,7 @@ export const useTypingStore = defineStore('typing', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${authStore.session.idToken}`
+              Authorization: `${authStore.session.idToken}`
             },
             body: JSON.stringify({
               query: /* GraphQL */ `
@@ -70,7 +70,7 @@ export const useTypingStore = defineStore('typing', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${authStore.session.idToken}`
+              Authorization: `${authStore.session.idToken}`
             },
             body: JSON.stringify({
               query: /* GraphQL */ `

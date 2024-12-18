@@ -14,6 +14,8 @@ impl TypingMutation {
         _ctx: &async_graphql::Context<'_>,
         input: TypingInput,
     ) -> Result<super::Typing, async_graphql::Error> {
+        dotenvy::dotenv().ok();
+
         let environment = std::env::var("ENVIRONMENT")?;
 
         let table_name = format!("{environment}-table");

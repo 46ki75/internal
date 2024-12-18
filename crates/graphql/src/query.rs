@@ -77,4 +77,11 @@ impl QueryRoot {
             .list_github_todo(ctx)
             .await
     }
+
+    pub async fn typing_list(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> Result<Vec<crate::model::typing::Typing>, async_graphql::Error> {
+        crate::model::typing::query::TypingQuery.typing(ctx).await
+    }
 }

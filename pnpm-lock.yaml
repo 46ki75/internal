@@ -18,8 +18,8 @@ importers:
         specifier: ^3.713.0
         version: 3.713.0
       '@elmethis/core':
-        specifier: 1.0.0-alpha.92
-        version: 1.0.0-alpha.92
+        specifier: 1.0.0-alpha.94
+        version: 1.0.0-alpha.94
       '@heroicons/vue':
         specifier: ^2.2.0
         version: 2.2.0(vue@3.5.13(typescript@5.7.2))
@@ -560,8 +560,8 @@ packages:
     resolution: {integrity: sha512-YLPHc8yASwjNkmcDMQMY35yiWjoKAKnhUbPRszBRS0YgH+IXtsMp61j+yTcnCE3oO2DgP0U3iejLC8FTtKDC8Q==}
     engines: {node: '>=16.13'}
 
-  '@elmethis/core@1.0.0-alpha.92':
-    resolution: {integrity: sha512-cDKuU1BQ2ahar9EzhtlzSehOo45T93itPYMBbWZSt9JPITfsOSzIDuIt33GCIYuMQ3Hg3JMsA+BLSD7Cp/aeRQ==}
+  '@elmethis/core@1.0.0-alpha.94':
+    resolution: {integrity: sha512-SgYPIpNUJRDvR0gcshn8W+aMD5VNJR4WQbHau1dvwNC9+Wy4U9/zwA0ODSkYUjg+uUE/4aDeAhCcT84nw/VPAA==}
 
   '@esbuild/aix-ppc64@0.21.5':
     resolution: {integrity: sha512-1SDgH6ZSPTlggy1yI6+Dbkiz8xzpHJEVAlF/AM1tHPLsf5STom9rwtjE4hKAF20FfXXNTFqEYXyJNWh1GiZedQ==}
@@ -5185,7 +5185,7 @@ snapshots:
     dependencies:
       mime: 3.0.0
 
-  '@elmethis/core@1.0.0-alpha.92':
+  '@elmethis/core@1.0.0-alpha.94':
     dependencies:
       nanoid: 5.0.9
 

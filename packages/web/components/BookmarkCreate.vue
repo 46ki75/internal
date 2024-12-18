@@ -3,10 +3,12 @@
     <ElmHeading1 text="Create Bookmark" />
 
     <div class="input-container">
-      <label for="name"><ElmInlineText text="Name" /></label>
-      <input id="name" class="input" type="text" v-model="name" />
-      <label for="url"><ElmInlineText text="URL" /></label>
-      <input id="url" class="input" type="text" v-model="url" />
+      <ElmTextField
+        v-model="name"
+        label="Name"
+        :icon="GlobeAsiaAustraliaIcon"
+      />
+      <ElmTextField v-model="url" label="URL" :icon="LinkIcon" />
 
       <ElmButton
         block
@@ -20,12 +22,13 @@
 </template>
 
 <script setup lang="ts">
-import { ElmHeading1, ElmButton, ElmInlineText } from '@elmethis/core'
+import { ElmHeading1, ElmButton, ElmTextField } from '@elmethis/core'
+import { GlobeAsiaAustraliaIcon, LinkIcon } from '@heroicons/vue/24/outline'
 
 const bookmarkStore = useBookmarkStore()
 
-const name = ref<string | null>()
-const url = ref<string | null>()
+const name = ref<string | undefined>()
+const url = ref<string | undefined>()
 
 const handleCreate = async () => {
   if (name.value != null && url.value != null) {

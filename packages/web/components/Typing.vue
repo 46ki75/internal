@@ -1,24 +1,26 @@
 <template>
   <div>
-    <div>
-      <span v-for="(target, index) in targetArray">
-        <ElmInlineText
-          :key="`${currentIndex}-${index}-${target.char}`"
-          :text="target.char"
-          :style="{
-            fontFamily: 'Source Code Pro',
-            fontSize: '1.5rem',
-            textDecoration: target.status === 'current' ? 'underline' : 'none',
-            color:
-              target.status === 'incorrect'
-                ? 'red'
-                : target.status === 'typed'
-                ? 'gray'
-                : 'black'
-          }"
-        />
-      </span>
-    </div>
+    <span>
+      <ElmInlineText
+        v-for="(target, index) in targetArray"
+        :key="`${currentIndex}-${index}-${target.char}`"
+        :text="target.char"
+        :style="{
+          fontFamily: 'Source Code Pro',
+          fontSize: '1.5rem',
+          textDecoration: target.status === 'current' ? 'underline' : 'none',
+          color:
+            target.status === 'incorrect'
+              ? 'red'
+              : target.status === 'typed'
+              ? 'gray'
+              : 'black'
+        }"
+      />
+    </span>
+
+    <div>{{ seeds[currentIndex].description }}</div>
+
     <div>Mistakes: {{ mistakes }}</div>
   </div>
 </template>

@@ -1,6 +1,12 @@
 <template>
   <div class="main">
-    <Typing />
+    <div class="child">
+      <Typing />
+
+      <div :style="{ margin: '10rem 0' }"></div>
+
+      <TypingCreate />
+    </div>
   </div>
 </template>
 
@@ -12,5 +18,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.child {
+  width: 100%;
+  max-width: 1000px;
 }
 </style>

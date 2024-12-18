@@ -9,11 +9,21 @@ export const useTypingStore = defineStore('typing', {
     return {
       typingList: [] as Typing[],
       loading: false,
-      error: null as string | null
+      error: null as string | null,
+      text: '',
+      description: 'string'
     }
   },
 
   actions: {
+    setText(text: string) {
+      this.text = text
+    },
+
+    setDescription(description: string) {
+      this.description = description
+    },
+
     async fetch() {
       this.loading = true
 
@@ -50,7 +60,7 @@ export const useTypingStore = defineStore('typing', {
       }
     },
 
-    async upsert({ text, description }: { text: string; description: string }) {
+    async upsert() {
       this.loading = true
       const authStore = useAuthStore()
       try {
@@ -64,15 +74,17 @@ export const useTypingStore = defineStore('typing', {
             },
             body: JSON.stringify({
               query: /* GraphQL */ `
-                mutation UpsertTyping($text: String!, $description: String!) {
-                  upsertTyping(text: $text, description: $description) {
+                mutation CreateTyping($text: String!, $description: String!) {
+                  upsertTyping(
+                    input: { text: $text, description: $description }
+                  ) {
                     id
                     text
                     description
                   }
                 }
               `,
-              variables: { text, description }
+              variables: { text: this.text, description: this.description }
             })
           }
         )

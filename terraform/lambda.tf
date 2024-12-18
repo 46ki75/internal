@@ -52,7 +52,11 @@ resource "aws_iam_policy" "lambda_policy_graphql" {
         "Action" : [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
-          "logs:PutLogEvents"
+          "logs:PutLogEvents",
+          "dynamodb:Scan",
+          "dynamodb:Query",
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
         ],
         "Resource" : "*"
       }

@@ -77,6 +77,7 @@ resource "aws_lambda_function" "graphql" {
 
   environment {
     variables = {
+      ENVIRONMENT                 = terraform.workspace
       NOTION_API_KEY              = data.aws_ssm_parameter.lambda_env_NOTION_API_KEY.value
       GITHUB_TOKEN                = data.aws_ssm_parameter.lambda_env_GITHUB_TOKEN.value
       NOTION_ANKI_DATABASE_ID     = data.aws_ssm_parameter.lambda_env_NOTION_ANKI_DATABASE_ID.value

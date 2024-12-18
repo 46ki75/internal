@@ -33,4 +33,24 @@ impl MutationRoot {
             .update_anki(ctx, input)
             .await
     }
+
+    pub async fn upsert_typing(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+        input: crate::model::typing::mutation::TypingInput,
+    ) -> Result<crate::model::typing::Typing, async_graphql::Error> {
+        crate::model::typing::mutation::TypingMutation
+            .upsert_typing(ctx, input)
+            .await
+    }
+
+    pub async fn delete_typing(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+        input: crate::model::typing::mutation::TypingDeleteInput,
+    ) -> Result<String, async_graphql::Error> {
+        crate::model::typing::mutation::TypingMutation
+            .delete_typing(ctx, input)
+            .await
+    }
 }

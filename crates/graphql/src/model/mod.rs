@@ -2,6 +2,7 @@ pub mod anki;
 pub mod bookmark;
 pub mod todo;
 pub mod translation;
+pub mod typing;
 
 #[derive(async_graphql::SimpleObject, Default, Debug)]
 pub struct PageInfo {

@@ -33,4 +33,14 @@ impl MutationRoot {
             .update_anki(ctx, input)
             .await
     }
+
+    pub async fn create_typing(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+        input: crate::model::typing::mutation::TypingInput,
+    ) -> Result<crate::model::typing::Typing, async_graphql::Error> {
+        crate::model::typing::mutation::TypingMutation
+            .create_typing(ctx, input)
+            .await
+    }
 }

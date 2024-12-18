@@ -43,4 +43,14 @@ impl MutationRoot {
             .create_typing(ctx, input)
             .await
     }
+
+    pub async fn delete_typing(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+        input: crate::model::typing::mutation::TypingDeleteInput,
+    ) -> Result<String, async_graphql::Error> {
+        crate::model::typing::mutation::TypingMutation
+            .delete_typing(ctx, input)
+            .await
+    }
 }

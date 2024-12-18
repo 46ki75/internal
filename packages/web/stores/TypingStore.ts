@@ -48,6 +48,41 @@ export const useTypingStore = defineStore('typing', {
       } finally {
         this.loading = false
       }
+    },
+
+    async upsert({ text, description }: { text: string; description: string }) {
+      this.loading = true
+      const authStore = useAuthStore()
+      try {
+        const response = await $fetch<{ data: { upsertTyping: Typing } }>(
+          '/api/graphql',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${authStore.session.idToken}`
+            },
+            body: JSON.stringify({
+              query: /* GraphQL */ `
+                mutation UpsertTyping($text: String!, $description: String!) {
+                  upsertTyping(text: $text, description: $description) {
+                    id
+                    text
+                    description
+                  }
+                }
+              `,
+              variables: { text, description }
+            })
+          }
+        )
+
+        this.typingList = [...this.typingList, response.data.upsertTyping]
+      } catch (error) {
+        this.error = (error as Error)?.message
+      } finally {
+        this.loading = false
+      }
     }
   }
 })

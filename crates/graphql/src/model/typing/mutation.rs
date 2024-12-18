@@ -14,7 +14,7 @@ pub struct TypingDeleteInput {
 
 #[async_graphql::Object]
 impl TypingMutation {
-    pub async fn create_typing(
+    pub async fn upsert_typing(
         &self,
         _ctx: &async_graphql::Context<'_>,
         input: TypingInput,

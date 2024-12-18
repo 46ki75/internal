@@ -40,6 +40,16 @@
           <span>Color</span>
         </template>
       </ElmTooltip>
+
+      <ElmTooltip>
+        <template #original>
+          <NuxtLink to="/typing"><ComputerDesktopIcon class="icon" /></NuxtLink>
+        </template>
+
+        <template #tooltip>
+          <span>Typing</span>
+        </template>
+      </ElmTooltip>
     </div>
 
     <div>
@@ -61,6 +71,7 @@ import { ElmToggleTheme, ElmTooltip } from '@elmethis/core'
 import {
   ArrowLeftEndOnRectangleIcon,
   ArrowLeftStartOnRectangleIcon,
+  ComputerDesktopIcon,
   HomeIcon,
   LanguageIcon,
   SwatchIcon,

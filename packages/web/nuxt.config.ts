@@ -59,5 +59,14 @@ export default defineNuxtConfig({
       USER_POOL_ID,
       USER_POOL_CLIENT_ID
     }
+  },
+  postcss: {
+    plugins: {
+      cssnano: {},
+      autoprefixer: {},
+      'postcss-preset-env': {
+        stage: 3
+      }
+    }
   }
 })

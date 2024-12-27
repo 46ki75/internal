@@ -1,5 +1,6 @@
 pub mod anki;
 pub mod bookmark;
+pub mod routine;
 pub mod todo;
 pub mod translation;
 pub mod typing;

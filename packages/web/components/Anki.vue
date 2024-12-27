@@ -167,13 +167,15 @@ onKeyStroke(['Enter', ' '], (e) => {
 const { shift } = useMagicKeys()
 
 onKeyStroke(['a', 's', 'd'], (e) => {
-  e.preventDefault()
-  if (shift.value) {
-    const rating = e.key === 'a' ? 0 : e.key === 's' ? 1 : 2
-    ankiStore.updateAnkiByPerformanceRating(rating)
-  } else {
-    const rating = e.key === 'a' ? 4 : e.key === 's' ? 3 : 5
-    ankiStore.updateAnkiByPerformanceRating(rating)
+  if (ankiStore.isShowAnswer) {
+    e.preventDefault()
+    if (shift.value) {
+      const rating = e.key === 'a' ? 0 : e.key === 's' ? 1 : 2
+      ankiStore.updateAnkiByPerformanceRating(rating)
+    } else {
+      const rating = e.key === 'a' ? 4 : e.key === 's' ? 3 : 5
+      ankiStore.updateAnkiByPerformanceRating(rating)
+    }
   }
 })
 </script>

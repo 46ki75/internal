@@ -2,6 +2,8 @@
   <div>
     <ElmHeading1 text="Routine" />
 
+    <ElmParagraph><span>毎日0時に更新</span></ElmParagraph>
+
     <ElmBlockFallback
       v-if="routineStore.loading || routineStore.routineList.length === 0"
     />
@@ -31,7 +33,8 @@ import {
   ElmBlockFallback,
   ElmCheckbox,
   ElmHeading1,
-  ElmInlineText
+  ElmInlineText,
+  ElmParagraph
 } from '@elmethis/core'
 
 const routineStore = useRoutineStore()

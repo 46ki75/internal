@@ -64,10 +64,39 @@ impl AnkiMutation {
 
         properties.insert("nextReviewAt".to_string(), next_review_at_property);
 
+        let children = vec![
+            notionrs::block::Block::Heading1 {
+                heading_1: notionrs::block::heading::HeadingBlock::default()
+                    .rich_text(vec![notionrs::others::rich_text::RichText::from("Front")
+                        .color(notionrs::others::color::Color::Brown)]),
+            },
+            notionrs::block::Block::Paragraph {
+                paragraph: notionrs::block::paragraph::ParagraphBlock::from(""),
+            },
+            notionrs::block::Block::Heading1 {
+                heading_1: notionrs::block::heading::HeadingBlock::default()
+                    .rich_text(vec![notionrs::others::rich_text::RichText::from("Back")
+                        .color(notionrs::others::color::Color::Brown)]),
+            },
+            notionrs::block::Block::Paragraph {
+                paragraph: notionrs::block::paragraph::ParagraphBlock::from(""),
+            },
+            notionrs::block::Block::Heading1 {
+                heading_1: notionrs::block::heading::HeadingBlock::default().rich_text(vec![
+                    notionrs::others::rich_text::RichText::from("Explanation")
+                        .color(notionrs::others::color::Color::Brown),
+                ]),
+            },
+            notionrs::block::Block::Paragraph {
+                paragraph: notionrs::block::paragraph::ParagraphBlock::from(""),
+            },
+        ];
+
         let request = client
             .create_page()
             .database_id(database_id)
-            .properties(properties);
+            .properties(properties)
+            .children(children);
 
         let response = request.send().await?;
 

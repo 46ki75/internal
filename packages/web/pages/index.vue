@@ -8,6 +8,7 @@
 
       <div>
         <ToDo />
+        <Routine />
       </div>
     </div>
   </main>

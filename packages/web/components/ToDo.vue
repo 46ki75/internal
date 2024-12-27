@@ -2,10 +2,11 @@
   <div>
     <ElmHeading1 text="ToDo" />
 
-    <table
-      class="todo"
-      v-if="!todoStore.loading && todoStore.todoList.length > 0"
-    >
+    <ElmBlockFallback
+      v-if="todoStore.loading || todoStore.todoList.length === 0"
+    />
+
+    <table class="todo" v-else>
       <thead>
         <tr>
           <th>
@@ -86,6 +87,7 @@
 <script setup lang="ts">
 import {
   ElmBadge,
+  ElmBlockFallback,
   ElmCheckbox,
   ElmHeading1,
   ElmInlineLink,

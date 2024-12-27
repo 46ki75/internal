@@ -1,0 +1,90 @@
+import { z } from 'zod'
+
+const RoutineSchema = z.object({
+  id: z.string(),
+  url: z.string(),
+  name: z.string(),
+  isDone: z.boolean(),
+  dayOfWeek: z.array(z.string())
+})
+
+const PageInforSchema = z.object({
+  hasNextPage: z.boolean(),
+  hasPreviousPage: z.boolean(),
+  startCursor: z.string().nullable().optional(),
+  endCursor: z.string().nullable().optional(),
+  nextCursor: z.string().nullable().optional()
+})
+
+const EdgeSchema = z.object({
+  node: RoutineSchema,
+  cursor: z.string()
+})
+
+const ConnectionScema = z.object({
+  edges: z.array(EdgeSchema),
+  pageInfo: PageInforSchema
+})
+
+type Connection = z.infer<typeof ConnectionScema>
+
+const query = /* GraphQL */ `
+  query ListRoutine {
+    routineList {
+      edges {
+        node {
+          id
+          url
+          name
+          dayOfWeek
+          isDone
+        }
+      }
+    }
+  }
+`
+
+export const useRoutineStore = defineStore('routine', {
+  state: () => {
+    return {
+      routineList: [] as Connection['edges'][number]['node'][],
+      loading: false,
+      error: null as string | null
+    }
+  },
+  actions: {
+    async fetch() {
+      this.loading = true
+
+      const authStore = useAuthStore()
+      if (authStore.session.idToken == null) {
+        await authStore.refreshAccessToken()
+        if (authStore.session.idToken == null) {
+          return
+        }
+      }
+      try {
+        const response = await $fetch<{
+          data: {
+            routineList: Connection
+          }
+        }>('/api/graphql', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: authStore.session.idToken
+          },
+          body: JSON.stringify({ query })
+        })
+
+        this.routineList = response.data.routineList.edges.map(
+          (edge) => edge.node
+        )
+      } catch (error: unknown) {
+        this.error = (error as Error)?.message
+      } finally {
+        this.loading = false
+      }
+    }
+  }
+})

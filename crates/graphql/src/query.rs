@@ -85,6 +85,15 @@ impl QueryRoot {
         crate::model::typing::query::TypingQuery.typing(ctx).await
     }
 
+    pub async fn routine_list_all(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> Result<crate::model::routine::RoutineConnection, async_graphql::Error> {
+        crate::model::routine::query::RoutineQuery
+            .list_all_routine(ctx)
+            .await
+    }
+
     pub async fn routine_list(
         &self,
         ctx: &async_graphql::Context<'_>,

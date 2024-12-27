@@ -19,7 +19,7 @@
       <tbody>
         <tr v-for="routine in routineStore.routineList">
           <td>
-            <ElmCheckbox label="" :is-checked="routine.isDone" />
+            <RoutineCheck :id="routine.id" :is-done="routine.isDone" />
           </td>
           <td><ElmInlineText :text="routine.name" /></td>
         </tr>

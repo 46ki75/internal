@@ -26,6 +26,8 @@ const ConnectionScema = z.object({
   pageInfo: PageInforSchema
 })
 
+type Routine = z.infer<typeof RoutineSchema>
+
 type Connection = z.infer<typeof ConnectionScema>
 
 const query = /* GraphQL */ `
@@ -43,6 +45,19 @@ const query = /* GraphQL */ `
     }
   }
 `
+
+const mutation = /* GraphQL */ `
+  mutation UpdateRoutine($id: String!, $isDone: Boolean!) {
+    updateRoutine(input: { id: $id, isDone: $isDone }) {
+      id
+      url
+      name
+      dayOfWeekList
+      isDone
+    }
+  }
+`
+
 const dayOfWeekList = [
   'Sunday',
   'Monday',
@@ -99,6 +114,44 @@ export const useRoutineStore = defineStore('routine', {
         this.error = (error as Error)?.message
       } finally {
         this.loading = false
+      }
+    },
+    async update({ id, isDone }: { id: string; isDone: boolean }) {
+      const authStore = useAuthStore()
+      if (authStore.session.idToken == null) {
+        await authStore.refreshAccessToken()
+        if (authStore.session.idToken == null) {
+          return
+        }
+      }
+      try {
+        const response = await $fetch<{
+          data: {
+            updateRoutine: Routine
+          }
+        }>('/api/graphql', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: authStore.session.idToken
+          },
+          body: JSON.stringify({
+            query: mutation,
+            variables: {
+              id,
+              isDone
+            }
+          })
+        })
+
+        const updatedRoutine = response.data.updateRoutine
+
+        const index = this.routineList.findIndex((routine) => routine.id === id)
+        if (index !== -1) {
+          this.routineList[index] = updatedRoutine
+        }
+      } catch (error: unknown) {
+        this.error = (error as Error)?.message
       }
     }
   }

@@ -5,7 +5,7 @@ pub struct Routine {
     pub id: String,
     pub url: String,
     pub name: String,
-    pub day_of_week: Vec<String>,
+    pub day_of_week_list: Vec<String>,
     pub is_done: bool,
 }
 

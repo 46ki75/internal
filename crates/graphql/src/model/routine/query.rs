@@ -50,7 +50,7 @@ impl RoutineQuery {
                     .get("DayOfWeek")
                     .ok_or("Day of the week (`DayOfWeek`) not found")?;
 
-                let day_of_week = match day_of_week_property {
+                let day_of_week_list = match day_of_week_property {
                     notionrs::page::PageProperty::MultiSelect(multi_select) => multi_select
                         .multi_select
                         .iter()
@@ -78,7 +78,7 @@ impl RoutineQuery {
                     id,
                     url,
                     name,
-                    day_of_week,
+                    day_of_week_list,
                     is_done,
                 })
             })

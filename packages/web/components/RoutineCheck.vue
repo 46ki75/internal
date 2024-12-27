@@ -1,5 +1,5 @@
 <template>
-  <ElmCheckbox label="" v-model:is-checked="isDone" />
+  <ElmCheckbox label="" v-model="isDone" />
 </template>
 
 <script setup lang="ts">
@@ -12,7 +12,7 @@ const props = defineProps<{
   isDone: boolean
 }>()
 
-const isDone = defineModel({ default: false })
+const isDone = defineModel<boolean>({})
 
 onMounted(async () => {
   isDone.value = props.isDone
@@ -20,10 +20,13 @@ onMounted(async () => {
 
 watch(isDone, async () => {
   console.log('props', props)
-  await routineStore.update({
-    id: props.id,
-    isDone: isDone.value
-  })
+
+  if (isDone.value != null) {
+    await routineStore.update({
+      id: props.id,
+      isDone: isDone.value
+    })
+  }
 })
 </script>
 

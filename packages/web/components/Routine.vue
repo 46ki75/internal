@@ -9,7 +9,7 @@
     <table v-else>
       <thead>
         <tr>
-          <th><ElmInlineText text="Dome" /></th>
+          <th><ElmInlineText text="IsDone" /></th>
           <th><ElmInlineText text="Name" /></th>
         </tr>
       </thead>

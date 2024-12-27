@@ -5,15 +5,8 @@ pub struct Routine {
     pub id: String,
     pub url: String,
     pub name: String,
-    pub day_of_week: Vec<MultiSelect>,
+    pub day_of_week: Vec<String>,
     pub is_done: bool,
-}
-
-#[derive(async_graphql::SimpleObject, Default, Debug)]
-pub struct MultiSelect {
-    pub id: String,
-    pub name: String,
-    pub color: String,
 }
 
 #[derive(async_graphql::SimpleObject, Default, Debug)]

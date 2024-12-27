@@ -39,14 +39,8 @@ impl RoutineQuery {
                     notionrs::page::PageProperty::MultiSelect(multi_select) => multi_select
                         .multi_select
                         .iter()
-                        .map(|s| {
-                            Ok(super::MultiSelect {
-                                id: s.id.clone().ok_or("ID not found")?,
-                                name: s.name.clone(),
-                                color: s.color.ok_or("Color not found")?.to_string(),
-                            })
-                        })
-                        .collect::<Result<Vec<super::MultiSelect>, async_graphql::Error>>(),
+                        .map(|s| Ok(s.name.to_string()))
+                        .collect::<Result<Vec<String>, async_graphql::Error>>(),
                     _ => {
                         return Err(async_graphql::Error::from(
                             "Day of the week (`DayOfWeek`) is not a multi_select property",

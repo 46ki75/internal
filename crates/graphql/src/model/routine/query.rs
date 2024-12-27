@@ -10,11 +10,8 @@ impl RoutineQuery {
         let secret = std::env::var("NOTION_API_KEY")
             .map_err(|_| async_graphql::Error::from("NOTION_API_KEY not found"))?;
 
-        // TODO: Refactor this to use the database_id from the environment
-        let database_id = String::from("16934608d5c98026ac01d6116028f07f");
-
-        // let database_id = std::env::var("NOTION_ROUTINE_DATABASE_ID")
-        //     .map_err(|_| async_graphql::Error::from("NOTION_ROUTINE_DATABASE_ID not found"))?;
+        let database_id = std::env::var("NOTION_ROUTINE_DATABASE_ID")
+            .map_err(|_| async_graphql::Error::from("NOTION_ROUTINE_DATABASE_ID not found"))?;
 
         let client = notionrs::client::Client::new().secret(secret);
 

@@ -8,23 +8,15 @@
       v-if="routineStore.loading || routineStore.routineList.length === 0"
     />
 
-    <table v-else>
-      <thead>
-        <tr>
-          <th><ElmInlineText text="IsDone" /></th>
-          <th><ElmInlineText text="Name" /></th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr v-for="routine in routineStore.routineList">
-          <td>
-            <RoutineCheck :id="routine.id" :is-done="routine.isDone" />
-          </td>
-          <td><ElmInlineText :text="routine.name" /></td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="checkbox-container" v-else>
+      <div v-for="routine in routineStore.routineList">
+        <RoutineCheck
+          :label="routine.name"
+          :id="routine.id"
+          :is-done="routine.isDone"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -44,4 +36,10 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.checkbox-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+</style>

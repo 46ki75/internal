@@ -1,5 +1,5 @@
 <template>
-  <ElmCheckbox label="" v-model="isDone" />
+  <ElmCheckbox :label="label" v-model="isDone" />
 </template>
 
 <script setup lang="ts">
@@ -10,6 +10,7 @@ const routineStore = useRoutineStore()
 const props = defineProps<{
   id: string
   isDone: boolean
+  label: string
 }>()
 
 const isDone = defineModel<boolean>({})

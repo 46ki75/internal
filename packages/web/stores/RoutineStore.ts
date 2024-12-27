@@ -29,20 +29,30 @@ const ConnectionScema = z.object({
 type Connection = z.infer<typeof ConnectionScema>
 
 const query = /* GraphQL */ `
-  query ListRoutine {
-    routineList {
+  query ListRoutine($dayOfWeek: String) {
+    routineList(input: { dayOfWeek: $dayOfWeek }) {
       edges {
         node {
           id
           url
           name
-          dayOfWeek
+          dayOfWeekList
           isDone
         }
       }
     }
   }
 `
+const dayOfWeekList = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday'
+]
 
 export const useRoutineStore = defineStore('routine', {
   state: () => {
@@ -74,7 +84,12 @@ export const useRoutineStore = defineStore('routine', {
             'Content-Type': 'application/json',
             Authorization: authStore.session.idToken
           },
-          body: JSON.stringify({ query })
+          body: JSON.stringify({
+            query,
+            variables: {
+              dayOfWeek: dayOfWeekList[new Date().getDay()]
+            }
+          })
         })
 
         this.routineList = response.data.routineList.edges.map(

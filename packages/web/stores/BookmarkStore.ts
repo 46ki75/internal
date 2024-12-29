@@ -95,11 +95,22 @@ export const useBookmarkStore = defineStore('bookmark', {
       this.loading = true
       this.error = null
 
+      const authStore = useAuthStore()
+      if (authStore.session.idToken == null) {
+        await authStore.refreshAccessToken()
+        if (authStore.session.idToken == null) {
+          return
+        }
+      }
+
       try {
         const result = await execute<{ bookmarkList: BookmarkResponse }>({
           endpoint: '/api/graphql',
           query,
-          cache: 'localStorage'
+          cache: 'localStorage',
+          headers: {
+            Authorization: authStore.session.idToken
+          }
         })
 
         this.bookmarkList = result.bookmarkList.edges.map((edge) => edge.node)

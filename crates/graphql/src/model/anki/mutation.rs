@@ -67,7 +67,7 @@ impl AnkiMutation {
         let children = vec![
             notionrs::block::Block::Heading1 {
                 heading_1: notionrs::block::heading::HeadingBlock::default()
-                    .rich_text(vec![notionrs::others::rich_text::RichText::from("Front")
+                    .rich_text(vec![notionrs::others::rich_text::RichText::from("front")
                         .color(notionrs::others::color::Color::Brown)]),
             },
             notionrs::block::Block::Paragraph {
@@ -75,7 +75,7 @@ impl AnkiMutation {
             },
             notionrs::block::Block::Heading1 {
                 heading_1: notionrs::block::heading::HeadingBlock::default()
-                    .rich_text(vec![notionrs::others::rich_text::RichText::from("Back")
+                    .rich_text(vec![notionrs::others::rich_text::RichText::from("back")
                         .color(notionrs::others::color::Color::Brown)]),
             },
             notionrs::block::Block::Paragraph {
@@ -83,7 +83,7 @@ impl AnkiMutation {
             },
             notionrs::block::Block::Heading1 {
                 heading_1: notionrs::block::heading::HeadingBlock::default().rich_text(vec![
-                    notionrs::others::rich_text::RichText::from("Explanation")
+                    notionrs::others::rich_text::RichText::from("explanation")
                         .color(notionrs::others::color::Color::Brown),
                 ]),
             },

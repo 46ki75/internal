@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { uniqBy } from 'lodash-es'
 import { z } from 'zod'
-import Bookmark from '~/components/Bookmark.vue'
+import { execute } from '@com.46ki75/graphql'
 
 const query = /* GraphQL */ `
   query Bookmark {
@@ -29,23 +29,27 @@ const query = /* GraphQL */ `
   }
 `
 
+export const bookmarkSchema = z.object({
+  id: z.string(),
+  name: z.string().nullable(),
+  url: z.string().nullable(),
+  favicon: z.string().nullable(),
+  tags: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      color: z.string()
+    })
+  ),
+  notionUrl: z.string()
+})
+
+type Bookmark = z.infer<typeof bookmarkSchema>
+
 export const bookmarkResponseSchema = z.object({
   edges: z.array(
     z.object({
-      node: z.object({
-        id: z.string(),
-        name: z.string().nullable(),
-        url: z.string().nullable(),
-        favicon: z.string().nullable(),
-        tags: z.array(
-          z.object({
-            id: z.string(),
-            name: z.string(),
-            color: z.string()
-          })
-        ),
-        notionUrl: z.string()
-      }),
+      node: bookmarkSchema,
       cursor: z.string()
     })
   ),
@@ -91,49 +95,19 @@ export const useBookmarkStore = defineStore('bookmark', {
       this.loading = true
       this.error = null
 
-      const cache = window.localStorage.getItem('bookmarkList')
+      try {
+        const result = await execute<{ bookmarkList: BookmarkResponse }>({
+          endpoint: '/api/graphql',
+          query,
+          cache: 'localStorage'
+        })
 
-      if (cache) {
-        try {
-          this.bookmarkList = JSON.parse(cache)
-        } catch {
-          this.error = "Couldn't parse cache"
-        } finally {
-          this.loading = false
-        }
+        this.bookmarkList = result.bookmarkList.edges.map((edge) => edge.node)
+      } catch {
+        this.error = "Couldn't fetch bookmark list"
+      } finally {
+        this.loading = false
       }
-
-      const authStore = useAuthStore()
-      if (authStore.session.idToken == null) {
-        await authStore.refreshAccessToken()
-        if (authStore.session.idToken == null) {
-          this.loading = false
-          return
-        }
-      }
-
-      const response = await $fetch<{
-        data: {
-          bookmarkList: BookmarkResponse
-        }
-      }>('/api/graphql', {
-        method: 'POST',
-        headers: {
-          Authorization: `${authStore.session.idToken}`
-        },
-        body: { query }
-      })
-
-      this.bookmarkList = response.data.bookmarkList.edges.map(
-        (edge) => edge.node
-      )
-
-      window.localStorage.setItem(
-        'bookmarkList',
-        JSON.stringify(this.bookmarkList)
-      )
-
-      this.loading = false
     },
     async create({ name, url }: { name: string; url: string }) {
       this.createLoading = true

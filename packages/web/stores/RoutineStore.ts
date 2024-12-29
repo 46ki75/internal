@@ -1,3 +1,4 @@
+import { execute } from '@com.46ki75/graphql'
 import { z } from 'zod'
 
 const RoutineSchema = z.object({
@@ -89,27 +90,18 @@ export const useRoutineStore = defineStore('routine', {
         }
       }
       try {
-        const response = await $fetch<{
-          data: {
-            routineList: Connection
-          }
-        }>('/api/graphql', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: authStore.session.idToken
+        const response = await execute<{ routineList: Connection }>({
+          endpoint: '/api/graphql',
+          query,
+          variables: {
+            dayOfWeek: dayOfWeekList[new Date().getDay()]
           },
-          body: JSON.stringify({
-            query,
-            variables: {
-              dayOfWeek: dayOfWeekList[new Date().getDay()]
-            }
-          })
+          headers: {
+            Authorization: authStore.session.idToken
+          }
         })
 
-        this.routineList = response.data.routineList.edges.map(
-          (edge) => edge.node
-        )
+        this.routineList = response.routineList.edges.map((edge) => edge.node)
       } catch (error: unknown) {
         this.error = (error as Error)?.message
       } finally {

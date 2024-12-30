@@ -21,8 +21,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       '@elmethis/core':
-        specifier: 1.0.0-alpha.97
-        version: 1.0.0-alpha.97
+        specifier: 1.0.0-alpha.98
+        version: 1.0.0-alpha.98
       '@heroicons/vue':
         specifier: ^2.2.0
         version: 2.2.0(vue@3.5.13(typescript@5.7.2))
@@ -821,8 +821,8 @@ packages:
     peerDependencies:
       postcss: ^8.4
 
-  '@elmethis/core@1.0.0-alpha.97':
-    resolution: {integrity: sha512-j3Jt/dzLnkpwJJTpGkaUxEFm0J04JETeQjVAD9Fp3FJhyH8h+qepJlzCo7076kavV4SalBeaeIgkiLwqfX3bRw==}
+  '@elmethis/core@1.0.0-alpha.98':
+    resolution: {integrity: sha512-iOLD8tH71VvcrsXOARia3j+A2h1y2TnkQBqjF3QL8gedgNGCNwviFg0pQJVV3XLoax9dfq/+/+FenleRerWLIA==}
 
   '@esbuild/aix-ppc64@0.21.5':
     resolution: {integrity: sha512-1SDgH6ZSPTlggy1yI6+Dbkiz8xzpHJEVAlF/AM1tHPLsf5STom9rwtjE4hKAF20FfXXNTFqEYXyJNWh1GiZedQ==}
@@ -6126,7 +6126,7 @@ snapshots:
     dependencies:
       postcss: 8.4.49
 
-  '@elmethis/core@1.0.0-alpha.97':
+  '@elmethis/core@1.0.0-alpha.98':
     dependencies:
       nanoid: 5.0.9
 

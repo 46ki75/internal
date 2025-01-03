@@ -38,35 +38,26 @@ type Connection = z.infer<typeof ConnectionScema>
 const query = /* GraphQL */ `
   query ToDo {
     githubNotificationList {
-      edges {
-        node {
-          id
-          url
-          source
-          title
-          description
-          isDone
-          deadline
-          severity
-          createdAt
-          updatedAt
-        }
-      }
+      ...ToDoFragment
     }
     notionTodoList {
-      edges {
-        node {
-          id
-          url
-          source
-          title
-          description
-          isDone
-          deadline
-          severity
-          createdAt
-          updatedAt
-        }
+      ...ToDoFragment
+    }
+  }
+
+  fragment ToDoFragment on ToDoConnection {
+    edges {
+      node {
+        id
+        url
+        source
+        title
+        description
+        isDone
+        deadline
+        severity
+        createdAt
+        updatedAt
       }
     }
   }

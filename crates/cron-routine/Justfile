@@ -1,5 +1,8 @@
 dev: 
-    cargo lambda watch -p 20010
+    cargo lambda watch
+    
+run: 
+    cargo lambda invoke --data-file event.json cron-routine
 
 build: 
     cargo lambda build --release

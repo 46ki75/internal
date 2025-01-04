@@ -37,9 +37,7 @@ async fn function_handler(_event: LambdaEvent<EventBridgeEvent>) -> Result<(), E
 
         let request = client.update_page().page_id(id).properties(properties);
 
-        let response = request.send().await?;
-
-        tracing::info!("Routine updated: {:?}", response);
+        let _response = request.send().await?;
     }
 
     Ok(())

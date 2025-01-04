@@ -8,5 +8,5 @@ resource "aws_cloudwatch_event_rule" "lambda_routine" {
 resource "aws_cloudwatch_event_target" "lambda_routine" {
   rule      = aws_cloudwatch_event_rule.lambda_routine.name
   target_id = "${terraform.workspace}-46ki75-lambda-routine"
-  arn       = aws_lambda_function.routine.arn
+  arn       = aws_lambda_alias.routine.arn
 }

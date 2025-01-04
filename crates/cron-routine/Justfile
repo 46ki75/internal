@@ -1,0 +1,11 @@
+dev: 
+    cargo lambda watch
+
+run: 
+    cargo lambda invoke --data-file event.json cron-routine
+
+build: 
+    cargo lambda build --release
+
+deploy: build
+    cargo run --bin deploy

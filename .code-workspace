@@ -15,6 +15,10 @@
     {
       "path": "./crates/graphql",
       "name": "GraphQL API (Lambda)"
+    },
+    {
+      "path": "./crates/cron-routine",
+      "name": "Cron Routine (Lambda)"
     }
   ],
   "settings": {

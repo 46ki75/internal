@@ -836,11 +836,16 @@ dependencies = [
 name = "cron-routine"
 version = "0.1.0"
 dependencies = [
+ "aws-config",
+ "aws-sdk-lambda",
  "aws_lambda_events 0.16.0",
  "dotenvy",
  "lambda_runtime",
  "notionrs",
+ "tempfile",
  "tokio",
+ "uuid",
+ "zip",
 ]
 
 [[package]]

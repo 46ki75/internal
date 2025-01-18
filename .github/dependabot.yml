@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: 'npm'
-    directory: '/'
+    directory: '/packages'
     schedule:
       interval: 'daily'
     target-branch: 'main'
@@ -12,6 +12,26 @@ updates:
 
   - package-ecosystem: 'terraform'
     directory: '/terraform'
+    schedule:
+      interval: 'daily'
+    target-branch: 'main'
+    assignees:
+      - '46ki75'
+    reviewers:
+      - '46ki75'
+
+  - package-ecosystem: 'cargo'
+    directory: '/crates'
+    schedule:
+      interval: 'daily'
+    target-branch: 'main'
+    assignees:
+      - '46ki75'
+    reviewers:
+      - '46ki75'
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
       interval: 'daily'
     target-branch: 'main'

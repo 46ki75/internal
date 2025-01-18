@@ -16,3 +16,7 @@
 ## S3
 
 - `shared-46ki75-internal-s3-bucket-terraform-tfstate`: Terraform の tfstate 管理用バケット・全環境共通
+
+## SNS
+
+- EMail サブスクリプションの承認

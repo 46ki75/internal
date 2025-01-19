@@ -9,7 +9,8 @@ resource "aws_cloudfront_origin_access_control" "web" {
 resource "aws_cloudfront_distribution" "default" {
   depends_on = [aws_acm_certificate.cloudfront_cert]
 
-  enabled = true
+  http_version = "http2andhttp3"
+  enabled      = true
 
   restrictions {
     geo_restriction {

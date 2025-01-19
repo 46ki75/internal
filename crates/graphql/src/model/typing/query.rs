@@ -11,7 +11,7 @@ impl TypingQuery {
 
         let environment = std::env::var("ENVIRONMENT")?;
 
-        let table_name = format!("{environment}-table");
+        let table_name = format!("{environment}-46ki75-internal-dynamodb-table");
 
         let config = aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
 

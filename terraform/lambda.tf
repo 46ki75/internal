@@ -32,7 +32,7 @@ data "aws_ssm_parameter" "lambda_env_DEEPL_API_KEY" {
 # GraphQL ----------
 
 resource "aws_iam_role" "lambda_role_graphql" {
-  name = "${terraform.workspace}-46ki75-iam-role-lambda-graphql"
+  name = "${terraform.workspace}-46ki75-internal-iam-role-lambda-graphql"
   assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
@@ -48,7 +48,7 @@ resource "aws_iam_role" "lambda_role_graphql" {
 }
 
 resource "aws_iam_policy" "lambda_policy_graphql" {
-  name        = "${terraform.workspace}-46ki75-iam-policy-lambda-graphql"
+  name        = "${terraform.workspace}-46ki75-internal-iam-policy-lambda-graphql"
   description = "Allow lambda to access cloudwatch logs"
   policy = jsonencode({
     "Version" : "2012-10-17",
@@ -76,7 +76,7 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_attachment_graphql" {
 }
 
 resource "aws_lambda_function" "graphql" {
-  function_name = "${terraform.workspace}-46ki75-lambda-function-graphql"
+  function_name = "${terraform.workspace}-46ki75-internal-lambda-function-graphql"
   role          = aws_iam_role.lambda_role_graphql.arn
   filename      = "./assets/bootstrap.zip"
   handler       = "bootstrap.handler"
@@ -108,7 +108,7 @@ resource "aws_lambda_alias" "graphql" {
 # Cron Routine
 
 resource "aws_iam_role" "lambda_role_routine" {
-  name = "${terraform.workspace}-46ki75-iam-role-lambda-routine"
+  name = "${terraform.workspace}-46ki75-internal-iam-role-lambda-routine"
   assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
@@ -124,7 +124,7 @@ resource "aws_iam_role" "lambda_role_routine" {
 }
 
 resource "aws_iam_policy" "lambda_policy_routine" {
-  name        = "${terraform.workspace}-46ki75-iam-policy-lambda-routine"
+  name        = "${terraform.workspace}-46ki75-internal-iam-policy-lambda-routine"
   description = "Allow lambda to access cloudwatch logs"
   policy = jsonencode({
     "Version" : "2012-10-17",
@@ -148,7 +148,7 @@ resource "aws_iam_role_policy_attachment" "lambda_policy_attachment_routine" {
 }
 
 resource "aws_lambda_function" "routine" {
-  function_name = "${terraform.workspace}-46ki75-lambda-function-routine"
+  function_name = "${terraform.workspace}-46ki75-internal-lambda-function-routine"
   role          = aws_iam_role.lambda_role_routine.arn
   filename      = "./assets/bootstrap.zip"
   handler       = "bootstrap.handler"

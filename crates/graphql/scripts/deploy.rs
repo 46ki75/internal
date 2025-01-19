@@ -54,7 +54,9 @@ async fn main() {
 
     let request = client
         .update_function_code()
-        .function_name(format!("{environment}-46ki75-lambda-function-graphql"))
+        .function_name(format!(
+            "{environment}-46ki75-internal-lambda-function-graphql"
+        ))
         .publish(true)
         .zip_file(zip_blob);
 

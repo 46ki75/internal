@@ -1,5 +1,5 @@
 resource "aws_apigatewayv2_api" "backend" {
-  name          = "${terraform.workspace}-46ki75-apigwv2-http-backend"
+  name          = "${terraform.workspace}-46ki75-internal-apigwv2-http-backend"
   protocol_type = "HTTP"
 }
 
@@ -35,6 +35,7 @@ resource "aws_apigatewayv2_stage" "backend" {
 }
 
 resource "aws_apigatewayv2_domain_name" "backend" {
+  depends_on  = [aws_acm_certificate.api_cert]
   domain_name = aws_acm_certificate.api_cert.domain_name
   domain_name_configuration {
     certificate_arn = aws_acm_certificate.api_cert.arn
@@ -51,7 +52,7 @@ resource "aws_apigatewayv2_api_mapping" "backend" {
 
 resource "aws_route53_record" "api_gateway" {
   zone_id = data.aws_route53_zone.internal.zone_id
-  name    = "${terraform.workspace}-apigw.internal.46ki75.com"
+  name    = aws_apigatewayv2_domain_name.backend.domain_name
   type    = "A"
 
   alias {
@@ -63,7 +64,7 @@ resource "aws_route53_record" "api_gateway" {
 
 # >>> Authorizer
 resource "aws_apigatewayv2_authorizer" "backend" {
-  name             = "${terraform.workspace}-46ki75-apigwv2-http-backend-authorizer"
+  name             = "${terraform.workspace}-46ki75-internal-apigwv2-http-backend-authorizer"
   authorizer_type  = "JWT"
   api_id           = aws_apigatewayv2_api.backend.id
   identity_sources = ["$request.header.Authorization"]

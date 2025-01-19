@@ -1,7 +1,7 @@
 resource "aws_acm_certificate" "cloudfront_cert" {
   provider = aws.us-east-1 # us-east-1
 
-  domain_name       = terraform.workspace == "prod" ? "internal.46ki75.com" : "${terraform.workspace}.internal.46ki75.com"
+  domain_name       = data.aws_route53_zone.internal.name
   validation_method = "DNS"
 }
 

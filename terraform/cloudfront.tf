@@ -1,5 +1,5 @@
 resource "aws_cloudfront_origin_access_control" "web" {
-  name                              = "${terraform.workspace}-46ki75-cloudfront-oac-web"
+  name                              = "${terraform.workspace}-46ki75-internal-cloudfront-oac-web"
   description                       = "Frontend S3 OAC"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
@@ -7,7 +7,10 @@ resource "aws_cloudfront_origin_access_control" "web" {
 }
 
 resource "aws_cloudfront_distribution" "default" {
-  enabled = true
+  depends_on = [aws_acm_certificate.cloudfront_cert]
+
+  http_version = "http2and3"
+  enabled      = true
 
   restrictions {
     geo_restriction {
@@ -121,7 +124,7 @@ resource "aws_cloudfront_distribution" "default" {
 
 # >>> CloudFront Function
 resource "aws_cloudfront_function" "rename_uri" {
-  name    = "${terraform.workspace}-46ki75-cloudfront-function-rename-uri"
+  name    = "${terraform.workspace}-46ki75-cloudfront-internal-function-rename-uri"
   runtime = "cloudfront-js-2.0"
   comment = "Rename URI to index.html"
   publish = true

@@ -1,9 +1,7 @@
 <template>
   <ElmHeading1 text="ToDo" />
 
-  <ElmBlockFallback
-    v-if="todoStore.fetchState.loading || todoStore.todoList.length === 0"
-  />
+  <ElmBlockFallback v-if="todoStore.todoList.length === 0" />
 
   <table class="todo global-fade-in" v-else>
     <thead>

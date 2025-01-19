@@ -1,3 +1,9 @@
 <template>
-  <div><ToDoView /><ToDoCreate /></div>
+  <div>
+    <ToDoView />
+
+    <KeepAlive>
+      <ToDoCreate />
+    </KeepAlive>
+  </div>
 </template>

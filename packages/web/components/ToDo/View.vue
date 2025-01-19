@@ -5,7 +5,7 @@
     v-if="todoStore.fetchState.loading || todoStore.todoList.length === 0"
   />
 
-  <table class="todo" v-else>
+  <table class="todo global-fade-in" v-else>
     <thead>
       <tr>
         <th>
@@ -132,5 +132,20 @@ const colorMap: Record<
 .icon {
   height: 16px;
   width: 16px;
+}
+
+.v-enter-to,
+.v-leave-from {
+  opacity: 1;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 300ms;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>

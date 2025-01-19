@@ -1,7 +1,7 @@
 <template>
   <ElmHeading1 text="Bookmarks" />
-  <ElmInlineText v-if="bookmarkStore.loading" text="LOADING..." />
-  <div v-else>
+  <ElmBlockFallback v-if="bookmarkStore.bookmarkList.length === 0" />
+  <div class="global-fade-in" v-else>
     <div
       v-for="b in bookmarkStore.classifiedBookmarkList"
       :style="{ marginBlock: '1rem' }"
@@ -30,6 +30,7 @@
 
 <script setup lang="ts">
 import {
+  ElmBlockFallback,
   ElmBookmarkIcon,
   ElmHeading1,
   ElmInlineText,

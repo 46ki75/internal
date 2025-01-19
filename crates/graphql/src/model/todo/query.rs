@@ -85,7 +85,33 @@ impl ToDoQuery {
                             _ => None,
                         });
 
-                let severity = super::Sevelity::Unknown;
+                let severity: super::Sevelity = result
+                    .properties
+                    .get("Sevelity")
+                    .and_then(|s| {
+                        if let notionrs::page::PageProperty::Select(select) = s {
+                            if let Some(select_name) = &select.select {
+                                let select_name_str = select_name.to_string();
+
+                                if select_name_str == "INFO" {
+                                    Some(super::Sevelity::Info)
+                                } else if select_name_str == "WARN" {
+                                    return Some(super::Sevelity::Warn);
+                                } else if select_name_str == "ERROR" {
+                                    return Some(super::Sevelity::Error);
+                                } else if select_name_str == "FATAL" {
+                                    return Some(super::Sevelity::Fatal);
+                                } else {
+                                    None
+                                }
+                            } else {
+                                None
+                            }
+                        } else {
+                            None
+                        }
+                    })
+                    .unwrap_or(super::Sevelity::Unknown);
 
                 let created_at = Some(result.created_time.to_rfc3339());
                 let updated_at = Some(result.last_edited_time.to_rfc3339());

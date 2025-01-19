@@ -3,7 +3,6 @@
     <div class="center">
       <div>
         <Bookmark />
-        <BookmarkCreate />
       </div>
 
       <div>

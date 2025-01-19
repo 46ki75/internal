@@ -1,0 +1,4 @@
+<template>
+  <BookmarkView />
+  <BookmarkCreate />
+</template>

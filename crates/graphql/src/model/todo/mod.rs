@@ -1,3 +1,4 @@
+pub mod mutation;
 pub mod query;
 
 #[derive(async_graphql::SimpleObject, Default, Debug)]

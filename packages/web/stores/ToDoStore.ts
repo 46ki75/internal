@@ -1,3 +1,4 @@
+import type { has } from 'lodash-es'
 import { z } from 'zod'
 
 const ToDoSchema = z.object({
@@ -35,45 +36,72 @@ const ConnectionScema = z.object({
 
 type Connection = z.infer<typeof ConnectionScema>
 
+const fragment = /* GraphQL */ `
+  fragment ToDoFragment on ToDo {
+    id
+    url
+    source
+    title
+    description
+    isDone
+    deadline
+    severity
+    createdAt
+    updatedAt
+  }
+`
+
 const query = /* GraphQL */ `
   query ToDo {
     githubNotificationList {
-      ...ToDoFragment
+      ...ToDoConnectionFragment
     }
     notionTodoList {
+      ...ToDoConnectionFragment
+    }
+  }
+
+  fragment ToDoConnectionFragment on ToDoConnection {
+    edges {
+      node {
+        ...ToDoFragment
+      }
+    }
+  }
+
+  ${fragment}
+`
+
+const mutation = /* GraphQL */ `
+  mutation CreateToDO($title: String!, $description: String) {
+    createTodo(input: { title: $title, description: $description }) {
       ...ToDoFragment
     }
   }
 
-  fragment ToDoFragment on ToDoConnection {
-    edges {
-      node {
-        id
-        url
-        source
-        title
-        description
-        isDone
-        deadline
-        severity
-        createdAt
-        updatedAt
-      }
-    }
-  }
+  ${fragment}
 `
 
 export const useToDoStore = defineStore('todo', {
   state: () => {
     return {
       todoList: [] as Connection['edges'][number]['node'][],
-      loading: false,
-      error: null as string | null
+
+      fetchState: {
+        loading: false,
+        error: null as string | null
+      },
+
+      createState: {
+        loading: false,
+        error: null as string | null
+      }
     }
   },
   actions: {
     async fetch() {
-      this.loading = true
+      this.fetchState.loading = true
+      this.fetchState.error = null
 
       const authStore = useAuthStore()
       if (authStore.session.idToken == null) {
@@ -104,9 +132,48 @@ export const useToDoStore = defineStore('todo', {
             response.data.githubNotificationList.edges.map((edge) => edge.node)
           )
       } catch (error: unknown) {
-        this.error = (error as Error)?.message
+        this.fetchState.error = (error as Error)?.message
       } finally {
-        this.loading = false
+        this.fetchState.loading = false
+      }
+    },
+    async create({
+      title,
+      description
+    }: {
+      title: string
+      description?: string
+    }) {
+      this.createState.loading = true
+
+      const authStore = useAuthStore()
+      if (authStore.session.idToken == null) {
+        await authStore.refreshAccessToken()
+        if (authStore.session.idToken == null) {
+          return
+        }
+      }
+
+      try {
+        const response = await $fetch<{
+          data: { createTodo: Connection['edges'][number]['node'] }
+        }>('/api/graphql', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: authStore.session.idToken
+          },
+          body: JSON.stringify({
+            query: mutation,
+            variables: { title, description }
+          })
+        })
+
+        this.todoList.push(response.data.createTodo)
+      } catch (error: unknown) {
+        this.createState.error = (error as Error)?.message
+      } finally {
+        this.createState.loading = false
       }
     }
   }

@@ -14,6 +14,20 @@
 </template>
 
 <style lang="scss">
+@keyframes global-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.global-fade-in {
+  animation: global-fade-in 300ms;
+}
+
 html {
   scroll-behavior: smooth;
 }

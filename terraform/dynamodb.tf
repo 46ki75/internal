@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "default" {
-  name           = "${terraform.workspace}-table"
+  name           = "${terraform.workspace}-46ki75-internal-dynamodb-table"
   billing_mode   = "PROVISIONED"
   read_capacity  = 3
   write_capacity = 3

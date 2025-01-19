@@ -20,7 +20,7 @@ const distributionId = DistributionList?.Items?.find((distribution) =>
   distribution.Aliases?.Items?.includes(
     ENVIRONMENT === 'prod'
       ? 'internal.46ki75.com'
-      : `${ENVIRONMENT}.internal.46ki75.com`
+      : `${ENVIRONMENT}-internal.46ki75.com`
   )
 )?.Id
 

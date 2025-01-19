@@ -23,7 +23,7 @@ impl TypingMutation {
 
         let environment = std::env::var("ENVIRONMENT")?;
 
-        let table_name = format!("{environment}-table");
+        let table_name = format!("{environment}-46ki75-internal-dynamodb-table");
 
         let TypingInput { text, description } = input;
 

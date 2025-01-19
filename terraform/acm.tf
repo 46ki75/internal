@@ -1,5 +1,5 @@
 resource "aws_acm_certificate" "api_cert" {
-  domain_name       = "${terraform.workspace}-apigw.internal.46ki75.com"
+  domain_name       = "api.${data.aws_route53_zone.internal.name}"
   validation_method = "DNS"
 }
 

@@ -35,32 +35,50 @@ const ConnectionScema = z.object({
 
 type Connection = z.infer<typeof ConnectionScema>
 
+const fragment = /* GraphQL */ `
+  fragment ToDoConnectionFragment on ToDoConnection {
+    edges {
+      node {
+        ...ToDoFragment
+      }
+    }
+  }
+
+  fragment ToDoFragment on ToDo {
+    id
+    url
+    source
+    title
+    description
+    isDone
+    deadline
+    severity
+    createdAt
+    updatedAt
+  }
+`
+
 const query = /* GraphQL */ `
   query ToDo {
     githubNotificationList {
-      ...ToDoFragment
+      ...ToDoConnectionFragment
     }
     notionTodoList {
+      ...ToDoConnectionFragment
+    }
+  }
+
+  ${fragment}
+`
+
+const mutation = /* GraphQL */ `
+  mutation CreateToDO($title: String!, $description: String) {
+    createTodo(input: { title: $title, description: $description }) {
       ...ToDoFragment
     }
   }
 
-  fragment ToDoFragment on ToDoConnection {
-    edges {
-      node {
-        id
-        url
-        source
-        title
-        description
-        isDone
-        deadline
-        severity
-        createdAt
-        updatedAt
-      }
-    }
-  }
+  ${fragment}
 `
 
 export const useToDoStore = defineStore('todo', {
@@ -103,6 +121,64 @@ export const useToDoStore = defineStore('todo', {
           .concat(
             response.data.githubNotificationList.edges.map((edge) => edge.node)
           )
+      } catch (error: unknown) {
+        this.error = (error as Error)?.message
+      } finally {
+        this.loading = false
+      }
+    },
+    async create({
+      title,
+      description
+    }: {
+      title: string
+      description?: string
+    }) {
+      this.loading = true
+
+      const authStore = useAuthStore()
+      if (authStore.session.idToken == null) {
+        await authStore.refreshAccessToken()
+        if (authStore.session.idToken == null) {
+          return
+        }
+      }
+
+      try {
+        const response = await $fetch<{
+          data: { CreateToDO: Connection['edges'][number]['node'] }
+        }>('/api/graphql', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: authStore.session.idToken
+          },
+          body: JSON.stringify({
+            query: /* GraphQL */ `
+              mutation CreateToDo {
+                createToDo {
+                  ...ToDoFragment
+                }
+              }
+
+              fragment ToDoFragment on ToDo {
+                id
+                url
+                source
+                title
+                description
+                isDone
+                deadline
+                severity
+                createdAt
+                updatedAt
+              }
+            `,
+            variables: { title, description }
+          })
+        })
+
+        this.todoList.push(response.data.CreateToDO)
       } catch (error: unknown) {
         this.error = (error as Error)?.message
       } finally {

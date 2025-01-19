@@ -9,7 +9,7 @@ resource "aws_cloudfront_origin_access_control" "web" {
 resource "aws_cloudfront_distribution" "default" {
   depends_on = [aws_acm_certificate.cloudfront_cert]
 
-  http_version = "http2andhttp3"
+  http_version = "http2and3"
   enabled      = true
 
   restrictions {

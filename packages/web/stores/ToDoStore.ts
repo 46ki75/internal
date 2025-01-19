@@ -1,3 +1,4 @@
+import type { has } from 'lodash-es'
 import { z } from 'zod'
 
 const ToDoSchema = z.object({
@@ -85,14 +86,22 @@ export const useToDoStore = defineStore('todo', {
   state: () => {
     return {
       todoList: [] as Connection['edges'][number]['node'][],
-      loading: false,
-      error: null as string | null,
-      updateLoading: false
+
+      fetchState: {
+        loading: false,
+        error: null as string | null
+      },
+
+      createState: {
+        loading: false,
+        error: null as string | null
+      }
     }
   },
   actions: {
     async fetch() {
-      this.loading = true
+      this.fetchState.loading = true
+      this.fetchState.error = null
 
       const authStore = useAuthStore()
       if (authStore.session.idToken == null) {
@@ -123,9 +132,9 @@ export const useToDoStore = defineStore('todo', {
             response.data.githubNotificationList.edges.map((edge) => edge.node)
           )
       } catch (error: unknown) {
-        this.error = (error as Error)?.message
+        this.fetchState.error = (error as Error)?.message
       } finally {
-        this.loading = false
+        this.fetchState.loading = false
       }
     },
     async create({
@@ -135,7 +144,7 @@ export const useToDoStore = defineStore('todo', {
       title: string
       description?: string
     }) {
-      this.updateLoading = true
+      this.createState.loading = true
 
       const authStore = useAuthStore()
       if (authStore.session.idToken == null) {
@@ -162,9 +171,9 @@ export const useToDoStore = defineStore('todo', {
 
         this.todoList.push(response.data.createTodo)
       } catch (error: unknown) {
-        this.error = (error as Error)?.message
+        this.createState.error = (error as Error)?.message
       } finally {
-        this.updateLoading = false
+        this.createState.loading = false
       }
     }
   }

@@ -3,16 +3,18 @@
     <ElmTextField
       v-model="title"
       label="Title"
-      :loading="todoStore.updateLoading"
+      :loading="todoStore.createState.loading"
       :icon="PencilIcon"
     />
+
     <ElmTextField
       v-model="description"
       label="Description (optional)"
-      :loading="todoStore.updateLoading"
+      :loading="todoStore.createState.loading"
       :icon="AdjustmentsHorizontalIcon"
     />
-    <ElmButton @click="handleCreate" :loading="todoStore.updateLoading">
+
+    <ElmButton @click="handleCreate" :loading="todoStore.createState.loading">
       <ListBulletIcon class="icon" />
       <span>Create ToDo</span>
     </ElmButton>

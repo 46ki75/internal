@@ -3,7 +3,7 @@
     <ElmHeading1 text="ToDo" />
 
     <ElmBlockFallback
-      v-if="todoStore.loading || todoStore.todoList.length === 0"
+      v-if="todoStore.fetchState.loading || todoStore.todoList.length === 0"
     />
 
     <table class="todo" v-else>
@@ -95,7 +95,7 @@ import {
   ElmInlineLink,
   ElmInlineText
 } from '@elmethis/core'
-import { ArrowTopRightOnSquareIcon, BellIcon } from '@heroicons/vue/24/solid'
+import { BellIcon } from '@heroicons/vue/24/solid'
 
 const todoStore = useToDoStore()
 

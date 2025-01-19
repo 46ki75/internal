@@ -30,7 +30,7 @@ impl ToDoMutation {
             properties.insert(
                 "Type".to_string(),
                 notionrs::page::properties::PageProperty::Select(
-                    notionrs::page::properties::PageSelectProperty::from("ToDo"),
+                    notionrs::page::properties::PageSelectProperty::from("todo"),
                 ),
             );
 

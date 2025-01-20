@@ -1,16 +1,21 @@
 <template>
   <div class="wrapper">
-    <div>
-      <label for="username" class="label">username</label>
-      <input id="username" class="input" type="text" ref="username" />
-    </div>
-
-    <div>
-      <label for="password" class="label">password</label>
-      <input id="password" class="input" type="password" ref="password" />
-    </div>
+    <ElmTextField
+      v-model="username"
+      label="username"
+      required
+      :icon="UserCircleIcon"
+    />
+    <ElmTextField
+      v-model="password"
+      label="password"
+      required
+      :icon="LockClosedIcon"
+      is-password
+    />
 
     <ElmButton block :loading="authStore.signIn.loading" @click="handleSignIn">
+      <ArrowLeftEndOnRectangleIcon class="icon" />
       <ElmInlineText text="LOGIN" />
     </ElmButton>
 
@@ -19,28 +24,33 @@
 </template>
 
 <script setup lang="ts">
-import { ElmButton, ElmInlineText } from '@elmethis/core'
+import { ElmButton, ElmInlineText, ElmTextField } from '@elmethis/core'
+import {
+  ArrowLeftEndOnRectangleIcon,
+  LockClosedIcon,
+  UserCircleIcon
+} from '@heroicons/vue/24/outline'
 
 const authStore = useAuthStore()
 const router = useRouter()
 
-const username = ref<HTMLInputElement>()
-const password = ref<HTMLInputElement>()
+const username = ref<string>('')
+const password = ref<string>('')
 const error = ref<string | null>(null)
 
 const handleSignIn = async () => {
   if (
-    username.value?.value == null ||
-    password.value?.value == null ||
-    username.value.value == '' ||
-    password.value.value == ''
+    username.value == null ||
+    password.value == null ||
+    username.value == '' ||
+    password.value == ''
   ) {
     console.log('password is empty')
     error.value = 'Please enter username and password'
   } else {
     await authStore.signin({
-      username: username.value.value,
-      password: password.value.value
+      username: username.value,
+      password: password.value
     })
 
     if (authStore.session.inSession) {
@@ -55,6 +65,12 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+@use '../scss/mixins';
+
+.icon {
+  @include mixins.icon;
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;

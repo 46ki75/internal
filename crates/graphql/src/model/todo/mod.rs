@@ -10,13 +10,13 @@ pub struct ToDo {
     pub description: Option<String>,
     pub is_done: bool,
     pub deadline: Option<String>,
-    pub severity: Sevelity,
+    pub severity: Severity,
     pub created_at: Option<String>,
     pub updated_at: Option<String>,
 }
 
 #[derive(async_graphql::Enum, Default, Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Sevelity {
+pub enum Severity {
     #[default]
     Unknown,
     Info,

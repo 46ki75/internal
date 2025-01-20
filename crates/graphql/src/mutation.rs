@@ -73,4 +73,14 @@ impl MutationRoot {
             .create_todo(ctx, input)
             .await
     }
+
+    pub async fn update_todo(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+        input: crate::model::todo::mutation::UpdateToDoInput,
+    ) -> Result<crate::model::todo::ToDo, async_graphql::Error> {
+        crate::model::todo::mutation::ToDoMutation
+            .update_todo(ctx, input)
+            .await
+    }
 }

@@ -4,7 +4,6 @@ pub struct ToDoMutation;
 #[derive(async_graphql::InputObject, Debug)]
 pub struct CreateToDoInput {
     pub title: String,
-    pub description: Option<String>,
 }
 
 #[async_graphql::Object]
@@ -22,7 +21,7 @@ impl ToDoMutation {
 
         let client = notionrs::client::Client::new().secret(secret);
 
-        let CreateToDoInput { title, description } = input;
+        let CreateToDoInput { title } = input;
 
         let properties = {
             let mut properties = std::collections::HashMap::new();
@@ -48,15 +47,6 @@ impl ToDoMutation {
                 ),
             );
 
-            if let Some(description) = description.clone() {
-                properties.insert(
-                    "Description".to_string(),
-                    notionrs::page::properties::PageProperty::RichText(
-                        notionrs::page::properties::PageRichTextProperty::from(description),
-                    ),
-                );
-            }
-
             properties
         };
 
@@ -71,7 +61,7 @@ impl ToDoMutation {
             id: response.id,
             url: response.url,
             title,
-            description,
+            description: None,
             source: "Notion:todo".to_string(),
             is_done: false,
             deadline: None,

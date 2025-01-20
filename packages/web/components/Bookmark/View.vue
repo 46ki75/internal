@@ -8,7 +8,7 @@
     >
       <ElmTag :text="b.tag.name" :color="b.tag.color" />
       <div class="bookmark-container">
-        <template v-for="bookmark in b.bookmarkList">
+        <template v-for="(bookmark, index) in b.bookmarkList">
           <ElmBookmarkIcon
             v-if="bookmark.url != null"
             :name="bookmark.name ?? bookmark.url ?? ''"
@@ -17,6 +17,10 @@
               'https://www.svgrepo.com/show/197996/internet.svg'
             "
             :href="bookmark.url ?? ''"
+            class="fade-in"
+            :style="{
+              animationDelay: `${index * 25}ms`
+            }"
           />
         </template>
       </div>
@@ -47,6 +51,21 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation-name: fade-in;
+  animation-duration: 500ms;
+  animation-fill-mode: both;
+}
+
 .bookmark-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(5rem, 1fr));

@@ -22,7 +22,12 @@
     </thead>
 
     <tbody>
-      <tr v-for="todo in todoStore.todoList" :key="todo.id">
+      <tr
+        v-for="(todo, index) in todoStore.todoList"
+        :key="todo.id"
+        class="fade-in"
+        :style="{ '--animation-delay': `${index * 50}ms` }"
+      >
         <td>
           <img
             v-if="todo.source.toLocaleLowerCase().includes('notion')"
@@ -110,6 +115,22 @@ const colorMap: Record<
 </script>
 
 <style scoped lang="scss">
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation-name: fade-in;
+  animation-duration: 500ms;
+  animation-fill-mode: both;
+  animation-delay: var(--animation-delay);
+}
+
 .todo {
   width: 100%;
 

@@ -72,13 +72,22 @@ const query = /* GraphQL */ `
   ${fragment}
 `
 
-const mutation = /* GraphQL */ `
+const createMutation = /* GraphQL */ `
   mutation CreateToDO($title: String!) {
     createTodo(input: { title: $title }) {
       ...ToDoFragment
     }
   }
 
+  ${fragment}
+`
+
+const updateMutation = /* GraphQL */ `
+  mutation UpdateToDo($id: String!, $isDone: Boolean!) {
+    updateTodo(input: { id: $id, isDone: $isDone }) {
+      ...ToDoFragment
+    }
+  }
   ${fragment}
 `
 
@@ -93,6 +102,11 @@ export const useToDoStore = defineStore('todo', {
       },
 
       createState: {
+        loading: false,
+        error: null as string | null
+      },
+
+      updateState: {
         loading: false,
         error: null as string | null
       }
@@ -158,7 +172,7 @@ export const useToDoStore = defineStore('todo', {
             Authorization: authStore.session.idToken
           },
           body: JSON.stringify({
-            query: mutation,
+            query: createMutation,
             variables: { title }
           })
         })
@@ -168,6 +182,39 @@ export const useToDoStore = defineStore('todo', {
         this.createState.error = (error as Error)?.message
       } finally {
         this.createState.loading = false
+      }
+    },
+    async update({ id, isDone }: { id: string; isDone: boolean }) {
+      this.updateState.loading = true
+
+      const authStore = useAuthStore()
+      if (authStore.session.idToken == null) {
+        await authStore.refreshAccessToken()
+        if (authStore.session.idToken == null) {
+          return
+        }
+      }
+
+      try {
+        const response = await $fetch<{
+          data: { updateTodo: Connection['edges'][number]['node'] }
+        }>('/api/graphql', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: authStore.session.idToken
+          },
+          body: JSON.stringify({
+            query: updateMutation,
+            variables: { id, isDone }
+          })
+        })
+
+        this.todoList = this.todoList.filter((todo) => todo.id !== id)
+      } catch (error: unknown) {
+        this.updateState.error = (error as Error)?.message
+      } finally {
+        this.updateState.loading = false
       }
     }
   }

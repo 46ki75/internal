@@ -62,10 +62,10 @@
         </td>
 
         <td>
-          <ElmCheckbox
+          <ToDoCheck
             v-if="todo.source === 'Notion:todo'"
-            :isChecked="todo.isDone"
-            label=""
+            :id="todo.id"
+            v-model="todo.isDone"
           />
           <ElmInlineText v-else text="-" />
         </td>

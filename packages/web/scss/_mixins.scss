@@ -1,0 +1,8 @@
+@mixin icon($size: 20px) {
+  width: $size;
+  color: rgba(black, 0.8);
+
+  [data-theme='dark'] & {
+    color: rgba(white, 0.8);
+  }
+}

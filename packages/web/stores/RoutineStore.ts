@@ -84,19 +84,26 @@ export const useRoutineStore = defineStore('routine', {
 
       const authStore = useAuthStore()
 
-      try {
-        const response = await execute<{ routineList: Connection }>({
-          endpoint: '/api/graphql',
-          query,
-          variables: {
-            dayOfWeek: dayOfWeekList[new Date().getDay()]
-          },
-          headers: {
-            Authorization: authStore.session.idToken as string
-          }
-        })
+      console.log(10000000000000000000)
 
-        this.routineList = response.routineList.edges.map((edge) => edge.node)
+      try {
+        const response = await $fetch<{ data: { routineList: Connection } }>(
+          '/api/graphql',
+          {
+            method: 'POST',
+            headers: {
+              Authorization: authStore.session.idToken as string
+            },
+            body: {
+              query,
+              variables: { dayOfWeek: dayOfWeekList[new Date().getDay()] }
+            }
+          }
+        )
+
+        this.routineList = response.data.routineList.edges.map(
+          (edge) => edge.node
+        )
       } catch (error: unknown) {
         this.error = (error as Error)?.message
       } finally {

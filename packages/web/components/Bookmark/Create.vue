@@ -3,16 +3,8 @@
     <ElmHeading1 text="Create Bookmark" />
 
     <div class="input-container">
-      <ElmTextField
-        v-model="name"
-        label="Name"
-        :icon="h(Icon, { icon: 'mdi:globe' })"
-      />
-      <ElmTextField
-        v-model="url"
-        label="URL"
-        :icon="h(Icon, { icon: 'mdi:link-variant' })"
-      />
+      <ElmTextField v-model="name" label="Name" :icon="GlobeIcon" />
+      <ElmTextField v-model="url" label="URL" :icon="LinkIcon" />
 
       <ElmButton
         block
@@ -42,6 +34,9 @@ const handleCreate = async () => {
     })
   }
 }
+
+const GlobeIcon = h(Icon, { icon: 'mdi:globe' })
+const LinkIcon = h(Icon, { icon: 'mdi:link-variant' })
 </script>
 
 <style scoped lang="scss">

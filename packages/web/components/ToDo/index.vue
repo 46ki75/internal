@@ -1,9 +1,6 @@
 <template>
   <div>
     <ToDoView />
-
-    <KeepAlive>
-      <ToDoCreate />
-    </KeepAlive>
+    <ToDoCreate />
   </div>
 </template>

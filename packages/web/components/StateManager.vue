@@ -1,7 +1,7 @@
 <template>
   <transition>
     <div class="fix" v-if="refreshing">
-      <ElmDotLoadingIcon /> <ElmInlineText text="アクセストークンを更新中" />
+      <ElmDotLoadingIcon /><ElmInlineText text="アクセストークンを更新中" />
     </div>
   </transition>
 </template>

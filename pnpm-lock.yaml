@@ -21,8 +21,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       '@elmethis/core':
-        specifier: 1.0.0-alpha.133
-        version: 1.0.0-alpha.133
+        specifier: 1.0.0-alpha.134
+        version: 1.0.0-alpha.134
       '@pinia/nuxt':
         specifier: 0.9.0
         version: 0.9.0(magicast@0.3.5)(pinia@2.3.0(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(rollup@4.28.1)
@@ -882,8 +882,8 @@ packages:
     peerDependencies:
       postcss: ^8.4
 
-  '@elmethis/core@1.0.0-alpha.133':
-    resolution: {integrity: sha512-nIWW9VcZApmaxBezFGHjW7ioecXO0GqFa3Z8qfnvWwS3I9cm+M71VlsPmTjH3fLwrkYicf401b7yUKSAsAxcKg==}
+  '@elmethis/core@1.0.0-alpha.134':
+    resolution: {integrity: sha512-DcyOej5/7ZQSA1o1YaJTLOE1awVLgzeMgIikuYv4nvMNNfmLiz350SL7+keupDbrpmpAT71MMZUUATR1Wx691Q==}
 
   '@esbuild/aix-ppc64@0.21.5':
     resolution: {integrity: sha512-1SDgH6ZSPTlggy1yI6+Dbkiz8xzpHJEVAlF/AM1tHPLsf5STom9rwtjE4hKAF20FfXXNTFqEYXyJNWh1GiZedQ==}
@@ -6567,7 +6567,7 @@ snapshots:
     dependencies:
       postcss: 8.5.1
 
-  '@elmethis/core@1.0.0-alpha.133':
+  '@elmethis/core@1.0.0-alpha.134':
     dependencies:
       nanoid: 5.0.9
 

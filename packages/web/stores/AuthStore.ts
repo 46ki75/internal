@@ -43,6 +43,11 @@ interface AuthState {
     loadingState: boolean
     error: boolean
   }
+
+  refreshState: {
+    loading: boolean
+    error: boolean
+  }
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -66,6 +71,11 @@ export const useAuthStore = defineStore('auth', {
 
     signOut: {
       loadingState: false,
+      error: false
+    },
+
+    refreshState: {
+      loading: false,
       error: false
     }
   }),
@@ -103,9 +113,17 @@ export const useAuthStore = defineStore('auth', {
       }
       await this.refresh()
     },
-    async refresh() {
-      this.session.loading = true
-      this.session.error = false
+
+    /**
+     * Refresh the session
+     * @returns boolean
+     * - true: refresh success
+     * - false: need to sign in
+     */
+    async refresh(): Promise<boolean> {
+      this.refreshState.loading = true
+      this.refreshState.error = false
+
       configure()
 
       try {
@@ -122,11 +140,31 @@ export const useAuthStore = defineStore('auth', {
       } catch {
         this.session.useId = undefined
         this.session.username = undefined
-        this.session.error = true
         this.session.inSession = false
-      } finally {
-        this.session.loading = false
+        this.refreshState.error = true
+        this.refreshState.loading = false
+        return false
       }
+
+      this.refreshState.loading = false
+      return true
+    },
+
+    /**
+     * Refresh the session if the token is about to expire
+     * @param thresholdSecond - the threshold to refresh the token
+     * @returns boolean
+     * - true: refresh success
+     * - false: need to sign in
+     */
+    async refreshIfNeed(thresholdSecond: number = 60 * 10): Promise<boolean> {
+      if (
+        this.accessTokenRemainSeconds < thresholdSecond ||
+        this.idTokenRemainSeconds < thresholdSecond
+      ) {
+        return await this.refresh()
+      }
+      return true
     }
   },
   getters: {

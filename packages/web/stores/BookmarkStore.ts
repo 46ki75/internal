@@ -96,11 +96,12 @@ export const useBookmarkStore = defineStore('bookmark', {
       this.error = null
 
       const authStore = useAuthStore()
-      if (authStore.session.idToken == null) {
-        await authStore.refresh()
-        if (authStore.session.idToken == null) {
-          return
-        }
+      const ok = await authStore.refreshIfNeed()
+
+      if (!ok) {
+        this.loading = false
+        this.error = 'Failed to refresh auth'
+        return
       }
 
       try {
@@ -109,7 +110,7 @@ export const useBookmarkStore = defineStore('bookmark', {
           query,
           cache: 'localStorage',
           headers: {
-            Authorization: authStore.session.idToken
+            Authorization: authStore.session.idToken as string
           }
         })
 
@@ -124,11 +125,12 @@ export const useBookmarkStore = defineStore('bookmark', {
       this.createLoading = true
 
       const authStore = useAuthStore()
-      if (authStore.session.idToken == null) {
-        await authStore.refresh()
-        if (authStore.session.idToken == null) {
-          return
-        }
+      const ok = await authStore.refreshIfNeed()
+
+      if (!ok) {
+        this.createLoading = false
+        this.createError = 'Failed to refresh auth'
+        return
       }
 
       try {

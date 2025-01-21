@@ -118,11 +118,12 @@ export const useToDoStore = defineStore('todo', {
       this.fetchState.error = null
 
       const authStore = useAuthStore()
-      if (authStore.session.idToken == null) {
-        await authStore.refresh()
-        if (authStore.session.idToken == null) {
-          return
-        }
+      const ok = await authStore.refreshIfNeed()
+
+      if (!ok) {
+        this.fetchState.loading = false
+        this.fetchState.error = 'Failed to refresh auth'
+        return
       }
 
       try {
@@ -135,7 +136,7 @@ export const useToDoStore = defineStore('todo', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: authStore.session.idToken
+            Authorization: authStore.session.idToken as string
           },
           body: JSON.stringify({ query })
         })
@@ -155,11 +156,13 @@ export const useToDoStore = defineStore('todo', {
       this.createState.loading = true
 
       const authStore = useAuthStore()
-      if (authStore.session.idToken == null) {
-        await authStore.refresh()
-        if (authStore.session.idToken == null) {
-          return
-        }
+
+      const ok = await authStore.refreshIfNeed()
+
+      if (!ok) {
+        this.createState.loading = false
+        this.createState.error = 'Failed to refresh auth'
+        return
       }
 
       try {
@@ -169,7 +172,7 @@ export const useToDoStore = defineStore('todo', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: authStore.session.idToken
+            Authorization: authStore.session.idToken as string
           },
           body: JSON.stringify({
             query: createMutation,
@@ -188,11 +191,12 @@ export const useToDoStore = defineStore('todo', {
       this.updateState.loading = true
 
       const authStore = useAuthStore()
-      if (authStore.session.idToken == null) {
-        await authStore.refresh()
-        if (authStore.session.idToken == null) {
-          return
-        }
+
+      const ok = await authStore.refreshIfNeed()
+      if (!ok) {
+        this.updateState.loading = false
+        this.updateState.error = 'Failed to refresh auth'
+        return
       }
 
       try {
@@ -202,7 +206,7 @@ export const useToDoStore = defineStore('todo', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: authStore.session.idToken
+            Authorization: authStore.session.idToken as string
           },
           body: JSON.stringify({
             query: updateMutation,

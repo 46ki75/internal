@@ -6,9 +6,13 @@
       <ElmTextField
         v-model="name"
         label="Name"
-        :icon="GlobeAsiaAustraliaIcon"
+        :icon="h(Icon, { icon: 'mdi:globe' })"
       />
-      <ElmTextField v-model="url" label="URL" :icon="LinkIcon" />
+      <ElmTextField
+        v-model="url"
+        label="URL"
+        :icon="h(Icon, { icon: 'mdi:link-variant' })"
+      />
 
       <ElmButton
         block
@@ -23,7 +27,7 @@
 
 <script setup lang="ts">
 import { ElmHeading1, ElmButton, ElmTextField } from '@elmethis/core'
-import { GlobeAsiaAustraliaIcon, LinkIcon } from '@heroicons/vue/24/outline'
+import { Icon } from '@iconify/vue'
 
 const bookmarkStore = useBookmarkStore()
 

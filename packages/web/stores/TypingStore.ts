@@ -28,9 +28,6 @@ export const useTypingStore = defineStore('typing', {
       this.loading = true
 
       const authStore = useAuthStore()
-      if (authStore.session.idToken == null) {
-        await authStore.refresh()
-      }
 
       try {
         const response = await $fetch<{ data: { typingList: Typing[] } }>(
@@ -67,9 +64,6 @@ export const useTypingStore = defineStore('typing', {
       this.loading = true
 
       const authStore = useAuthStore()
-      if (authStore.session.idToken == null) {
-        await authStore.refresh()
-      }
 
       try {
         const response = await $fetch<{ data: { upsertTyping: Typing } }>(

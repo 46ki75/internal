@@ -83,12 +83,7 @@ export const useRoutineStore = defineStore('routine', {
       this.loading = true
 
       const authStore = useAuthStore()
-      if (authStore.session.idToken == null) {
-        await authStore.refresh()
-        if (authStore.session.idToken == null) {
-          return
-        }
-      }
+
       try {
         const response = await execute<{ routineList: Connection }>({
           endpoint: '/api/graphql',
@@ -97,7 +92,7 @@ export const useRoutineStore = defineStore('routine', {
             dayOfWeek: dayOfWeekList[new Date().getDay()]
           },
           headers: {
-            Authorization: authStore.session.idToken
+            Authorization: authStore.session.idToken as string
           }
         })
 
@@ -110,12 +105,7 @@ export const useRoutineStore = defineStore('routine', {
     },
     async update({ id, isDone }: { id: string; isDone: boolean }) {
       const authStore = useAuthStore()
-      if (authStore.session.idToken == null) {
-        await authStore.refresh()
-        if (authStore.session.idToken == null) {
-          return
-        }
-      }
+
       try {
         const response = await $fetch<{
           data: {
@@ -125,7 +115,7 @@ export const useRoutineStore = defineStore('routine', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: authStore.session.idToken
+            Authorization: authStore.session.idToken as string
           },
           body: JSON.stringify({
             query: mutation,

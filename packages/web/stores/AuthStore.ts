@@ -34,13 +34,13 @@ interface AuthState {
     error: boolean
   }
 
-  signIn: {
+  signInState: {
     loading: boolean
     error: boolean
   }
 
   signOut: {
-    loading: boolean
+    loadingState: boolean
     error: boolean
   }
 }
@@ -59,13 +59,13 @@ export const useAuthStore = defineStore('auth', {
       error: false
     },
 
-    signIn: {
+    signInState: {
       loading: false,
       error: false
     },
 
     signOut: {
-      loading: false,
+      loadingState: false,
       error: false
     }
   }),
@@ -77,21 +77,21 @@ export const useAuthStore = defineStore('auth', {
       username: string
       password: string
     }) {
-      this.signIn.loading = true
-      this.signIn.error = false
+      this.signInState.loading = true
+      this.signInState.error = false
       try {
         configure()
         const _ = await signIn({ username, password })
       } catch (e: any) {
-        this.signIn.error = true
+        this.signInState.error = true
         throw new Error(e)
       } finally {
-        this.signIn.loading = false
+        this.signInState.loading = false
       }
       await this.refreshAccessToken()
     },
     async signOut() {
-      this.signOut.loading = true
+      this.signOut.loadingState = true
       this.signOut.error = false
       configure()
       try {
@@ -99,7 +99,7 @@ export const useAuthStore = defineStore('auth', {
       } catch {
         this.signOut.error = true
       } finally {
-        this.signOut.loading = false
+        this.signOut.loadingState = false
       }
       await this.refreshAccessToken()
     },

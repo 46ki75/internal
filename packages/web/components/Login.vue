@@ -14,7 +14,11 @@
       is-password
     />
 
-    <ElmButton block :loading="authStore.signIn.loading" @click="handleSignIn">
+    <ElmButton
+      block
+      :loading="authStore.signInState.loading"
+      @click="handleSignIn"
+    >
       <Icon icon="mdi:send-variant" class="icon" />
       <ElmInlineText text="LOGIN" />
     </ElmButton>

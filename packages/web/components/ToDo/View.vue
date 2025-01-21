@@ -73,7 +73,7 @@
         <td>
           <ElmBadge :color="colorMap[todo.severity]">
             <template #left>
-              <BellIcon class="icon" />
+              <Icon icon="mdi:notifications-active" class="icon" />
             </template>
             <template #right>
               <ElmInlineText :text="todo.severity" />
@@ -89,12 +89,11 @@
 import {
   ElmBadge,
   ElmBlockFallback,
-  ElmCheckbox,
   ElmHeading1,
   ElmInlineLink,
   ElmInlineText
 } from '@elmethis/core'
-import { BellIcon } from '@heroicons/vue/24/solid'
+import { Icon } from '@iconify/vue'
 
 const todoStore = useToDoStore()
 

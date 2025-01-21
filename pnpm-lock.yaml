@@ -23,9 +23,6 @@ importers:
       '@elmethis/core':
         specifier: 1.0.0-alpha.100
         version: 1.0.0-alpha.100
-      '@heroicons/vue':
-        specifier: ^2.2.0
-        version: 2.2.0(vue@3.5.13(typescript@5.7.2))
       '@pinia/nuxt':
         specifier: 0.9.0
         version: 0.9.0(magicast@0.3.5)(pinia@2.3.0(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(rollup@4.28.1)
@@ -1319,11 +1316,6 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
-
-  '@heroicons/vue@2.2.0':
-    resolution: {integrity: sha512-G3dbSxoeEKqbi/DFalhRxJU4mTXJn7GwZ7ae8NuEQzd1bqdd0jAbdaBZlHPcvPD2xI1iGzNVB4k20Un2AguYPw==}
-    peerDependencies:
-      vue: '>= 3'
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -6798,10 +6790,6 @@ snapshots:
 
   '@esbuild/win32-x64@0.24.2':
     optional: true
-
-  '@heroicons/vue@2.2.0(vue@3.5.13(typescript@5.7.2))':
-    dependencies:
-      vue: 3.5.13(typescript@5.7.2)
 
   '@iconify/types@2.0.0': {}
 

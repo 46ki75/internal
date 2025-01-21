@@ -3,7 +3,8 @@
     <ElmHeading1 text="front" id="front" />
     <ElmJsonRendererAsync
       :key="`${ankiStore.getCurrentAnki.pageId}:front`"
-      :json="ankiStore.getCurrentAnki.blockList.front" />
+      :json="ankiStore.getCurrentAnki.blockList.front"
+    />
 
     <template v-if="ankiStore.isShowAnswer">
       <ElmHeading1 text="back" id="back" />
@@ -21,8 +22,9 @@
 
     <ElmButton v-else @click="ankiStore.setIsShowAnswer(true)" block>
       <ElmInlineText text="SHOW ANSWER" />
-      <ArrowTurnDownLeftIcon class="icon" /> </ElmButton
-  ></template>
+      <Icon icon="mdi:arrow-u-left-bottom" class="icon" />
+    </ElmButton>
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -32,7 +34,8 @@ import {
   ElmInlineText,
   ElmJsonRendererAsync
 } from '@elmethis/core'
-import { ArrowTurnDownLeftIcon } from '@heroicons/vue/24/solid'
+import { Icon } from '@iconify/vue'
+
 const ankiStore = useAnkiStore()
 </script>
 

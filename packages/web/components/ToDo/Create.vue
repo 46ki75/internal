@@ -8,7 +8,7 @@
     />
 
     <ElmButton @click="handleCreate" :loading="todoStore.createState.loading">
-      <ListBulletIcon class="icon" />
+      <Icon icon="mdi:task-add" class="icon" />
       <span>Create ToDo</span>
     </ElmButton>
   </div>
@@ -16,7 +16,9 @@
 
 <script setup lang="ts">
 import { ElmTextField, ElmButton } from '@elmethis/core'
-import { PencilIcon, ListBulletIcon } from '@heroicons/vue/24/outline'
+import { Icon } from '@iconify/vue'
+
+const PencilIcon = h(Icon, { icon: 'mdi:playlist-edit', class: 'icon' })
 
 const title = ref<string | undefined>()
 

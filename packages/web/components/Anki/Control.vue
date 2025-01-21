@@ -5,12 +5,12 @@
       block
       :loading="ankiStore.ankiList.length === 0"
     >
-      <PencilSquareIcon class="icon" />
+      <Icon icon="mdi:file-document-edit-outline" class="icon" />
       <ElmInlineText text="Edit" />
     </ElmButton>
 
     <ElmButton @click="ankiStore.create()" block>
-      <SparklesIcon class="icon" />
+      <Icon icon="mdi:sparkles-outline" class="icon" />
       <ElmInlineText text="NEW" />
     </ElmButton>
   </div>
@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { ElmButton, ElmInlineText } from '@elmethis/core'
-import { PencilSquareIcon, SparklesIcon } from '@heroicons/vue/24/solid'
+import { Icon } from '@iconify/vue'
 
 const ankiStore = useAnkiStore()
 </script>

@@ -4,18 +4,18 @@
       v-model="username"
       label="username"
       required
-      :icon="UserCircleIcon"
+      :icon="h(Icon, { icon: 'mdi:user-circle-outline' })"
     />
     <ElmTextField
       v-model="password"
       label="password"
       required
-      :icon="LockClosedIcon"
+      :icon="h(Icon, { icon: 'mdi:lock' })"
       is-password
     />
 
     <ElmButton block :loading="authStore.signIn.loading" @click="handleSignIn">
-      <ArrowLeftEndOnRectangleIcon class="icon" />
+      <Icon icon="mdi:send-variant" class="icon" />
       <ElmInlineText text="LOGIN" />
     </ElmButton>
 
@@ -25,11 +25,7 @@
 
 <script setup lang="ts">
 import { ElmButton, ElmInlineText, ElmTextField } from '@elmethis/core'
-import {
-  ArrowLeftEndOnRectangleIcon,
-  LockClosedIcon,
-  UserCircleIcon
-} from '@heroicons/vue/24/outline'
+import { Icon } from '@iconify/vue'
 
 const authStore = useAuthStore()
 const router = useRouter()

@@ -3,7 +3,9 @@
     <div>
       <ElmTooltip>
         <template #original>
-          <NuxtLink to="/"><HomeIcon class="icon" /></NuxtLink>
+          <NuxtLink to="/">
+            <Icon icon="material-symbols:cottage" class="icon" />
+          </NuxtLink>
         </template>
 
         <template #tooltip>
@@ -13,7 +15,7 @@
 
       <ElmTooltip>
         <template #original>
-          <NuxtLink to="/anki"><TagIcon class="icon" /></NuxtLink>
+          <NuxtLink to="/anki"><Icon icon="mdi:tag" class="icon" /></NuxtLink>
         </template>
 
         <template #tooltip>
@@ -23,7 +25,9 @@
 
       <ElmTooltip>
         <template #original>
-          <NuxtLink to="/translate"><LanguageIcon class="icon" /></NuxtLink>
+          <NuxtLink to="/translate">
+            <Icon icon="mdi:language" class="icon" />
+          </NuxtLink>
         </template>
 
         <template #tooltip>
@@ -33,7 +37,9 @@
 
       <ElmTooltip>
         <template #original>
-          <NuxtLink to="/color"><SwatchIcon class="icon" /></NuxtLink>
+          <NuxtLink to="/color">
+            <Icon icon="mdi:color" class="icon" />
+          </NuxtLink>
         </template>
 
         <template #tooltip>
@@ -43,7 +49,9 @@
 
       <ElmTooltip>
         <template #original>
-          <NuxtLink to="/typing"><ComputerDesktopIcon class="icon" /></NuxtLink>
+          <NuxtLink to="/typing">
+            <Icon icon="material-symbols:keyboard" class="icon" />
+          </NuxtLink>
         </template>
 
         <template #tooltip>
@@ -54,37 +62,31 @@
 
     <div>
       <ElmToggleTheme />
-      <ArrowLeftStartOnRectangleIcon
-        v-if="authStore.session.inSession"
-        class="signout"
-        @click="handleSignout"
-      />
-      <NuxtLink v-else to="/login">
-        <ArrowLeftEndOnRectangleIcon class="signin" />
-      </NuxtLink>
+
+      <span @click="handleClick()">
+        <ElmLoginIcon
+          :is-loading="false"
+          :is-login="authStore.session.inSession"
+        />
+      </span>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import { ElmToggleTheme, ElmTooltip } from '@elmethis/core'
-import {
-  ArrowLeftEndOnRectangleIcon,
-  ArrowLeftStartOnRectangleIcon,
-  ComputerDesktopIcon,
-  HomeIcon,
-  LanguageIcon,
-  SwatchIcon,
-  TagIcon
-} from '@heroicons/vue/24/solid'
+import { ElmLoginIcon, ElmToggleTheme, ElmTooltip } from '@elmethis/core'
+import { Icon } from '@iconify/vue'
 
 const router = useRouter()
 
 const authStore = useAuthStore()
 
-const handleSignout = async () => {
-  await authStore.signOut()
-  router.push('/login')
+const handleClick = async () => {
+  if (authStore.session.inSession) {
+    await authStore.signOut()
+
+    router.push('/login')
+  }
 }
 </script>
 
@@ -138,6 +140,7 @@ const handleSignout = async () => {
 
 .icon {
   width: 28px;
+  height: 28px;
   padding: 0.25rem;
   border-radius: 0.25rem;
   cursor: pointer;

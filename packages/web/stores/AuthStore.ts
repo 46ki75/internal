@@ -88,7 +88,7 @@ export const useAuthStore = defineStore('auth', {
       } finally {
         this.signInState.loading = false
       }
-      await this.refreshAccessToken()
+      await this.refresh()
     },
     async signOut() {
       this.signOut.loadingState = true
@@ -101,24 +101,23 @@ export const useAuthStore = defineStore('auth', {
       } finally {
         this.signOut.loadingState = false
       }
-      await this.refreshAccessToken()
+      await this.refresh()
     },
-    async refreshAccessToken() {
+    async refresh() {
       this.session.loading = true
       this.session.error = false
       configure()
 
       try {
-        const session = await fetchAuthSession({ forceRefresh: true })
-        this.session.accessToken = session.tokens?.accessToken.toString()
-        this.session.accessTokenExpiresAt =
-          session.tokens?.accessToken.payload.exp
-        this.session.idToken = session.tokens?.idToken?.toString()
-        this.session.idTokenExpiresAt = session.tokens?.idToken?.payload.exp
+        const { tokens } = await fetchAuthSession({ forceRefresh: true })
+        this.session.accessToken = tokens?.accessToken.toString()
+        this.session.accessTokenExpiresAt = tokens?.accessToken.payload.exp
+        this.session.idToken = tokens?.idToken?.toString()
+        this.session.idTokenExpiresAt = tokens?.idToken?.payload.exp
 
-        const response = await getCurrentUser()
-        this.session.useId = response.userId
-        this.session.username = response.username
+        const { userId, username } = await getCurrentUser()
+        this.session.useId = userId
+        this.session.username = username
         this.session.inSession = true
       } catch {
         this.session.useId = undefined

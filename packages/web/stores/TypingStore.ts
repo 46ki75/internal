@@ -29,7 +29,7 @@ export const useTypingStore = defineStore('typing', {
 
       const authStore = useAuthStore()
       if (authStore.session.idToken == null) {
-        await authStore.refreshAccessToken()
+        await authStore.refresh()
       }
 
       try {
@@ -68,7 +68,7 @@ export const useTypingStore = defineStore('typing', {
 
       const authStore = useAuthStore()
       if (authStore.session.idToken == null) {
-        await authStore.refreshAccessToken()
+        await authStore.refresh()
       }
 
       try {

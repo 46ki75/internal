@@ -97,7 +97,7 @@ export const useBookmarkStore = defineStore('bookmark', {
 
       const authStore = useAuthStore()
       if (authStore.session.idToken == null) {
-        await authStore.refreshAccessToken()
+        await authStore.refresh()
         if (authStore.session.idToken == null) {
           return
         }
@@ -125,7 +125,7 @@ export const useBookmarkStore = defineStore('bookmark', {
 
       const authStore = useAuthStore()
       if (authStore.session.idToken == null) {
-        await authStore.refreshAccessToken()
+        await authStore.refresh()
         if (authStore.session.idToken == null) {
           return
         }

@@ -18,7 +18,7 @@ onMounted(() => {
   window.setInterval(async () => {
     try {
       refreshing.value = true
-      await authStore.refreshAccessToken()
+      await authStore.refresh()
       console.log('Access token refreshed.')
     } catch {
       window.alert('Session expired. Please sign in again.')

@@ -64,7 +64,7 @@ export const useAnkiStore = defineStore('anki', {
     async init() {
       const authStore = useAuthStore()
       if (authStore.session.idToken == null) {
-        await authStore.refreshAccessToken()
+        await authStore.refresh()
       }
 
       const response = await $fetch<{
@@ -184,7 +184,7 @@ export const useAnkiStore = defineStore('anki', {
     async create() {
       const authStore = useAuthStore()
       if (authStore.session.idToken == null) {
-        await authStore.refreshAccessToken()
+        await authStore.refresh()
       }
 
       const response = await $fetch<{ data: { createAnki: { url: string } } }>(
@@ -229,7 +229,7 @@ export const useAnkiStore = defineStore('anki', {
 
         const authStore = useAuthStore()
         if (authStore.session.idToken == null) {
-          await authStore.refreshAccessToken()
+          await authStore.refresh()
         }
 
         const response = await $fetch<{

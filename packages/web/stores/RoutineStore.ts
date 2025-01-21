@@ -84,7 +84,7 @@ export const useRoutineStore = defineStore('routine', {
 
       const authStore = useAuthStore()
       if (authStore.session.idToken == null) {
-        await authStore.refreshAccessToken()
+        await authStore.refresh()
         if (authStore.session.idToken == null) {
           return
         }
@@ -111,7 +111,7 @@ export const useRoutineStore = defineStore('routine', {
     async update({ id, isDone }: { id: string; isDone: boolean }) {
       const authStore = useAuthStore()
       if (authStore.session.idToken == null) {
-        await authStore.refreshAccessToken()
+        await authStore.refresh()
         if (authStore.session.idToken == null) {
           return
         }

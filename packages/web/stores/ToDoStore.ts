@@ -119,7 +119,7 @@ export const useToDoStore = defineStore('todo', {
 
       const authStore = useAuthStore()
       if (authStore.session.idToken == null) {
-        await authStore.refreshAccessToken()
+        await authStore.refresh()
         if (authStore.session.idToken == null) {
           return
         }
@@ -156,7 +156,7 @@ export const useToDoStore = defineStore('todo', {
 
       const authStore = useAuthStore()
       if (authStore.session.idToken == null) {
-        await authStore.refreshAccessToken()
+        await authStore.refresh()
         if (authStore.session.idToken == null) {
           return
         }
@@ -189,7 +189,7 @@ export const useToDoStore = defineStore('todo', {
 
       const authStore = useAuthStore()
       if (authStore.session.idToken == null) {
-        await authStore.refreshAccessToken()
+        await authStore.refresh()
         if (authStore.session.idToken == null) {
           return
         }

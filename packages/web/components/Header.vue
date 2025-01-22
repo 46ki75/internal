@@ -65,7 +65,7 @@
 
       <span @click="handleClick()">
         <ElmLoginIcon
-          :is-loading="!authStore.refreshState.loading"
+          :is-loading="authStore.refreshState.loading"
           :is-login="authStore.inSession"
         />
       </span>

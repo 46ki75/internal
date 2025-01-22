@@ -118,7 +118,7 @@ export const useToDoStore = defineStore('todo', {
       this.fetchState.error = null
 
       const authStore = useAuthStore()
-      await authStore.wait()
+      await authStore.refreshIfNeed()
 
       try {
         const response = await $fetch<{
@@ -150,7 +150,7 @@ export const useToDoStore = defineStore('todo', {
       this.createState.loading = true
 
       const authStore = useAuthStore()
-      await authStore.wait()
+      await authStore.refreshIfNeed()
 
       try {
         const response = await $fetch<{
@@ -178,7 +178,7 @@ export const useToDoStore = defineStore('todo', {
       this.updateState.loading = true
 
       const authStore = useAuthStore()
-      await authStore.wait()
+      await authStore.refreshIfNeed()
 
       try {
         const response = await $fetch<{

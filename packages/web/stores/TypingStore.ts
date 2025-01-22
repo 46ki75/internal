@@ -28,7 +28,7 @@ export const useTypingStore = defineStore('typing', {
       this.loading = true
 
       const authStore = useAuthStore()
-      await authStore.wait()
+      await authStore.refreshIfNeed()
 
       try {
         const response = await $fetch<{ data: { typingList: Typing[] } }>(
@@ -65,7 +65,7 @@ export const useTypingStore = defineStore('typing', {
       this.loading = true
 
       const authStore = useAuthStore()
-      await authStore.wait()
+      await authStore.refreshIfNeed()
 
       try {
         const response = await $fetch<{ data: { upsertTyping: Typing } }>(

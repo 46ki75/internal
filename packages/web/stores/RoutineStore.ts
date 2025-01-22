@@ -83,7 +83,7 @@ export const useRoutineStore = defineStore('routine', {
       this.loading = true
 
       const authStore = useAuthStore()
-      await authStore.wait()
+      await authStore.refreshIfNeed()
 
       try {
         const response = await $fetch<{ data: { routineList: Connection } }>(
@@ -111,7 +111,7 @@ export const useRoutineStore = defineStore('routine', {
     },
     async update({ id, isDone }: { id: string; isDone: boolean }) {
       const authStore = useAuthStore()
-      await authStore.wait()
+      await authStore.refreshIfNeed()
 
       try {
         const response = await $fetch<{

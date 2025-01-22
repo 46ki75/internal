@@ -96,7 +96,7 @@ export const useBookmarkStore = defineStore('bookmark', {
       this.error = null
 
       const authStore = useAuthStore()
-      await authStore.wait()
+      await authStore.refreshIfNeed()
 
       try {
         const result = await execute<{ bookmarkList: BookmarkResponse }>({
@@ -119,7 +119,7 @@ export const useBookmarkStore = defineStore('bookmark', {
       this.createLoading = true
 
       const authStore = useAuthStore()
-      await authStore.wait()
+      await authStore.refreshIfNeed()
 
       try {
         const response = await $fetch<{

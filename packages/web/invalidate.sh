@@ -7,8 +7,6 @@ if [ -z "$ENVIRONMENT" ]; then
     exit 1
 fi
 
-DISTRIBUTION_ALIAS_DOMAIN=
-
 if [ "$ENVIRONMENT" = "prod" ]; then
     DISTRIBUTION_ALIAS_DOMAIN="internal.46ki75.com"
 else

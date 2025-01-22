@@ -94,6 +94,7 @@ import {
   ElmInlineText
 } from '@elmethis/core'
 import { Icon } from '@iconify/vue'
+import { useWindowFocus } from '@vueuse/core'
 
 const todoStore = useToDoStore()
 
@@ -111,6 +112,13 @@ const colorMap: Record<
   ERROR: '#c56565',
   FATAL: 'red'
 }
+
+const focused = useWindowFocus()
+watch(focused, async () => {
+  if (focused.value) {
+    await todoStore.fetch()
+  }
+})
 </script>
 
 <style scoped lang="scss">

@@ -43,12 +43,20 @@ import {
   ElmParagraph,
   ElmTag
 } from '@elmethis/core'
+import { useWindowFocus } from '@vueuse/core'
 
 const bookmarkStore = useBookmarkStore()
 
 onMounted(async () => {
   console.log('fetching bookmarks')
   await bookmarkStore.fetch()
+})
+
+const focused = useWindowFocus()
+watch(focused, async () => {
+  if (focused.value) {
+    await bookmarkStore.fetch()
+  }
 })
 </script>
 

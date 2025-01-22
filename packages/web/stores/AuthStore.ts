@@ -158,13 +158,25 @@ export const useAuthStore = defineStore('auth', {
      * - false: need to sign in
      */
     async refreshIfNeed(thresholdSecond: number = 60 * 10): Promise<boolean> {
-      if (
-        this.accessTokenRemainSeconds < thresholdSecond ||
-        this.idTokenRemainSeconds < thresholdSecond
-      ) {
-        return await this.refresh()
+      const INTERVAL = 50 // [ms]
+      const TIMEOUT = 3000 // [ms]
+      const ITERATION_COUNT = TIMEOUT / INTERVAL
+
+      for (let i = 0; i < ITERATION_COUNT; i++) {
+        if (
+          this.accessTokenRemainSeconds < thresholdSecond ||
+          this.idTokenRemainSeconds < thresholdSecond
+        ) {
+          if (this.refreshState.loading) {
+            await new Promise((resolve) => setTimeout(resolve, INTERVAL))
+            continue
+          } else {
+            return await this.refresh()
+          }
+        }
+        return true
       }
-      return true
+      return false
     }
   },
   getters: {

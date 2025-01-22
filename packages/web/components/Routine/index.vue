@@ -21,18 +21,14 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ElmBlockFallback,
-  ElmCheckbox,
-  ElmHeading1,
-  ElmInlineText,
-  ElmParagraph
-} from '@elmethis/core'
+import { ElmBlockFallback, ElmHeading1, ElmParagraph } from '@elmethis/core'
 
 const routineStore = useRoutineStore()
 
 onMounted(async () => {
-  await routineStore.fetch()
+  nextTick(async () => {
+    await routineStore.fetch()
+  })
 })
 </script>
 

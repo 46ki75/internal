@@ -84,8 +84,6 @@ export const useRoutineStore = defineStore('routine', {
 
       const authStore = useAuthStore()
 
-      console.log(10000000000000000000)
-
       try {
         const response = await $fetch<{ data: { routineList: Connection } }>(
           '/api/graphql',
@@ -97,7 +95,8 @@ export const useRoutineStore = defineStore('routine', {
             body: {
               query,
               variables: { dayOfWeek: dayOfWeekList[new Date().getDay()] }
-            }
+            },
+            retry: 3
           }
         )
 

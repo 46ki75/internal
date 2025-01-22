@@ -70,7 +70,7 @@ export const useAnkiStore = defineStore('anki', {
       }>('/api/graphql', {
         method: 'POST',
         headers: {
-          Authorization: `${authStore.session.idToken}`
+          Authorization: `${authStore.session.accessToken}`
         },
         body: {
           query: /* GraphQL */ `
@@ -126,7 +126,7 @@ export const useAnkiStore = defineStore('anki', {
       }>('/api/graphql', {
         method: 'POST',
         headers: {
-          Authorization: `${authStore.session.idToken}`
+          Authorization: `${authStore.session.accessToken}`
         },
         body: {
           query: /* GraphQL */ `
@@ -190,7 +190,7 @@ export const useAnkiStore = defineStore('anki', {
         {
           method: 'POST',
           headers: {
-            Authorization: `${authStore.session.idToken}`
+            Authorization: `${authStore.session.accessToken}`
           },
           body: {
             query: `#graphql
@@ -231,7 +231,7 @@ export const useAnkiStore = defineStore('anki', {
         }>('/api/graphql', {
           method: 'POST',
           headers: {
-            Authorization: `${authStore.session.idToken}`
+            Authorization: `${authStore.session.accessToken}`
           },
           body: {
             query: `#graphql

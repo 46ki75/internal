@@ -56,7 +56,7 @@ const handleSignIn = async () => {
       password: password.value
     })
 
-    if (authStore.session.inSession) {
+    if (authStore.inSession) {
       router.push('/')
     }
   }

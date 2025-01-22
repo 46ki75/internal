@@ -65,8 +65,8 @@
 
       <span @click="handleClick()">
         <ElmLoginIcon
-          :is-loading="false"
-          :is-login="authStore.session.inSession"
+          :is-loading="!authStore.refreshState.loading"
+          :is-login="authStore.inSession"
         />
       </span>
     </div>
@@ -82,7 +82,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 const handleClick = async () => {
-  if (authStore.session.inSession) {
+  if (authStore.inSession) {
     await authStore.signOut()
 
     router.push('/login')

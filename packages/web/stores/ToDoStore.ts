@@ -130,7 +130,7 @@ export const useToDoStore = defineStore('todo', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: authStore.session.idToken as string
+            Authorization: authStore.session.accessToken as string
           },
           body: JSON.stringify({ query })
         })
@@ -159,7 +159,7 @@ export const useToDoStore = defineStore('todo', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: authStore.session.idToken as string
+            Authorization: authStore.session.accessToken as string
           },
           body: JSON.stringify({
             query: createMutation,
@@ -187,7 +187,7 @@ export const useToDoStore = defineStore('todo', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: authStore.session.idToken as string
+            Authorization: authStore.session.accessToken as string
           },
           body: JSON.stringify({
             query: updateMutation,

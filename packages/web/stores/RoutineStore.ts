@@ -91,7 +91,7 @@ export const useRoutineStore = defineStore('routine', {
           {
             method: 'POST',
             headers: {
-              Authorization: authStore.session.idToken as string
+              Authorization: authStore.session.accessToken as string
             },
             body: {
               query,
@@ -122,7 +122,7 @@ export const useRoutineStore = defineStore('routine', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: authStore.session.idToken as string
+            Authorization: authStore.session.accessToken as string
           },
           body: JSON.stringify({
             query: mutation,

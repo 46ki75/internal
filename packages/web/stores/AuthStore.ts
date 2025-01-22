@@ -23,15 +23,14 @@ const configure = () => {
 
 interface AuthState {
   session: {
-    inSession?: boolean
     useId?: string
     username?: string
+
     accessToken?: string
     accessTokenExpiresAt?: number
+
     idToken?: string
     idTokenExpiresAt?: number
-    loading: boolean
-    error: boolean
   }
 
   signInState: {
@@ -53,15 +52,14 @@ interface AuthState {
 export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
     session: {
-      inSession: undefined,
       useId: undefined,
       username: undefined,
+
       accessToken: undefined,
       accessTokenExpiresAt: undefined,
+
       idToken: undefined,
-      idTokenExpiresAt: undefined,
-      loading: false,
-      error: false
+      idTokenExpiresAt: undefined
     },
 
     signInState: {
@@ -136,11 +134,9 @@ export const useAuthStore = defineStore('auth', {
         const { userId, username } = await getCurrentUser()
         this.session.useId = userId
         this.session.username = username
-        this.session.inSession = true
       } catch {
         this.session.useId = undefined
         this.session.username = undefined
-        this.session.inSession = false
         this.refreshState.error = true
         this.refreshState.loading = false
         return false
@@ -189,6 +185,11 @@ export const useAuthStore = defineStore('auth', {
       const expireAt: number | undefined = this.session?.idTokenExpiresAt
       if (!expireAt) return 0
       return new Date(expireAt).getTime() - Date.now() / 1000
+    },
+    inSession(): boolean {
+      const expireAt: number | undefined = this.session.accessTokenExpiresAt
+      if (!expireAt) return false
+      return new Date(expireAt).getTime() < new Date().getTime()
     }
   }
 })

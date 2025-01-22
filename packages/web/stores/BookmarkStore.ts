@@ -104,7 +104,7 @@ export const useBookmarkStore = defineStore('bookmark', {
           query,
           cache: 'localStorage',
           headers: {
-            Authorization: authStore.session.idToken as string
+            Authorization: authStore.session.accessToken as string
           }
         })
 
@@ -130,7 +130,7 @@ export const useBookmarkStore = defineStore('bookmark', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `${authStore.session.idToken}`
+            Authorization: `${authStore.session.accessToken}`
           },
           body: {
             query: /* GraphQL */ `

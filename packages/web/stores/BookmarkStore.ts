@@ -96,13 +96,7 @@ export const useBookmarkStore = defineStore('bookmark', {
       this.error = null
 
       const authStore = useAuthStore()
-      const ok = await authStore.refreshIfNeed()
-
-      if (!ok) {
-        this.loading = false
-        this.error = 'Failed to refresh auth'
-        return
-      }
+      await authStore.wait()
 
       try {
         const result = await execute<{ bookmarkList: BookmarkResponse }>({
@@ -125,13 +119,7 @@ export const useBookmarkStore = defineStore('bookmark', {
       this.createLoading = true
 
       const authStore = useAuthStore()
-      const ok = await authStore.refreshIfNeed()
-
-      if (!ok) {
-        this.createLoading = false
-        this.createError = 'Failed to refresh auth'
-        return
-      }
+      await authStore.wait()
 
       try {
         const response = await $fetch<{

@@ -45,6 +45,7 @@ export const useTranslateStore = defineStore('translate', {
       this.translateLoading = true
       try {
         const authStore = useAuthStore()
+        await authStore.wait()
 
         const response = await $fetch<{ data: { translate: string } }>(
           '/api/graphql',
@@ -75,6 +76,7 @@ export const useTranslateStore = defineStore('translate', {
     async fetchUsage() {
       this.usageLoading = true
       const authStore = useAuthStore()
+      await authStore.wait()
 
       const response = await $fetch<{
         data: {

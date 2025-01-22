@@ -83,6 +83,7 @@ export const useRoutineStore = defineStore('routine', {
       this.loading = true
 
       const authStore = useAuthStore()
+      await authStore.wait()
 
       try {
         const response = await $fetch<{ data: { routineList: Connection } }>(
@@ -95,8 +96,7 @@ export const useRoutineStore = defineStore('routine', {
             body: {
               query,
               variables: { dayOfWeek: dayOfWeekList[new Date().getDay()] }
-            },
-            retry: 3
+            }
           }
         )
 
@@ -111,6 +111,7 @@ export const useRoutineStore = defineStore('routine', {
     },
     async update({ id, isDone }: { id: string; isDone: boolean }) {
       const authStore = useAuthStore()
+      await authStore.wait()
 
       try {
         const response = await $fetch<{

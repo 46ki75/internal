@@ -63,6 +63,7 @@ export const useAnkiStore = defineStore('anki', {
     },
     async init() {
       const authStore = useAuthStore()
+      await authStore.wait()
 
       const response = await $fetch<{
         data: { ankiList: AnkiResponse }
@@ -118,6 +119,8 @@ export const useAnkiStore = defineStore('anki', {
     },
     async fetchAnkiList({ pageSize }: { pageSize: number }) {
       const authStore = useAuthStore()
+      await authStore.wait()
+
       const response = await $fetch<{
         data: { ankiList: AnkiResponse }
       }>('/api/graphql', {
@@ -180,6 +183,7 @@ export const useAnkiStore = defineStore('anki', {
     },
     async create() {
       const authStore = useAuthStore()
+      await authStore.wait()
 
       const response = await $fetch<{ data: { createAnki: { url: string } } }>(
         '/api/graphql',
@@ -220,6 +224,7 @@ export const useAnkiStore = defineStore('anki', {
 
       try {
         const authStore = useAuthStore()
+        await authStore.wait()
 
         const _ = await $fetch<{
           data: { updateAnki: { url: string } }

@@ -118,13 +118,7 @@ export const useToDoStore = defineStore('todo', {
       this.fetchState.error = null
 
       const authStore = useAuthStore()
-      const ok = await authStore.refreshIfNeed()
-
-      if (!ok) {
-        this.fetchState.loading = false
-        this.fetchState.error = 'Failed to refresh auth'
-        return
-      }
+      await authStore.wait()
 
       try {
         const response = await $fetch<{
@@ -156,14 +150,7 @@ export const useToDoStore = defineStore('todo', {
       this.createState.loading = true
 
       const authStore = useAuthStore()
-
-      const ok = await authStore.refreshIfNeed()
-
-      if (!ok) {
-        this.createState.loading = false
-        this.createState.error = 'Failed to refresh auth'
-        return
-      }
+      await authStore.wait()
 
       try {
         const response = await $fetch<{
@@ -191,13 +178,7 @@ export const useToDoStore = defineStore('todo', {
       this.updateState.loading = true
 
       const authStore = useAuthStore()
-
-      const ok = await authStore.refreshIfNeed()
-      if (!ok) {
-        this.updateState.loading = false
-        this.updateState.error = 'Failed to refresh auth'
-        return
-      }
+      await authStore.wait()
 
       try {
         const response = await $fetch<{

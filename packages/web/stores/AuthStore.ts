@@ -165,6 +165,20 @@ export const useAuthStore = defineStore('auth', {
         return await this.refresh()
       }
       return true
+    },
+
+    /**
+     * Wait until the session is in session
+     * **Note** This method does not refresh the session.
+     * just wait until the session is in session by other methods
+     */
+    async wait() {
+      while (true) {
+        if (this.session.inSession) {
+          return
+        }
+        await new Promise((resolve) => setTimeout(resolve, 200))
+      }
     }
   },
   getters: {

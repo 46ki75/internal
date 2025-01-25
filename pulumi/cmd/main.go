@@ -106,6 +106,19 @@ func main() {
 			return err
 		}
 
+		_, err =
+			s3.NewS3BucketPolicyComponent(
+				ctx,
+				"S3BucketPolicyComponent",
+				&s3.S3BucketPolicyComponentArgs{
+					S3Bucket:               s3BucketComponent.S3Bucket,
+					CloudFrontDistribution: cloudfrontDistributionComponent.CloudfrontDistribution,
+				},
+			)
+		if err != nil {
+			return err
+		}
+
 		return nil
 	})
 }

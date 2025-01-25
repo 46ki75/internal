@@ -36,7 +36,7 @@ func main() {
 			return err
 		}
 
-		_, err = s3.NewS3BucketComponent(
+		s3BucketComponent, err := s3.NewS3BucketComponent(
 			ctx,
 			"S3BucketComponent",
 			&s3.S3BucketComponentArgs{},
@@ -45,10 +45,32 @@ func main() {
 			return err
 		}
 
-		_, err = cloudfront.NewCloudfrontFunctionComponent(
+		cloudfrontFunctionComponent, err := cloudfront.NewCloudfrontFunctionComponent(
 			ctx,
 			"CloudfrontFunctionComponent",
 			&cloudfront.CloudfrontFunctionComponentArgs{},
+		)
+		if err != nil {
+			return err
+		}
+
+		originAccessControlComponent, err := cloudfront.NewOriginAccessControlComponent(
+			ctx,
+			"OriginAccessControlComponent",
+			&cloudfront.OriginAccessControlComponentArgs{},
+		)
+		if err != nil {
+			return err
+		}
+
+		_, err = cloudfront.NewCloudfrontDistributionComponent(
+			ctx,
+			"CloudfrontDistributionComponent",
+			&cloudfront.CloudfrontDistributionComponentArgs{
+				S3Bucket:                      s3BucketComponent.S3Bucket,
+				CloudfrontOriginAccessControl: originAccessControlComponent.CloudfrontOriginAccessControl,
+				CloudfrontFunction:            cloudfrontFunctionComponent.CloudfrontFunction,
+			},
 		)
 		if err != nil {
 			return err

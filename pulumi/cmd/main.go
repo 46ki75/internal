@@ -1,6 +1,7 @@
 package main
 
 import (
+	"internal/pkg/cloudfront"
 	"internal/pkg/dynamodb"
 	"internal/pkg/route53"
 	"internal/pkg/s3"
@@ -39,6 +40,15 @@ func main() {
 			ctx,
 			"S3BucketComponent",
 			&s3.S3BucketComponentArgs{},
+		)
+		if err != nil {
+			return err
+		}
+
+		_, err = cloudfront.NewCloudfrontFunctionComponent(
+			ctx,
+			"CloudfrontFunctionComponent",
+			&cloudfront.CloudfrontFunctionComponentArgs{},
 		)
 		if err != nil {
 			return err

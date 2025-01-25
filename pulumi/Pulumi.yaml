@@ -1,6 +1,7 @@
 name: internal
 description: A minimal AWS Go Pulumi program
 runtime: go
+main: cmd/main.go
 config:
   pulumi:tags:
     value:

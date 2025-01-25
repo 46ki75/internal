@@ -35,7 +35,11 @@ func NewS3BucketComponent(
 	component.S3Bucket, err = s3.NewBucketV2(
 		ctx,
 		fmt.Sprintf("%s-46ki75-internal-s3-bucket-web", stackName),
-		&s3.BucketV2Args{},
+		&s3.BucketV2Args{
+			Bucket: pulumi.StringPtr(
+				fmt.Sprintf("%s-46ki75-internal-s3-bucket-web", stackName),
+			),
+		},
 	)
 	if err != nil {
 		return nil, err

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"internal/pkg/acm"
 	"internal/pkg/cloudfront"
 	"internal/pkg/dynamodb"
 	"internal/pkg/route53"
@@ -18,7 +19,16 @@ func main() {
 			return err
 		}
 
-		_, err = route53.NewRoute53ZoneComponent(
+		acmCloudfrontComponent, err := acm.NewAcmCloudfrontComponent(
+			ctx,
+			"AcmCloudfrontComponent",
+			&acm.AcmCloudfrontComponentArgs{},
+		)
+		if err != nil {
+			return err
+		}
+
+		route53ZoneComponent, err := route53.NewRoute53ZoneComponent(
 			ctx,
 			"Route53ZoneComponent",
 			&route53.Route53ZoneComponentArgs{},
@@ -63,14 +73,34 @@ func main() {
 			return err
 		}
 
-		_, err = cloudfront.NewCloudfrontDistributionComponent(
+		cloudfrontDistributionComponent, err :=
+			cloudfront.NewCloudfrontDistributionComponent(
+				ctx,
+				"CloudfrontDistributionComponent",
+				&cloudfront.CloudfrontDistributionComponentArgs{
+					S3Bucket:                      s3BucketComponent.S3Bucket,
+					CloudfrontOriginAccessControl: originAccessControlComponent.CloudfrontOriginAccessControl,
+					CloudfrontFunction:            cloudfrontFunctionComponent.CloudfrontFunction,
+					CloudfrontCertificate:         acmCloudfrontComponent.CloudfrontCertificate,
+				},
+			)
+		if err != nil {
+			return err
+		}
+
+		_, err = route53.NewRoute53CloudfrontRecordComponent(
 			ctx,
-			"CloudfrontDistributionComponent",
-			&cloudfront.CloudfrontDistributionComponentArgs{
-				S3Bucket:                      s3BucketComponent.S3Bucket,
-				CloudfrontOriginAccessControl: originAccessControlComponent.CloudfrontOriginAccessControl,
-				CloudfrontFunction:            cloudfrontFunctionComponent.CloudfrontFunction,
+			"Route53CloudfrontRecordComponent",
+			&route53.Route53CloudfrontRecordComponentArgs{
+				Route53Zone:            route53ZoneComponent.Route53Zone,
+				CloudfrontDistribution: cloudfrontDistributionComponent.CloudfrontDistribution,
+				CloudfrontCertificate:  acmCloudfrontComponent.CloudfrontCertificate,
 			},
+			pulumi.DependsOn(
+				[]pulumi.Resource{
+					cloudfrontDistributionComponent,
+				},
+			),
 		)
 		if err != nil {
 			return err

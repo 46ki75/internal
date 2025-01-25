@@ -1,8 +1,6 @@
 package cloudfront
 
 import (
-	"sync"
-
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/cloudfront"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/s3"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
@@ -36,14 +34,9 @@ func NewCloudfrontDistributionComponent(
 
 	const s3OriginId = "web"
 
-	var wg sync.WaitGroup
-
-	wg.Add(1)
-
 	pulumi.All(
 		args.CloudfrontFunction.Arn,
 	).ApplyT(func(arns []interface{}) error {
-		defer wg.Done()
 
 		functionArn := arns[0].(string)
 
@@ -111,8 +104,6 @@ func NewCloudfrontDistributionComponent(
 
 		return nil
 	})
-
-	wg.Wait()
 
 	return component, nil
 }

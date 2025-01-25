@@ -20,4 +20,6 @@ resource "aws_dynamodb_table" "default" {
     attribute_name = "_TTL"
     enabled        = true
   }
+
+  deletion_protection_enabled = true
 }

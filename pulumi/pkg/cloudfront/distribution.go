@@ -27,8 +27,7 @@ func NewCloudfrontDistributionComponent(
 ) (*CloudfrontDistributionComponent, error) {
 	component := &CloudfrontDistributionComponent{}
 
-	// TODO: Rename the PROJECT placeholder
-	err := ctx.RegisterComponentResource("PROJECT:component:CloudfrontDistribution", name, component, opts...)
+	err := ctx.RegisterComponentResource("46ki75:component:CloudfrontDistribution", name, component, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -60,6 +59,7 @@ func NewCloudfrontDistributionComponent(
 						OriginId:              pulumi.String(s3OriginId),
 					},
 				},
+				Aliases:       pulumi.StringArray{},
 				Enabled:       pulumi.Bool(true),
 				IsIpv6Enabled: pulumi.Bool(true),
 				DefaultCacheBehavior: &cloudfront.DistributionDefaultCacheBehaviorArgs{

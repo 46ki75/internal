@@ -40,7 +40,7 @@ func NewRoute53ZoneComponent(
 	component.Route53Zone, err = route53.LookupZone(
 		ctx,
 		&route53.LookupZoneArgs{
-			Name: &zoneName,
+			Name: pulumi.StringRef(zoneName),
 		},
 	)
 	if err != nil {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"internal/pkg/dynamodb"
 	"internal/pkg/route53"
 	"internal/pkg/util"
 
@@ -19,6 +20,15 @@ func main() {
 			ctx,
 			"Route53ZoneComponent",
 			&route53.Route53ZoneComponentArgs{},
+		)
+		if err != nil {
+			return err
+		}
+
+		_, err = dynamodb.NewDynamoDbComponent(
+			ctx,
+			"DynamoDbComponent",
+			&dynamodb.DynamoDbComponentArgs{},
 		)
 		if err != nil {
 			return err

@@ -1,7 +1,8 @@
 version: 2
 updates:
   - package-ecosystem: 'npm'
-    directory: '/packages'
+    directories:
+      - '/packages/**'
     schedule:
       interval: 'daily'
     target-branch: 'main'
@@ -21,7 +22,8 @@ updates:
       - '46ki75'
 
   - package-ecosystem: 'cargo'
-    directory: '/crates'
+    directories:
+      - '/crates/**'
     schedule:
       interval: 'daily'
     target-branch: 'main'

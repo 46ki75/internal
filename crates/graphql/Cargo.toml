@@ -31,7 +31,7 @@ url = "2.5.4"
 
 
 tempfile = "3.14.0"
-zip = "2.2.1"
+zip = "2.2.2"
 aws-config = "1.5.11"
 aws-sdk-lambda = "1.60.0"
 aws-sdk-dynamodb = "1.55.0"

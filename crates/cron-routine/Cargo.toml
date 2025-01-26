@@ -26,7 +26,7 @@ tokio = { version = "1", features = ["macros"] }
 
 tempfile = "3.14.0"
 zip = "2.2.1"
-aws-config = "1.5.10"
+aws-config = "1.5.11"
 aws-sdk-lambda = "1.60.0"
 uuid = { version = "1.11.0", features = ["v4"] }
 

@@ -10,6 +10,8 @@ sudo apt install gh
 
 # Rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+cargo install cargo-binstall 
+cargo binstall just --no-confirm
 
 # Node.js (Volta)
 curl https://get.volta.sh | bash

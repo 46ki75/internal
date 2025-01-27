@@ -13,6 +13,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 . "$HOME/.cargo/env"
 cargo install cargo-binstall 
 cargo binstall just --no-confirm
+cargo binstall cargo-lambda --no-confirm
 
 # Node.js (Volta)
 curl https://get.volta.sh | bash

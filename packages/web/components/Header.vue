@@ -74,20 +74,19 @@
 </template>
 
 <script setup lang="ts">
-import { ElmLoginIcon, ElmToggleTheme, ElmTooltip } from '@elmethis/core'
-import { Icon } from '@iconify/vue'
+import { ElmLoginIcon, ElmToggleTheme, ElmTooltip } from "@elmethis/core";
+import { Icon } from "@iconify/vue";
 
-const router = useRouter()
+const router = useRouter();
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 
 const handleClick = async () => {
   if (authStore.inSession) {
-    await authStore.signOut()
-
-    router.push('/login')
+    await authStore.signOut();
   }
-}
+  router.push("/login");
+};
 </script>
 
 <style scoped lang="scss">
@@ -107,7 +106,7 @@ const handleClick = async () => {
 
   backdrop-filter: blur(2px);
   background-color: rgba(black, 0.05);
-  [data-theme='dark'] & {
+  [data-theme="dark"] & {
     background-color: rgba(white, 0.1);
   }
 }
@@ -146,7 +145,7 @@ const handleClick = async () => {
   cursor: pointer;
   transition: background-color 100ms;
   color: rgba(black, 0.7);
-  [data-theme='dark'] & {
+  [data-theme="dark"] & {
     color: rgba(white, 0.7);
   }
 

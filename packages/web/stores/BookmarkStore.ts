@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { uniqBy } from 'lodash-es'
 import { z } from 'zod'
-import { execute } from '@com.46ki75/graphql'
 
 const query = /* GraphQL */ `
   query Bookmark {
@@ -98,17 +97,28 @@ export const useBookmarkStore = defineStore('bookmark', {
       const authStore = useAuthStore()
       await authStore.refreshIfNeed()
 
+      const cache = window.localStorage.getItem('Bookmark')
+      if (cache != null) this.bookmarkList = JSON.parse(cache)
+
       try {
-        const result = await execute<{ bookmarkList: BookmarkResponse }>({
-          endpoint: '/api/graphql',
-          query,
-          cache: 'localStorage',
+        const result = await $fetch<{
+          data: { bookmarkList: BookmarkResponse }
+        }>('/api/graphql', {
+          method: 'POST',
           headers: {
             Authorization: authStore.session.accessToken as string
-          }
+          },
+          body: { query }
         })
 
-        this.bookmarkList = result.bookmarkList.edges.map((edge) => edge.node)
+        this.bookmarkList = result.data.bookmarkList.edges.map(
+          (edge) => edge.node
+        )
+
+        window.localStorage.setItem(
+          'Bookmark',
+          JSON.stringify(this.bookmarkList)
+        )
       } catch {
         this.error = "Couldn't fetch bookmark list"
       } finally {

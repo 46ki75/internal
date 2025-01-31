@@ -21,8 +21,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       '@elmethis/core':
-        specifier: 1.0.0-alpha.136
-        version: 1.0.0-alpha.136
+        specifier: 1.0.0-alpha.137
+        version: 1.0.0-alpha.137
       '@pinia/nuxt':
         specifier: 0.9.0
         version: 0.9.0(magicast@0.3.5)(pinia@2.3.1(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(rollup@4.32.1)
@@ -836,8 +836,8 @@ packages:
     peerDependencies:
       postcss: ^8.4
 
-  '@elmethis/core@1.0.0-alpha.136':
-    resolution: {integrity: sha512-huQHs8F2Dhzkm9PIUEMKS8+OQ1xgL5efEa0bXFdasxFtU1BHQ3bSSfgDed1E2ti400PVwjauVNNx4TTzZeicAw==}
+  '@elmethis/core@1.0.0-alpha.137':
+    resolution: {integrity: sha512-TDnY4s20bi0PBscdzQHMsaYJfv0Xw4djcp2i0a2D5M6ReY+H3WscqOg7a6Souxx9VEQesw9xS3y8E8/9yWZJMA==}
 
   '@esbuild/aix-ppc64@0.23.1':
     resolution: {integrity: sha512-6VhYk1diRqrhBAqpJEdjASR/+WVRtfjpqKuNw11cLiaWpAT/Uu+nokB+UJnevzy/P9C/ty6AOe0dwueMrGh/iQ==}
@@ -2911,8 +2911,8 @@ packages:
     resolution: {integrity: sha512-cgwlv/1iFQiFnU96XXgROh8xTeetsnJiDsTc7TYCLFd9+/WNkIqPTxiM/8pSd8VIrhXGTf1Ny1q1hquVqDJB5w==}
     engines: {node: '>= 4'}
 
-  dompurify@3.2.3:
-    resolution: {integrity: sha512-U1U5Hzc2MO0oW3DF+G9qYN0aT7atAou4AgI0XjWz061nyBPbdxkfdhfy5uMgGn6+oLFCfn44ZGbdDqCzVmlOWA==}
+  dompurify@3.2.4:
+    resolution: {integrity: sha512-ysFSFEDVduQpyhzAob/kkuJjf5zWkZD8/A9ywSp1byueyuCfHamrCBa14/Oc2iiB0e51B+NpxSl5gmzn+Ms/mg==}
 
   domutils@3.2.2:
     resolution: {integrity: sha512-6kZKyUajlDuqlHKVX1w7gyslj9MPIXzIFiz/rGu35uC1wMi+kMhQwGhl4lt9unC9Vb9INnY9Z3/ZA3+FhASLaw==}
@@ -6435,7 +6435,7 @@ snapshots:
     dependencies:
       postcss: 8.5.1
 
-  '@elmethis/core@1.0.0-alpha.136':
+  '@elmethis/core@1.0.0-alpha.137':
     dependencies:
       mermaid: 11.4.1
       nanoid: 5.0.9
@@ -8914,7 +8914,7 @@ snapshots:
     dependencies:
       domelementtype: 2.3.0
 
-  dompurify@3.2.3:
+  dompurify@3.2.4:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
@@ -9551,7 +9551,7 @@ snapshots:
       d3-sankey: 0.12.3
       dagre-d3-es: 7.0.11
       dayjs: 1.11.13
-      dompurify: 3.2.3
+      dompurify: 3.2.4
       katex: 0.16.21
       khroma: 2.1.0
       lodash-es: 4.17.21

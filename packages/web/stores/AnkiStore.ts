@@ -5,6 +5,10 @@ interface AnkiStoreState {
   nextCursor?: string
   isShowAnswer: boolean
   updateLoading: boolean
+
+  createState: {
+    loading: boolean
+  }
 }
 
 export const ankiResponseSchema = z.object({
@@ -55,7 +59,10 @@ export const useAnkiStore = defineStore('anki', {
     ankiList: [],
     nextCursor: undefined,
     isShowAnswer: false,
-    updateLoading: false
+    updateLoading: false,
+    createState: {
+      loading: false
+    }
   }),
   actions: {
     setIsShowAnswer(isShowAnswer: boolean) {
@@ -182,6 +189,7 @@ export const useAnkiStore = defineStore('anki', {
       }
     },
     async create() {
+      this.createState.loading = true
       const authStore = useAuthStore()
       await authStore.refreshIfNeed()
 
@@ -204,6 +212,8 @@ export const useAnkiStore = defineStore('anki', {
           }
         }
       )
+
+      this.createState.loading = false
 
       const url = response.data.createAnki.url.replace('https://', 'notion://')
 

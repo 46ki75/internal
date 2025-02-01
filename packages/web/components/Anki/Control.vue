@@ -9,7 +9,11 @@
       <ElmInlineText text="Edit" />
     </ElmButton>
 
-    <ElmButton @click="ankiStore.create()" block>
+    <ElmButton
+      @click="ankiStore.create()"
+      block
+      :loading="ankiStore.createState.loading"
+    >
       <Icon icon="mdi:sparkles-outline" class="icon" />
       <ElmInlineText text="NEW" />
     </ElmButton>

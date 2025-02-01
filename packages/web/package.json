@@ -15,7 +15,7 @@
   "dependencies": {
     "@aws-sdk/client-ssm": "^3.738.0",
     "@com.46ki75/graphql": "^0.2.2",
-    "@elmethis/core": "1.0.0-alpha.137",
+    "@elmethis/core": "1.0.0-alpha.138",
     "@pinia/nuxt": "0.9.0",
     "@vueuse/core": "^12.5.0",
     "aws-amplify": "^6.12.2",

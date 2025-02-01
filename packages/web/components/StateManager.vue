@@ -8,6 +8,7 @@
 
 <script setup lang="ts">
 import { ElmDotLoadingIcon, ElmInlineText } from '@elmethis/core'
+import { useWindowFocus } from '@vueuse/core'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -19,17 +20,26 @@ const refreshing = ref(false)
 const callback = async () => {
   try {
     refreshing.value = true
-    await authStore.refreshIfNeed(60 * 10) // 10 minutes
+    const isInSession = await authStore.refreshIfNeed(60 * 10) // 10 minutes
+    if (!isInSession) {
+      await router.push('/login')
+    }
   } catch {
-    window.alert('Session expired. Please sign in again.')
-    router.push('/login')
+    await router.push('/login')
   } finally {
     refreshing.value = false
   }
 }
 
-onMounted(() => {
-  callback()
+const focused = useWindowFocus()
+watch(focused, async () => {
+  if (focused.value) {
+    await callback()
+  }
+})
+
+onMounted(async () => {
+  await callback()
   timerId.value = window.setInterval(callback, 1000 * 60 * 5) // 5 minutes
 })
 

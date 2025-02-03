@@ -21,7 +21,7 @@ aws_lambda_events = { version = "0.16.0", default-features = false, features = [
 dotenvy = "0.15.7"
 
 lambda_runtime = "0.13.0"
-notionrs = "1.0.0-alpha.29"
+notionrs = "1.0.0-alpha.30"
 tokio = { version = "1", features = ["macros"] }
 
 tempfile = "3.16.0"

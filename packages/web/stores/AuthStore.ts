@@ -177,19 +177,21 @@ export const useAuthStore = defineStore('auth', {
   },
   getters: {
     accessTokenRemainSeconds(): number {
-      const expireAt: number | undefined = this.session?.accessTokenExpiresAt
+      const expireAt: number | undefined = this.session?.accessTokenExpiresAt // [s]
       if (!expireAt) return 0
-      return new Date(expireAt).getTime() - Date.now() / 1000
+      const remainSeconds = expireAt - Date.now() / 1000 // [s]
+      return remainSeconds
     },
     idTokenRemainSeconds(): number {
       const expireAt: number | undefined = this.session?.idTokenExpiresAt
       if (!expireAt) return 0
-      return new Date(expireAt).getTime() - Date.now() / 1000
+      const remainSeconds = expireAt - Date.now() / 1000 // [s]
+      return remainSeconds
     },
     inSession(): boolean {
       const expireAt: number | undefined = this.session.accessTokenExpiresAt
       if (!expireAt) return false
-      return new Date(expireAt).getTime() < new Date().getTime()
+      return new Date(expireAt * 1000).getTime() > new Date().getTime()
     }
   }
 })

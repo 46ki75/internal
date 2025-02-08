@@ -21,8 +21,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       '@elmethis/core':
-        specifier: 1.0.0-alpha.138
-        version: 1.0.0-alpha.138
+        specifier: 1.0.0-alpha.140
+        version: 1.0.0-alpha.140
       '@pinia/nuxt':
         specifier: 0.9.0
         version: 0.9.0(magicast@0.3.5)(pinia@2.3.1(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3)))(rollup@4.34.0)
@@ -829,8 +829,8 @@ packages:
     peerDependencies:
       postcss: ^8.4
 
-  '@elmethis/core@1.0.0-alpha.138':
-    resolution: {integrity: sha512-UGe4WVcKhfcVKa3HcotKEnwBWcx8h0eypb5JBDtr/LmbtJ6MSSnSBhC/kGvip9Rk0C5oSGC00VhRjUvo3HQi2g==}
+  '@elmethis/core@1.0.0-alpha.140':
+    resolution: {integrity: sha512-ZYZgsnioaTtpRGT9UezgaVRo8PNRdxAnBAV6+IBGhD18YXPjFYoga56/Y3Yq3Z+p0DhroghetA49ten0s4BrpQ==}
 
   '@esbuild/aix-ppc64@0.24.2':
     resolution: {integrity: sha512-thpVCb/rhxE/BnMLQ7GReQLLN8q9qbHmI55F4489/ByVg2aQaQ6kbcLb6FHkocZzQhxc4gx0sCk0tJkKBFzDhA==}
@@ -6110,7 +6110,7 @@ snapshots:
     dependencies:
       postcss: 8.5.1
 
-  '@elmethis/core@1.0.0-alpha.138':
+  '@elmethis/core@1.0.0-alpha.140':
     dependencies:
       mermaid: 11.4.1
       nanoid: 5.0.9

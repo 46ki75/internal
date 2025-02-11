@@ -21,7 +21,7 @@
     "aws-amplify": "^6.12.3",
     "lodash-es": "^4.17.21",
     "nuxt": "^3.15.4",
-    "pinia": "^2.3.1",
+    "pinia": "^3.0.0",
     "sass": "^1.84.0",
     "vue": "latest",
     "vue-router": "latest",

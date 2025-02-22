@@ -57,6 +57,84 @@ where
             explanation: serde_json::to_value(explanation)?,
         })
     }
+
+    pub async fn create_anki(
+        &self,
+        title: &str,
+    ) -> Result<crate::model::anki::Anki, crate::error::Error> {
+        let mut properties: std::collections::HashMap<String, notionrs::page::PageProperty> =
+            std::collections::HashMap::new();
+
+        properties.insert(
+            "title".to_string(),
+            notionrs::page::PageProperty::Title(notionrs::page::PageTitleProperty::from(
+                title.to_string(),
+            )),
+        );
+
+        let ease_factor = 2.5;
+
+        properties.insert(
+            "easeFactor".to_string(),
+            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(
+                ease_factor,
+            )),
+        );
+
+        properties.insert(
+            "repetitionCount".to_string(),
+            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(0)),
+        );
+
+        let next_review_at = chrono::Utc::now().with_timezone(
+            &chrono::FixedOffset::east_opt(9).ok_or(crate::error::Error::InvalidTimezone)?,
+        );
+
+        let next_review_at_property = notionrs::page::PageProperty::Date(
+            notionrs::page::PageDateProperty::default()
+                .start(next_review_at)
+                .clone(),
+        );
+
+        properties.insert("nextReviewAt".to_string(), next_review_at_property);
+
+        let children = vec![
+            notionrs::block::Block::Heading1 {
+                heading_1: notionrs::block::heading::HeadingBlock::default()
+                    .rich_text(vec![notionrs::others::rich_text::RichText::from("front")
+                        .color(notionrs::others::color::Color::Brown)]),
+            },
+            notionrs::block::Block::Paragraph {
+                paragraph: notionrs::block::paragraph::ParagraphBlock::from(""),
+            },
+            notionrs::block::Block::Heading1 {
+                heading_1: notionrs::block::heading::HeadingBlock::default()
+                    .rich_text(vec![notionrs::others::rich_text::RichText::from("back")
+                        .color(notionrs::others::color::Color::Brown)]),
+            },
+            notionrs::block::Block::Paragraph {
+                paragraph: notionrs::block::paragraph::ParagraphBlock::from(""),
+            },
+            notionrs::block::Block::Heading1 {
+                heading_1: notionrs::block::heading::HeadingBlock::default().rich_text(vec![
+                    notionrs::others::rich_text::RichText::from("explanation")
+                        .color(notionrs::others::color::Color::Brown),
+                ]),
+            },
+            notionrs::block::Block::Paragraph {
+                paragraph: notionrs::block::paragraph::ParagraphBlock::from(""),
+            },
+        ];
+
+        let page_response = self
+            .anki_repository
+            .create_anki(properties, children)
+            .await?;
+
+        let anki = crate::util::anki::AnkiUtil::convert_page_response(page_response)?;
+
+        Ok(anki)
+    }
 }
 
 #[cfg(test)]

@@ -1,7 +1,7 @@
 pub struct AnkiService;
 
 impl AnkiService {
-    pub fn try_convert(
+    pub fn convert_page_response(
         page_response: notionrs::page::PageResponse,
     ) -> Result<crate::model::anki::Anki, async_graphql::Error> {
         let properties = page_response.properties;
@@ -193,7 +193,7 @@ mod tests {
     use crate::repository::anki::{AnkiRepository, AnkiRepositoryStab};
 
     #[tokio::test]
-    async fn try_convert() {
+    async fn convert_page_response() {
         let anki_repository = AnkiRepositoryStab;
 
         let page = anki_repository
@@ -201,11 +201,11 @@ mod tests {
             .await
             .unwrap();
 
-        let _ = AnkiService::try_convert(page).unwrap();
+        let _ = AnkiService::convert_page_response(page).unwrap();
     }
 
     #[tokio::test]
-    async fn try_separate_blocks() {
+    async fn separate_blocks() {
         let blocks = AnkiRepositoryStab::list_blocks_by_id("4e913905-d9c2-457d-adb2-6f5491d1284b")
             .await
             .unwrap();

@@ -14,4 +14,7 @@ pub enum Error {
 
     #[error("elmethis_notion error: {0}")]
     ElmethisNotion(#[from] elmethis_notion::error::Error),
+
+    #[error("serde error: {0}")]
+    SerdeJson(#[from] serde_json::Error),
 }

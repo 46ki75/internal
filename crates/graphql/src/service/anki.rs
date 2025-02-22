@@ -139,6 +139,52 @@ impl AnkiService {
             url,
         })
     }
+
+    pub fn separate_blocks(
+        blocks: Vec<elmethis_notion::block::Block>,
+    ) -> Result<crate::model::anki::AnkiBlock, crate::error::Error> {
+        let mut front: Vec<elmethis_notion::block::Block> = Vec::new();
+        let mut back: Vec<elmethis_notion::block::Block> = Vec::new();
+        let mut explanation: Vec<elmethis_notion::block::Block> = Vec::new();
+
+        enum Marker {
+            Front,
+            Back,
+            Explanation,
+        }
+
+        let mut marker = Marker::Front;
+
+        for block in blocks {
+            if let elmethis_notion::block::Block::ElmHeading1(
+                elmethis_notion::block::ElmHeading1 { props },
+            ) = &block
+            {
+                if props.text == "front" {
+                    marker = Marker::Front;
+                    continue;
+                } else if props.text == "back" {
+                    marker = Marker::Back;
+                    continue;
+                } else if props.text == "explanation" {
+                    marker = Marker::Explanation;
+                    continue;
+                }
+            }
+
+            match marker {
+                Marker::Front => front.push(block),
+                Marker::Back => back.push(block),
+                Marker::Explanation => explanation.push(block),
+            }
+        }
+
+        Ok(crate::model::anki::AnkiBlock {
+            front: serde_json::to_value(front)?,
+            back: serde_json::to_value(back)?,
+            explanation: serde_json::to_value(explanation)?,
+        })
+    }
 }
 
 #[cfg(test)]
@@ -156,5 +202,14 @@ mod tests {
             .unwrap();
 
         let _ = AnkiService::try_convert(page).unwrap();
+    }
+
+    #[tokio::test]
+    async fn try_separate_blocks() {
+        let blocks = AnkiRepositoryStab::list_blocks_by_id("4e913905-d9c2-457d-adb2-6f5491d1284b")
+            .await
+            .unwrap();
+
+        let _ = AnkiService::separate_blocks(blocks).unwrap();
     }
 }

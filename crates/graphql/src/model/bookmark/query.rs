@@ -80,7 +80,7 @@ impl BookmarkQuery {
 
                 let favicon = bookmark.icon.clone().and_then(|i| match i {
                     notionrs::Icon::File(file) => Some(file.get_url()),
-                    notionrs::Icon::Emoji(_) => None,
+                    _ => None,
                 });
 
                 let tags_property = bookmark.properties.get("tags").ok_or("tags not found")?;

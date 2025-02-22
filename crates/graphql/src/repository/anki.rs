@@ -20,6 +20,10 @@ pub trait AnkiRepository {
         repetition_count: u32,
         next_review_at: String,
     ) -> Result<notionrs::page::PageResponse, crate::error::Error>;
+
+    async fn list_blocks_by_id(
+        page_id: &str,
+    ) -> Result<Vec<elmethis_notion::block::Block>, crate::error::Error>;
 }
 
 pub struct AnkiRepositoryImpl;
@@ -212,6 +216,20 @@ impl AnkiRepository for AnkiRepositoryImpl {
         let response = request.send().await?;
 
         Ok(response)
+    }
+
+    async fn list_blocks_by_id(
+        page_id: &str,
+    ) -> Result<Vec<elmethis_notion::block::Block>, crate::error::Error> {
+        let secret = std::env::var("NOTION_API_KEY").map_err(|_| {
+            crate::error::Error::EnvironmentalVariableNotFound("NOTION_API_KEY".to_string())
+        })?;
+
+        let mut client = elmethis_notion::client::Client::new(secret);
+
+        let blocks = client.convert_block(page_id).await?;
+
+        Ok(blocks)
     }
 }
 
@@ -492,5 +510,13 @@ impl AnkiRepository for AnkiRepositoryStab {
             request_id: None,
             in_trash: false,
         })
+    }
+
+    async fn list_blocks_by_id(
+        _page_id: &str,
+    ) -> Result<Vec<elmethis_notion::block::Block>, crate::error::Error> {
+        let blocks = vec![];
+
+        Ok(blocks)
     }
 }

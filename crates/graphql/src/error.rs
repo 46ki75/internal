@@ -11,4 +11,7 @@ pub enum Error {
 
     #[error("notionrs error: {0}")]
     NotionRs(#[from] notionrs::error::Error),
+
+    #[error("elmethis_notion error: {0}")]
+    ElmethisNotion(#[from] elmethis_notion::error::Error),
 }

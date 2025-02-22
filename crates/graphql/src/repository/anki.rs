@@ -1,0 +1,372 @@
+#[async_trait::async_trait]
+trait AnkiRepository {
+    async fn get_anki_by_id(
+        &self,
+        id: &str,
+    ) -> Result<notionrs::page::PageResponse, crate::error::Error>;
+
+    async fn list_anki(
+        page_size: u32,
+        next_cursor: Option<String>,
+    ) -> Result<Vec<notionrs::page::PageResponse>, crate::error::Error>;
+
+    async fn create_anki(
+        title: Option<String>,
+    ) -> Result<notionrs::page::PageResponse, crate::error::Error>;
+
+    async fn update_anki(
+        page_id: String,
+        ease_factor: f64,
+        repetition_count: u32,
+        next_review_at: String,
+    ) -> Result<notionrs::page::PageResponse, crate::error::Error>;
+}
+
+pub struct AnkiRepositoryImpl;
+
+#[async_trait::async_trait]
+impl AnkiRepository for AnkiRepositoryImpl {
+    async fn get_anki_by_id(
+        &self,
+        id: &str,
+    ) -> Result<notionrs::page::PageResponse, crate::error::Error> {
+        let secret = std::env::var("NOTION_API_KEY").map_err(|_| {
+            crate::error::Error::EnvironmentalVariableNotFound("NOTION_API_KEY".to_string())
+        })?;
+
+        let client = notionrs::client::Client::new().secret(secret);
+
+        let request = client.get_page().page_id(id);
+
+        let response = request.send().await?;
+
+        Ok(response)
+    }
+
+    async fn list_anki(
+        page_size: u32,
+        next_cursor: Option<String>,
+    ) -> Result<Vec<notionrs::page::PageResponse>, crate::error::Error> {
+        let secret = std::env::var("NOTION_API_KEY").map_err(|_| {
+            crate::error::Error::EnvironmentalVariableNotFound("NOTION_API_KEY".to_string())
+        })?;
+
+        let database_id = std::env::var("NOTION_ANKI_DATABASE_ID").map_err(|_| {
+            crate::error::Error::EnvironmentalVariableNotFound(
+                "NOTION_ANKI_DATABASE_ID".to_string(),
+            )
+        })?;
+
+        let client = notionrs::client::Client::new().secret(secret);
+
+        let sorts = vec![notionrs::database::Sort::asc("nextReviewAt")];
+
+        let mut request = client
+            .query_database()
+            .database_id(database_id)
+            .sorts(sorts)
+            .page_size(page_size);
+
+        if let Some(next_cursor) = next_cursor {
+            request = request.start_cursor(next_cursor);
+        }
+
+        let response = request.send().await?;
+
+        let pages = response.results;
+
+        Ok(pages)
+    }
+
+    async fn create_anki(
+        title: Option<String>,
+    ) -> Result<notionrs::page::PageResponse, crate::error::Error> {
+        let secret = std::env::var("NOTION_API_KEY").map_err(|_| {
+            crate::error::Error::EnvironmentalVariableNotFound("NOTION_API_KEY".to_string())
+        })?;
+
+        let database_id = std::env::var("NOTION_ANKI_DATABASE_ID").map_err(|_| {
+            crate::error::Error::EnvironmentalVariableNotFound(
+                "NOTION_ANKI_DATABASE_ID".to_string(),
+            )
+        })?;
+
+        let client = notionrs::client::Client::new().secret(secret);
+
+        let mut properties: std::collections::HashMap<String, notionrs::page::PageProperty> =
+            std::collections::HashMap::new();
+
+        properties.insert(
+            "title".to_string(),
+            notionrs::page::PageProperty::Title(notionrs::page::PageTitleProperty::from(
+                title.clone().unwrap_or("No Title".to_string()),
+            )),
+        );
+
+        let ease_factor = 2.5;
+
+        properties.insert(
+            "easeFactor".to_string(),
+            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(
+                ease_factor,
+            )),
+        );
+
+        properties.insert(
+            "repetitionCount".to_string(),
+            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(0)),
+        );
+
+        let next_review_at = chrono::Utc::now().with_timezone(
+            &chrono::FixedOffset::east_opt(9).ok_or(crate::error::Error::InvalidTimezone)?,
+        );
+
+        let next_review_at_property = notionrs::page::PageProperty::Date(
+            notionrs::page::PageDateProperty::default()
+                .start(next_review_at)
+                .clone(),
+        );
+
+        properties.insert("nextReviewAt".to_string(), next_review_at_property);
+
+        let children = vec![
+            notionrs::block::Block::Heading1 {
+                heading_1: notionrs::block::heading::HeadingBlock::default()
+                    .rich_text(vec![notionrs::others::rich_text::RichText::from("front")
+                        .color(notionrs::others::color::Color::Brown)]),
+            },
+            notionrs::block::Block::Paragraph {
+                paragraph: notionrs::block::paragraph::ParagraphBlock::from(""),
+            },
+            notionrs::block::Block::Heading1 {
+                heading_1: notionrs::block::heading::HeadingBlock::default()
+                    .rich_text(vec![notionrs::others::rich_text::RichText::from("back")
+                        .color(notionrs::others::color::Color::Brown)]),
+            },
+            notionrs::block::Block::Paragraph {
+                paragraph: notionrs::block::paragraph::ParagraphBlock::from(""),
+            },
+            notionrs::block::Block::Heading1 {
+                heading_1: notionrs::block::heading::HeadingBlock::default().rich_text(vec![
+                    notionrs::others::rich_text::RichText::from("explanation")
+                        .color(notionrs::others::color::Color::Brown),
+                ]),
+            },
+            notionrs::block::Block::Paragraph {
+                paragraph: notionrs::block::paragraph::ParagraphBlock::from(""),
+            },
+        ];
+
+        let request = client
+            .create_page()
+            .database_id(database_id)
+            .properties(properties)
+            .children(children);
+
+        let response = request.send().await?;
+
+        Ok(response)
+    }
+
+    async fn update_anki(
+        page_id: String,
+        ease_factor: f64,
+        repetition_count: u32,
+        next_review_at: String,
+    ) -> Result<notionrs::page::PageResponse, crate::error::Error> {
+        let secret = std::env::var("NOTION_API_KEY").map_err(|_| {
+            crate::error::Error::EnvironmentalVariableNotFound("NOTION_API_KEY".to_string())
+        })?;
+
+        let client = notionrs::client::Client::new().secret(secret);
+
+        let mut properties: std::collections::HashMap<String, notionrs::page::PageProperty> =
+            std::collections::HashMap::new();
+
+        properties.insert(
+            "easeFactor".to_string(),
+            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(
+                ease_factor,
+            )),
+        );
+
+        properties.insert(
+            "repetitionCount".to_string(),
+            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(
+                repetition_count,
+            )),
+        );
+
+        let next_review_at = chrono::DateTime::parse_from_rfc3339(&next_review_at)?;
+
+        let next_review_at_property = notionrs::page::PageProperty::Date(
+            notionrs::page::PageDateProperty::default()
+                .start(next_review_at)
+                .clone(),
+        );
+
+        properties.insert("nextReviewAt".to_string(), next_review_at_property);
+
+        let request = client.update_page().page_id(page_id).properties(properties);
+
+        let response = request.send().await?;
+
+        Ok(response)
+    }
+}
+
+pub struct AnkiRepositoryStab;
+
+#[async_trait::async_trait]
+impl AnkiRepository for AnkiRepositoryStab {
+    async fn get_anki_by_id(
+        &self,
+        _id: &str,
+    ) -> Result<notionrs::page::PageResponse, crate::error::Error> {
+        let user = notionrs::User::Person(notionrs::Person {
+            object: "user".to_string(),
+            id: "c4afec03-71d3-4114-b992-df84ed2e594c".to_string(),
+            name: None,
+            avatar_url: None,
+            r#type: None,
+            person: None,
+        });
+
+        Ok(notionrs::page::PageResponse {
+            id: "4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e".to_string(),
+            created_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+            last_edited_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+            created_by: user.clone(),
+            last_edited_by: user,
+            cover: None,
+            icon: None,
+            parent: notionrs::others::parent::Parent::PageParent(
+                notionrs::others::parent::PageParent {
+                    r#type: "page_id".to_string(),
+                    page_id: "7e39472a-dfeb-41c9-a97c-f66c85e9dafe".to_string(),
+                },
+            ),
+            archived: false,
+            properties: std::collections::HashMap::new(),
+            url: "https://www.notion.com/".to_string(),
+            public_url: None,
+            developer_survey: None,
+            request_id: None,
+            in_trash: false,
+        })
+    }
+
+    async fn list_anki(
+        _page_size: u32,
+        _next_cursor: Option<String>,
+    ) -> Result<Vec<notionrs::page::PageResponse>, crate::error::Error> {
+        let user = notionrs::User::Person(notionrs::Person {
+            object: "user".to_string(),
+            id: "c4afec03-71d3-4114-b992-df84ed2e594c".to_string(),
+            name: None,
+            avatar_url: None,
+            r#type: None,
+            person: None,
+        });
+
+        let page = notionrs::page::PageResponse {
+            id: "4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e".to_string(),
+            created_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+            last_edited_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+            created_by: user.clone(),
+            last_edited_by: user,
+            cover: None,
+            icon: None,
+            parent: notionrs::others::parent::Parent::PageParent(
+                notionrs::others::parent::PageParent {
+                    r#type: "page_id".to_string(),
+                    page_id: "7e39472a-dfeb-41c9-a97c-f66c85e9dafe".to_string(),
+                },
+            ),
+            archived: false,
+            properties: std::collections::HashMap::new(),
+            url: "https://www.notion.com/".to_string(),
+            public_url: None,
+            developer_survey: None,
+            request_id: None,
+            in_trash: false,
+        };
+
+        Ok(vec![page])
+    }
+
+    async fn create_anki(
+        _title: Option<String>,
+    ) -> Result<notionrs::page::PageResponse, crate::error::Error> {
+        let user = notionrs::User::Person(notionrs::Person {
+            object: "user".to_string(),
+            id: "c4afec03-71d3-4114-b992-df84ed2e594c".to_string(),
+            name: None,
+            avatar_url: None,
+            r#type: None,
+            person: None,
+        });
+
+        Ok(notionrs::page::PageResponse {
+            id: "4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e".to_string(),
+            created_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+            last_edited_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+            created_by: user.clone(),
+            last_edited_by: user,
+            cover: None,
+            icon: None,
+            parent: notionrs::others::parent::Parent::PageParent(
+                notionrs::others::parent::PageParent {
+                    r#type: "page_id".to_string(),
+                    page_id: "7e39472a-dfeb-41c9-a97c-f66c85e9dafe".to_string(),
+                },
+            ),
+            archived: false,
+            properties: std::collections::HashMap::new(),
+            url: "https://www.notion.com/".to_string(),
+            public_url: None,
+            developer_survey: None,
+            request_id: None,
+            in_trash: false,
+        })
+    }
+
+    async fn update_anki(
+        _page_id: String,
+        _ease_factor: f64,
+        _repetition_count: u32,
+        _next_review_at: String,
+    ) -> Result<notionrs::page::PageResponse, crate::error::Error> {
+        let user = notionrs::User::Person(notionrs::Person {
+            object: "user".to_string(),
+            id: "c4afec03-71d3-4114-b992-df84ed2e594c".to_string(),
+            name: None,
+            avatar_url: None,
+            r#type: None,
+            person: None,
+        });
+
+        Ok(notionrs::page::PageResponse {
+            id: "4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e".to_string(),
+            created_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+            last_edited_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+            created_by: user.clone(),
+            last_edited_by: user,
+            cover: None,
+            icon: None,
+            parent: notionrs::others::parent::Parent::PageParent(
+                notionrs::others::parent::PageParent {
+                    r#type: "page_id".to_string(),
+                    page_id: "7e39472a-dfeb-41c9-a97c-f66c85e9dafe".to_string(),
+                },
+            ),
+            archived: false,
+            properties: std::collections::HashMap::new(),
+            url: "https://www.notion.com/".to_string(),
+            public_url: None,
+            developer_survey: None,
+            request_id: None,
+            in_trash: false,
+        })
+    }
+}

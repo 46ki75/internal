@@ -2,9 +2,11 @@ use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use lambda_http::{http::Method, run, service_fn, tracing, Body, Error, Request, Response};
 use serde_json::json;
 
+mod error;
 mod model;
 mod mutation;
 mod query;
+mod repository;
 
 async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     dotenvy::dotenv().ok();

@@ -19,28 +19,18 @@
         :json="ankiStore.getCurrentAnki.blockList.explanation"
       />
     </template>
-
-    <ElmButton v-else @click="ankiStore.setIsShowAnswer(true)" block>
-      <ElmInlineText text="SHOW ANSWER" />
-      <Icon icon="mdi:arrow-u-left-bottom" class="icon" />
-    </ElmButton>
   </template>
 </template>
 
 <script setup lang="ts">
-import {
-  ElmButton,
-  ElmHeading1,
-  ElmInlineText,
-  ElmJsonRendererAsync
-} from '@elmethis/core'
-import { Icon } from '@iconify/vue'
+import { ElmHeading1, ElmJsonRendererAsync } from "@elmethis/core";
+import { Icon } from "@iconify/vue";
 
-const ankiStore = useAnkiStore()
+const ankiStore = useAnkiStore();
 </script>
 
 <style scoped lang="scss">
-@use '../../scss/_mixins.scss';
+@use "../../scss/_mixins.scss";
 
 .icon {
   @include mixins.icon;

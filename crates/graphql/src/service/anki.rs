@@ -178,13 +178,13 @@ impl AnkiService {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::repository::anki::AnkiRepositoryStab;
+    use crate::repository::anki::AnkiRepositoryStub;
 
     #[tokio::test]
     async fn separate_blocks() {
-        let anki_repository_stab = std::sync::Arc::new(AnkiRepositoryStab);
+        let anki_repository_stub = std::sync::Arc::new(AnkiRepositoryStub);
         let anki_service = AnkiService {
-            anki_repository: anki_repository_stab,
+            anki_repository: anki_repository_stub,
         };
 
         let _ = anki_service
@@ -195,9 +195,9 @@ mod tests {
 
     #[tokio::test]
     async fn create_anki() {
-        let anki_repository_stab = std::sync::Arc::new(AnkiRepositoryStab);
+        let anki_repository_stub = std::sync::Arc::new(AnkiRepositoryStub);
         let anki_service = AnkiService {
-            anki_repository: anki_repository_stab,
+            anki_repository: anki_repository_stub,
         };
 
         let _ = anki_service.create_anki("title").await.unwrap();
@@ -205,9 +205,9 @@ mod tests {
 
     #[tokio::test]
     async fn update_anki() {
-        let anki_repository_stab = std::sync::Arc::new(AnkiRepositoryStab);
+        let anki_repository_stub = std::sync::Arc::new(AnkiRepositoryStub);
         let anki_service = AnkiService {
-            anki_repository: anki_repository_stab,
+            anki_repository: anki_repository_stub,
         };
 
         let _ = anki_service

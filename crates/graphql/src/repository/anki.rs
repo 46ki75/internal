@@ -148,10 +148,10 @@ impl AnkiRepository for AnkiRepositoryImpl {
     }
 }
 
-pub struct AnkiRepositoryStab;
+pub struct AnkiRepositoryStub;
 
 #[async_trait::async_trait]
-impl AnkiRepository for AnkiRepositoryStab {
+impl AnkiRepository for AnkiRepositoryStub {
     async fn get_anki_by_id(
         &self,
         _id: &str,

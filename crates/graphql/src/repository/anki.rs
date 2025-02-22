@@ -1,5 +1,5 @@
 #[async_trait::async_trait]
-pub trait AnkiRepository {
+pub trait AnkiRepository: Send + Sync {
     async fn get_anki_by_id(
         &self,
         id: &str,

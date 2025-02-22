@@ -1,14 +1,8 @@
-pub struct AnkiService<T>
-where
-    T: crate::repository::anki::AnkiRepository,
-{
-    anki_repository: T,
+pub struct AnkiService {
+    anki_repository: std::sync::Arc<dyn crate::repository::anki::AnkiRepository + Send + Sync>,
 }
 
-impl<T> AnkiService<T>
-where
-    T: crate::repository::anki::AnkiRepository,
-{
+impl AnkiService {
     pub async fn list_blocks(
         &self,
         id: &str,
@@ -188,7 +182,7 @@ mod tests {
 
     #[tokio::test]
     async fn separate_blocks() {
-        let anki_repository_stab = AnkiRepositoryStab;
+        let anki_repository_stab = std::sync::Arc::new(AnkiRepositoryStab);
         let anki_service = AnkiService {
             anki_repository: anki_repository_stab,
         };
@@ -201,7 +195,7 @@ mod tests {
 
     #[tokio::test]
     async fn create_anki() {
-        let anki_repository_stab = AnkiRepositoryStab;
+        let anki_repository_stab = std::sync::Arc::new(AnkiRepositoryStab);
         let anki_service = AnkiService {
             anki_repository: anki_repository_stab,
         };
@@ -211,7 +205,7 @@ mod tests {
 
     #[tokio::test]
     async fn update_anki() {
-        let anki_repository_stab = AnkiRepositoryStab;
+        let anki_repository_stab = std::sync::Arc::new(AnkiRepositoryStab);
         let anki_service = AnkiService {
             anki_repository: anki_repository_stab,
         };

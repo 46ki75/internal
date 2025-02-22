@@ -4,41 +4,41 @@ pub mod util;
 
 #[derive(async_graphql::SimpleObject)]
 pub struct AnkiConnection {
-    edges: Vec<AnkiEdge>,
-    page_info: crate::model::PageInfo,
+    pub edges: Vec<AnkiEdge>,
+    pub page_info: crate::model::PageInfo,
 }
 
 #[derive(async_graphql::SimpleObject)]
 pub struct AnkiEdge {
-    node: Anki,
-    cursor: String,
+    pub node: Anki,
+    pub cursor: String,
 }
 
 pub struct Anki {
-    page_id: String,
-    title: Option<String>,
-    description: Option<String>,
-    ease_factor: f64,
-    repetition_count: u32,
-    next_review_at: String,
-    created_at: String,
-    updated_at: String,
-    tags: Vec<AnkiTag>,
-    url: String,
+    pub page_id: String,
+    pub title: Option<String>,
+    pub description: Option<String>,
+    pub ease_factor: f64,
+    pub repetition_count: u32,
+    pub next_review_at: String,
+    pub created_at: String,
+    pub updated_at: String,
+    pub tags: Vec<AnkiTag>,
+    pub url: String,
 }
 
 #[derive(async_graphql::SimpleObject)]
 pub struct AnkiTag {
-    id: String,
-    name: String,
-    color: String,
+    pub id: String,
+    pub name: String,
+    pub color: String,
 }
 
 #[derive(async_graphql::SimpleObject)]
 pub struct AnkiBlock {
-    front: serde_json::Value,
-    back: serde_json::Value,
-    explanation: serde_json::Value,
+    pub front: serde_json::Value,
+    pub back: serde_json::Value,
+    pub explanation: serde_json::Value,
 }
 
 #[async_graphql::Object]

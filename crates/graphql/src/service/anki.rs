@@ -155,6 +155,6 @@ mod tests {
             .await
             .unwrap();
 
-        let anki = AnkiService::try_convert(page).unwrap();
+        let _ = AnkiService::try_convert(page).unwrap();
     }
 }

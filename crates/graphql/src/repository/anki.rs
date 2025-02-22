@@ -1,5 +1,5 @@
 #[async_trait::async_trait]
-trait AnkiRepository {
+pub trait AnkiRepository {
     async fn get_anki_by_id(
         &self,
         id: &str,
@@ -232,6 +232,37 @@ impl AnkiRepository for AnkiRepositoryStab {
             person: None,
         });
 
+        let mut properties = std::collections::HashMap::new();
+
+        let title_property = notionrs::page::PageProperty::Title(
+            notionrs::page::PageTitleProperty::from("title".to_string()),
+        );
+        properties.insert("title".to_string(), title_property);
+
+        let description_property = notionrs::page::PageProperty::RichText(
+            notionrs::page::PageRichTextProperty::from("description".to_string()),
+        );
+        properties.insert("description".to_string(), description_property);
+
+        let ease_factor_property =
+            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(2.5));
+        properties.insert("easeFactor".to_string(), ease_factor_property);
+
+        let repetition_count_property =
+            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(5));
+        properties.insert("repetitionCount".to_string(), repetition_count_property);
+
+        let next_review_at_property =
+            notionrs::page::PageProperty::Date(notionrs::page::PageDateProperty::from(
+                chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+            ));
+        properties.insert("nextReviewAt".to_string(), next_review_at_property);
+
+        let tags_property = notionrs::page::PageProperty::MultiSelect(
+            notionrs::page::PageMultiSelectProperty::default(),
+        );
+        properties.insert("tags".to_string(), tags_property);
+
         Ok(notionrs::page::PageResponse {
             id: "4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e".to_string(),
             created_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
@@ -247,7 +278,7 @@ impl AnkiRepository for AnkiRepositoryStab {
                 },
             ),
             archived: false,
-            properties: std::collections::HashMap::new(),
+            properties,
             url: "https://www.notion.com/".to_string(),
             public_url: None,
             developer_survey: None,
@@ -269,6 +300,37 @@ impl AnkiRepository for AnkiRepositoryStab {
             person: None,
         });
 
+        let mut properties = std::collections::HashMap::new();
+
+        let title_property = notionrs::page::PageProperty::Title(
+            notionrs::page::PageTitleProperty::from("title".to_string()),
+        );
+        properties.insert("title".to_string(), title_property);
+
+        let description_property = notionrs::page::PageProperty::RichText(
+            notionrs::page::PageRichTextProperty::from("description".to_string()),
+        );
+        properties.insert("description".to_string(), description_property);
+
+        let ease_factor_property =
+            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(2.5));
+        properties.insert("easeFactor".to_string(), ease_factor_property);
+
+        let repetition_count_property =
+            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(5));
+        properties.insert("repetitionCount".to_string(), repetition_count_property);
+
+        let next_review_at_property =
+            notionrs::page::PageProperty::Date(notionrs::page::PageDateProperty::from(
+                chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+            ));
+        properties.insert("nextReviewAt".to_string(), next_review_at_property);
+
+        let tags_property = notionrs::page::PageProperty::MultiSelect(
+            notionrs::page::PageMultiSelectProperty::default(),
+        );
+        properties.insert("tags".to_string(), tags_property);
+
         let page = notionrs::page::PageResponse {
             id: "4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e".to_string(),
             created_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
@@ -284,7 +346,7 @@ impl AnkiRepository for AnkiRepositoryStab {
                 },
             ),
             archived: false,
-            properties: std::collections::HashMap::new(),
+            properties,
             url: "https://www.notion.com/".to_string(),
             public_url: None,
             developer_survey: None,
@@ -307,6 +369,37 @@ impl AnkiRepository for AnkiRepositoryStab {
             person: None,
         });
 
+        let mut properties = std::collections::HashMap::new();
+
+        let title_property = notionrs::page::PageProperty::Title(
+            notionrs::page::PageTitleProperty::from("title".to_string()),
+        );
+        properties.insert("title".to_string(), title_property);
+
+        let description_property = notionrs::page::PageProperty::RichText(
+            notionrs::page::PageRichTextProperty::from("description".to_string()),
+        );
+        properties.insert("description".to_string(), description_property);
+
+        let ease_factor_property =
+            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(2.5));
+        properties.insert("easeFactor".to_string(), ease_factor_property);
+
+        let repetition_count_property =
+            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(5));
+        properties.insert("repetitionCount".to_string(), repetition_count_property);
+
+        let next_review_at_property =
+            notionrs::page::PageProperty::Date(notionrs::page::PageDateProperty::from(
+                chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+            ));
+        properties.insert("nextReviewAt".to_string(), next_review_at_property);
+
+        let tags_property = notionrs::page::PageProperty::MultiSelect(
+            notionrs::page::PageMultiSelectProperty::default(),
+        );
+        properties.insert("tags".to_string(), tags_property);
+
         Ok(notionrs::page::PageResponse {
             id: "4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e".to_string(),
             created_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
@@ -322,7 +415,7 @@ impl AnkiRepository for AnkiRepositoryStab {
                 },
             ),
             archived: false,
-            properties: std::collections::HashMap::new(),
+            properties,
             url: "https://www.notion.com/".to_string(),
             public_url: None,
             developer_survey: None,
@@ -346,6 +439,37 @@ impl AnkiRepository for AnkiRepositoryStab {
             person: None,
         });
 
+        let mut properties = std::collections::HashMap::new();
+
+        let title_property = notionrs::page::PageProperty::Title(
+            notionrs::page::PageTitleProperty::from("title".to_string()),
+        );
+        properties.insert("title".to_string(), title_property);
+
+        let description_property = notionrs::page::PageProperty::RichText(
+            notionrs::page::PageRichTextProperty::from("description".to_string()),
+        );
+        properties.insert("description".to_string(), description_property);
+
+        let ease_factor_property =
+            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(2.5));
+        properties.insert("easeFactor".to_string(), ease_factor_property);
+
+        let repetition_count_property =
+            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(5));
+        properties.insert("repetitionCount".to_string(), repetition_count_property);
+
+        let next_review_at_property =
+            notionrs::page::PageProperty::Date(notionrs::page::PageDateProperty::from(
+                chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+            ));
+        properties.insert("nextReviewAt".to_string(), next_review_at_property);
+
+        let tags_property = notionrs::page::PageProperty::MultiSelect(
+            notionrs::page::PageMultiSelectProperty::default(),
+        );
+        properties.insert("tags".to_string(), tags_property);
+
         Ok(notionrs::page::PageResponse {
             id: "4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e".to_string(),
             created_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
@@ -361,7 +485,7 @@ impl AnkiRepository for AnkiRepositoryStab {
                 },
             ),
             archived: false,
-            properties: std::collections::HashMap::new(),
+            properties,
             url: "https://www.notion.com/".to_string(),
             public_url: None,
             developer_survey: None,

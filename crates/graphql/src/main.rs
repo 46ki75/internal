@@ -7,6 +7,7 @@ mod model;
 mod mutation;
 mod query;
 mod repository;
+mod service;
 
 async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     dotenvy::dotenv().ok();

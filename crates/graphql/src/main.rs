@@ -8,8 +8,8 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     std::env::var("NOTION_API_KEY").map_err(|_| Error::from("NOTION_API_KEY not found"))?;
 
     let schema = Schema::build(
-        graphql::query::QueryRoot,
-        graphql::mutation::MutationRoot,
+        internal_graphql::query::QueryRoot,
+        internal_graphql::mutation::MutationRoot,
         EmptySubscription,
     )
     .data(event.headers().clone())

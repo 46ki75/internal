@@ -1242,31 +1242,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "07e28edb80900c19c28f1072f2e8aeca7fa06b23cd4169cefe1af5aa3260783f"
 
 [[package]]
-name = "graphql"
-version = "0.1.0"
-dependencies = [
- "async-graphql",
- "async-trait",
- "aws-config",
- "aws-sdk-dynamodb",
- "aws-sdk-lambda",
- "chrono",
- "dotenvy",
- "elmethis-notion",
- "lambda_http",
- "notionrs",
- "reqwest",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 2.0.11",
- "tokio",
- "url",
- "uuid",
- "zip",
-]
-
-[[package]]
 name = "h2"
 version = "0.3.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1717,6 +1692,31 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a0c10553d664a4d0bcff9f4215d0aac67a639cc68ef660840afe309b807bc9f5"
 dependencies = [
  "generic-array",
+]
+
+[[package]]
+name = "internal_graphql"
+version = "0.1.0"
+dependencies = [
+ "async-graphql",
+ "async-trait",
+ "aws-config",
+ "aws-sdk-dynamodb",
+ "aws-sdk-lambda",
+ "chrono",
+ "dotenvy",
+ "elmethis-notion",
+ "lambda_http",
+ "notionrs",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.11",
+ "tokio",
+ "url",
+ "uuid",
+ "zip",
 ]
 
 [[package]]

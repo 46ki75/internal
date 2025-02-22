@@ -6,15 +6,18 @@ pub trait AnkiRepository {
     ) -> Result<notionrs::page::PageResponse, crate::error::Error>;
 
     async fn list_anki(
+        &self,
         page_size: u32,
         next_cursor: Option<String>,
     ) -> Result<Vec<notionrs::page::PageResponse>, crate::error::Error>;
 
     async fn create_anki(
+        &self,
         title: Option<String>,
     ) -> Result<notionrs::page::PageResponse, crate::error::Error>;
 
     async fn update_anki(
+        &self,
         page_id: String,
         ease_factor: f64,
         repetition_count: u32,
@@ -22,6 +25,7 @@ pub trait AnkiRepository {
     ) -> Result<notionrs::page::PageResponse, crate::error::Error>;
 
     async fn list_blocks_by_id(
+        &self,
         page_id: &str,
     ) -> Result<Vec<elmethis_notion::block::Block>, crate::error::Error>;
 }
@@ -48,6 +52,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
     }
 
     async fn list_anki(
+        &self,
         page_size: u32,
         next_cursor: Option<String>,
     ) -> Result<Vec<notionrs::page::PageResponse>, crate::error::Error> {
@@ -83,6 +88,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
     }
 
     async fn create_anki(
+        &self,
         title: Option<String>,
     ) -> Result<notionrs::page::PageResponse, crate::error::Error> {
         let secret = std::env::var("NOTION_API_KEY").map_err(|_| {
@@ -173,6 +179,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
     }
 
     async fn update_anki(
+        &self,
         page_id: String,
         ease_factor: f64,
         repetition_count: u32,
@@ -219,6 +226,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
     }
 
     async fn list_blocks_by_id(
+        &self,
         page_id: &str,
     ) -> Result<Vec<elmethis_notion::block::Block>, crate::error::Error> {
         let secret = std::env::var("NOTION_API_KEY").map_err(|_| {
@@ -306,6 +314,7 @@ impl AnkiRepository for AnkiRepositoryStab {
     }
 
     async fn list_anki(
+        &self,
         _page_size: u32,
         _next_cursor: Option<String>,
     ) -> Result<Vec<notionrs::page::PageResponse>, crate::error::Error> {
@@ -376,6 +385,7 @@ impl AnkiRepository for AnkiRepositoryStab {
     }
 
     async fn create_anki(
+        &self,
         _title: Option<String>,
     ) -> Result<notionrs::page::PageResponse, crate::error::Error> {
         let user = notionrs::User::Person(notionrs::Person {
@@ -443,6 +453,7 @@ impl AnkiRepository for AnkiRepositoryStab {
     }
 
     async fn update_anki(
+        &self,
         _page_id: String,
         _ease_factor: f64,
         _repetition_count: u32,
@@ -513,6 +524,7 @@ impl AnkiRepository for AnkiRepositoryStab {
     }
 
     async fn list_blocks_by_id(
+        &self,
         _page_id: &str,
     ) -> Result<Vec<elmethis_notion::block::Block>, crate::error::Error> {
         let blocks = vec![];

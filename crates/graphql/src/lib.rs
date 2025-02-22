@@ -5,6 +5,7 @@ pub mod query;
 pub mod repository;
 pub mod resolver;
 pub mod service;
+pub mod util;
 
 use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use lambda_http::{http::Method, Body, Error, Request, Response};

@@ -17,4 +17,7 @@ pub enum Error {
 
     #[error("serde error: {0}")]
     SerdeJson(#[from] serde_json::Error),
+
+    #[error("Notion property not found: {0}")]
+    NotionPropertynotFound(String),
 }

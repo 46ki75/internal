@@ -135,6 +135,50 @@ where
 
         Ok(anki)
     }
+
+    pub async fn update_anki(
+        &self,
+        page_id: String,
+        ease_factor: f64,
+        repetition_count: u32,
+        next_review_at: String,
+    ) -> Result<crate::model::anki::Anki, crate::error::Error> {
+        let mut properties: std::collections::HashMap<String, notionrs::page::PageProperty> =
+            std::collections::HashMap::new();
+
+        properties.insert(
+            "easeFactor".to_string(),
+            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(
+                ease_factor,
+            )),
+        );
+
+        properties.insert(
+            "repetitionCount".to_string(),
+            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(
+                repetition_count,
+            )),
+        );
+
+        let next_review_at = chrono::DateTime::parse_from_rfc3339(&next_review_at)?;
+
+        let next_review_at_property = notionrs::page::PageProperty::Date(
+            notionrs::page::PageDateProperty::default()
+                .start(next_review_at)
+                .clone(),
+        );
+
+        properties.insert("nextReviewAt".to_string(), next_review_at_property);
+
+        let page_response = self
+            .anki_repository
+            .update_anki(&page_id, properties)
+            .await?;
+
+        let anki = crate::util::anki::AnkiUtil::convert_page_response(page_response)?;
+
+        Ok(anki)
+    }
 }
 
 #[cfg(test)]
@@ -151,6 +195,34 @@ mod tests {
 
         let _ = anki_service
             .list_blocks("28b8e5f3-ba43-44a8-b790-bfc8c62b7628")
+            .await
+            .unwrap();
+    }
+
+    #[tokio::test]
+    async fn create_anki() {
+        let anki_repository_stab = AnkiRepositoryStab;
+        let anki_service = AnkiService {
+            anki_repository: anki_repository_stab,
+        };
+
+        let _ = anki_service.create_anki("title").await.unwrap();
+    }
+
+    #[tokio::test]
+    async fn update_anki() {
+        let anki_repository_stab = AnkiRepositoryStab;
+        let anki_service = AnkiService {
+            anki_repository: anki_repository_stab,
+        };
+
+        let _ = anki_service
+            .update_anki(
+                "28b8e5f3-ba43-44a8-b790-bfc8c62b7628".to_string(),
+                2.5,
+                0,
+                "2021-09-01T00:00:00+09:00".to_string(),
+            )
             .await
             .unwrap();
     }

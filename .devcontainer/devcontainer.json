@@ -12,9 +12,28 @@
         "christian-kohler.path-intellisense",
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
-        "ms-azuretools.vscode-docker"
+        "ms-azuretools.vscode-docker",
+        "Vue.volar",
+        "GraphQL.vscode-graphql",
+        "rust-lang.rust-analyzer"
       ]
     }
   },
-  "forwardPorts": [20000, 20010]
+  "forwardPorts": [
+    20000,
+    20010
+  ],
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli": {},
+    "ghcr.io/devcontainers-extra/features/starship": {},
+    "ghcr.io/devcontainers/features/rust": {},
+    "ghcr.io/devcontainers/features/node": {
+      "version": "22"
+    },
+    "ghcr.io/devcontainers/features/terraform": {},
+    "ghcr.io/devcontainers/features/aws-cli": {}
+  },
+  "containerEnv": {
+    "AWS_PROFILE": "internal"
+  }
 }

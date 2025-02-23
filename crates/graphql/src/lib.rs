@@ -19,7 +19,7 @@ pub async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     let anki_repository = std::sync::Arc::new(crate::repository::anki::AnkiRepositoryImpl);
     let anki_service = std::sync::Arc::new(crate::service::anki::AnkiService { anki_repository });
     let anki_query_resolver =
-        std::sync::Arc::new(crate::resolver::anki::AnkiQueryResolver { anki_service });
+        std::sync::Arc::new(crate::resolver::anki::query::AnkiQueryResolver { anki_service });
 
     let query_root = crate::query::QueryRoot {
         anki_query_resolver,

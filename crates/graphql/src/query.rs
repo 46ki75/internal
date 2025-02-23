@@ -1,5 +1,5 @@
 pub struct QueryRoot {
-    pub anki_query_resolver: std::sync::Arc<crate::resolver::anki::AnkiQueryResolver>,
+    pub anki_query_resolver: std::sync::Arc<crate::resolver::anki::query::AnkiQueryResolver>,
 }
 
 #[async_graphql::Object]
@@ -24,7 +24,7 @@ impl QueryRoot {
     pub async fn anki(
         &self,
         ctx: &async_graphql::Context<'_>,
-        input: crate::resolver::anki::AnkiInput,
+        input: crate::resolver::anki::query::AnkiInput,
     ) -> Result<crate::model::anki::Anki, async_graphql::Error> {
         self.anki_query_resolver.anki(ctx, input).await
     }
@@ -32,7 +32,7 @@ impl QueryRoot {
     pub async fn anki_list(
         &self,
         ctx: &async_graphql::Context<'_>,
-        input: Option<crate::resolver::anki::AnkiListInput>,
+        input: Option<crate::resolver::anki::query::AnkiListInput>,
     ) -> Result<crate::model::anki::AnkiConnection, async_graphql::Error> {
         self.anki_query_resolver.anki_list(ctx, input).await
     }

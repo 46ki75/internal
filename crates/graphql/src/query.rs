@@ -1,6 +1,6 @@
-use async_graphql::*;
-
-pub struct QueryRoot;
+pub struct QueryRoot {
+    pub anki_query_resolver: std::sync::Arc<crate::resolver::anki::AnkiQueryResolver>,
+}
 
 #[async_graphql::Object]
 impl QueryRoot {
@@ -12,22 +12,29 @@ impl QueryRoot {
         Ok(String::from("Hello, GraphQL!"))
     }
 
+    // pub async fn anki_query(
+    //     &self,
+    //     _ctx: &async_graphql::Context<'_>,
+    // ) -> Result<crate::resolver::anki::AnkiQueryResolver, async_graphql::Error> {
+    //     Ok(crate::resolver::anki::AnkiQueryResolver {
+    //         anki_service: self.anki_service.clone(),
+    //     })
+    // }
+
     pub async fn anki(
         &self,
         ctx: &async_graphql::Context<'_>,
-        input: crate::model::anki::query::AnkiInput,
+        input: crate::resolver::anki::AnkiInput,
     ) -> Result<crate::model::anki::Anki, async_graphql::Error> {
-        crate::model::anki::query::AnkiQuery.anki(ctx, input).await
+        self.anki_query_resolver.anki(ctx, input).await
     }
 
     pub async fn anki_list(
         &self,
         ctx: &async_graphql::Context<'_>,
-        input: Option<crate::model::anki::query::ListAnkiInput>,
+        input: Option<crate::resolver::anki::AnkiListInput>,
     ) -> Result<crate::model::anki::AnkiConnection, async_graphql::Error> {
-        crate::model::anki::query::AnkiQuery
-            .list_anki(ctx, input)
-            .await
+        self.anki_query_resolver.anki_list(ctx, input).await
     }
 
     pub async fn bookmark_list(

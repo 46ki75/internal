@@ -1,8 +1,54 @@
 pub struct AnkiService {
-    anki_repository: std::sync::Arc<dyn crate::repository::anki::AnkiRepository + Send + Sync>,
+    pub anki_repository: std::sync::Arc<dyn crate::repository::anki::AnkiRepository + Send + Sync>,
 }
 
 impl AnkiService {
+    pub async fn get_anki_by_id(
+        &self,
+        id: &str,
+    ) -> Result<crate::model::anki::Anki, crate::error::Error> {
+        let page = self.anki_repository.get_anki_by_id(id).await?;
+
+        let anki = crate::util::anki::AnkiUtil::convert_page_response(page)?;
+
+        Ok(anki)
+    }
+
+    pub async fn list_anki(
+        &self,
+        page_size: u32,
+        next_cursor: Option<String>,
+    ) -> Result<crate::model::anki::AnkiConnection, crate::error::Error> {
+        let pages = self
+            .anki_repository
+            .list_anki(page_size, next_cursor)
+            .await?;
+
+        let anki_list = pages
+            .results
+            .into_iter()
+            .map(crate::util::anki::AnkiUtil::convert_page_response)
+            .collect::<Result<Vec<crate::model::anki::Anki>, crate::error::Error>>()?;
+
+        let anki_edge = anki_list
+            .into_iter()
+            .map(|anki| crate::model::anki::AnkiEdge {
+                cursor: anki.page_id.to_string(),
+                node: anki,
+            })
+            .collect::<Vec<crate::model::anki::AnkiEdge>>();
+
+        let anki_connection = crate::model::anki::AnkiConnection {
+            edges: anki_edge,
+            page_info: crate::model::PageInfo {
+                next_cursor: pages.next_cursor,
+                ..Default::default()
+            },
+        };
+
+        Ok(anki_connection)
+    }
+
     pub async fn list_blocks(
         &self,
         id: &str,

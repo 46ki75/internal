@@ -16,13 +16,20 @@ pub async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
 
     std::env::var("NOTION_API_KEY").map_err(|_| Error::from("NOTION_API_KEY not found"))?;
 
-    let schema = Schema::build(
-        crate::query::QueryRoot,
-        crate::mutation::MutationRoot,
-        EmptySubscription,
-    )
-    .data(event.headers().clone())
-    .finish();
+    let anki_repository = std::sync::Arc::new(crate::repository::anki::AnkiRepositoryImpl);
+    let anki_service = std::sync::Arc::new(crate::service::anki::AnkiService { anki_repository });
+    let anki_query_resolver =
+        std::sync::Arc::new(crate::resolver::anki::AnkiQueryResolver { anki_service });
+
+    let query_root = crate::query::QueryRoot {
+        anki_query_resolver,
+    };
+
+    let mutation_root = crate::mutation::MutationRoot;
+
+    let schema = Schema::build(query_root, mutation_root, EmptySubscription)
+        .data(event.headers().clone())
+        .finish();
 
     if event.method() == Method::GET {
         let playground_html = GraphiQLSource::build().endpoint("/api/graphql").finish();

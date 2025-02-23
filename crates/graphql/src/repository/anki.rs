@@ -9,7 +9,10 @@ pub trait AnkiRepository: Send + Sync {
         &self,
         page_size: u32,
         next_cursor: Option<String>,
-    ) -> Result<Vec<notionrs::page::PageResponse>, crate::error::Error>;
+    ) -> Result<
+        notionrs::list_response::ListResponse<notionrs::page::PageResponse>,
+        crate::error::Error,
+    >;
 
     async fn create_anki(
         &self,
@@ -56,7 +59,10 @@ impl AnkiRepository for AnkiRepositoryImpl {
         &self,
         page_size: u32,
         next_cursor: Option<String>,
-    ) -> Result<Vec<notionrs::page::PageResponse>, crate::error::Error> {
+    ) -> Result<
+        notionrs::list_response::ListResponse<notionrs::page::PageResponse>,
+        crate::error::Error,
+    > {
         log::debug!("Reading environmental variable NOTION_API_KEY");
         let secret = std::env::var("NOTION_API_KEY").map_err(|_| {
             crate::error::Error::EnvironmentalVariableNotFound("NOTION_API_KEY".to_string())
@@ -85,9 +91,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
 
         let response = request.send().await?;
 
-        let pages = response.results;
-
-        Ok(pages)
+        Ok(response)
     }
 
     async fn create_anki(
@@ -233,7 +237,10 @@ impl AnkiRepository for AnkiRepositoryStub {
         &self,
         _page_size: u32,
         _next_cursor: Option<String>,
-    ) -> Result<Vec<notionrs::page::PageResponse>, crate::error::Error> {
+    ) -> Result<
+        notionrs::list_response::ListResponse<notionrs::page::PageResponse>,
+        crate::error::Error,
+    > {
         let user = notionrs::User::Person(notionrs::Person {
             object: "user".to_string(),
             id: "c4afec03-71d3-4114-b992-df84ed2e594c".to_string(),
@@ -297,7 +304,13 @@ impl AnkiRepository for AnkiRepositoryStub {
             in_trash: false,
         };
 
-        Ok(vec![page])
+        Ok(notionrs::list_response::ListResponse {
+            object: "list".to_string(),
+            results: vec![page],
+            next_cursor: None,
+            has_more: Some(false),
+            r#type: Some("page".to_string()),
+        })
     }
 
     async fn create_anki(

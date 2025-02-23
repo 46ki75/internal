@@ -25,7 +25,7 @@ pub struct Bookmark {
 
 #[derive(async_graphql::SimpleObject)]
 pub struct BookmarkTag {
-    id: String,
-    name: String,
-    color: String,
+    pub id: String,
+    pub name: String,
+    pub color: String,
 }

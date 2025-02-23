@@ -6,3 +6,6 @@ build:
 
 deploy: build
     cargo run --bin deploy
+
+test:
+    cargo test --lib

@@ -19,13 +19,19 @@ pub async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     let anki_repository = std::sync::Arc::new(crate::repository::anki::AnkiRepositoryImpl);
     let anki_service = std::sync::Arc::new(crate::service::anki::AnkiService { anki_repository });
     let anki_query_resolver =
-        std::sync::Arc::new(crate::resolver::anki::query::AnkiQueryResolver { anki_service });
+        std::sync::Arc::new(crate::resolver::anki::query::AnkiQueryResolver {
+            anki_service: anki_service.clone(),
+        });
+    let anki_mutation_resolver =
+        std::sync::Arc::new(crate::resolver::anki::mutation::AnkiMutationResolver { anki_service });
 
     let query_root = crate::query::QueryRoot {
         anki_query_resolver,
     };
 
-    let mutation_root = crate::mutation::MutationRoot;
+    let mutation_root = crate::mutation::MutationRoot {
+        anki_mutation_resolver,
+    };
 
     let schema = Schema::build(query_root, mutation_root, EmptySubscription)
         .data(event.headers().clone())

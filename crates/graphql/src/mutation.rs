@@ -1,6 +1,9 @@
 use async_graphql::*;
 
-pub struct MutationRoot;
+pub struct MutationRoot {
+    pub anki_mutation_resolver:
+        std::sync::Arc<crate::resolver::anki::mutation::AnkiMutationResolver>,
+}
 
 #[async_graphql::Object]
 impl MutationRoot {
@@ -17,21 +20,17 @@ impl MutationRoot {
     pub async fn create_anki(
         &self,
         ctx: &async_graphql::Context<'_>,
-        input: crate::model::anki::mutation::CreateAnkiInput,
+        input: crate::resolver::anki::mutation::CreateAnkiInput,
     ) -> Result<crate::model::anki::Anki, async_graphql::Error> {
-        crate::model::anki::mutation::AnkiMutation
-            .create_anki(ctx, input)
-            .await
+        self.anki_mutation_resolver.create_anki(ctx, input).await
     }
 
     pub async fn update_anki(
         &self,
         ctx: &async_graphql::Context<'_>,
-        input: crate::model::anki::mutation::UpdateAnkiInput,
+        input: crate::resolver::anki::mutation::UpdateAnkiInput,
     ) -> Result<crate::model::anki::Anki, async_graphql::Error> {
-        crate::model::anki::mutation::AnkiMutation
-            .update_anki(ctx, input)
-            .await
+        self.anki_mutation_resolver.update_anki(ctx, input).await
     }
 
     pub async fn upsert_typing(

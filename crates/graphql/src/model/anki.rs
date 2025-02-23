@@ -1,7 +1,3 @@
-pub mod mutation;
-pub mod query;
-pub mod util;
-
 #[derive(async_graphql::SimpleObject)]
 pub struct AnkiConnection {
     pub edges: Vec<AnkiEdge>,

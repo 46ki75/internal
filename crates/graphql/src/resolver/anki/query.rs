@@ -1,6 +1,4 @@
-pub struct AnkiQueryResolver {
-    pub anki_service: std::sync::Arc<crate::service::anki::AnkiService>,
-}
+pub struct AnkiQueryResolver;
 
 #[derive(async_graphql::InputObject)]
 pub struct AnkiInput {
@@ -17,11 +15,12 @@ pub struct AnkiListInput {
 impl AnkiQueryResolver {
     pub async fn anki(
         &self,
-        _ctx: &async_graphql::Context<'_>,
+        ctx: &async_graphql::Context<'_>,
         input: AnkiInput,
     ) -> Result<crate::model::anki::Anki, async_graphql::Error> {
-        let anki = self
-            .anki_service
+        let anki_service = ctx.data::<std::sync::Arc<crate::service::anki::AnkiService>>()?;
+
+        let anki = anki_service
             .get_anki_by_id(&input.page_id)
             .await
             .map_err(|e| async_graphql::Error::new(e.to_string()))?;
@@ -31,16 +30,17 @@ impl AnkiQueryResolver {
 
     pub async fn anki_list(
         &self,
-        _ctx: &async_graphql::Context<'_>,
+        ctx: &async_graphql::Context<'_>,
         input: Option<AnkiListInput>,
     ) -> Result<crate::model::anki::AnkiConnection, async_graphql::Error> {
+        let anki_service = ctx.data::<std::sync::Arc<crate::service::anki::AnkiService>>()?;
+
         let input = input.unwrap_or(AnkiListInput {
             page_size: None,
             next_cursor: None,
         });
 
-        let anki_list = self
-            .anki_service
+        let anki_list = anki_service
             .list_anki(input.page_size.unwrap_or(50), input.next_cursor)
             .await
             .map_err(|e| e.to_string())?;

@@ -1,6 +1,4 @@
-pub struct AnkiMutationResolver {
-    pub anki_service: std::sync::Arc<crate::service::anki::AnkiService>,
-}
+pub struct AnkiMutationResolver;
 
 #[derive(async_graphql::InputObject)]
 pub struct CreateAnkiInput {
@@ -19,11 +17,12 @@ pub struct UpdateAnkiInput {
 impl AnkiMutationResolver {
     pub async fn create_anki(
         &self,
-        _ctx: &async_graphql::Context<'_>,
+        ctx: &async_graphql::Context<'_>,
         input: CreateAnkiInput,
     ) -> Result<crate::model::anki::Anki, async_graphql::Error> {
-        Ok(self
-            .anki_service
+        let anki_service = ctx.data::<std::sync::Arc<crate::service::anki::AnkiService>>()?;
+
+        Ok(anki_service
             .create_anki(input.title)
             .await
             .map_err(|e| e.to_string())?)
@@ -31,11 +30,12 @@ impl AnkiMutationResolver {
 
     pub async fn update_anki(
         &self,
-        _ctx: &async_graphql::Context<'_>,
+        ctx: &async_graphql::Context<'_>,
         input: UpdateAnkiInput,
     ) -> Result<crate::model::anki::Anki, async_graphql::Error> {
-        Ok(self
-            .anki_service
+        let anki_service = ctx.data::<std::sync::Arc<crate::service::anki::AnkiService>>()?;
+
+        Ok(anki_service
             .update_anki(
                 input.page_id,
                 input.ease_factor,

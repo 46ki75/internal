@@ -37,12 +37,14 @@ impl AnkiRepository for AnkiRepositoryImpl {
         &self,
         id: &str,
     ) -> Result<notionrs::page::PageResponse, crate::error::Error> {
+        log::debug!("Reading environmental variable NOTION_API_KEY");
         let secret = std::env::var("NOTION_API_KEY").map_err(|_| {
             crate::error::Error::EnvironmentalVariableNotFound("NOTION_API_KEY".to_string())
         })?;
 
         let client = notionrs::client::Client::new().secret(secret);
 
+        log::debug!("Sending request to Notion API");
         let request = client.get_page().page_id(id);
 
         let response = request.send().await?;
@@ -55,6 +57,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
         page_size: u32,
         next_cursor: Option<String>,
     ) -> Result<Vec<notionrs::page::PageResponse>, crate::error::Error> {
+        log::debug!("Reading environmental variable NOTION_API_KEY");
         let secret = std::env::var("NOTION_API_KEY").map_err(|_| {
             crate::error::Error::EnvironmentalVariableNotFound("NOTION_API_KEY".to_string())
         })?;
@@ -65,6 +68,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
             )
         })?;
 
+        log::debug!("Sending request to Notion API");
         let client = notionrs::client::Client::new().secret(secret);
 
         let sorts = vec![notionrs::database::Sort::asc("nextReviewAt")];
@@ -91,16 +95,19 @@ impl AnkiRepository for AnkiRepositoryImpl {
         properties: std::collections::HashMap<String, notionrs::page::PageProperty>,
         children: Vec<notionrs::block::Block>,
     ) -> Result<notionrs::page::PageResponse, crate::error::Error> {
+        log::debug!("Reading environmental variable NOTION_API_KEY");
         let secret = std::env::var("NOTION_API_KEY").map_err(|_| {
             crate::error::Error::EnvironmentalVariableNotFound("NOTION_API_KEY".to_string())
         })?;
 
+        log::debug!("Reading environmental variable NOTION_ANKI_DATABASE_ID");
         let database_id = std::env::var("NOTION_ANKI_DATABASE_ID").map_err(|_| {
             crate::error::Error::EnvironmentalVariableNotFound(
                 "NOTION_ANKI_DATABASE_ID".to_string(),
             )
         })?;
 
+        log::debug!("Sending request to Notion API");
         let client = notionrs::client::Client::new().secret(secret);
 
         let request = client
@@ -136,10 +143,12 @@ impl AnkiRepository for AnkiRepositoryImpl {
         &self,
         page_id: &str,
     ) -> Result<Vec<elmethis_notion::block::Block>, crate::error::Error> {
+        log::debug!("Reading environmental variable NOTION_API_KEY");
         let secret = std::env::var("NOTION_API_KEY").map_err(|_| {
             crate::error::Error::EnvironmentalVariableNotFound("NOTION_API_KEY".to_string())
         })?;
 
+        log::debug!("Sending request to Notion API");
         let mut client = elmethis_notion::client::Client::new(secret);
 
         let blocks = client.convert_block(page_id).await?;

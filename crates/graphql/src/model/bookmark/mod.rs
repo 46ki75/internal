@@ -1,18 +1,3 @@
-pub mod mutation;
-pub mod query;
-
-#[derive(async_graphql::SimpleObject)]
-pub struct BookmarkConnection {
-    pub edges: Vec<BookmarkEdge>,
-    pub page_info: crate::model::PageInfo,
-}
-
-#[derive(async_graphql::SimpleObject)]
-pub struct BookmarkEdge {
-    pub node: Bookmark,
-    pub cursor: String,
-}
-
 #[derive(async_graphql::SimpleObject)]
 pub struct Bookmark {
     pub id: String,

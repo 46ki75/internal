@@ -3,20 +3,12 @@ use async_graphql::*;
 pub struct MutationRoot {
     pub anki_mutation_resolver:
         std::sync::Arc<crate::resolver::anki::mutation::AnkiMutationResolver>,
+    pub bookmark_mutation_resolver:
+        std::sync::Arc<crate::resolver::bookmark::mutation::BookmarkMutationResolver>,
 }
 
 #[async_graphql::Object]
 impl MutationRoot {
-    pub async fn create_bookmark(
-        &self,
-        ctx: &async_graphql::Context<'_>,
-        input: crate::model::bookmark::mutation::CreateBookmarkInput,
-    ) -> Result<crate::model::bookmark::Bookmark, async_graphql::Error> {
-        crate::model::bookmark::mutation::BookmarkMutation
-            .create_bookmark(ctx, input)
-            .await
-    }
-
     pub async fn create_anki(
         &self,
         ctx: &async_graphql::Context<'_>,
@@ -31,6 +23,16 @@ impl MutationRoot {
         input: crate::resolver::anki::mutation::UpdateAnkiInput,
     ) -> Result<crate::model::anki::Anki, async_graphql::Error> {
         self.anki_mutation_resolver.update_anki(ctx, input).await
+    }
+
+    pub async fn create_bookmark(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+        input: crate::resolver::bookmark::mutation::CreateBookmarkInput,
+    ) -> Result<crate::model::bookmark::Bookmark, async_graphql::Error> {
+        self.bookmark_mutation_resolver
+            .create_bookmark(ctx, input)
+            .await
     }
 
     pub async fn upsert_typing(

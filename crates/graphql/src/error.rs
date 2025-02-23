@@ -1,7 +1,7 @@
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error("Environmental variable not found: {0}")]
-    EnvironmentalVariableNotFound(String),
+    EnvironmentalVariableNotFound(#[from] std::env::VarError),
 
     #[error("Invalid timezone")]
     InvalidTimezone,
@@ -20,4 +20,10 @@ pub enum Error {
 
     #[error("Notion property not found: {0}")]
     NotionPropertynotFound(String),
+
+    #[error("URL parse error: {0}")]
+    UrlParse(#[from] url::ParseError),
+
+    #[error("FQDN parse error: {0}")]
+    FqdnParse(String),
 }

@@ -33,6 +33,8 @@ pub async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     });
     let bookmark_query_resolver =
         std::sync::Arc::new(crate::resolver::bookmark::query::BookmarkQueryResolver);
+    let bookmark_mutation_resolver =
+        std::sync::Arc::new(crate::resolver::bookmark::mutation::BookmarkMutationResolver);
 
     log::debug!("Building schema: QueryRoot");
     let query_root = crate::query::QueryRoot {
@@ -43,6 +45,7 @@ pub async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     log::debug!("Building schema: MutationRoot");
     let mutation_root = crate::mutation::MutationRoot {
         anki_mutation_resolver,
+        bookmark_mutation_resolver,
     };
 
     log::debug!("Building schema: Schema");

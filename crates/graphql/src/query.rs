@@ -14,15 +14,6 @@ impl QueryRoot {
         Ok(String::from("Hello, GraphQL!"))
     }
 
-    // pub async fn anki_query(
-    //     &self,
-    //     _ctx: &async_graphql::Context<'_>,
-    // ) -> Result<crate::resolver::anki::AnkiQueryResolver, async_graphql::Error> {
-    //     Ok(crate::resolver::anki::AnkiQueryResolver {
-    //         anki_service: self.anki_service.clone(),
-    //     })
-    // }
-
     pub async fn anki(
         &self,
         ctx: &async_graphql::Context<'_>,
@@ -38,16 +29,6 @@ impl QueryRoot {
     ) -> Result<crate::model::anki::AnkiConnection, async_graphql::Error> {
         self.anki_query_resolver.anki_list(ctx, input).await
     }
-
-    // pub async fn bookmark_list(
-    //     &self,
-    //     ctx: &async_graphql::Context<'_>,
-    //     input: Option<crate::model::bookmark::query::BookmarkListInput>,
-    // ) -> Result<crate::model::bookmark::BookmarkConnection, async_graphql::Error> {
-    //     crate::model::bookmark::query::BookmarkQuery
-    //         .list_bookmark(ctx, input)
-    //         .await
-    // }
 
     pub async fn bookmark_list(
         &self,

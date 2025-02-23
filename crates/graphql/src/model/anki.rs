@@ -79,57 +79,17 @@ impl Anki {
         &self.url
     }
 
-    pub async fn block_list(&self) -> Result<AnkiBlock, async_graphql::Error> {
-        let secret = std::env::var("NOTION_API_KEY")
-            .map_err(|_| async_graphql::Error::from("NOTION_API_KEY not found"))?;
+    pub async fn block_list(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+    ) -> Result<AnkiBlock, async_graphql::Error> {
+        let anki_service = ctx.data::<std::sync::Arc<crate::service::anki::AnkiService>>()?;
 
-        let mut client = elmethis_notion::client::Client::new(secret);
-
-        let blocks = client
-            .convert_block(&self.page_id)
+        let blocks = anki_service
+            .list_blocks(&self.page_id)
             .await
-            .map_err(|e| async_graphql::Error::from(format!("Failed to get block: {}", e)))?;
+            .map_err(|e| e.to_string())?;
 
-        let mut front: Vec<elmethis_notion::block::Block> = Vec::new();
-        let mut back: Vec<elmethis_notion::block::Block> = Vec::new();
-        let mut explanation: Vec<elmethis_notion::block::Block> = Vec::new();
-
-        enum Marker {
-            Front,
-            Back,
-            Explanation,
-        }
-
-        let mut marker = Marker::Front;
-
-        for block in blocks {
-            if let elmethis_notion::block::Block::ElmHeading1(
-                elmethis_notion::block::ElmHeading1 { props },
-            ) = &block
-            {
-                if props.text == "front" {
-                    marker = Marker::Front;
-                    continue;
-                } else if props.text == "back" {
-                    marker = Marker::Back;
-                    continue;
-                } else if props.text == "explanation" {
-                    marker = Marker::Explanation;
-                    continue;
-                }
-            }
-
-            match marker {
-                Marker::Front => front.push(block),
-                Marker::Back => back.push(block),
-                Marker::Explanation => explanation.push(block),
-            }
-        }
-
-        Ok(AnkiBlock {
-            front: serde_json::to_value(front)?,
-            back: serde_json::to_value(back)?,
-            explanation: serde_json::to_value(explanation)?,
-        })
+        Ok(blocks)
     }
 }

@@ -100,7 +100,7 @@ impl AnkiService {
 
     pub async fn create_anki(
         &self,
-        title: &str,
+        title: Option<String>,
     ) -> Result<crate::model::anki::Anki, crate::error::Error> {
         let mut properties: std::collections::HashMap<String, notionrs::page::PageProperty> =
             std::collections::HashMap::new();
@@ -108,7 +108,7 @@ impl AnkiService {
         properties.insert(
             "title".to_string(),
             notionrs::page::PageProperty::Title(notionrs::page::PageTitleProperty::from(
-                title.to_string(),
+                title.unwrap_or("No Title".to_string()),
             )),
         );
 
@@ -246,7 +246,10 @@ mod tests {
             anki_repository: anki_repository_stub,
         };
 
-        let _ = anki_service.create_anki("title").await.unwrap();
+        let _ = anki_service
+            .create_anki(Some("title".to_string()))
+            .await
+            .unwrap();
     }
 
     #[tokio::test]

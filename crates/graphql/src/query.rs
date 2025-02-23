@@ -56,26 +56,6 @@ impl QueryRoot {
         self.bookmark_query_resolver.list_bookmark(ctx).await
     }
 
-    pub async fn translate(
-        &self,
-        ctx: &async_graphql::Context<'_>,
-        input: crate::model::translation::query::TranslateInput,
-    ) -> Result<String, async_graphql::Error> {
-        crate::model::translation::query::TranslationQuery
-            .translate(ctx, input)
-            .await
-    }
-
-    pub async fn translate_usage(
-        &self,
-        ctx: &async_graphql::Context<'_>,
-    ) -> Result<crate::model::translation::query::TranslateUsageResponse, async_graphql::Error>
-    {
-        crate::model::translation::query::TranslationQuery
-            .translate_usage(ctx)
-            .await
-    }
-
     pub async fn notion_todo_list(
         &self,
         ctx: &async_graphql::Context<'_>,

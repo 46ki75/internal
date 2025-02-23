@@ -6,66 +6,66 @@ pub struct BookmarkService {
 impl BookmarkService {
     pub async fn list_bookmark(
         &self,
-    ) -> Result<crate::model::bookmark::BookmarkConnection, crate::error::Error> {
+    ) -> Result<Vec<crate::model::bookmark::Bookmark>, crate::error::Error> {
         let response = self.bookmark_repository.list_bookmark().await?;
 
-        let bookmarks = response
-            .results
-            .iter()
-            .map(|bookmark| {
-                let id = bookmark.id.to_string();
+        let bookmarks =
+            response
+                .results
+                .iter()
+                .map(|bookmark| {
+                    let id = bookmark.id.to_string();
 
-                let name_property = bookmark.properties.get("name").ok_or(
-                    crate::error::Error::NotionPropertynotFound("name".to_string()),
-                )?;
+                    let name_property = bookmark.properties.get("name").ok_or(
+                        crate::error::Error::NotionPropertynotFound("name".to_string()),
+                    )?;
 
-                let name = match name_property {
-                    notionrs::page::PageProperty::Title(title) => {
-                        if title.to_string().trim().is_empty() {
-                            None
-                        } else {
-                            Some(title.to_string().trim().to_string())
+                    let name = match name_property {
+                        notionrs::page::PageProperty::Title(title) => {
+                            if title.to_string().trim().is_empty() {
+                                None
+                            } else {
+                                Some(title.to_string().trim().to_string())
+                            }
                         }
-                    }
-                    _ => {
-                        return Err(crate::error::Error::NotionPropertynotFound(
-                            "name".to_string(),
-                        ))
-                    }
-                };
-
-                let url_property = bookmark.properties.get("url").ok_or(
-                    crate::error::Error::NotionPropertynotFound("url".to_string()),
-                )?;
-
-                let url = match url_property {
-                    notionrs::page::PageProperty::Url(url) => {
-                        if url.to_string().trim().is_empty() {
-                            None
-                        } else {
-                            Some(url.to_string().trim().to_string())
+                        _ => {
+                            return Err(crate::error::Error::NotionPropertynotFound(
+                                "name".to_string(),
+                            ))
                         }
-                    }
-                    _ => {
-                        return Err(crate::error::Error::NotionPropertynotFound(
-                            "url".to_string(),
-                        ))
-                    }
-                };
+                    };
 
-                let favicon = bookmark.icon.clone().and_then(|i| match i {
-                    notionrs::Icon::File(file) => Some(file.get_url()),
-                    _ => None,
-                });
+                    let url_property = bookmark.properties.get("url").ok_or(
+                        crate::error::Error::NotionPropertynotFound("url".to_string()),
+                    )?;
 
-                let tags_property = bookmark.properties.get("tags").ok_or(
-                    crate::error::Error::NotionPropertynotFound("tags".to_string()),
-                )?;
+                    let url = match url_property {
+                        notionrs::page::PageProperty::Url(url) => {
+                            if url.to_string().trim().is_empty() {
+                                None
+                            } else {
+                                Some(url.to_string().trim().to_string())
+                            }
+                        }
+                        _ => {
+                            return Err(crate::error::Error::NotionPropertynotFound(
+                                "url".to_string(),
+                            ))
+                        }
+                    };
 
-                let tags =
-                    match tags_property {
-                        notionrs::page::PageProperty::MultiSelect(selects) => {
-                            selects
+                    let favicon = bookmark.icon.clone().and_then(|i| match i {
+                        notionrs::Icon::File(file) => Some(file.get_url()),
+                        _ => None,
+                    });
+
+                    let tags_property = bookmark.properties.get("tags").ok_or(
+                        crate::error::Error::NotionPropertynotFound("tags".to_string()),
+                    )?;
+
+                    let tags =
+                        match tags_property {
+                            notionrs::page::PageProperty::MultiSelect(selects) => selects
                                 .multi_select
                                 .iter()
                                 .map(|select| {
@@ -120,39 +120,26 @@ impl BookmarkService {
                                 .collect::<Result<
                                     Vec<crate::model::bookmark::BookmarkTag>,
                                     crate::error::Error,
-                                >>()?
-                        }
-                        _ => {
-                            return Err(crate::error::Error::NotionPropertynotFound(
-                                "tags".to_string(),
-                            ))
-                        }
-                    };
+                                >>()?,
+                            _ => {
+                                return Err(crate::error::Error::NotionPropertynotFound(
+                                    "tags".to_string(),
+                                ))
+                            }
+                        };
 
-                Ok(crate::model::bookmark::BookmarkEdge {
-                    node: crate::model::bookmark::Bookmark {
+                    Ok(crate::model::bookmark::Bookmark {
                         id: id.to_string(),
                         name,
                         url,
                         favicon,
                         tags,
                         notion_url: bookmark.url.to_string(),
-                    },
-                    cursor: id,
+                    })
                 })
-            })
-            .collect::<Result<Vec<crate::model::bookmark::BookmarkEdge>, crate::error::Error>>()?;
+                .collect::<Result<Vec<crate::model::bookmark::Bookmark>, crate::error::Error>>()?;
 
-        Ok(crate::model::bookmark::BookmarkConnection {
-            edges: bookmarks,
-            page_info: crate::model::PageInfo {
-                has_next_page: response.has_more.unwrap_or(false),
-                has_previous_page: false,
-                start_cursor: None,
-                end_cursor: None,
-                next_cursor: response.next_cursor.clone(),
-            },
-        })
+        Ok(bookmarks)
     }
 }
 

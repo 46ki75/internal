@@ -22,8 +22,17 @@ pub async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     let anki_mutation_resolver =
         std::sync::Arc::new(crate::resolver::anki::mutation::AnkiMutationResolver);
 
+    let bookmark_repository =
+        std::sync::Arc::new(crate::repository::bookmark::BookmarkRepositoryImpl);
+    let bookmark_service = std::sync::Arc::new(crate::service::bookmark::BookmarkService {
+        bookmark_repository,
+    });
+    let bookmark_query_resolver =
+        std::sync::Arc::new(crate::resolver::bookmark::query::BookmarkQueryResolver);
+
     let query_root = crate::query::QueryRoot {
         anki_query_resolver,
+        bookmark_query_resolver,
     };
 
     let mutation_root = crate::mutation::MutationRoot {
@@ -33,6 +42,7 @@ pub async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     let schema = Schema::build(query_root, mutation_root, EmptySubscription)
         .data(event.headers().clone())
         .data(anki_service)
+        .data(bookmark_service)
         .finish();
 
     if event.method() == Method::GET {

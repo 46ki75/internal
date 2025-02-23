@@ -1,5 +1,7 @@
 pub struct QueryRoot {
     pub anki_query_resolver: std::sync::Arc<crate::resolver::anki::query::AnkiQueryResolver>,
+    pub bookmark_query_resolver:
+        std::sync::Arc<crate::resolver::bookmark::query::BookmarkQueryResolver>,
 }
 
 #[async_graphql::Object]
@@ -37,14 +39,21 @@ impl QueryRoot {
         self.anki_query_resolver.anki_list(ctx, input).await
     }
 
+    // pub async fn bookmark_list(
+    //     &self,
+    //     ctx: &async_graphql::Context<'_>,
+    //     input: Option<crate::model::bookmark::query::BookmarkListInput>,
+    // ) -> Result<crate::model::bookmark::BookmarkConnection, async_graphql::Error> {
+    //     crate::model::bookmark::query::BookmarkQuery
+    //         .list_bookmark(ctx, input)
+    //         .await
+    // }
+
     pub async fn bookmark_list(
         &self,
         ctx: &async_graphql::Context<'_>,
-        input: Option<crate::model::bookmark::query::BookmarkListInput>,
-    ) -> Result<crate::model::bookmark::BookmarkConnection, async_graphql::Error> {
-        crate::model::bookmark::query::BookmarkQuery
-            .list_bookmark(ctx, input)
-            .await
+    ) -> Result<Vec<crate::model::bookmark::Bookmark>, async_graphql::Error> {
+        self.bookmark_query_resolver.list_bookmark(ctx).await
     }
 
     pub async fn translate(

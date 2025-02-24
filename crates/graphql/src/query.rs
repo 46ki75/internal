@@ -1,6 +1,10 @@
-use async_graphql::*;
-
-pub struct QueryRoot;
+pub struct QueryRoot {
+    pub anki_query_resolver: std::sync::Arc<crate::resolver::anki::query::AnkiQueryResolver>,
+    pub bookmark_query_resolver:
+        std::sync::Arc<crate::resolver::bookmark::query::BookmarkQueryResolver>,
+    pub to_do_query_resolver: std::sync::Arc<crate::resolver::to_do::query::ToDoQueryResolver>,
+    pub typing_query_resolver: std::sync::Arc<crate::resolver::typing::query::TypingQueryResolver>,
+}
 
 #[async_graphql::Object]
 impl QueryRoot {
@@ -15,83 +19,37 @@ impl QueryRoot {
     pub async fn anki(
         &self,
         ctx: &async_graphql::Context<'_>,
-        input: crate::model::anki::query::AnkiInput,
-    ) -> Result<crate::model::anki::Anki, async_graphql::Error> {
-        crate::model::anki::query::AnkiQuery.anki(ctx, input).await
+        input: crate::resolver::anki::query::AnkiInput,
+    ) -> Result<crate::entity::anki::Anki, async_graphql::Error> {
+        self.anki_query_resolver.anki(ctx, input).await
     }
 
     pub async fn anki_list(
         &self,
         ctx: &async_graphql::Context<'_>,
-        input: Option<crate::model::anki::query::ListAnkiInput>,
-    ) -> Result<crate::model::anki::AnkiConnection, async_graphql::Error> {
-        crate::model::anki::query::AnkiQuery
-            .list_anki(ctx, input)
-            .await
+        input: Option<crate::resolver::anki::query::AnkiListInput>,
+    ) -> Result<crate::entity::anki::AnkiConnection, async_graphql::Error> {
+        self.anki_query_resolver.anki_list(ctx, input).await
     }
 
     pub async fn bookmark_list(
         &self,
         ctx: &async_graphql::Context<'_>,
-        input: Option<crate::model::bookmark::query::BookmarkListInput>,
-    ) -> Result<crate::model::bookmark::BookmarkConnection, async_graphql::Error> {
-        crate::model::bookmark::query::BookmarkQuery
-            .list_bookmark(ctx, input)
-            .await
+    ) -> Result<Vec<crate::entity::bookmark::Bookmark>, async_graphql::Error> {
+        self.bookmark_query_resolver.list_bookmark(ctx).await
     }
 
-    pub async fn translate(
+    pub async fn todo_list(
         &self,
         ctx: &async_graphql::Context<'_>,
-        input: crate::model::translation::query::TranslateInput,
-    ) -> Result<String, async_graphql::Error> {
-        crate::model::translation::query::TranslationQuery
-            .translate(ctx, input)
-            .await
-    }
-
-    pub async fn translate_usage(
-        &self,
-        ctx: &async_graphql::Context<'_>,
-    ) -> Result<crate::model::translation::query::TranslateUsageResponse, async_graphql::Error>
-    {
-        crate::model::translation::query::TranslationQuery
-            .translate_usage(ctx)
-            .await
-    }
-
-    pub async fn notion_todo_list(
-        &self,
-        ctx: &async_graphql::Context<'_>,
-    ) -> Result<crate::model::todo::ToDoConnection, async_graphql::Error> {
-        crate::model::todo::query::ToDoQuery
-            .list_notion_to_do(ctx)
-            .await
-    }
-
-    pub async fn github_notification_list(
-        &self,
-        ctx: &async_graphql::Context<'_>,
-    ) -> Result<crate::model::todo::ToDoConnection, async_graphql::Error> {
-        crate::model::todo::query::ToDoQuery
-            .list_github_todo(ctx)
-            .await
+    ) -> Result<Vec<crate::entity::to_do::ToDo>, async_graphql::Error> {
+        self.to_do_query_resolver.to_do_list(ctx).await
     }
 
     pub async fn typing_list(
         &self,
         ctx: &async_graphql::Context<'_>,
-    ) -> Result<Vec<crate::model::typing::Typing>, async_graphql::Error> {
-        crate::model::typing::query::TypingQuery.typing(ctx).await
-    }
-
-    pub async fn routine_list(
-        &self,
-        ctx: &async_graphql::Context<'_>,
-        input: Option<crate::model::routine::query::RoutineQueryInput>,
-    ) -> Result<crate::model::routine::RoutineConnection, async_graphql::Error> {
-        crate::model::routine::query::RoutineQuery
-            .list_routine(ctx, input)
-            .await
+    ) -> Result<Vec<crate::entity::typing::Typing>, async_graphql::Error> {
+        self.typing_query_resolver.typing_list(ctx).await
     }
 }

@@ -1,5 +1,5 @@
 [package]
-name = "graphql"
+name = "internal-graphql"
 version = "0.1.0"
 edition = "2021"
 
@@ -23,7 +23,7 @@ chrono = "0.4.39"
 dotenvy = "0.15.7"
 elmethis-notion = { version = "1.0.0-alpha.8", features = ["rustls-tls"] }
 lambda_http = "0.14.0"
-notionrs = { version = "1.0.0-alpha.30", features = ["rustls-tls"] }
+notionrs = { version = "1.0.0-alpha.33", features = ["rustls-tls"] }
 serde = { version = "1.0.218", features = ["derive"] }
 serde_json = "1.0.139"
 tokio = { version = "1.43.0", features = ["macros"] }
@@ -36,6 +36,11 @@ aws-config = "1.5.11"
 aws-sdk-lambda = "1.61.0"
 aws-sdk-dynamodb = "1.55.0"
 uuid = { version = "1.13.2", features = ["v4"] }
+async-trait = "0.1.86"
+thiserror = "2.0.11"
+log = "0.4.26"
+env_logger = "0.11.6"
+once_cell = "1.20.3"
 
 [[bin]]
 name = "deploy"

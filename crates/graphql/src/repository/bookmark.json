@@ -1,0 +1,70 @@
+{
+  "object": "page",
+  "id": "19c34608-d5c9-815e-8d3d-f07de138b71a",
+  "created_time": "2025-02-16T12:15:00.000Z",
+  "last_edited_time": "2025-02-16T12:15:00.000Z",
+  "created_by": {
+    "object": "user",
+    "id": "e4ab2fbc-1eaf-4c41-b4a3-9708efc7580a"
+  },
+  "last_edited_by": {
+    "object": "user",
+    "id": "d7592761-a145-4788-ba2c-d67bbfaed77f"
+  },
+  "cover": null,
+  "icon": {
+    "type": "external",
+    "external": {
+      "url": "https://logo.clearbit.com/direct.bk.mufg.jp"
+    }
+  },
+  "parent": {
+    "type": "database_id",
+    "database_id": "9fc3ffdb-e018-4a43-a810-e1e8ed9fd6e1"
+  },
+  "archived": false,
+  "in_trash": false,
+  "properties": {
+    "tags": {
+      "id": "KS%5Er",
+      "type": "multi_select",
+      "multi_select": [
+        {
+          "id": "fbe4379e-c1e7-4f2f-a54c-8458a0834e1f",
+          "name": "Bank",
+          "color": "yellow"
+        }
+      ]
+    },
+    "url": {
+      "id": "S~xm",
+      "type": "url",
+      "url": "https://direct.bk.mufg.jp/index.html"
+    },
+    "name": {
+      "id": "title",
+      "type": "title",
+      "title": [
+        {
+          "type": "text",
+          "text": {
+            "content": "三菱UFJダイレクト",
+            "link": null
+          },
+          "annotations": {
+            "bold": false,
+            "italic": false,
+            "strikethrough": false,
+            "underline": false,
+            "code": false,
+            "color": "default"
+          },
+          "plain_text": "三菱UFJダイレクト",
+          "href": null
+        }
+      ]
+    }
+  },
+  "url": "https://www.notion.so/UFJ-19c34608d5c9815e8d3df07de138b71a",
+  "public_url": null
+}

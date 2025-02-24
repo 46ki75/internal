@@ -25,18 +25,6 @@
 
       <ElmTooltip>
         <template #original>
-          <NuxtLink to="/translate">
-            <Icon icon="mdi:language" class="icon" />
-          </NuxtLink>
-        </template>
-
-        <template #tooltip>
-          <span>Translate</span>
-        </template>
-      </ElmTooltip>
-
-      <ElmTooltip>
-        <template #original>
           <NuxtLink to="/color">
             <Icon icon="mdi:color" class="icon" />
           </NuxtLink>

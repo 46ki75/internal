@@ -1,32 +1,23 @@
-import { defineStore } from 'pinia'
-import { uniqBy } from 'lodash-es'
-import { z } from 'zod'
+import { defineStore } from "pinia";
+import { uniqBy } from "lodash-es";
+import { z } from "zod";
 
 const query = /* GraphQL */ `
-  query Bookmark {
-    bookmarkList(input: { pageSize: 100 }) {
-      edges {
-        node {
-          id
-          name
-          url
-          favicon
-          tags {
-            id
-            name
-            color
-          }
-          notionUrl
-        }
-        cursor
+  query BookmarkList {
+    bookmarkList {
+      id
+      name
+      url
+      favicon
+      tags {
+        id
+        name
+        color
       }
-      pageInfo {
-        hasNextPage
-        nextCursor
-      }
+      notionUrl
     }
   }
-`
+`;
 
 export const bookmarkSchema = z.object({
   id: z.string(),
@@ -37,110 +28,90 @@ export const bookmarkSchema = z.object({
     z.object({
       id: z.string(),
       name: z.string(),
-      color: z.string()
+      color: z.string(),
     })
   ),
-  notionUrl: z.string()
-})
+  notionUrl: z.string(),
+});
 
-type Bookmark = z.infer<typeof bookmarkSchema>
-
-export const bookmarkResponseSchema = z.object({
-  edges: z.array(
-    z.object({
-      node: bookmarkSchema,
-      cursor: z.string()
-    })
-  ),
-  pageInfo: z.object({
-    hasNextPage: z.boolean().optional().nullable(),
-    hasPreviousPage: z.boolean().optional().nullable(),
-    startCursor: z.string().optional().nullable(),
-    endCursor: z.string().optional().nullable(),
-    nextCursor: z.string().optional().nullable()
-  })
-})
-
-type BookmarkResponse = z.infer<typeof bookmarkResponseSchema>
+type Bookmark = z.infer<typeof bookmarkSchema>;
 
 type ClassifiedBookmarkList = Array<{
   tag: {
-    id: string
-    name: string
-    color: string
-  }
-  bookmarkList: BookmarkResponse['edges'][number]['node'][]
-}>
+    id: string;
+    name: string;
+    color: string;
+  };
+  bookmarkList: Bookmark[];
+}>;
 
 interface BookmarkState {
-  loading: boolean
-  error: string | null
-  bookmarkList: BookmarkResponse['edges'][number]['node'][]
+  loading: boolean;
+  error: string | null;
+  bookmarkList: Bookmark[];
 
-  createLoading: boolean
-  createError: string | null
+  createLoading: boolean;
+  createError: string | null;
 }
 
-export const useBookmarkStore = defineStore('bookmark', {
+export const useBookmarkStore = defineStore("bookmark", {
   state: (): BookmarkState => ({
     loading: false,
     error: null,
     bookmarkList: [],
     createLoading: false,
-    createError: null
+    createError: null,
   }),
   actions: {
     async fetch() {
-      this.loading = true
-      this.error = null
+      this.loading = true;
+      this.error = null;
 
-      const authStore = useAuthStore()
-      await authStore.refreshIfNeed()
+      const authStore = useAuthStore();
+      await authStore.refreshIfNeed();
 
-      const cache = window.localStorage.getItem('Bookmark')
-      if (cache != null) this.bookmarkList = JSON.parse(cache)
+      const cache = window.localStorage.getItem("Bookmark");
+      if (cache != null) this.bookmarkList = JSON.parse(cache);
 
       try {
         const result = await $fetch<{
-          data: { bookmarkList: BookmarkResponse }
-        }>('/api/graphql', {
-          method: 'POST',
+          data: { bookmarkList: Bookmark[] };
+        }>("/api/graphql", {
+          method: "POST",
           headers: {
-            Authorization: authStore.session.accessToken as string
+            Authorization: authStore.session.accessToken as string,
           },
-          body: { query }
-        })
+          body: { query },
+        });
 
-        this.bookmarkList = result.data.bookmarkList.edges.map(
-          (edge) => edge.node
-        )
+        this.bookmarkList = result.data.bookmarkList;
 
         window.localStorage.setItem(
-          'Bookmark',
+          "Bookmark",
           JSON.stringify(this.bookmarkList)
-        )
+        );
       } catch {
-        this.error = "Couldn't fetch bookmark list"
+        this.error = "Couldn't fetch bookmark list";
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
     async create({ name, url }: { name: string; url: string }) {
-      this.createLoading = true
+      this.createLoading = true;
 
-      const authStore = useAuthStore()
-      await authStore.refreshIfNeed()
+      const authStore = useAuthStore();
+      await authStore.refreshIfNeed();
 
       try {
         const response = await $fetch<{
           data: {
-            createBookmark: BookmarkResponse['edges'][number]['node']
-          }
-        }>('/api/graphql', {
-          method: 'POST',
+            createBookmark: Bookmark;
+          };
+        }>("/api/graphql", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `${authStore.session.accessToken}`
+            "Content-Type": "application/json",
+            Authorization: `${authStore.session.accessToken}`,
           },
           body: {
             query: /* GraphQL */ `
@@ -159,45 +130,45 @@ export const useBookmarkStore = defineStore('bookmark', {
                 }
               }
             `,
-            variables: { name, url }
-          }
-        })
+            variables: { name, url },
+          },
+        });
 
-        this.bookmarkList.push(response.data.createBookmark)
+        this.bookmarkList.push(response.data.createBookmark);
 
-        const { notionUrl } = response.data.createBookmark
+        const { notionUrl } = response.data.createBookmark;
 
-        window.open(notionUrl.replace('https://', 'notion://'), '_blank')
+        window.open(notionUrl.replace("https://", "notion://"), "_blank");
       } catch {
-        this.createError = "Couldn't create bookmark"
+        this.createError = "Couldn't create bookmark";
       } finally {
-        this.createLoading = false
+        this.createLoading = false;
       }
-    }
+    },
   },
   getters: {
-    tags(): BookmarkResponse['edges'][number]['node']['tags'] {
-      const tags = this.bookmarkList.flatMap((bookmark) => bookmark.tags)
-      const uniqueTags = uniqBy(tags, (tag) => tag.id)
-      return uniqueTags
+    tags(): Bookmark["tags"] {
+      const tags = this.bookmarkList.flatMap((bookmark) => bookmark.tags);
+      const uniqueTags = uniqBy(tags, (tag) => tag.id);
+      return uniqueTags;
     },
     classifiedBookmarkList(): ClassifiedBookmarkList {
-      const results: ClassifiedBookmarkList = []
-      const uniqueTags = this.tags
+      const results: ClassifiedBookmarkList = [];
+      const uniqueTags = this.tags;
 
       for (const tag of uniqueTags) {
-        results.push({ tag, bookmarkList: [] })
+        results.push({ tag, bookmarkList: [] });
       }
 
-      const bookmarkList = this.bookmarkList
+      const bookmarkList = this.bookmarkList;
       for (const bookmark of bookmarkList) {
         for (const tag of bookmark.tags) {
-          const index = results.findIndex((result) => result.tag.id === tag.id)
-          results[index].bookmarkList.push(bookmark)
+          const index = results.findIndex((result) => result.tag.id === tag.id);
+          results[index].bookmarkList.push(bookmark);
         }
       }
 
-      return results
-    }
-  }
-})
+      return results;
+    },
+  },
+});

@@ -6,17 +6,17 @@ pub struct TypingService {
 impl TypingService {
     pub async fn typing_list(
         &self,
-    ) -> Result<Vec<crate::model::typing::Typing>, crate::error::Error> {
+    ) -> Result<Vec<crate::entity::typing::Typing>, crate::error::Error> {
         let records = self.typing_repository.typing_list().await?;
 
         let results = records
             .into_iter()
-            .map(|record| crate::model::typing::Typing {
+            .map(|record| crate::entity::typing::Typing {
                 id: record.id,
                 text: record.text,
                 description: record.description,
             })
-            .collect::<Vec<crate::model::typing::Typing>>();
+            .collect::<Vec<crate::entity::typing::Typing>>();
 
         Ok(results)
     }
@@ -25,7 +25,7 @@ impl TypingService {
         &self,
         text: String,
         description: String,
-    ) -> Result<crate::model::typing::Typing, crate::error::Error> {
+    ) -> Result<crate::entity::typing::Typing, crate::error::Error> {
         let id = uuid::Uuid::new_v4().to_string();
 
         let record = self
@@ -33,7 +33,7 @@ impl TypingService {
             .upsert_typing(id, text, description)
             .await?;
 
-        Ok(crate::model::typing::Typing {
+        Ok(crate::entity::typing::Typing {
             id: record.id,
             text: record.text,
             description: record.description,
@@ -43,10 +43,10 @@ impl TypingService {
     pub async fn delete_typing(
         &self,
         id: String,
-    ) -> Result<crate::model::typing::Typing, crate::error::Error> {
+    ) -> Result<crate::entity::typing::Typing, crate::error::Error> {
         let record = self.typing_repository.delete_typing(id).await?;
 
-        Ok(crate::model::typing::Typing {
+        Ok(crate::entity::typing::Typing {
             id: record.id,
             text: record.text,
             description: record.description,

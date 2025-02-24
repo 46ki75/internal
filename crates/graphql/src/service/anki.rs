@@ -6,7 +6,7 @@ impl AnkiService {
     pub async fn get_anki_by_id(
         &self,
         id: &str,
-    ) -> Result<crate::model::anki::Anki, crate::error::Error> {
+    ) -> Result<crate::entity::anki::Anki, crate::error::Error> {
         let page = self.anki_repository.get_anki_by_id(id).await?;
 
         let anki = crate::util::anki::AnkiUtil::convert_page_response(page)?;
@@ -18,7 +18,7 @@ impl AnkiService {
         &self,
         page_size: u32,
         next_cursor: Option<String>,
-    ) -> Result<crate::model::anki::AnkiConnection, crate::error::Error> {
+    ) -> Result<crate::entity::anki::AnkiConnection, crate::error::Error> {
         let pages = self
             .anki_repository
             .list_anki(page_size, next_cursor)
@@ -28,19 +28,19 @@ impl AnkiService {
             .results
             .into_iter()
             .map(crate::util::anki::AnkiUtil::convert_page_response)
-            .collect::<Result<Vec<crate::model::anki::Anki>, crate::error::Error>>()?;
+            .collect::<Result<Vec<crate::entity::anki::Anki>, crate::error::Error>>()?;
 
         let anki_edge = anki_list
             .into_iter()
-            .map(|anki| crate::model::anki::AnkiEdge {
+            .map(|anki| crate::entity::anki::AnkiEdge {
                 cursor: anki.page_id.to_string(),
                 node: anki,
             })
-            .collect::<Vec<crate::model::anki::AnkiEdge>>();
+            .collect::<Vec<crate::entity::anki::AnkiEdge>>();
 
-        let anki_connection = crate::model::anki::AnkiConnection {
+        let anki_connection = crate::entity::anki::AnkiConnection {
             edges: anki_edge,
-            page_info: crate::model::PageInfo {
+            page_info: crate::entity::PageInfo {
                 next_cursor: pages.next_cursor,
                 ..Default::default()
             },
@@ -52,7 +52,7 @@ impl AnkiService {
     pub async fn list_blocks(
         &self,
         id: &str,
-    ) -> Result<crate::model::anki::AnkiBlock, crate::error::Error> {
+    ) -> Result<crate::entity::anki::AnkiBlock, crate::error::Error> {
         let blocks = self.anki_repository.list_blocks_by_id(id).await?;
 
         let mut front: Vec<elmethis_notion::block::Block> = Vec::new();
@@ -91,7 +91,7 @@ impl AnkiService {
             }
         }
 
-        Ok(crate::model::anki::AnkiBlock {
+        Ok(crate::entity::anki::AnkiBlock {
             front: serde_json::to_value(front)?,
             back: serde_json::to_value(back)?,
             explanation: serde_json::to_value(explanation)?,
@@ -101,7 +101,7 @@ impl AnkiService {
     pub async fn create_anki(
         &self,
         title: Option<String>,
-    ) -> Result<crate::model::anki::Anki, crate::error::Error> {
+    ) -> Result<crate::entity::anki::Anki, crate::error::Error> {
         let mut properties: std::collections::HashMap<String, notionrs::page::PageProperty> =
             std::collections::HashMap::new();
 
@@ -182,7 +182,7 @@ impl AnkiService {
         ease_factor: f64,
         repetition_count: u32,
         next_review_at: String,
-    ) -> Result<crate::model::anki::Anki, crate::error::Error> {
+    ) -> Result<crate::entity::anki::Anki, crate::error::Error> {
         let mut properties: std::collections::HashMap<String, notionrs::page::PageProperty> =
             std::collections::HashMap::new();
 

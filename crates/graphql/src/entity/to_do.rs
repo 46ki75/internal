@@ -25,7 +25,7 @@ pub enum Severity {
 #[derive(async_graphql::SimpleObject, Default, Debug)]
 pub struct ToDoConnection {
     pub edges: Vec<ToDoEdge>,
-    pub page_info: crate::model::PageInfo,
+    pub page_info: crate::entity::PageInfo,
 }
 
 #[derive(async_graphql::SimpleObject, Default, Debug)]

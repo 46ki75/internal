@@ -17,7 +17,7 @@ impl MutationRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: crate::resolver::anki::mutation::CreateAnkiInput,
-    ) -> Result<crate::model::anki::Anki, async_graphql::Error> {
+    ) -> Result<crate::entity::anki::Anki, async_graphql::Error> {
         self.anki_mutation_resolver.create_anki(ctx, input).await
     }
 
@@ -25,7 +25,7 @@ impl MutationRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: crate::resolver::anki::mutation::UpdateAnkiInput,
-    ) -> Result<crate::model::anki::Anki, async_graphql::Error> {
+    ) -> Result<crate::entity::anki::Anki, async_graphql::Error> {
         self.anki_mutation_resolver.update_anki(ctx, input).await
     }
 
@@ -33,7 +33,7 @@ impl MutationRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: crate::resolver::bookmark::mutation::CreateBookmarkInput,
-    ) -> Result<crate::model::bookmark::Bookmark, async_graphql::Error> {
+    ) -> Result<crate::entity::bookmark::Bookmark, async_graphql::Error> {
         self.bookmark_mutation_resolver
             .create_bookmark(ctx, input)
             .await
@@ -43,7 +43,7 @@ impl MutationRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: crate::resolver::to_do::mutation::CreateToDoInput,
-    ) -> Result<crate::model::to_do::ToDo, async_graphql::Error> {
+    ) -> Result<crate::entity::to_do::ToDo, async_graphql::Error> {
         self.to_do_mutation_resolver.create_to_do(ctx, input).await
     }
 
@@ -51,7 +51,7 @@ impl MutationRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: crate::resolver::to_do::mutation::UpdateToDoInput,
-    ) -> Result<crate::model::to_do::ToDo, async_graphql::Error> {
+    ) -> Result<crate::entity::to_do::ToDo, async_graphql::Error> {
         self.to_do_mutation_resolver.update_to_do(ctx, input).await
     }
 
@@ -59,7 +59,7 @@ impl MutationRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: crate::resolver::typing::mutation::TypingUpsertInput,
-    ) -> Result<crate::model::typing::Typing, async_graphql::Error> {
+    ) -> Result<crate::entity::typing::Typing, async_graphql::Error> {
         self.typing_mutation_resolver
             .upsert_typing(ctx, input)
             .await
@@ -69,7 +69,7 @@ impl MutationRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: crate::resolver::typing::mutation::TypingDeleteInput,
-    ) -> Result<crate::model::typing::Typing, async_graphql::Error> {
+    ) -> Result<crate::entity::typing::Typing, async_graphql::Error> {
         self.typing_mutation_resolver
             .delete_typing(ctx, input)
             .await

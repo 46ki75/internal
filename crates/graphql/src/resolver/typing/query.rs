@@ -4,7 +4,7 @@ impl TypingQueryResolver {
     pub async fn typing_list(
         &self,
         ctx: &async_graphql::Context<'_>,
-    ) -> Result<Vec<crate::model::typing::Typing>, async_graphql::Error> {
+    ) -> Result<Vec<crate::entity::typing::Typing>, async_graphql::Error> {
         let typing_service = ctx.data::<std::sync::Arc<crate::service::typing::TypingService>>()?;
 
         let results = typing_service

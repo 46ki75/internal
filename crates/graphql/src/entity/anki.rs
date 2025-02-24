@@ -1,7 +1,7 @@
 #[derive(async_graphql::SimpleObject)]
 pub struct AnkiConnection {
     pub edges: Vec<AnkiEdge>,
-    pub page_info: crate::model::PageInfo,
+    pub page_info: crate::entity::PageInfo,
 }
 
 #[derive(async_graphql::SimpleObject)]

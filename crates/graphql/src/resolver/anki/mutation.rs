@@ -19,7 +19,7 @@ impl AnkiMutationResolver {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: CreateAnkiInput,
-    ) -> Result<crate::model::anki::Anki, async_graphql::Error> {
+    ) -> Result<crate::entity::anki::Anki, async_graphql::Error> {
         let anki_service = ctx.data::<std::sync::Arc<crate::service::anki::AnkiService>>()?;
 
         Ok(anki_service
@@ -32,7 +32,7 @@ impl AnkiMutationResolver {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: UpdateAnkiInput,
-    ) -> Result<crate::model::anki::Anki, async_graphql::Error> {
+    ) -> Result<crate::entity::anki::Anki, async_graphql::Error> {
         let anki_service = ctx.data::<std::sync::Arc<crate::service::anki::AnkiService>>()?;
 
         Ok(anki_service

@@ -1,8 +1,8 @@
 use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use lambda_http::{http::Method, Body, Error, Request, Response};
 
+pub mod entity;
 pub mod error;
-pub mod model;
 pub mod mutation;
 pub mod query;
 pub mod record;

@@ -3,7 +3,7 @@ pub struct AnkiUtil;
 impl AnkiUtil {
     pub fn convert_page_response(
         page_response: notionrs::page::PageResponse,
-    ) -> Result<crate::model::anki::Anki, crate::error::Error> {
+    ) -> Result<crate::entity::anki::Anki, crate::error::Error> {
         let properties = page_response.properties;
 
         // >>> title
@@ -138,7 +138,7 @@ impl AnkiUtil {
                 tags.multi_select
                     .iter()
                     .map(|tag| {
-                        Ok(crate::model::anki::AnkiTag {
+                        Ok(crate::entity::anki::AnkiTag {
                             id: tag.clone().id.ok_or(
                                 crate::error::Error::NotionPropertynotFound("tag.id".to_string()),
                             )?,
@@ -162,7 +162,7 @@ impl AnkiUtil {
                             .to_string(),
                         })
                     })
-                    .collect::<Result<Vec<crate::model::anki::AnkiTag>, crate::error::Error>>()
+                    .collect::<Result<Vec<crate::entity::anki::AnkiTag>, crate::error::Error>>()
             }
             _ => {
                 return Err(crate::error::Error::NotionPropertynotFound(
@@ -177,7 +177,7 @@ impl AnkiUtil {
         let updated_at = page_response.last_edited_time.to_rfc3339();
         let url = page_response.url.to_string();
 
-        Ok(crate::model::anki::Anki {
+        Ok(crate::entity::anki::Anki {
             page_id,
             title,
             description,

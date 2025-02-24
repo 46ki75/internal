@@ -17,7 +17,7 @@ impl AnkiQueryResolver {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: AnkiInput,
-    ) -> Result<crate::model::anki::Anki, async_graphql::Error> {
+    ) -> Result<crate::entity::anki::Anki, async_graphql::Error> {
         let anki_service = ctx.data::<std::sync::Arc<crate::service::anki::AnkiService>>()?;
 
         let anki = anki_service
@@ -32,7 +32,7 @@ impl AnkiQueryResolver {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: Option<AnkiListInput>,
-    ) -> Result<crate::model::anki::AnkiConnection, async_graphql::Error> {
+    ) -> Result<crate::entity::anki::AnkiConnection, async_graphql::Error> {
         let anki_service = ctx.data::<std::sync::Arc<crate::service::anki::AnkiService>>()?;
 
         let input = input.unwrap_or(AnkiListInput {
@@ -50,7 +50,7 @@ impl AnkiQueryResolver {
 }
 
 #[async_graphql::Object]
-impl crate::model::anki::Anki {
+impl crate::entity::anki::Anki {
     async fn page_id(&self) -> &str {
         &self.page_id
     }
@@ -83,7 +83,7 @@ impl crate::model::anki::Anki {
         &self.updated_at
     }
 
-    async fn tags(&self) -> &[crate::model::anki::AnkiTag] {
+    async fn tags(&self) -> &[crate::entity::anki::AnkiTag] {
         &self.tags
     }
 
@@ -94,7 +94,7 @@ impl crate::model::anki::Anki {
     pub async fn block_list(
         &self,
         ctx: &async_graphql::Context<'_>,
-    ) -> Result<crate::model::anki::AnkiBlock, async_graphql::Error> {
+    ) -> Result<crate::entity::anki::AnkiBlock, async_graphql::Error> {
         let anki_service = ctx.data::<std::sync::Arc<crate::service::anki::AnkiService>>()?;
 
         let blocks = anki_service

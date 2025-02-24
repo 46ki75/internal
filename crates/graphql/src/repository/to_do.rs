@@ -1,0 +1,93 @@
+#[async_trait::async_trait]
+pub trait ToDoRepository {
+    async fn create_to_do(
+        &self,
+        properties: std::collections::HashMap<String, notionrs::page::properties::PageProperty>,
+    ) -> Result<notionrs::page::page_response::PageResponse, crate::error::Error>;
+
+    async fn list_notion_to_do(
+        &self,
+        filter: notionrs::filter::Filter,
+    ) -> Result<
+        notionrs::list_response::ListResponse<notionrs::page::page_response::PageResponse>,
+        crate::error::Error,
+    >;
+}
+
+pub struct ToDoRepositoryImpl;
+
+#[async_trait::async_trait]
+impl ToDoRepository for ToDoRepositoryImpl {
+    async fn create_to_do(
+        &self,
+        properties: std::collections::HashMap<String, notionrs::page::properties::PageProperty>,
+    ) -> Result<notionrs::page::page_response::PageResponse, crate::error::Error> {
+        let secret = std::env::var("NOTION_API_KEY")?;
+
+        let database_id = std::env::var("NOTION_TODO_DATABASE_ID")?;
+
+        let client = notionrs::client::Client::new().secret(secret);
+
+        let request = client
+            .create_page()
+            .database_id(database_id)
+            .properties(properties);
+
+        let response = request.send().await?;
+
+        Ok(response)
+    }
+
+    async fn list_notion_to_do(
+        &self,
+        filter: notionrs::filter::Filter,
+    ) -> Result<
+        notionrs::list_response::ListResponse<notionrs::page::page_response::PageResponse>,
+        crate::error::Error,
+    > {
+        let secret = std::env::var("NOTION_API_KEY")?;
+
+        let database_id = std::env::var("NOTION_TODO_DATABASE_ID")?;
+
+        let client = notionrs::client::Client::new().secret(secret);
+
+        let request = client
+            .query_database()
+            .filter(filter)
+            .database_id(database_id);
+
+        let response = request.send().await?;
+
+        Ok(response)
+    }
+}
+
+pub struct ToDoRepositoryStub;
+
+#[async_trait::async_trait]
+impl ToDoRepository for ToDoRepositoryStub {
+    async fn list_notion_to_do(
+        &self,
+        _filter: notionrs::filter::Filter,
+    ) -> Result<
+        notionrs::list_response::ListResponse<notionrs::page::page_response::PageResponse>,
+        crate::error::Error,
+    > {
+        let json = include_bytes!("./todo_list.json");
+
+        let response = serde_json::from_slice(json)?;
+
+        Ok(response)
+    }
+
+    async fn create_to_do(
+        &self,
+        _properties: std::collections::HashMap<String, notionrs::page::properties::PageProperty>,
+    ) -> Result<notionrs::page::page_response::PageResponse, crate::error::Error> {
+        let json = include_bytes!("./to_do.json");
+
+        let response = serde_json::from_slice(json)?;
+
+        Ok(response)
+    }
+}

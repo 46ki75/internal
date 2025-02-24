@@ -50,6 +50,6 @@ impl QueryRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
     ) -> Result<Vec<crate::model::typing::Typing>, async_graphql::Error> {
-        crate::model::typing::query::TypingQuery.typing(ctx).await
+        self.typing_query_resolver.typing_list(ctx).await
     }
 }

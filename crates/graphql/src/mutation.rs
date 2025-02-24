@@ -7,6 +7,8 @@ pub struct MutationRoot {
         std::sync::Arc<crate::resolver::bookmark::mutation::BookmarkMutationResolver>,
     pub to_do_mutation_resolver:
         std::sync::Arc<crate::resolver::to_do::mutation::ToDoMutationResolver>,
+    pub typing_mutation_resolver:
+        std::sync::Arc<crate::resolver::typing::mutation::TypingMutationResolver>,
 }
 
 #[async_graphql::Object]
@@ -37,26 +39,6 @@ impl MutationRoot {
             .await
     }
 
-    pub async fn upsert_typing(
-        &self,
-        ctx: &async_graphql::Context<'_>,
-        input: crate::model::typing::mutation::TypingInput,
-    ) -> Result<crate::model::typing::Typing, async_graphql::Error> {
-        crate::model::typing::mutation::TypingMutation
-            .upsert_typing(ctx, input)
-            .await
-    }
-
-    pub async fn delete_typing(
-        &self,
-        ctx: &async_graphql::Context<'_>,
-        input: crate::model::typing::mutation::TypingDeleteInput,
-    ) -> Result<String, async_graphql::Error> {
-        crate::model::typing::mutation::TypingMutation
-            .delete_typing(ctx, input)
-            .await
-    }
-
     pub async fn create_todo(
         &self,
         ctx: &async_graphql::Context<'_>,
@@ -71,5 +53,25 @@ impl MutationRoot {
         input: crate::resolver::to_do::mutation::UpdateToDoInput,
     ) -> Result<crate::model::to_do::ToDo, async_graphql::Error> {
         self.to_do_mutation_resolver.update_to_do(ctx, input).await
+    }
+
+    pub async fn upsert_typing(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+        input: crate::resolver::typing::mutation::TypingUpsertInput,
+    ) -> Result<crate::model::typing::Typing, async_graphql::Error> {
+        self.typing_mutation_resolver
+            .upsert_typing(ctx, input)
+            .await
+    }
+
+    pub async fn delete_typing(
+        &self,
+        ctx: &async_graphql::Context<'_>,
+        input: crate::resolver::typing::mutation::TypingDeleteInput,
+    ) -> Result<crate::model::typing::Typing, async_graphql::Error> {
+        self.typing_mutation_resolver
+            .delete_typing(ctx, input)
+            .await
     }
 }

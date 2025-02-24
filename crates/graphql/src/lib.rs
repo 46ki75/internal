@@ -5,6 +5,7 @@ pub mod error;
 pub mod model;
 pub mod mutation;
 pub mod query;
+pub mod record;
 pub mod repository;
 pub mod resolver;
 pub mod service;
@@ -40,11 +41,22 @@ static SCHEMA: once_cell::sync::Lazy<
     let to_do_mutation_resolver =
         std::sync::Arc::new(crate::resolver::to_do::mutation::ToDoMutationResolver);
 
+    log::debug!("Injecting dependencies: Typing");
+    let typing_repository: std::sync::Arc<repository::typing::TypingRepositoryImpl> =
+        std::sync::Arc::new(crate::repository::typing::TypingRepositoryImpl);
+    let typing_service =
+        std::sync::Arc::new(crate::service::typing::TypingService { typing_repository });
+    let typing_query_resolver =
+        std::sync::Arc::new(crate::resolver::typing::query::TypingQueryResolver);
+    let typing_mutation_resolver =
+        std::sync::Arc::new(crate::resolver::typing::mutation::TypingMutationResolver);
+
     log::debug!("Building schema: QueryRoot");
     let query_root = crate::query::QueryRoot {
         anki_query_resolver,
         bookmark_query_resolver,
         to_do_query_resolver,
+        typing_query_resolver,
     };
 
     log::debug!("Building schema: MutationRoot");
@@ -52,6 +64,7 @@ static SCHEMA: once_cell::sync::Lazy<
         anki_mutation_resolver,
         bookmark_mutation_resolver,
         to_do_mutation_resolver,
+        typing_mutation_resolver,
     };
 
     log::debug!("Building schema: Schema");
@@ -59,6 +72,7 @@ static SCHEMA: once_cell::sync::Lazy<
         .data(anki_service)
         .data(bookmark_service)
         .data(to_do_service)
+        .data(typing_service)
         .finish()
 });
 

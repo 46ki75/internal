@@ -26,4 +26,13 @@ pub enum Error {
 
     #[error("FQDN parse error: {0}")]
     FqdnParse(String),
+
+    #[error("DynamoDB error: {0}")]
+    DynamoDb(String),
+
+    #[error("No items found: {0}")]
+    DynamoDbNoItems(String),
+
+    #[error("DynamoDB Type error: {0}")]
+    DynamoDbType(String),
 }

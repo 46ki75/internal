@@ -3,6 +3,7 @@ pub struct QueryRoot {
     pub bookmark_query_resolver:
         std::sync::Arc<crate::resolver::bookmark::query::BookmarkQueryResolver>,
     pub to_do_query_resolver: std::sync::Arc<crate::resolver::to_do::query::ToDoQueryResolver>,
+    pub typing_query_resolver: std::sync::Arc<crate::resolver::typing::query::TypingQueryResolver>,
 }
 
 #[async_graphql::Object]

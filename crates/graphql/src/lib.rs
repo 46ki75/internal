@@ -31,22 +31,34 @@ static SCHEMA: once_cell::sync::Lazy<
     let bookmark_mutation_resolver =
         std::sync::Arc::new(crate::resolver::bookmark::mutation::BookmarkMutationResolver);
 
+    log::debug!("Injecting dependencies: ToDO");
+    let to_do_repository = std::sync::Arc::new(crate::repository::to_do::ToDoRepositoryImpl);
+    let to_do_service =
+        std::sync::Arc::new(crate::service::to_do::ToDoService { to_do_repository });
+    let to_do_query_resolver =
+        std::sync::Arc::new(crate::resolver::to_do::query::ToDoQueryResolver);
+    let to_do_mutation_resolver =
+        std::sync::Arc::new(crate::resolver::to_do::mutation::ToDoMutationResolver);
+
     log::debug!("Building schema: QueryRoot");
     let query_root = crate::query::QueryRoot {
         anki_query_resolver,
         bookmark_query_resolver,
+        to_do_query_resolver,
     };
 
     log::debug!("Building schema: MutationRoot");
     let mutation_root = crate::mutation::MutationRoot {
         anki_mutation_resolver,
         bookmark_mutation_resolver,
+        to_do_mutation_resolver,
     };
 
     log::debug!("Building schema: Schema");
     Schema::build(query_root, mutation_root, EmptySubscription)
         .data(anki_service)
         .data(bookmark_service)
+        .data(to_do_service)
         .finish()
 });
 

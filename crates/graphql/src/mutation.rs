@@ -5,6 +5,8 @@ pub struct MutationRoot {
         std::sync::Arc<crate::resolver::anki::mutation::AnkiMutationResolver>,
     pub bookmark_mutation_resolver:
         std::sync::Arc<crate::resolver::bookmark::mutation::BookmarkMutationResolver>,
+    pub to_do_mutation_resolver:
+        std::sync::Arc<crate::resolver::to_do::mutation::ToDoMutationResolver>,
 }
 
 #[async_graphql::Object]
@@ -68,11 +70,9 @@ impl MutationRoot {
     pub async fn create_todo(
         &self,
         ctx: &async_graphql::Context<'_>,
-        input: crate::model::todo::mutation::CreateToDoInput,
+        input: crate::resolver::to_do::mutation::CreateToDoInput,
     ) -> Result<crate::model::todo::ToDo, async_graphql::Error> {
-        crate::model::todo::mutation::ToDoMutation
-            .create_todo(ctx, input)
-            .await
+        self.to_do_mutation_resolver.create_to_do(ctx, input).await
     }
 
     pub async fn update_todo(

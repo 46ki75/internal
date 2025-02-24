@@ -2,6 +2,7 @@ pub struct QueryRoot {
     pub anki_query_resolver: std::sync::Arc<crate::resolver::anki::query::AnkiQueryResolver>,
     pub bookmark_query_resolver:
         std::sync::Arc<crate::resolver::bookmark::query::BookmarkQueryResolver>,
+    pub to_do_query_resolver: std::sync::Arc<crate::resolver::to_do::query::ToDoQueryResolver>,
 }
 
 #[async_graphql::Object]
@@ -37,22 +38,11 @@ impl QueryRoot {
         self.bookmark_query_resolver.list_bookmark(ctx).await
     }
 
-    pub async fn notion_todo_list(
+    pub async fn todo_list(
         &self,
         ctx: &async_graphql::Context<'_>,
-    ) -> Result<crate::model::todo::ToDoConnection, async_graphql::Error> {
-        crate::model::todo::query::ToDoQuery
-            .list_notion_to_do(ctx)
-            .await
-    }
-
-    pub async fn github_notification_list(
-        &self,
-        ctx: &async_graphql::Context<'_>,
-    ) -> Result<crate::model::todo::ToDoConnection, async_graphql::Error> {
-        crate::model::todo::query::ToDoQuery
-            .list_github_todo(ctx)
-            .await
+    ) -> Result<Vec<crate::model::todo::ToDo>, async_graphql::Error> {
+        self.to_do_query_resolver.to_do_list(ctx).await
     }
 
     pub async fn typing_list(

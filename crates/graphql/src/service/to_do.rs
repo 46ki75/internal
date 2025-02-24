@@ -51,6 +51,79 @@ impl ToDoService {
         })
     }
 
+    pub async fn update_to_do(
+        &self,
+        id: String,
+        is_done: bool,
+    ) -> Result<crate::model::todo::ToDo, crate::error::Error> {
+        let mut properties = std::collections::HashMap::new();
+
+        properties.insert(
+            "IsDone".to_string(),
+            notionrs::page::properties::PageProperty::Checkbox(
+                notionrs::page::properties::PageCheckboxProperty::from(is_done),
+            ),
+        );
+
+        let response = self.to_do_repository.update_to_do(id, properties).await?;
+
+        let properties = response.properties;
+
+        let title_property =
+            properties
+                .get("Title")
+                .ok_or(crate::error::Error::NotionPropertynotFound(
+                    "Title".to_string(),
+                ))?;
+
+        let title = if let notionrs::page::PageProperty::Title(title) = title_property {
+            Ok(title.to_string())
+        } else {
+            Err(crate::error::Error::NotionPropertynotFound(
+                "Title".to_string(),
+            ))
+        }?;
+
+        let serverity_property =
+            properties
+                .get("Severity")
+                .ok_or(crate::error::Error::NotionPropertynotFound(
+                    "Severity".to_string(),
+                ))?;
+
+        let severity = if let notionrs::page::PageProperty::Select(severity) = serverity_property {
+            let select_name_str = severity.to_string();
+            Ok(if select_name_str == "INFO" {
+                crate::model::todo::Severity::Info
+            } else if select_name_str == "WARN" {
+                crate::model::todo::Severity::Warn
+            } else if select_name_str == "ERROR" {
+                crate::model::todo::Severity::Error
+            } else if select_name_str == "FATAL" {
+                crate::model::todo::Severity::Fatal
+            } else {
+                crate::model::todo::Severity::Unknown
+            })
+        } else {
+            Err(crate::error::Error::NotionPropertynotFound(
+                "Severity".to_string(),
+            ))
+        }?;
+
+        Ok(crate::model::todo::ToDo {
+            id: response.id,
+            url: response.url,
+            source: "Notion:todo".to_string(),
+            title,
+            description: None,
+            is_done,
+            deadline: None,
+            severity,
+            created_at: Some(response.created_time.to_rfc3339()),
+            updated_at: Some(response.last_edited_time.to_rfc3339()),
+        })
+    }
+
     pub async fn list_notion_to_do(
         &self,
     ) -> Result<Vec<crate::model::todo::ToDo>, crate::error::Error> {
@@ -160,13 +233,25 @@ mod tests {
     use super::*;
 
     #[tokio::test]
-    async fn create_todo() {
+    async fn create_to_do() {
         let to_do_repository = std::sync::Arc::new(crate::repository::to_do::ToDoRepositoryStub);
 
         let to_do_service = ToDoService { to_do_repository };
 
         let _todos = to_do_service
             .create_to_do("My Title".to_string())
+            .await
+            .unwrap();
+    }
+
+    #[tokio::test]
+    async fn update_to_do() {
+        let to_do_repository = std::sync::Arc::new(crate::repository::to_do::ToDoRepositoryStub);
+
+        let to_do_service = ToDoService { to_do_repository };
+
+        let _todos = to_do_service
+            .update_to_do("aab0c9e2-d945-4ba2-a7f2-0609fee58530".to_string(), true)
             .await
             .unwrap();
     }

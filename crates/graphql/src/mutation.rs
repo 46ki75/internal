@@ -78,10 +78,8 @@ impl MutationRoot {
     pub async fn update_todo(
         &self,
         ctx: &async_graphql::Context<'_>,
-        input: crate::model::todo::mutation::UpdateToDoInput,
+        input: crate::resolver::to_do::mutation::UpdateToDoInput,
     ) -> Result<crate::model::todo::ToDo, async_graphql::Error> {
-        crate::model::todo::mutation::ToDoMutation
-            .update_todo(ctx, input)
-            .await
+        self.to_do_mutation_resolver.update_to_do(ctx, input).await
     }
 }

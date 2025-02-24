@@ -7,7 +7,7 @@ impl ToDoService {
     pub async fn create_to_do(
         &self,
         title: String,
-    ) -> Result<crate::model::todo::ToDo, crate::error::Error> {
+    ) -> Result<crate::model::to_do::ToDo, crate::error::Error> {
         let properties = {
             let mut properties = std::collections::HashMap::new();
 
@@ -37,7 +37,7 @@ impl ToDoService {
 
         let response = self.to_do_repository.create_to_do(properties).await?;
 
-        Ok(crate::model::todo::ToDo {
+        Ok(crate::model::to_do::ToDo {
             id: response.id,
             url: response.url,
             title,
@@ -45,7 +45,7 @@ impl ToDoService {
             source: "Notion:todo".to_string(),
             is_done: false,
             deadline: None,
-            severity: crate::model::todo::Severity::Info,
+            severity: crate::model::to_do::Severity::Info,
             created_at: Some(response.created_time.to_rfc3339()),
             updated_at: Some(response.last_edited_time.to_rfc3339()),
         })
@@ -55,7 +55,7 @@ impl ToDoService {
         &self,
         id: String,
         is_done: bool,
-    ) -> Result<crate::model::todo::ToDo, crate::error::Error> {
+    ) -> Result<crate::model::to_do::ToDo, crate::error::Error> {
         let mut properties = std::collections::HashMap::new();
 
         properties.insert(
@@ -94,15 +94,15 @@ impl ToDoService {
         let severity = if let notionrs::page::PageProperty::Select(severity) = serverity_property {
             let select_name_str = severity.to_string();
             Ok(if select_name_str == "INFO" {
-                crate::model::todo::Severity::Info
+                crate::model::to_do::Severity::Info
             } else if select_name_str == "WARN" {
-                crate::model::todo::Severity::Warn
+                crate::model::to_do::Severity::Warn
             } else if select_name_str == "ERROR" {
-                crate::model::todo::Severity::Error
+                crate::model::to_do::Severity::Error
             } else if select_name_str == "FATAL" {
-                crate::model::todo::Severity::Fatal
+                crate::model::to_do::Severity::Fatal
             } else {
-                crate::model::todo::Severity::Unknown
+                crate::model::to_do::Severity::Unknown
             })
         } else {
             Err(crate::error::Error::NotionPropertynotFound(
@@ -110,7 +110,7 @@ impl ToDoService {
             ))
         }?;
 
-        Ok(crate::model::todo::ToDo {
+        Ok(crate::model::to_do::ToDo {
             id: response.id,
             url: response.url,
             source: "Notion:todo".to_string(),
@@ -126,7 +126,7 @@ impl ToDoService {
 
     pub async fn list_notion_to_do(
         &self,
-    ) -> Result<Vec<crate::model::todo::ToDo>, crate::error::Error> {
+    ) -> Result<Vec<crate::model::to_do::ToDo>, crate::error::Error> {
         let filter = notionrs::filter::Filter::and(vec![
             notionrs::filter::Filter::select_equals("Type", "todo"),
             notionrs::filter::Filter::checkbox_is_not_checked("IsDone"),
@@ -177,7 +177,7 @@ impl ToDoService {
                             _ => None,
                         });
 
-                let severity: crate::model::todo::Severity = result
+                let severity: crate::model::to_do::Severity = result
                     .properties
                     .get("Severity")
                     .and_then(|s| {
@@ -186,13 +186,13 @@ impl ToDoService {
                                 let select_name_str = select_name.to_string();
 
                                 if select_name_str == "INFO" {
-                                    Some(crate::model::todo::Severity::Info)
+                                    Some(crate::model::to_do::Severity::Info)
                                 } else if select_name_str == "WARN" {
-                                    return Some(crate::model::todo::Severity::Warn);
+                                    return Some(crate::model::to_do::Severity::Warn);
                                 } else if select_name_str == "ERROR" {
-                                    return Some(crate::model::todo::Severity::Error);
+                                    return Some(crate::model::to_do::Severity::Error);
                                 } else if select_name_str == "FATAL" {
-                                    return Some(crate::model::todo::Severity::Fatal);
+                                    return Some(crate::model::to_do::Severity::Fatal);
                                 } else {
                                     None
                                 }
@@ -203,12 +203,12 @@ impl ToDoService {
                             None
                         }
                     })
-                    .unwrap_or(crate::model::todo::Severity::Unknown);
+                    .unwrap_or(crate::model::to_do::Severity::Unknown);
 
                 let created_at = Some(result.created_time.to_rfc3339());
                 let updated_at = Some(result.last_edited_time.to_rfc3339());
 
-                Ok(crate::model::todo::ToDo {
+                Ok(crate::model::to_do::ToDo {
                     id,
                     url,
                     source,
@@ -221,7 +221,7 @@ impl ToDoService {
                     updated_at,
                 })
             })
-            .collect::<Result<Vec<crate::model::todo::ToDo>, crate::error::Error>>()?;
+            .collect::<Result<Vec<crate::model::to_do::ToDo>, crate::error::Error>>()?;
 
         Ok(todos)
     }

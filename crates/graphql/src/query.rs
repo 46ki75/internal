@@ -41,7 +41,7 @@ impl QueryRoot {
     pub async fn todo_list(
         &self,
         ctx: &async_graphql::Context<'_>,
-    ) -> Result<Vec<crate::model::todo::ToDo>, async_graphql::Error> {
+    ) -> Result<Vec<crate::model::to_do::ToDo>, async_graphql::Error> {
         self.to_do_query_resolver.to_do_list(ctx).await
     }
 

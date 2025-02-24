@@ -1,7 +1,7 @@
 pub mod anki;
 pub mod bookmark;
 pub mod routine;
-pub mod todo;
+pub mod to_do;
 pub mod typing;
 
 #[derive(async_graphql::SimpleObject, Default, Debug)]

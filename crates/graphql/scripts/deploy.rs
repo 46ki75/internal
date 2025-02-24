@@ -25,8 +25,9 @@ async fn main() {
         .start_file("bootstrap", options)
         .expect("Failed to create file in zip");
 
-    let mut bootstrap_content = std::fs::File::open("../../target/lambda/graphql/bootstrap")
-        .expect("Failed to open bootstrap file");
+    let mut bootstrap_content =
+        std::fs::File::open("../../target/lambda/internal-graphql/bootstrap")
+            .expect("Failed to open bootstrap file");
 
     let mut buffer = Vec::new();
 

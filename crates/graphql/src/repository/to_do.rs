@@ -14,10 +14,7 @@ pub trait ToDoRepository {
     async fn list_notion_to_do(
         &self,
         filter: notionrs::filter::Filter,
-    ) -> Result<
-        notionrs::list_response::ListResponse<notionrs::page::page_response::PageResponse>,
-        crate::error::Error,
-    >;
+    ) -> Result<Vec<notionrs::page::page_response::PageResponse>, crate::error::Error>;
 }
 
 pub struct ToDoRepositoryImpl;
@@ -63,10 +60,7 @@ impl ToDoRepository for ToDoRepositoryImpl {
     async fn list_notion_to_do(
         &self,
         filter: notionrs::filter::Filter,
-    ) -> Result<
-        notionrs::list_response::ListResponse<notionrs::page::page_response::PageResponse>,
-        crate::error::Error,
-    > {
+    ) -> Result<Vec<notionrs::page::page_response::PageResponse>, crate::error::Error> {
         let secret = std::env::var("NOTION_API_KEY")?;
 
         let database_id = std::env::var("NOTION_TODO_DATABASE_ID")?;
@@ -74,7 +68,7 @@ impl ToDoRepository for ToDoRepositoryImpl {
         let client = notionrs::client::Client::new().secret(secret);
 
         let request = client
-            .query_database()
+            .query_database_all()
             .filter(filter)
             .database_id(database_id);
 
@@ -114,14 +108,11 @@ impl ToDoRepository for ToDoRepositoryStub {
     async fn list_notion_to_do(
         &self,
         _filter: notionrs::filter::Filter,
-    ) -> Result<
-        notionrs::list_response::ListResponse<notionrs::page::page_response::PageResponse>,
-        crate::error::Error,
-    > {
-        let json = include_bytes!("./todo_list.json");
+    ) -> Result<Vec<notionrs::page::page_response::PageResponse>, crate::error::Error> {
+        let json = include_bytes!("./to_do.json");
 
         let response = serde_json::from_slice(json)?;
 
-        Ok(response)
+        Ok(vec![response])
     }
 }

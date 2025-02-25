@@ -1,4 +1,3 @@
-import type { string } from "zod";
 import type { TypingEntity } from "~/entity/Entity";
 
 export interface TypingRepository {

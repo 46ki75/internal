@@ -10,7 +10,6 @@ impl BookmarkService {
         let response = self.bookmark_repository.list_bookmark().await?;
 
         let bookmarks = response
-            .results
             .iter()
             .map(|bookmark| {
                 let id = bookmark.id.to_string();

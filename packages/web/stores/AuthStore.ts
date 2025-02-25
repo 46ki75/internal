@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { AuthRepositoryImpl } from "~/repository/Auth";
+import { AuthRepositoryImpl } from "~/repository/AuthRepository";
 
 const authRepository = new AuthRepositoryImpl();
 

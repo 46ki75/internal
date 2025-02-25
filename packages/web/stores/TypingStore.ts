@@ -1,4 +1,4 @@
-import { TypingRepositoryImpl } from "~/repository/Typing";
+import { TypingRepositoryImpl } from "~/repository/TypingRepository";
 
 interface Typing {
   id: String;

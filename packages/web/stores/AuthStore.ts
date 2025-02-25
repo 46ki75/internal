@@ -1,115 +1,97 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
+import { AuthRepositoryImpl } from "~/repository/Auth";
 
-import { Amplify } from 'aws-amplify'
-import {
-  fetchAuthSession,
-  getCurrentUser,
-  signIn,
-  signOut
-} from 'aws-amplify/auth'
-
-const configure = () => {
-  const config = useRuntimeConfig()
-
-  Amplify.configure({
-    Auth: {
-      Cognito: {
-        userPoolId: config.public.USER_POOL_ID,
-        userPoolClientId: config.public.USER_POOL_CLIENT_ID
-      }
-    }
-  })
-}
+const authRepository = new AuthRepositoryImpl();
 
 interface AuthState {
   session: {
-    useId?: string
-    username?: string
+    useId?: string;
+    username?: string;
 
-    accessToken?: string
-    accessTokenExpiresAt?: number
+    accessToken?: string;
+    accessTokenExpiresAt?: number;
 
-    idToken?: string
-    idTokenExpiresAt?: number
-  }
+    idToken?: string;
+    idTokenExpiresAt?: number;
+  };
 
   signInState: {
-    loading: boolean
-    error: boolean
-  }
+    loading: boolean;
+    error: boolean;
+  };
 
   signOut: {
-    loadingState: boolean
-    error: boolean
-  }
+    loadingState: boolean;
+    error: boolean;
+  };
 
   refreshState: {
-    loading: boolean
-    error: boolean
-  }
+    loading: boolean;
+    error: boolean;
+  };
 }
 
-export const useAuthStore = defineStore('auth', {
-  state: (): AuthState => ({
-    session: {
-      useId: undefined,
-      username: undefined,
+export const useAuthStore = defineStore("auth", {
+  state: (): AuthState => {
+    return {
+      session: {
+        useId: undefined,
+        username: undefined,
 
-      accessToken: undefined,
-      accessTokenExpiresAt: undefined,
+        accessToken: undefined,
+        accessTokenExpiresAt: undefined,
 
-      idToken: undefined,
-      idTokenExpiresAt: undefined
-    },
+        idToken: undefined,
+        idTokenExpiresAt: undefined,
+      },
 
-    signInState: {
-      loading: false,
-      error: false
-    },
+      signInState: {
+        loading: false,
+        error: false,
+      },
 
-    signOut: {
-      loadingState: false,
-      error: false
-    },
+      signOut: {
+        loadingState: false,
+        error: false,
+      },
 
-    refreshState: {
-      loading: false,
-      error: false
-    }
-  }),
+      refreshState: {
+        loading: false,
+        error: false,
+      },
+    };
+  },
   actions: {
-    async signin({
+    async signIn({
       username,
-      password
+      password,
     }: {
-      username: string
-      password: string
+      username: string;
+      password: string;
     }) {
-      this.signInState.loading = true
-      this.signInState.error = false
+      this.signInState.loading = true;
+      this.signInState.error = false;
       try {
-        configure()
-        const _ = await signIn({ username, password })
+        const _ = await authRepository.signIn({ username, password });
       } catch (e: any) {
-        this.signInState.error = true
-        throw new Error(e)
+        this.signInState.error = true;
+        throw new Error(e);
       } finally {
-        this.signInState.loading = false
+        this.signInState.loading = false;
       }
-      await this.refresh()
+      await this.refresh();
     },
     async signOut() {
-      this.signOut.loadingState = true
-      this.signOut.error = false
-      configure()
+      this.signOut.loadingState = true;
+      this.signOut.error = false;
       try {
-        await signOut()
+        authRepository.signOut();
       } catch {
-        this.signOut.error = true
+        this.signOut.error = true;
       } finally {
-        this.signOut.loadingState = false
+        this.signOut.loadingState = false;
       }
-      await this.refresh()
+      await this.refresh();
     },
 
     /**
@@ -119,31 +101,35 @@ export const useAuthStore = defineStore('auth', {
      * - false: need to sign in
      */
     async refresh(): Promise<boolean> {
-      this.refreshState.loading = true
-      this.refreshState.error = false
-
-      configure()
+      this.refreshState.loading = true;
+      this.refreshState.error = false;
 
       try {
-        const { tokens } = await fetchAuthSession({ forceRefresh: true })
-        this.session.accessToken = tokens?.accessToken.toString()
-        this.session.accessTokenExpiresAt = tokens?.accessToken.payload.exp
-        this.session.idToken = tokens?.idToken?.toString()
-        this.session.idTokenExpiresAt = tokens?.idToken?.payload.exp
+        const {
+          accessToken,
+          accessTokenExpiresAt,
+          idToken,
+          idTokenExpiresAt,
+          userId,
+          username,
+        } = await authRepository.refresh();
 
-        const { userId, username } = await getCurrentUser()
-        this.session.useId = userId
-        this.session.username = username
+        this.session.accessToken = accessToken;
+        this.session.accessTokenExpiresAt = accessTokenExpiresAt;
+        this.session.idToken = idToken;
+        this.session.idTokenExpiresAt = idTokenExpiresAt;
+        this.session.useId = userId;
+        this.session.username = username;
       } catch {
-        this.session.useId = undefined
-        this.session.username = undefined
-        this.refreshState.error = true
-        this.refreshState.loading = false
-        return false
+        this.session.useId = undefined;
+        this.session.username = undefined;
+        this.refreshState.error = true;
+        this.refreshState.loading = false;
+        return false;
       }
 
-      this.refreshState.loading = false
-      return true
+      this.refreshState.loading = false;
+      return true;
     },
 
     /**
@@ -154,9 +140,9 @@ export const useAuthStore = defineStore('auth', {
      * - false: need to sign in
      */
     async refreshIfNeed(thresholdSecond: number = 60 * 10): Promise<boolean> {
-      const INTERVAL = 50 // [ms]
-      const TIMEOUT = 3000 // [ms]
-      const ITERATION_COUNT = TIMEOUT / INTERVAL
+      const INTERVAL = 50; // [ms]
+      const TIMEOUT = 3000; // [ms]
+      const ITERATION_COUNT = TIMEOUT / INTERVAL;
 
       for (let i = 0; i < ITERATION_COUNT; i++) {
         if (
@@ -164,34 +150,34 @@ export const useAuthStore = defineStore('auth', {
           this.idTokenRemainSeconds < thresholdSecond
         ) {
           if (this.refreshState.loading) {
-            await new Promise((resolve) => setTimeout(resolve, INTERVAL))
-            continue
+            await new Promise((resolve) => setTimeout(resolve, INTERVAL));
+            continue;
           } else {
-            return await this.refresh()
+            return await this.refresh();
           }
         }
-        return true
+        return true;
       }
-      return false
-    }
+      return false;
+    },
   },
   getters: {
     accessTokenRemainSeconds(): number {
-      const expireAt: number | undefined = this.session?.accessTokenExpiresAt // [s]
-      if (!expireAt) return 0
-      const remainSeconds = expireAt - Date.now() / 1000 // [s]
-      return remainSeconds
+      const expireAt: number | undefined = this.session?.accessTokenExpiresAt; // [s]
+      if (!expireAt) return 0;
+      const remainSeconds = expireAt - Date.now() / 1000; // [s]
+      return remainSeconds;
     },
     idTokenRemainSeconds(): number {
-      const expireAt: number | undefined = this.session?.idTokenExpiresAt
-      if (!expireAt) return 0
-      const remainSeconds = expireAt - Date.now() / 1000 // [s]
-      return remainSeconds
+      const expireAt: number | undefined = this.session?.idTokenExpiresAt;
+      if (!expireAt) return 0;
+      const remainSeconds = expireAt - Date.now() / 1000; // [s]
+      return remainSeconds;
     },
     inSession(): boolean {
-      const expireAt: number | undefined = this.session.accessTokenExpiresAt
-      if (!expireAt) return false
-      return new Date(expireAt * 1000).getTime() > new Date().getTime()
-    }
-  }
-})
+      const expireAt: number | undefined = this.session.accessTokenExpiresAt;
+      if (!expireAt) return false;
+      return new Date(expireAt * 1000).getTime() > new Date().getTime();
+    },
+  },
+});

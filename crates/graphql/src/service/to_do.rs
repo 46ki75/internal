@@ -135,7 +135,6 @@ impl ToDoService {
         let response = self.to_do_repository.list_notion_to_do(filter).await?;
 
         let todos = response
-            .results
             .iter()
             .map(|result| {
                 let id = result.id.clone();

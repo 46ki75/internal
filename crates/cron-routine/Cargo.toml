@@ -25,7 +25,7 @@ notionrs = "1.0.0-alpha.30"
 tokio = { version = "1", features = ["macros"] }
 
 tempfile = "3.17.1"
-zip = "2.2.2"
+zip = "2.2.3"
 aws-config = "1.5.11"
 aws-sdk-lambda = "1.61.0"
 uuid = { version = "1.14.0", features = ["v4"] }

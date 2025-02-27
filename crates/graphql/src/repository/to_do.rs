@@ -27,12 +27,11 @@ impl ToDoRepository for ToDoRepositoryImpl {
         &self,
         properties: std::collections::HashMap<String, notionrs::page::properties::PageProperty>,
     ) -> Result<notionrs::page::page_response::PageResponse, crate::error::Error> {
-        let secret = self.config.notion_api_key.as_str();
         let database_id = self.config.notion_to_do_database_id.as_str();
 
-        let client = notionrs::client::Client::new().secret(secret);
-
-        let request = client
+        let request = self
+            .config
+            .notion_client
             .create_page()
             .database_id(database_id)
             .properties(properties);
@@ -47,11 +46,12 @@ impl ToDoRepository for ToDoRepositoryImpl {
         id: String,
         properties: std::collections::HashMap<String, notionrs::page::properties::PageProperty>,
     ) -> Result<notionrs::page::page_response::PageResponse, crate::error::Error> {
-        let secret = self.config.notion_api_key.as_str();
-
-        let client = notionrs::client::Client::new().secret(secret);
-
-        let request = client.update_page().page_id(&id).properties(properties);
+        let request = self
+            .config
+            .notion_client
+            .update_page()
+            .page_id(&id)
+            .properties(properties);
 
         let response = request.send().await?;
 
@@ -62,12 +62,11 @@ impl ToDoRepository for ToDoRepositoryImpl {
         &self,
         filter: notionrs::filter::Filter,
     ) -> Result<Vec<notionrs::page::page_response::PageResponse>, crate::error::Error> {
-        let secret = self.config.notion_api_key.as_str();
         let database_id = self.config.notion_to_do_database_id.as_str();
 
-        let client = notionrs::client::Client::new().secret(secret);
-
-        let request = client
+        let request = self
+            .config
+            .notion_client
             .query_database_all()
             .filter(filter)
             .database_id(database_id);

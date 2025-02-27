@@ -1,10 +1,12 @@
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Config {
     pub environment: String,
     pub notion_api_key: String,
     pub notion_anki_database_id: String,
     pub notion_to_do_database_id: String,
     pub notion_bookmark_database_id: String,
+    pub notion_client: std::sync::Arc<notionrs::client::Client>,
+    pub elmethis_notion_client: std::sync::Arc<elmethis_notion::client::Client>,
 }
 
 impl Config {
@@ -38,12 +40,20 @@ impl Config {
                 )
             })?;
 
+        let notion_client =
+            std::sync::Arc::new(notionrs::client::Client::new().secret(&notion_api_key));
+
+        let elmethis_notion_client =
+            std::sync::Arc::new(elmethis_notion::client::Client::new(&notion_api_key));
+
         Ok(Config {
             environment,
             notion_api_key,
             notion_anki_database_id,
             notion_to_do_database_id,
             notion_bookmark_database_id,
+            notion_client,
+            elmethis_notion_client,
         })
     }
 }

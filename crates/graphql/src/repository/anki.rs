@@ -42,11 +42,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
         &self,
         id: &str,
     ) -> Result<notionrs::page::PageResponse, crate::error::Error> {
-        let secret = self.config.notion_api_key.as_str();
-
-        let client = notionrs::client::Client::new().secret(secret);
-
-        let request = client.get_page().page_id(id);
+        let request = self.config.notion_client.get_page().page_id(id);
 
         log::debug!("Sending request to Notion API");
         let response = request.send().await?;
@@ -62,14 +58,13 @@ impl AnkiRepository for AnkiRepositoryImpl {
         notionrs::list_response::ListResponse<notionrs::page::PageResponse>,
         crate::error::Error,
     > {
-        let secret = self.config.notion_api_key.as_str();
         let database_id = self.config.notion_anki_database_id.as_str();
-
-        let client = notionrs::client::Client::new().secret(secret);
 
         let sorts = vec![notionrs::database::Sort::asc("nextReviewAt")];
 
-        let mut request = client
+        let mut request = self
+            .config
+            .notion_client
             .query_database()
             .database_id(database_id)
             .sorts(sorts)
@@ -90,12 +85,11 @@ impl AnkiRepository for AnkiRepositoryImpl {
         properties: std::collections::HashMap<String, notionrs::page::PageProperty>,
         children: Vec<notionrs::block::Block>,
     ) -> Result<notionrs::page::PageResponse, crate::error::Error> {
-        let secret = self.config.notion_api_key.as_str();
         let database_id = self.config.notion_anki_database_id.as_str();
 
-        let client = notionrs::client::Client::new().secret(secret);
-
-        let request = client
+        let request = self
+            .config
+            .notion_client
             .create_page()
             .database_id(database_id)
             .properties(properties)
@@ -112,11 +106,12 @@ impl AnkiRepository for AnkiRepositoryImpl {
         page_id: &str,
         properties: std::collections::HashMap<String, notionrs::page::PageProperty>,
     ) -> Result<notionrs::page::PageResponse, crate::error::Error> {
-        let secret = self.config.notion_api_key.as_str();
-
-        let client = notionrs::client::Client::new().secret(secret);
-
-        let request = client.update_page().page_id(page_id).properties(properties);
+        let request = self
+            .config
+            .notion_client
+            .update_page()
+            .page_id(page_id)
+            .properties(properties);
 
         log::debug!("Sending request to Notion API");
         let response = request.send().await?;

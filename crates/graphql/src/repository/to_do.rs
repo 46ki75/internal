@@ -17,7 +17,9 @@ pub trait ToDoRepository {
     ) -> Result<Vec<notionrs::page::page_response::PageResponse>, crate::error::Error>;
 }
 
-pub struct ToDoRepositoryImpl;
+pub struct ToDoRepositoryImpl {
+    pub config: crate::config::Config,
+}
 
 #[async_trait::async_trait]
 impl ToDoRepository for ToDoRepositoryImpl {
@@ -25,9 +27,8 @@ impl ToDoRepository for ToDoRepositoryImpl {
         &self,
         properties: std::collections::HashMap<String, notionrs::page::properties::PageProperty>,
     ) -> Result<notionrs::page::page_response::PageResponse, crate::error::Error> {
-        let secret = std::env::var("NOTION_API_KEY")?;
-
-        let database_id = std::env::var("NOTION_TODO_DATABASE_ID")?;
+        let secret = self.config.notion_api_key.as_str();
+        let database_id = self.config.notion_to_do_database_id.as_str();
 
         let client = notionrs::client::Client::new().secret(secret);
 
@@ -46,7 +47,7 @@ impl ToDoRepository for ToDoRepositoryImpl {
         id: String,
         properties: std::collections::HashMap<String, notionrs::page::properties::PageProperty>,
     ) -> Result<notionrs::page::page_response::PageResponse, crate::error::Error> {
-        let secret = std::env::var("NOTION_API_KEY")?;
+        let secret = self.config.notion_api_key.as_str();
 
         let client = notionrs::client::Client::new().secret(secret);
 
@@ -61,9 +62,8 @@ impl ToDoRepository for ToDoRepositoryImpl {
         &self,
         filter: notionrs::filter::Filter,
     ) -> Result<Vec<notionrs::page::page_response::PageResponse>, crate::error::Error> {
-        let secret = std::env::var("NOTION_API_KEY")?;
-
-        let database_id = std::env::var("NOTION_TODO_DATABASE_ID")?;
+        let secret = self.config.notion_api_key.as_str();
+        let database_id = self.config.notion_to_do_database_id.as_str();
 
         let client = notionrs::client::Client::new().secret(secret);
 

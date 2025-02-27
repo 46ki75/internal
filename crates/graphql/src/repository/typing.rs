@@ -17,14 +17,16 @@ pub trait TypingRepository {
     ) -> Result<crate::record::typing::TypingRecord, crate::error::Error>;
 }
 
-pub struct TypingRepositoryImpl;
+pub struct TypingRepositoryImpl {
+    pub config: crate::config::Config,
+}
 
 #[async_trait::async_trait]
 impl TypingRepository for TypingRepositoryImpl {
     async fn typing_list(
         &self,
     ) -> Result<Vec<crate::record::typing::TypingRecord>, crate::error::Error> {
-        let environment = std::env::var("ENVIRONMENT")?;
+        let environment = self.config.environment.as_str();
 
         let config = aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
 
@@ -57,7 +59,7 @@ impl TypingRepository for TypingRepositoryImpl {
         text: String,
         description: String,
     ) -> Result<crate::record::typing::TypingRecord, crate::error::Error> {
-        let environment = std::env::var("ENVIRONMENT")?;
+        let environment = self.config.environment.as_str();
 
         let config = aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
 
@@ -101,7 +103,7 @@ impl TypingRepository for TypingRepositoryImpl {
         &self,
         id: String,
     ) -> Result<crate::record::typing::TypingRecord, crate::error::Error> {
-        let environment = std::env::var("ENVIRONMENT")?;
+        let environment = self.config.environment.as_str();
 
         let config = aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
 

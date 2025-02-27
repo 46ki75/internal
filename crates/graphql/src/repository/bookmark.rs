@@ -12,7 +12,7 @@ pub trait BookmarkRepository: Send + Sync {
 }
 
 pub struct BookmarkRepositoryImpl {
-    pub config: crate::config::Config,
+    pub config: std::sync::Arc<crate::config::Config>,
 }
 
 #[async_trait::async_trait]

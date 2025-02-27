@@ -18,7 +18,9 @@ static SCHEMA: tokio::sync::OnceCell<
 
 async fn init_schema(
 ) -> Schema<crate::query::QueryRoot, crate::mutation::MutationRoot, EmptySubscription> {
-    let config = crate::config::Config::try_new().expect("Failed to load configuration");
+    let config = std::sync::Arc::new(
+        crate::config::Config::try_new().expect("Failed to load configuration"),
+    );
 
     log::debug!("Injecting dependencies: Anki");
     let anki_repository = std::sync::Arc::new(crate::repository::anki::AnkiRepositoryImpl {

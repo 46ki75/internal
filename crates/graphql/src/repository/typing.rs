@@ -18,7 +18,7 @@ pub trait TypingRepository {
 }
 
 pub struct TypingRepositoryImpl {
-    pub config: crate::config::Config,
+    pub config: std::sync::Arc<crate::config::Config>,
 }
 
 #[async_trait::async_trait]

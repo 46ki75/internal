@@ -35,7 +35,7 @@ zip = "2.2.3"
 aws-config = "1.5.11"
 aws-sdk-lambda = "1.61.0"
 aws-sdk-dynamodb = "1.55.0"
-uuid = { version = "1.14.0", features = ["v4"] }
+uuid = { version = "1.15.0", features = ["v4"] }
 async-trait = "0.1.86"
 thiserror = "2.0.11"
 log = "0.4.26"

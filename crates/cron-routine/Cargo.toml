@@ -28,7 +28,7 @@ tempfile = "3.17.1"
 zip = "2.2.3"
 aws-config = "1.5.11"
 aws-sdk-lambda = "1.61.0"
-uuid = { version = "1.14.0", features = ["v4"] }
+uuid = { version = "1.15.0", features = ["v4"] }
 
 [[bin]]
 name = "deploy"

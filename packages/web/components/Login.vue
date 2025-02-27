@@ -28,47 +28,47 @@
 </template>
 
 <script setup lang="ts">
-import { ElmButton, ElmInlineText, ElmTextField } from '@elmethis/core'
-import { Icon } from '@iconify/vue'
+import { ElmButton, ElmInlineText, ElmTextField } from "@elmethis/core";
+import { Icon } from "@iconify/vue";
 
-const UserIcon = h(Icon, { icon: 'mdi:user-circle-outline' })
-const LockIcon = h(Icon, { icon: 'mdi:lock' })
+const UserIcon = h(Icon, { icon: "mdi:user-circle-outline" });
+const LockIcon = h(Icon, { icon: "mdi:lock" });
 
-const authStore = useAuthStore()
-const router = useRouter()
+const authStore = useAuthStore();
+const router = useRouter();
 
-const username = ref<string>('')
-const password = ref<string>('')
-const error = ref<string | null>(null)
+const username = ref<string>("");
+const password = ref<string>("");
+const error = ref<string | null>(null);
 
 const handleSignIn = async () => {
   if (
     username.value == null ||
     password.value == null ||
-    username.value == '' ||
-    password.value == ''
+    username.value == "" ||
+    password.value == ""
   ) {
-    console.log('password is empty')
-    error.value = 'Please enter username and password'
+    console.log("password is empty");
+    error.value = "Please enter username and password";
   } else {
-    await authStore.signin({
+    await authStore.signIn({
       username: username.value,
-      password: password.value
-    })
+      password: password.value,
+    });
 
     if (authStore.inSession) {
-      router.push('/')
+      router.push("/");
     }
   }
-}
+};
 
 onMounted(async () => {
-  await authStore.refresh()
-})
+  await authStore.refresh();
+});
 </script>
 
 <style scoped lang="scss">
-@use '../scss/mixins';
+@use "../scss/mixins";
 
 .icon {
   @include mixins.icon;

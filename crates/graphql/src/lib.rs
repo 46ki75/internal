@@ -16,7 +16,7 @@ static SCHEMA: tokio::sync::OnceCell<
     Schema<crate::query::QueryRoot, crate::mutation::MutationRoot, EmptySubscription>,
 > = tokio::sync::OnceCell::const_new();
 
-async fn init_schema() -> Result<
+async fn try_init_schema() -> Result<
     Schema<crate::query::QueryRoot, crate::mutation::MutationRoot, EmptySubscription>,
     crate::error::Error,
 > {
@@ -95,7 +95,7 @@ async fn init_schema() -> Result<
 pub async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     dotenvy::dotenv().ok();
 
-    let schema = match SCHEMA.get_or_try_init(init_schema).await {
+    let schema = match SCHEMA.get_or_try_init(try_init_schema).await {
         Ok(schema) => schema,
         Err(err) => {
             return Ok(Response::builder()

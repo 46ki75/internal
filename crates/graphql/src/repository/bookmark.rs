@@ -11,19 +11,22 @@ pub trait BookmarkRepository: Send + Sync {
     ) -> Result<notionrs::page::page_response::PageResponse, crate::error::Error>;
 }
 
-pub struct BookmarkRepositoryImpl;
+pub struct BookmarkRepositoryImpl {
+    pub config: std::sync::Arc<crate::config::Config>,
+}
 
 #[async_trait::async_trait]
 impl BookmarkRepository for BookmarkRepositoryImpl {
     async fn list_bookmark(
         &self,
     ) -> Result<Vec<notionrs::page::page_response::PageResponse>, crate::error::Error> {
-        let secret = std::env::var("NOTION_API_KEY")?;
-        let database_id = std::env::var("NOTION_BOOKMARK_DATABASE_ID")?;
+        let database_id = self.config.notion_bookmark_database_id.as_str();
 
-        let client = notionrs::client::Client::new().secret(secret);
-
-        let request = client.query_database_all().database_id(database_id);
+        let request = self
+            .config
+            .notion_client
+            .query_database_all()
+            .database_id(database_id);
 
         let response = request.send().await?;
 
@@ -35,13 +38,11 @@ impl BookmarkRepository for BookmarkRepositoryImpl {
         properties: std::collections::HashMap<String, notionrs::page::properties::PageProperty>,
         favicon: &str,
     ) -> Result<notionrs::page::page_response::PageResponse, crate::error::Error> {
-        let secret = std::env::var("NOTION_API_KEY")?;
+        let database_id = self.config.notion_bookmark_database_id.as_str();
 
-        let database_id = std::env::var("NOTION_BOOKMARK_DATABASE_ID")?;
-
-        let client = notionrs::client::Client::new().secret(&secret);
-
-        let request = client
+        let request = self
+            .config
+            .notion_client
             .create_page()
             .database_id(database_id)
             .properties(properties)

@@ -32,7 +32,9 @@ pub trait AnkiRepository: Send + Sync {
     ) -> Result<Vec<elmethis_notion::block::Block>, crate::error::Error>;
 }
 
-pub struct AnkiRepositoryImpl;
+pub struct AnkiRepositoryImpl {
+    pub config: std::sync::Arc<crate::config::Config>,
+}
 
 #[async_trait::async_trait]
 impl AnkiRepository for AnkiRepositoryImpl {
@@ -40,11 +42,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
         &self,
         id: &str,
     ) -> Result<notionrs::page::PageResponse, crate::error::Error> {
-        let secret = std::env::var("NOTION_API_KEY")?;
-
-        let client = notionrs::client::Client::new().secret(secret);
-
-        let request = client.get_page().page_id(id);
+        let request = self.config.notion_client.get_page().page_id(id);
 
         log::debug!("Sending request to Notion API");
         let response = request.send().await?;
@@ -60,14 +58,13 @@ impl AnkiRepository for AnkiRepositoryImpl {
         notionrs::list_response::ListResponse<notionrs::page::PageResponse>,
         crate::error::Error,
     > {
-        let secret = std::env::var("NOTION_API_KEY")?;
-        let database_id = std::env::var("NOTION_ANKI_DATABASE_ID")?;
-
-        let client = notionrs::client::Client::new().secret(secret);
+        let database_id = self.config.notion_anki_database_id.as_str();
 
         let sorts = vec![notionrs::database::Sort::asc("nextReviewAt")];
 
-        let mut request = client
+        let mut request = self
+            .config
+            .notion_client
             .query_database()
             .database_id(database_id)
             .sorts(sorts)
@@ -88,12 +85,11 @@ impl AnkiRepository for AnkiRepositoryImpl {
         properties: std::collections::HashMap<String, notionrs::page::PageProperty>,
         children: Vec<notionrs::block::Block>,
     ) -> Result<notionrs::page::PageResponse, crate::error::Error> {
-        let secret = std::env::var("NOTION_API_KEY")?;
-        let database_id = std::env::var("NOTION_ANKI_DATABASE_ID")?;
+        let database_id = self.config.notion_anki_database_id.as_str();
 
-        let client = notionrs::client::Client::new().secret(secret);
-
-        let request = client
+        let request = self
+            .config
+            .notion_client
             .create_page()
             .database_id(database_id)
             .properties(properties)
@@ -110,11 +106,12 @@ impl AnkiRepository for AnkiRepositoryImpl {
         page_id: &str,
         properties: std::collections::HashMap<String, notionrs::page::PageProperty>,
     ) -> Result<notionrs::page::PageResponse, crate::error::Error> {
-        let secret = std::env::var("NOTION_API_KEY")?;
-
-        let client = notionrs::client::Client::new().secret(secret);
-
-        let request = client.update_page().page_id(page_id).properties(properties);
+        let request = self
+            .config
+            .notion_client
+            .update_page()
+            .page_id(page_id)
+            .properties(properties);
 
         log::debug!("Sending request to Notion API");
         let response = request.send().await?;
@@ -126,7 +123,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
         &self,
         page_id: &str,
     ) -> Result<Vec<elmethis_notion::block::Block>, crate::error::Error> {
-        let secret = std::env::var("NOTION_API_KEY")?;
+        let secret = self.config.notion_api_key.as_str();
 
         let mut client = elmethis_notion::client::Client::new(secret);
 

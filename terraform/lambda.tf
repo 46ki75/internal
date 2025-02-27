@@ -16,7 +16,7 @@ data "aws_ssm_parameter" "lambda_env_NOTION_BOOKMARK_DATABASE_ID" {
   name = "/shared/46ki75/internal/notion/bookmark/database/id"
 }
 
-data "aws_ssm_parameter" "lambda_env_NOTION_TODO_DATABASE_ID" {
+data "aws_ssm_parameter" "lambda_env_NOTION_TO_DO_DATABASE_ID" {
   name = "/shared/46ki75/internal/notion/todo/database/id"
 }
 
@@ -92,7 +92,7 @@ resource "aws_lambda_function" "graphql" {
       GITHUB_TOKEN                = data.aws_ssm_parameter.lambda_env_GITHUB_TOKEN.value
       NOTION_ANKI_DATABASE_ID     = data.aws_ssm_parameter.lambda_env_NOTION_ANKI_DATABASE_ID.value
       NOTION_BOOKMARK_DATABASE_ID = data.aws_ssm_parameter.lambda_env_NOTION_BOOKMARK_DATABASE_ID.value
-      NOTION_TODO_DATABASE_ID     = data.aws_ssm_parameter.lambda_env_NOTION_TODO_DATABASE_ID.value
+      NOTION_TO_DO_DATABASE_ID    = data.aws_ssm_parameter.lambda_env_NOTION_TO_DO_DATABASE_ID.value
       NOTION_ROUTINE_DATABASE_ID  = data.aws_ssm_parameter.lambda_env_NOTION_ROUTINE_DATABASE_ID.value
       DEEPL_API_KEY               = data.aws_ssm_parameter.lambda_env_DEEPL_API_KEY.value
     }

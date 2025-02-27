@@ -1,7 +1,7 @@
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error("Environmental variable not found: {0}")]
-    EnvironmentalVariableNotFound(#[from] std::env::VarError),
+    EnvironmentalVariableNotFound(String),
 
     #[error("Invalid timezone")]
     InvalidTimezone,

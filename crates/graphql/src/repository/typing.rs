@@ -17,22 +17,22 @@ pub trait TypingRepository {
     ) -> Result<crate::record::typing::TypingRecord, crate::error::Error>;
 }
 
-pub struct TypingRepositoryImpl;
+pub struct TypingRepositoryImpl {
+    pub config: std::sync::Arc<crate::config::Config>,
+}
 
 #[async_trait::async_trait]
 impl TypingRepository for TypingRepositoryImpl {
     async fn typing_list(
         &self,
     ) -> Result<Vec<crate::record::typing::TypingRecord>, crate::error::Error> {
-        let environment = std::env::var("ENVIRONMENT")?;
-
-        let config = aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
-
-        let dynamodb_client = aws_sdk_dynamodb::Client::new(&config);
+        let environment = self.config.environment.as_str();
 
         let table_name = format!("{environment}-46ki75-internal-dynamodb-table");
 
-        let request = dynamodb_client
+        let request = self
+            .config
+            .dynamodb_client
             .query()
             .table_name(table_name)
             .key_condition_expression("PK = :pk")
@@ -57,15 +57,13 @@ impl TypingRepository for TypingRepositoryImpl {
         text: String,
         description: String,
     ) -> Result<crate::record::typing::TypingRecord, crate::error::Error> {
-        let environment = std::env::var("ENVIRONMENT")?;
-
-        let config = aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
-
-        let dynamodb_client = aws_sdk_dynamodb::Client::new(&config);
+        let environment = self.config.environment.as_str();
 
         let table_name = format!("{environment}-46ki75-internal-dynamodb-table");
 
-        let request = dynamodb_client
+        let request = self
+            .config
+            .dynamodb_client
             .put_item()
             .table_name(table_name)
             .item(
@@ -101,15 +99,13 @@ impl TypingRepository for TypingRepositoryImpl {
         &self,
         id: String,
     ) -> Result<crate::record::typing::TypingRecord, crate::error::Error> {
-        let environment = std::env::var("ENVIRONMENT")?;
-
-        let config = aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
-
-        let dynamodb_client = aws_sdk_dynamodb::Client::new(&config);
+        let environment = self.config.environment.as_str();
 
         let table_name = format!("{environment}-46ki75-internal-dynamodb-table");
 
-        let request = dynamodb_client
+        let request = self
+            .config
+            .dynamodb_client
             .delete_item()
             .table_name(table_name)
             .key(

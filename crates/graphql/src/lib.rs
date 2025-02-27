@@ -1,6 +1,7 @@
 use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use lambda_http::{http::Method, Body, Error, Request, Response};
 
+pub mod config;
 pub mod entity;
 pub mod error;
 pub mod mutation;
@@ -11,11 +12,20 @@ pub mod resolver;
 pub mod service;
 pub mod util;
 
-static SCHEMA: once_cell::sync::Lazy<
+static SCHEMA: tokio::sync::OnceCell<
     Schema<crate::query::QueryRoot, crate::mutation::MutationRoot, EmptySubscription>,
-> = once_cell::sync::Lazy::new(|| {
+> = tokio::sync::OnceCell::const_new();
+
+async fn try_init_schema() -> Result<
+    Schema<crate::query::QueryRoot, crate::mutation::MutationRoot, EmptySubscription>,
+    crate::error::Error,
+> {
+    let config = std::sync::Arc::new(crate::config::Config::try_new_async().await?);
+
     log::debug!("Injecting dependencies: Anki");
-    let anki_repository = std::sync::Arc::new(crate::repository::anki::AnkiRepositoryImpl);
+    let anki_repository = std::sync::Arc::new(crate::repository::anki::AnkiRepositoryImpl {
+        config: config.clone(),
+    });
     let anki_service = std::sync::Arc::new(crate::service::anki::AnkiService { anki_repository });
     let anki_query_resolver = std::sync::Arc::new(crate::resolver::anki::query::AnkiQueryResolver);
     let anki_mutation_resolver =
@@ -23,7 +33,9 @@ static SCHEMA: once_cell::sync::Lazy<
 
     log::debug!("Injecting dependencies: Bookmark");
     let bookmark_repository =
-        std::sync::Arc::new(crate::repository::bookmark::BookmarkRepositoryImpl);
+        std::sync::Arc::new(crate::repository::bookmark::BookmarkRepositoryImpl {
+            config: config.clone(),
+        });
     let bookmark_service = std::sync::Arc::new(crate::service::bookmark::BookmarkService {
         bookmark_repository,
     });
@@ -33,7 +45,9 @@ static SCHEMA: once_cell::sync::Lazy<
         std::sync::Arc::new(crate::resolver::bookmark::mutation::BookmarkMutationResolver);
 
     log::debug!("Injecting dependencies: ToDO");
-    let to_do_repository = std::sync::Arc::new(crate::repository::to_do::ToDoRepositoryImpl);
+    let to_do_repository = std::sync::Arc::new(crate::repository::to_do::ToDoRepositoryImpl {
+        config: config.clone(),
+    });
     let to_do_service =
         std::sync::Arc::new(crate::service::to_do::ToDoService { to_do_repository });
     let to_do_query_resolver =
@@ -43,7 +57,9 @@ static SCHEMA: once_cell::sync::Lazy<
 
     log::debug!("Injecting dependencies: Typing");
     let typing_repository: std::sync::Arc<repository::typing::TypingRepositoryImpl> =
-        std::sync::Arc::new(crate::repository::typing::TypingRepositoryImpl);
+        std::sync::Arc::new(crate::repository::typing::TypingRepositoryImpl {
+            config: config.clone(),
+        });
     let typing_service =
         std::sync::Arc::new(crate::service::typing::TypingService { typing_repository });
     let typing_query_resolver =
@@ -68,16 +84,29 @@ static SCHEMA: once_cell::sync::Lazy<
     };
 
     log::debug!("Building schema: Schema");
-    Schema::build(query_root, mutation_root, EmptySubscription)
+    Ok(Schema::build(query_root, mutation_root, EmptySubscription)
         .data(anki_service)
         .data(bookmark_service)
         .data(to_do_service)
         .data(typing_service)
-        .finish()
-});
+        .finish())
+}
 
 pub async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
-    dotenvy::dotenv().ok();
+    let schema = match SCHEMA.get_or_try_init(try_init_schema).await {
+        Ok(schema) => schema,
+        Err(err) => {
+            return Ok(Response::builder()
+                .status(500)
+                .header("content-type", "application/json")
+                .body(
+                    serde_json::json!({"error": format!("Failed to initialize schema: {}", err)})
+                        .to_string()
+                        .into(),
+                )
+                .map_err(Box::new)?);
+        }
+    };
 
     log::debug!("Lambda function triggered");
 
@@ -107,7 +136,7 @@ pub async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
             }
         };
 
-        let gql_response = SCHEMA.execute(gql_request).await;
+        let gql_response = schema.execute(gql_request).await;
 
         let response_body = match serde_json::to_string(&gql_response) {
             Ok(body) => body,

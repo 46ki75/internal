@@ -93,8 +93,6 @@ async fn try_init_schema() -> Result<
 }
 
 pub async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
-    dotenvy::dotenv().ok();
-
     let schema = match SCHEMA.get_or_try_init(try_init_schema).await {
         Ok(schema) => schema,
         Err(err) => {

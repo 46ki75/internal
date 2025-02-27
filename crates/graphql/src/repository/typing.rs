@@ -28,13 +28,11 @@ impl TypingRepository for TypingRepositoryImpl {
     ) -> Result<Vec<crate::record::typing::TypingRecord>, crate::error::Error> {
         let environment = self.config.environment.as_str();
 
-        let config = aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
-
-        let dynamodb_client = aws_sdk_dynamodb::Client::new(&config);
-
         let table_name = format!("{environment}-46ki75-internal-dynamodb-table");
 
-        let request = dynamodb_client
+        let request = self
+            .config
+            .dynamodb_client
             .query()
             .table_name(table_name)
             .key_condition_expression("PK = :pk")
@@ -61,13 +59,11 @@ impl TypingRepository for TypingRepositoryImpl {
     ) -> Result<crate::record::typing::TypingRecord, crate::error::Error> {
         let environment = self.config.environment.as_str();
 
-        let config = aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
-
-        let dynamodb_client = aws_sdk_dynamodb::Client::new(&config);
-
         let table_name = format!("{environment}-46ki75-internal-dynamodb-table");
 
-        let request = dynamodb_client
+        let request = self
+            .config
+            .dynamodb_client
             .put_item()
             .table_name(table_name)
             .item(
@@ -105,13 +101,11 @@ impl TypingRepository for TypingRepositoryImpl {
     ) -> Result<crate::record::typing::TypingRecord, crate::error::Error> {
         let environment = self.config.environment.as_str();
 
-        let config = aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
-
-        let dynamodb_client = aws_sdk_dynamodb::Client::new(&config);
-
         let table_name = format!("{environment}-46ki75-internal-dynamodb-table");
 
-        let request = dynamodb_client
+        let request = self
+            .config
+            .dynamodb_client
             .delete_item()
             .table_name(table_name)
             .key(

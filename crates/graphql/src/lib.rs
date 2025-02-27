@@ -16,11 +16,11 @@ static SCHEMA: tokio::sync::OnceCell<
     Schema<crate::query::QueryRoot, crate::mutation::MutationRoot, EmptySubscription>,
 > = tokio::sync::OnceCell::const_new();
 
-async fn init_schema(
-) -> Schema<crate::query::QueryRoot, crate::mutation::MutationRoot, EmptySubscription> {
-    let config = std::sync::Arc::new(
-        crate::config::Config::try_new().expect("Failed to load configuration"),
-    );
+async fn init_schema() -> Result<
+    Schema<crate::query::QueryRoot, crate::mutation::MutationRoot, EmptySubscription>,
+    crate::error::Error,
+> {
+    let config = std::sync::Arc::new(crate::config::Config::try_new()?);
 
     log::debug!("Injecting dependencies: Anki");
     let anki_repository = std::sync::Arc::new(crate::repository::anki::AnkiRepositoryImpl {
@@ -84,18 +84,31 @@ async fn init_schema(
     };
 
     log::debug!("Building schema: Schema");
-    Schema::build(query_root, mutation_root, EmptySubscription)
+    Ok(Schema::build(query_root, mutation_root, EmptySubscription)
         .data(anki_service)
         .data(bookmark_service)
         .data(to_do_service)
         .data(typing_service)
-        .finish()
+        .finish())
 }
 
 pub async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     dotenvy::dotenv().ok();
 
-    let schema = SCHEMA.get_or_init(init_schema).await;
+    let schema = match SCHEMA.get_or_try_init(init_schema).await {
+        Ok(schema) => schema,
+        Err(err) => {
+            return Ok(Response::builder()
+                .status(500)
+                .header("content-type", "application/json")
+                .body(
+                    serde_json::json!({"error": format!("Failed to initialize schema: {}", err)})
+                        .to_string()
+                        .into(),
+                )
+                .map_err(Box::new)?);
+        }
+    };
 
     log::debug!("Lambda function triggered");
 

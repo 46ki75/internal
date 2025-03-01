@@ -2,7 +2,7 @@ use std::io::{Read, Write};
 
 #[tokio::main]
 async fn main() {
-    let environment = std::env::var("ENVIRONMENT").expect("ENVIRONMENT must be set");
+    let stage_name = std::env::var("STAGE_NAME").expect("STAGE_NAME must be set");
 
     let temp_dir = tempfile::tempdir().expect("Failed to create temp dir");
 
@@ -56,7 +56,7 @@ async fn main() {
     let request = client
         .update_function_code()
         .function_name(format!(
-            "{environment}-46ki75-internal-lambda-function-graphql"
+            "{stage_name}-46ki75-internal-lambda-function-graphql"
         ))
         .publish(true)
         .zip_file(zip_blob);

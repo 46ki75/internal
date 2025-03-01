@@ -23,7 +23,7 @@ export default defineNuxtConfig({
     server: {
       proxy: {
         "/api/graphql": {
-          target: "http://localhost:20010/lambda-url/internal-graphql",
+          target: "http://localhost:9000/lambda-url/internal-graphql",
           changeOrigin: true,
         },
       },

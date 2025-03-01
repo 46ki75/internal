@@ -3,6 +3,9 @@ pub enum Error {
     #[error("Environmental variable not found: {0}")]
     EnvironmentalVariableNotFound(String),
 
+    #[error("SSM Parameter error: {0}")]
+    SsmFetchParameter(String),
+
     #[error("Invalid timezone")]
     InvalidTimezone,
 

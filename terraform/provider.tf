@@ -32,14 +32,14 @@ provider "aws" {
 }
 
 locals {
-  environments = ["dev", "stg", "prod"]
+  stage_name_list = ["dev", "stg", "prod"]
 }
 
 resource "null_resource" "validate_workspace" {
   lifecycle {
     postcondition {
-      condition     = contains(local.environments, terraform.workspace)
-      error_message = "Invalid workspace. Available workspaces: ${join(", ", local.environments)}"
+      condition     = contains(local.stage_name_list, terraform.workspace)
+      error_message = "Invalid workspace. Available workspaces: ${join(", ", local.stage_name_list)}"
     }
   }
 }

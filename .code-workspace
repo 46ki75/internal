@@ -17,17 +17,12 @@
       "name": "GraphQL API (Lambda)"
     },
     {
-      "path": "./crates/cron-routine",
-      "name": "Cron Routine (Lambda)"
-    },
-    {
       "name": "Pulumi",
       "path": "./pulumi"
     }
   ],
   "settings": {
     "terminal.integrated.env.linux": {
-      "ENVIRONMENT": "dev",
       "AWS_PROFILE": "internal"
     },
     "editor.formatOnSave": true,

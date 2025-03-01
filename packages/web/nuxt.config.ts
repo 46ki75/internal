@@ -1,17 +1,17 @@
 import { fetchSSMParameter } from "./utils/fetchSsmParameter";
 
-if (process.env.ENVIRONMENT == null) {
-  throw new Error("ENVIRONMENT is not set");
+if (process.env.STAGE_NAME == null) {
+  throw new Error("STAGE_NAME is not set");
 } else {
-  console.log(`ENVIRONMENT: ${process.env.ENVIRONMENT}`);
+  console.log(`STAGE_NAME: ${process.env.STAGE_NAME}`);
 }
 
 const USER_POOL_ID = await fetchSSMParameter(
-  `/${process.env.ENVIRONMENT}/46ki75/internal/cognito/userpool/id`
+  `/${process.env.STAGE_NAME}/46ki75/internal/cognito/userpool/id`
 );
 
 const USER_POOL_CLIENT_ID = await fetchSSMParameter(
-  `/${process.env.ENVIRONMENT}/46ki75/internal/cognito/userpool/client/id`
+  `/${process.env.STAGE_NAME}/46ki75/internal/cognito/userpool/client/id`
 );
 
 // https://nuxt.com/docs/api/configuration/nuxt-config

@@ -31,7 +31,8 @@
       "version": "22"
     },
     "ghcr.io/devcontainers/features/terraform": {},
-    "ghcr.io/devcontainers/features/aws-cli": {}
+    "ghcr.io/devcontainers/features/aws-cli": {},
+    "ghcr.io/devcontainers-extra/features/zig": {}
   },
   "containerEnv": {
     "AWS_PROFILE": "internal"

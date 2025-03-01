@@ -1,5 +1,5 @@
 dev: 
-    RUST_LOG=internal_graphql=debug cargo lambda watch
+    STAGE_NAME=dev RUST_LOG=internal_graphql=debug cargo lambda watch
 
 build: 
     cargo lambda build --release

@@ -1776,7 +1776,6 @@ dependencies = [
  "aws-sdk-lambda",
  "aws-sdk-ssm",
  "chrono",
- "dotenvy",
  "elmethis-notion",
  "env_logger",
  "lambda_http",

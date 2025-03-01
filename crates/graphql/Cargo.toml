@@ -20,7 +20,6 @@ reqwest = { version = "0.12.12", features = [
 ], default-features = false }
 async-graphql = "7.0.15"
 chrono = "0.4.40"
-dotenvy = "0.15.7"
 elmethis-notion = { version = "1.0.0-alpha.11", features = ["rustls-tls"] }
 lambda_http = "0.14.0"
 notionrs = { version = "1.0.0-alpha.35", features = ["rustls-tls"] }

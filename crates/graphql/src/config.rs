@@ -14,8 +14,6 @@ pub struct Config {
 
 impl Config {
     pub async fn try_new_async() -> Result<Self, crate::error::Error> {
-        dotenvy::dotenv().ok();
-
         let stage_name = std::env::var("STAGE_NAME").map_err(|_| {
             crate::error::Error::EnvironmentalVariableNotFound("STAGE_NAME".to_string())
         })?;

@@ -1,6 +1,6 @@
 #[derive(Debug)]
 pub struct Config {
-    pub environment: String,
+    pub stage_name: String,
     pub notion_api_key: String,
     pub notion_anki_database_id: String,
     pub notion_to_do_database_id: String,
@@ -99,7 +99,7 @@ impl Config {
             std::sync::Arc::new(elmethis_notion::client::Client::new(&notion_api_key));
 
         Ok(Config {
-            environment: stage_name,
+            stage_name,
             notion_api_key,
             notion_anki_database_id,
             notion_to_do_database_id,

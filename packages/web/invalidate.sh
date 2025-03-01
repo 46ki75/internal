@@ -2,15 +2,15 @@
 
 set -eu -o pipefail
 
-if [ -z "$ENVIRONMENT" ]; then
-    echo "ENVIRONMENT is not set"
+if [ -z "$STAGE_NAME" ]; then
+    echo "STAGE_NAME is not set"
     exit 1
 fi
 
-if [ "$ENVIRONMENT" = "prod" ]; then
+if [ "$STAGE_NAME" = "prod" ]; then
     DISTRIBUTION_ALIAS_DOMAIN="internal.46ki75.com"
 else
-    DISTRIBUTION_ALIAS_DOMAIN="${ENVIRONMENT}-internal.46ki75.com"
+    DISTRIBUTION_ALIAS_DOMAIN="${STAGE_NAME}-internal.46ki75.com"
 fi
 
 echo "Invalidating cache for $DISTRIBUTION_ALIAS_DOMAIN"

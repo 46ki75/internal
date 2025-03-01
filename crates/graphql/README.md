@@ -2,4 +2,4 @@
 
 ## Environmental Variables
 
-- `STAGE_NAME`
+- `STAGE_NAME`: `dev` | `stg` | `prod`

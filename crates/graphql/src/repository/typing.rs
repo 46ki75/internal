@@ -26,9 +26,9 @@ impl TypingRepository for TypingRepositoryImpl {
     async fn typing_list(
         &self,
     ) -> Result<Vec<crate::record::typing::TypingRecord>, crate::error::Error> {
-        let environment = self.config.environment.as_str();
+        let stage_name = self.config.stage_name.as_str();
 
-        let table_name = format!("{environment}-46ki75-internal-dynamodb-table");
+        let table_name = format!("{stage_name}-46ki75-internal-dynamodb-table");
 
         let request = self
             .config
@@ -57,9 +57,9 @@ impl TypingRepository for TypingRepositoryImpl {
         text: String,
         description: String,
     ) -> Result<crate::record::typing::TypingRecord, crate::error::Error> {
-        let environment = self.config.environment.as_str();
+        let stage_name = self.config.stage_name.as_str();
 
-        let table_name = format!("{environment}-46ki75-internal-dynamodb-table");
+        let table_name = format!("{stage_name}-46ki75-internal-dynamodb-table");
 
         let request = self
             .config
@@ -99,9 +99,9 @@ impl TypingRepository for TypingRepositoryImpl {
         &self,
         id: String,
     ) -> Result<crate::record::typing::TypingRecord, crate::error::Error> {
-        let environment = self.config.environment.as_str();
+        let stage_name = self.config.stage_name.as_str();
 
-        let table_name = format!("{environment}-46ki75-internal-dynamodb-table");
+        let table_name = format!("{stage_name}-46ki75-internal-dynamodb-table");
 
         let request = self
             .config

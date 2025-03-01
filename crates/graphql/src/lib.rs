@@ -20,6 +20,8 @@ async fn try_init_schema() -> Result<
     Schema<crate::query::QueryRoot, crate::mutation::MutationRoot, EmptySubscription>,
     crate::error::Error,
 > {
+    log::info!("Initializing schema");
+
     let config = std::sync::Arc::new(crate::config::Config::try_new_async().await?);
 
     log::debug!("Injecting dependencies: Anki");

@@ -36,7 +36,12 @@ impl ToDoRepository for ToDoRepositoryImpl {
             .database_id(database_id)
             .properties(properties);
 
-        let response = request.send().await?;
+        log::debug!("Sending request to Notion API");
+        let response = request.send().await.map_err(|e| {
+            let error_message = format!("Notion API error: {}", e);
+            log::error!("{}", error_message);
+            crate::error::Error::NotionRs(error_message)
+        })?;
 
         Ok(response)
     }
@@ -53,7 +58,12 @@ impl ToDoRepository for ToDoRepositoryImpl {
             .page_id(&id)
             .properties(properties);
 
-        let response = request.send().await?;
+        log::debug!("Sending request to Notion API");
+        let response = request.send().await.map_err(|e| {
+            let error_message = format!("Notion API error: {}", e);
+            log::error!("{}", error_message);
+            crate::error::Error::NotionRs(error_message)
+        })?;
 
         Ok(response)
     }
@@ -71,7 +81,12 @@ impl ToDoRepository for ToDoRepositoryImpl {
             .filter(filter)
             .database_id(database_id);
 
-        let response = request.send().await?;
+        log::debug!("Sending request to Notion API");
+        let response = request.send().await.map_err(|e| {
+            let error_message = format!("Notion API error: {}", e);
+            log::error!("{}", error_message);
+            crate::error::Error::NotionRs(error_message)
+        })?;
 
         Ok(response)
     }

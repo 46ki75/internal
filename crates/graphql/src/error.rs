@@ -13,7 +13,7 @@ pub enum Error {
     DateTimeParse(#[from] chrono::ParseError),
 
     #[error("notionrs error: {0}")]
-    NotionRs(#[from] notionrs::error::Error),
+    NotionRs(String),
 
     #[error("elmethis_notion error: {0}")]
     ElmethisNotion(#[from] elmethis_notion::error::Error),

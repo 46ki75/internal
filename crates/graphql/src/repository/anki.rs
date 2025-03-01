@@ -45,7 +45,11 @@ impl AnkiRepository for AnkiRepositoryImpl {
         let request = self.config.notion_client.get_page().page_id(id);
 
         log::debug!("Sending request to Notion API");
-        let response = request.send().await?;
+        let response = request.send().await.map_err(|e| {
+            let error_message = format!("Notion API error: {}", e);
+            log::error!("{}", error_message);
+            crate::error::Error::NotionRs(error_message)
+        })?;
 
         Ok(response)
     }
@@ -75,7 +79,11 @@ impl AnkiRepository for AnkiRepositoryImpl {
         }
 
         log::debug!("Sending request to Notion API");
-        let response = request.send().await?;
+        let response = request.send().await.map_err(|e| {
+            let error_message = format!("Notion API error: {}", e);
+            log::error!("{}", error_message);
+            crate::error::Error::NotionRs(error_message)
+        })?;
 
         Ok(response)
     }
@@ -96,7 +104,11 @@ impl AnkiRepository for AnkiRepositoryImpl {
             .children(children);
 
         log::debug!("Sending request to Notion API");
-        let response = request.send().await?;
+        let response = request.send().await.map_err(|e| {
+            let error_message = format!("Notion API error: {}", e);
+            log::error!("{}", error_message);
+            crate::error::Error::NotionRs(error_message)
+        })?;
 
         Ok(response)
     }
@@ -114,7 +126,11 @@ impl AnkiRepository for AnkiRepositoryImpl {
             .properties(properties);
 
         log::debug!("Sending request to Notion API");
-        let response = request.send().await?;
+        let response = request.send().await.map_err(|e| {
+            let error_message = format!("Notion API error: {}", e);
+            log::error!("{}", error_message);
+            crate::error::Error::NotionRs(error_message)
+        })?;
 
         Ok(response)
     }

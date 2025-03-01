@@ -28,7 +28,12 @@ impl BookmarkRepository for BookmarkRepositoryImpl {
             .query_database_all()
             .database_id(database_id);
 
-        let response = request.send().await?;
+        log::debug!("Sending request to Notion API");
+        let response = request.send().await.map_err(|e| {
+            let error_message = format!("Notion API error: {}", e);
+            log::error!("{}", error_message);
+            crate::error::Error::NotionRs(error_message)
+        })?;
 
         Ok(response)
     }
@@ -40,6 +45,7 @@ impl BookmarkRepository for BookmarkRepositoryImpl {
     ) -> Result<notionrs::page::page_response::PageResponse, crate::error::Error> {
         let database_id = self.config.notion_bookmark_database_id.as_str();
 
+        log::debug!("Sending request to Notion API");
         let request = self
             .config
             .notion_client
@@ -50,7 +56,12 @@ impl BookmarkRepository for BookmarkRepositoryImpl {
                 notionrs::File::External(notionrs::others::file::ExternalFile::from(favicon)),
             ));
 
-        let response = request.send().await?;
+        log::debug!("Sending request to Notion API");
+        let response = request.send().await.map_err(|e| {
+            let error_message = format!("Notion API error: {}", e);
+            log::error!("{}", error_message);
+            crate::error::Error::NotionRs(error_message)
+        })?;
 
         Ok(response)
     }

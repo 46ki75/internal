@@ -56,9 +56,15 @@ resource "aws_lambda_function" "graphql" {
   publish       = true # Publish a new version
   timeout       = 30
 
+  logging_config {
+    log_group  = aws_cloudwatch_log_group.lambda_graphql.name
+    log_format = "Text"
+  }
+
   environment {
     variables = {
       STAGE_NAME = terraform.workspace
+      RUST_LOG   = "internal_graphql=debug"
     }
   }
 }

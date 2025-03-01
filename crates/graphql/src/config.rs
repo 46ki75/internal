@@ -26,44 +26,43 @@ impl Config {
 
         let ssm_client = std::sync::Arc::new(aws_sdk_ssm::Client::new(&aws_sdk_config));
 
-        let notion_api_key = ssm_client
+        let notion_api_key_future = ssm_client
             .get_parameter()
             .name(format!("/{stage_name}/46ki75/internal/notion/secret"))
             .with_decryption(true)
-            .send()
-            .await
-            .map_err(|e| crate::error::Error::SsmFetchParameter(e.to_string()))?
-            .parameter
-            .ok_or(crate::error::Error::SsmFetchParameter(
-                "No parameter found".to_string(),
-            ))?
-            .value
-            .ok_or(crate::error::Error::SsmFetchParameter(
-                "No value found".to_string(),
-            ))?;
+            .send();
 
         let notion_anki_database_id = ssm_client
             .get_parameter()
             .name("/shared/46ki75/internal/notion/anki/database/id")
             .with_decryption(true)
-            .send()
-            .await
-            .map_err(|e| crate::error::Error::SsmFetchParameter(e.to_string()))?
-            .parameter
-            .ok_or(crate::error::Error::SsmFetchParameter(
-                "No parameter found".to_string(),
-            ))?
-            .value
-            .ok_or(crate::error::Error::SsmFetchParameter(
-                "No value found".to_string(),
-            ))?;
+            .send();
 
         let notion_to_do_database_id = ssm_client
             .get_parameter()
             .name("/shared/46ki75/internal/notion/todo/database/id")
             .with_decryption(true)
-            .send()
-            .await
+            .send();
+
+        let notion_bookmark_database_id = ssm_client
+            .get_parameter()
+            .name("/shared/46ki75/internal/notion/bookmark/database/id")
+            .with_decryption(true)
+            .send();
+
+        let (
+            notion_api_key_response,
+            notion_anki_response,
+            notion_to_do_response,
+            notion_bookmark_response,
+        ) = tokio::join!(
+            notion_api_key_future,
+            notion_anki_database_id,
+            notion_to_do_database_id,
+            notion_bookmark_database_id
+        );
+
+        let notion_api_key = notion_api_key_response
             .map_err(|e| crate::error::Error::SsmFetchParameter(e.to_string()))?
             .parameter
             .ok_or(crate::error::Error::SsmFetchParameter(
@@ -74,12 +73,29 @@ impl Config {
                 "No value found".to_string(),
             ))?;
 
-        let notion_bookmark_database_id = ssm_client
-            .get_parameter()
-            .name("/shared/46ki75/internal/notion/bookmark/database/id")
-            .with_decryption(true)
-            .send()
-            .await
+        let notion_anki_database_id = notion_anki_response
+            .map_err(|e| crate::error::Error::SsmFetchParameter(e.to_string()))?
+            .parameter
+            .ok_or(crate::error::Error::SsmFetchParameter(
+                "No parameter found".to_string(),
+            ))?
+            .value
+            .ok_or(crate::error::Error::SsmFetchParameter(
+                "No value found".to_string(),
+            ))?;
+
+        let notion_to_do_database_id = notion_to_do_response
+            .map_err(|e| crate::error::Error::SsmFetchParameter(e.to_string()))?
+            .parameter
+            .ok_or(crate::error::Error::SsmFetchParameter(
+                "No parameter found".to_string(),
+            ))?
+            .value
+            .ok_or(crate::error::Error::SsmFetchParameter(
+                "No value found".to_string(),
+            ))?;
+
+        let notion_bookmark_database_id = notion_bookmark_response
             .map_err(|e| crate::error::Error::SsmFetchParameter(e.to_string()))?
             .parameter
             .ok_or(crate::error::Error::SsmFetchParameter(

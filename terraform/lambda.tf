@@ -33,7 +33,9 @@ resource "aws_iam_policy" "lambda_policy_graphql" {
           "dynamodb:GetItem",
           "dynamodb:PutItem",
           "ssm:GetParameter",
-          "kms:Decrypt"
+          "kms:Decrypt",
+          "xray:PutTraceSegments",
+          "xray:PutTelemetryRecords"
         ],
         "Resource" : "*"
       }
@@ -57,14 +59,21 @@ resource "aws_lambda_function" "graphql" {
   timeout       = 30
 
   logging_config {
-    log_group  = aws_cloudwatch_log_group.lambda_graphql.name
-    log_format = "Text"
+    log_group             = aws_cloudwatch_log_group.lambda_graphql.name
+    log_format            = "JSON"
+    application_log_level = "DEBUG"
+    system_log_level      = "INFO"
+  }
+
+  tracing_config {
+    mode = "Active"
   }
 
   environment {
     variables = {
-      STAGE_NAME = terraform.workspace
-      RUST_LOG   = "internal_graphql=debug"
+      STAGE_NAME      = terraform.workspace
+      RUST_LOG        = "internal_graphql=debug"
+      RUST_LOG_FORMAT = "json"
     }
   }
 }

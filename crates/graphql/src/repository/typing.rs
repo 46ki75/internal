@@ -41,7 +41,7 @@ impl TypingRepository for TypingRepositoryImpl {
                 aws_sdk_dynamodb::types::AttributeValue::S(String::from("Typing#")),
             );
 
-        log::debug!("Sending request to DynamoDB: typing_list");
+        tracing::debug!("Sending request to DynamoDB: typing_list");
         let response = request
             .send()
             .await
@@ -84,7 +84,7 @@ impl TypingRepository for TypingRepositoryImpl {
                 aws_sdk_dynamodb::types::AttributeValue::S(description.to_string()),
             );
 
-        log::debug!("Sending request to DynamoDB: upsert_typing");
+        tracing::debug!("Sending request to DynamoDB: upsert_typing");
         let _response = request
             .send()
             .await
@@ -119,7 +119,7 @@ impl TypingRepository for TypingRepositoryImpl {
                 aws_sdk_dynamodb::types::AttributeValue::S(id.to_string()),
             );
 
-        log::debug!("Sending request to DynamoDB: delete_typing");
+        tracing::debug!("Sending request to DynamoDB: delete_typing");
         let _response = request
             .send()
             .await

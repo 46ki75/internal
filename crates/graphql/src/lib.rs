@@ -20,11 +20,11 @@ async fn try_init_schema() -> Result<
     Schema<crate::query::QueryRoot, crate::mutation::MutationRoot, EmptySubscription>,
     crate::error::Error,
 > {
-    lambda_http::tracing::info!("Initializing schema");
+    tracing::info!("Initializing schema");
 
     let config = std::sync::Arc::new(crate::config::Config::try_new_async().await?);
 
-    lambda_http::tracing::debug!("Injecting dependencies: Anki");
+    tracing::debug!("Injecting dependencies: Anki");
     let anki_repository = std::sync::Arc::new(crate::repository::anki::AnkiRepositoryImpl {
         config: config.clone(),
     });
@@ -33,7 +33,7 @@ async fn try_init_schema() -> Result<
     let anki_mutation_resolver =
         std::sync::Arc::new(crate::resolver::anki::mutation::AnkiMutationResolver);
 
-    lambda_http::tracing::debug!("Injecting dependencies: Bookmark");
+    tracing::debug!("Injecting dependencies: Bookmark");
     let bookmark_repository =
         std::sync::Arc::new(crate::repository::bookmark::BookmarkRepositoryImpl {
             config: config.clone(),
@@ -46,7 +46,7 @@ async fn try_init_schema() -> Result<
     let bookmark_mutation_resolver =
         std::sync::Arc::new(crate::resolver::bookmark::mutation::BookmarkMutationResolver);
 
-    lambda_http::tracing::debug!("Injecting dependencies: ToDO");
+    tracing::debug!("Injecting dependencies: ToDO");
     let to_do_repository = std::sync::Arc::new(crate::repository::to_do::ToDoRepositoryImpl {
         config: config.clone(),
     });
@@ -57,7 +57,7 @@ async fn try_init_schema() -> Result<
     let to_do_mutation_resolver =
         std::sync::Arc::new(crate::resolver::to_do::mutation::ToDoMutationResolver);
 
-    lambda_http::tracing::debug!("Injecting dependencies: Typing");
+    tracing::debug!("Injecting dependencies: Typing");
     let typing_repository: std::sync::Arc<repository::typing::TypingRepositoryImpl> =
         std::sync::Arc::new(crate::repository::typing::TypingRepositoryImpl {
             config: config.clone(),
@@ -69,7 +69,7 @@ async fn try_init_schema() -> Result<
     let typing_mutation_resolver =
         std::sync::Arc::new(crate::resolver::typing::mutation::TypingMutationResolver);
 
-    lambda_http::tracing::debug!("Building schema: QueryRoot");
+    tracing::debug!("Building schema: QueryRoot");
     let query_root = crate::query::QueryRoot {
         anki_query_resolver,
         bookmark_query_resolver,
@@ -77,7 +77,7 @@ async fn try_init_schema() -> Result<
         typing_query_resolver,
     };
 
-    lambda_http::tracing::debug!("Building schema: MutationRoot");
+    tracing::debug!("Building schema: MutationRoot");
     let mutation_root = crate::mutation::MutationRoot {
         anki_mutation_resolver,
         bookmark_mutation_resolver,
@@ -85,7 +85,7 @@ async fn try_init_schema() -> Result<
         typing_mutation_resolver,
     };
 
-    lambda_http::tracing::debug!("Building schema: Schema");
+    tracing::debug!("Building schema: Schema");
     Ok(Schema::build(query_root, mutation_root, EmptySubscription)
         .data(anki_service)
         .data(bookmark_service)
@@ -110,7 +110,7 @@ pub async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
         }
     };
 
-    lambda_http::tracing::debug!("Lambda function triggered");
+    tracing::debug!("Lambda function triggered");
 
     if event.method() == Method::GET {
         let playground_html = GraphiQLSource::build().endpoint("/api/graphql").finish();

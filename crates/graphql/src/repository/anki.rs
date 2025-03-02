@@ -44,7 +44,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
     ) -> Result<notionrs::page::PageResponse, crate::error::Error> {
         let request = self.config.notion_client.get_page().page_id(id);
 
-        lambda_http::tracing::debug!("Sending request to Notion API");
+        tracing::debug!("Sending request to Notion API");
         let response = request.send().await.map_err(|e| {
             let error_message = format!("Notion API error: {}", e);
             log::error!("{}", error_message);
@@ -78,7 +78,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
             request = request.start_cursor(next_cursor);
         }
 
-        lambda_http::tracing::debug!("Sending request to Notion API");
+        tracing::debug!("Sending request to Notion API");
         let response = request.send().await.map_err(|e| {
             let error_message = format!("Notion API error: {}", e);
             log::error!("{}", error_message);
@@ -103,7 +103,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
             .properties(properties)
             .children(children);
 
-        lambda_http::tracing::debug!("Sending request to Notion API");
+        tracing::debug!("Sending request to Notion API");
         let response = request.send().await.map_err(|e| {
             let error_message = format!("Notion API error: {}", e);
             log::error!("{}", error_message);
@@ -125,7 +125,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
             .page_id(page_id)
             .properties(properties);
 
-        lambda_http::tracing::debug!("Sending request to Notion API");
+        tracing::debug!("Sending request to Notion API");
         let response = request.send().await.map_err(|e| {
             let error_message = format!("Notion API error: {}", e);
             log::error!("{}", error_message);
@@ -143,7 +143,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
 
         let mut client = elmethis_notion::client::Client::new(secret);
 
-        lambda_http::tracing::debug!("Sending request to Notion API");
+        tracing::debug!("Sending request to Notion API");
         let blocks = client.convert_block(page_id).await?;
 
         Ok(blocks)

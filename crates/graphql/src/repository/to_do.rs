@@ -36,7 +36,7 @@ impl ToDoRepository for ToDoRepositoryImpl {
             .database_id(database_id)
             .properties(properties);
 
-        lambda_http::tracing::debug!("Sending request to Notion API");
+        tracing::debug!("Sending request to Notion API");
         let response = request.send().await.map_err(|e| {
             let error_message = format!("Notion API error: {}", e);
             log::error!("{}", error_message);
@@ -58,7 +58,7 @@ impl ToDoRepository for ToDoRepositoryImpl {
             .page_id(&id)
             .properties(properties);
 
-        lambda_http::tracing::debug!("Sending request to Notion API");
+        tracing::debug!("Sending request to Notion API");
         let response = request.send().await.map_err(|e| {
             let error_message = format!("Notion API error: {}", e);
             log::error!("{}", error_message);
@@ -81,7 +81,7 @@ impl ToDoRepository for ToDoRepositoryImpl {
             .filter(filter)
             .database_id(database_id);
 
-        lambda_http::tracing::debug!("Sending request to Notion API");
+        tracing::debug!("Sending request to Notion API");
         let response = request.send().await.map_err(|e| {
             let error_message = format!("Notion API error: {}", e);
             log::error!("{}", error_message);

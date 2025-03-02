@@ -18,7 +18,7 @@ impl Config {
             crate::error::Error::EnvironmentalVariableNotFound("STAGE_NAME".to_string())
         })?;
 
-        lambda_http::tracing::info!("STAGE_NAME: {}", stage_name);
+        tracing::info!("STAGE_NAME: {}", stage_name);
 
         let aws_sdk_config = aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
 

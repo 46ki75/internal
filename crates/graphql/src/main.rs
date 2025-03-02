@@ -44,7 +44,5 @@ async fn main() -> Result<(), Error> {
         fmt.pretty().init(); // cargo add tracing_subscriber --features=ansi
     }
 
-    lambda_http::tracing::init_default_subscriber();
-
     run(service_fn(internal_graphql::function_handler)).await
 }

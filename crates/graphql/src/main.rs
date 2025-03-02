@@ -13,7 +13,7 @@ async fn main() -> Result<(), Error> {
         .with_file(true)
         .with_line_number(true);
 
-    if rust_log_format == "json" {
+    if rust_log_format.eq_ignore_ascii_case("JSON") {
         fmt.json().init();
     } else {
         fmt.pretty().init(); // cargo add tracing_subscriber --features=ansi

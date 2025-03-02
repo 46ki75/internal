@@ -73,7 +73,7 @@ resource "aws_lambda_function" "graphql" {
     variables = {
       STAGE_NAME      = terraform.workspace
       RUST_LOG        = "internal_graphql=debug"
-      RUST_LOG_FORMAT = "json"
+      RUST_LOG_FORMAT = "JSON"
     }
   }
 }

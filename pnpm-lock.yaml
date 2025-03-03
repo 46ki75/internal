@@ -15,8 +15,8 @@ importers:
   packages/web:
     dependencies:
       '@aws-sdk/client-ssm':
-        specifier: ^3.758.0
-        version: 3.758.0
+        specifier: ^3.759.0
+        version: 3.759.0
       '@com.46ki75/graphql':
         specifier: ^0.2.2
         version: 0.2.2
@@ -152,8 +152,8 @@ packages:
     resolution: {integrity: sha512-qkVkqYvOe3WVuVNL/gRITGYFfHJCx2ijGFK7H3hNUJH3P4AwskmouAd1pWf+3cbGedRnj2is7iw7E602LeJIHA==}
     engines: {node: '>=16.0.0'}
 
-  '@aws-sdk/client-ssm@3.758.0':
-    resolution: {integrity: sha512-XaUpT4eeGNdSN2gN3dyBFIMySBv6y+Wl+H2B1RLkzbHjhoKsrkmutHo/lhuRz3BvJg/rcWLGR/tM3QHexuprXQ==}
+  '@aws-sdk/client-ssm@3.759.0':
+    resolution: {integrity: sha512-+h1D1jBi6p2fG+ePxwIn2N4TOZcx7ExzhZJnpPT2actC9bV6vkRbeulGr/2fqNu11/S59DZJLfOHjVDH9X1nWA==}
     engines: {node: '>=18.0.0'}
 
   '@aws-sdk/client-sso-oidc@3.621.0':
@@ -4946,7 +4946,7 @@ snapshots:
     transitivePeerDependencies:
       - aws-crt
 
-  '@aws-sdk/client-ssm@3.758.0':
+  '@aws-sdk/client-ssm@3.759.0':
     dependencies:
       '@aws-crypto/sha256-browser': 5.2.0
       '@aws-crypto/sha256-js': 5.2.0

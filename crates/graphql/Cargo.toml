@@ -36,7 +36,7 @@ aws-sdk-lambda = "1.70.0"
 aws-sdk-dynamodb = "1.55.0"
 uuid = { version = "1.15.1", features = ["v4"] }
 async-trait = "0.1.86"
-thiserror = "2.0.11"
+thiserror = "2.0.12"
 log = "0.4.26"
 env_logger = { version = "0.11.6" }
 once_cell = "1.20.3"

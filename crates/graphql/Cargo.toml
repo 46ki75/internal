@@ -32,7 +32,7 @@ url = "2.5.4"
 tempfile = "3.17.1"
 zip = "2.2.3"
 aws-config = "1.5.17"
-aws-sdk-lambda = "1.70.0"
+aws-sdk-lambda = "1.71.0"
 aws-sdk-dynamodb = "1.66.0"
 uuid = { version = "1.15.1", features = ["v4"] }
 async-trait = "0.1.87"

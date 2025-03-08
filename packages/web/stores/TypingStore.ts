@@ -35,7 +35,9 @@ export const useTypingStore = defineStore("typing", {
       await authStore.refreshIfNeed();
 
       try {
-        const response = await typingRepository.list();
+        const response = await typingRepository.list({
+          accessToken: `${authStore.session.accessToken}`,
+        });
 
         this.typingList = response;
       } catch (error) {

@@ -1,7 +1,7 @@
 import type { TypingEntity } from "~/entity/Entity";
 
 export interface TypingRepository {
-  list(): Promise<TypingEntity[]>;
+  list({ accessToken }: { accessToken: string }): Promise<TypingEntity[]>;
   upsert({
     accessToken,
     text,
@@ -14,13 +14,18 @@ export interface TypingRepository {
 }
 
 export class TypingRepositoryImpl implements TypingRepository {
-  async list(): Promise<TypingEntity[]> {
+  async list({
+    accessToken,
+  }: {
+    accessToken: string;
+  }): Promise<TypingEntity[]> {
     const response = await $fetch<{ data: { typingList: TypingEntity[] } }>(
       "/api/graphql",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: accessToken,
         },
         body: JSON.stringify({
           query: /* GraphQL */ `

@@ -2070,9 +2070,9 @@ checksum = "650eef8c711430f1a879fdd01d4745a7deea475becfb90269c06775983bbf086"
 
 [[package]]
 name = "notionrs"
-version = "1.0.0-alpha.35"
+version = "1.0.0-alpha.36"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "479ac0f60597e3584822796d5417c632683f5d7ef4c5dc170fedcd3669a45893"
+checksum = "726eac5e7390c996edefae2ea8689781e9e089dd38fd30da54cde30ae65096e8"
 dependencies = [
  "chrono",
  "reqwest",

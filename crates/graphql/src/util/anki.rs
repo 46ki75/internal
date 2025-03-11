@@ -2,7 +2,7 @@ pub struct AnkiUtil;
 
 impl AnkiUtil {
     pub fn convert_page_response(
-        page_response: notionrs::page::PageResponse,
+        page_response: notionrs::object::page::PageResponse,
     ) -> Result<crate::entity::anki::Anki, crate::error::Error> {
         let properties = page_response.properties;
 
@@ -15,7 +15,7 @@ impl AnkiUtil {
                 ))?;
 
         let title = match title_property {
-            notionrs::page::PageProperty::Title(title) => {
+            notionrs::object::page::PageProperty::Title(title) => {
                 if title.to_string().trim().is_empty() {
                     None
                 } else {
@@ -39,7 +39,7 @@ impl AnkiUtil {
                 ))?;
 
         let description = match description_property {
-            notionrs::page::PageProperty::RichText(description) => {
+            notionrs::object::page::PageProperty::RichText(description) => {
                 if description.to_string().trim().is_empty() {
                     None
                 } else {
@@ -62,20 +62,19 @@ impl AnkiUtil {
                     "easeFactor".to_string(),
                 ))?;
 
-        let ease_factor = match ease_factor_property {
-            notionrs::page::PageProperty::Number(ease_factor) => {
-                ease_factor
+        let ease_factor =
+            match ease_factor_property {
+                notionrs::object::page::PageProperty::Number(ease_factor) => ease_factor
                     .number
                     .ok_or(crate::error::Error::NotionPropertynotFound(
                         "easeFactor".to_string(),
-                    ))?
-            }
-            _ => {
-                return Err(crate::error::Error::NotionPropertynotFound(
-                    "easeFactor".to_string(),
-                ))
-            }
-        };
+                    ))?,
+                _ => {
+                    return Err(crate::error::Error::NotionPropertynotFound(
+                        "easeFactor".to_string(),
+                    ))
+                }
+            };
         // <<< ease_factor
 
         // >>> repetition_count
@@ -84,11 +83,12 @@ impl AnkiUtil {
         )?;
 
         let repetition_count = match repetition_count_property {
-            notionrs::page::PageProperty::Number(repetition_count) => repetition_count
+            notionrs::object::page::PageProperty::Number(repetition_count) => repetition_count
                 .number
                 .ok_or(crate::error::Error::NotionPropertynotFound(
                     "repetitionCount".to_string(),
-                ))? as u32,
+                ))?
+                as u32,
             _ => {
                 return Err(crate::error::Error::NotionPropertynotFound(
                     "repetitionCount".to_string(),
@@ -106,7 +106,7 @@ impl AnkiUtil {
                 ))?;
 
         let next_review_at = match next_review_at_property {
-            notionrs::page::PageProperty::Date(next_review_at) => next_review_at
+            notionrs::object::page::PageProperty::Date(next_review_at) => next_review_at
                 .clone()
                 .date
                 .ok_or(crate::error::Error::NotionPropertynotFound(
@@ -134,7 +134,7 @@ impl AnkiUtil {
                 ))?;
 
         let tags = match tags_property {
-            notionrs::page::PageProperty::MultiSelect(tags) => {
+            notionrs::object::page::PageProperty::MultiSelect(tags) => {
                 tags.multi_select
                     .iter()
                     .map(|tag| {
@@ -148,16 +148,16 @@ impl AnkiUtil {
                                     "tag.color".to_string(),
                                 ),
                             )? {
-                                notionrs::others::select::SelectColor::Default => "#868e9c",
-                                notionrs::others::select::SelectColor::Blue => "#6987b8",
-                                notionrs::others::select::SelectColor::Brown => "#a17c5b",
-                                notionrs::others::select::SelectColor::Gray => "#59b57c",
-                                notionrs::others::select::SelectColor::Green => "#59b57c",
-                                notionrs::others::select::SelectColor::Orange => "#d48b70",
-                                notionrs::others::select::SelectColor::Pink => "#c9699e",
-                                notionrs::others::select::SelectColor::Purple => "#9771bd",
-                                notionrs::others::select::SelectColor::Red => "#c56565",
-                                notionrs::others::select::SelectColor::Yellow => "#cdb57b",
+                                notionrs::object::select::SelectColor::Default => "#868e9c",
+                                notionrs::object::select::SelectColor::Blue => "#6987b8",
+                                notionrs::object::select::SelectColor::Brown => "#a17c5b",
+                                notionrs::object::select::SelectColor::Gray => "#59b57c",
+                                notionrs::object::select::SelectColor::Green => "#59b57c",
+                                notionrs::object::select::SelectColor::Orange => "#d48b70",
+                                notionrs::object::select::SelectColor::Pink => "#c9699e",
+                                notionrs::object::select::SelectColor::Purple => "#9771bd",
+                                notionrs::object::select::SelectColor::Red => "#c56565",
+                                notionrs::object::select::SelectColor::Yellow => "#cdb57b",
                             }
                             .to_string(),
                         })

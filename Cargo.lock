@@ -1076,9 +1076,9 @@ checksum = "60b1af1c220855b6ceac025d3f6ecdd2b7c4894bfe9cd9bda4fbb4bc7c0d4cf0"
 
 [[package]]
 name = "elmethis-notion"
-version = "1.0.0-alpha.11"
+version = "1.0.0-alpha.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "88be50fa3ba2d8d0eab9a834b370f64ceb86b9b74367fcf4aef34db100d0d2b7"
+checksum = "e63ea14b0a431d96793e922402babb461bec00c72d1c07b1dbea40d0e409570b"
 dependencies = [
  "async-recursion",
  "dotenvy",
@@ -2070,16 +2070,28 @@ checksum = "650eef8c711430f1a879fdd01d4745a7deea475becfb90269c06775983bbf086"
 
 [[package]]
 name = "notionrs"
-version = "1.0.0-alpha.36"
+version = "1.0.0-alpha.37"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "726eac5e7390c996edefae2ea8689781e9e089dd38fd30da54cde30ae65096e8"
+checksum = "fb350d99951dfd6d8bf0727498f4682fbae0ee8aae0c5f5d3340d97c7d1bc563"
 dependencies = [
  "chrono",
+ "notionrs_macro",
  "reqwest",
  "serde",
  "serde_json",
  "serde_plain",
  "thiserror 2.0.12",
+]
+
+[[package]]
+name = "notionrs_macro"
+version = "1.0.0-alpha.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c707c5c85f9b7f2f07e12e3a88e840db4f9044d78cc209ed77ec5ab1df51da81"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -2374,9 +2386,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.92"
+version = "1.0.94"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "37d3544b3f2748c54e147655edb5025752e2303145b5aefb3c3ea2c78b973bb0"
+checksum = "a31971752e70b8b2686d7e46ec17fb38dad4051d94024c88df49b667caea9c84"
 dependencies = [
  "unicode-ident",
 ]
@@ -2446,9 +2458,9 @@ dependencies = [
 
 [[package]]
 name = "quote"
-version = "1.0.37"
+version = "1.0.39"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b5b9d34b8991d19d98081b46eacdd8eb58c6f2b201139f7c5f643cc155a633af"
+checksum = "c1f1914ce909e1658d9907913b4b91947430c7d9be598b15a1912935b8c04801"
 dependencies = [
  "proc-macro2",
 ]
@@ -3058,9 +3070,9 @@ checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
 
 [[package]]
 name = "syn"
-version = "2.0.90"
+version = "2.0.100"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "919d3b74a5dd0ccd15aeb8f93e7006bd9e14c295087c9896a110f490752bcf31"
+checksum = "b09a44accad81e1ba1cd74a32461ba89dee89095ba17b32f5d03683b1b1fc2a0"
 dependencies = [
  "proc-macro2",
  "quote",

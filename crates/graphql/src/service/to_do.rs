@@ -13,22 +13,22 @@ impl ToDoService {
 
             properties.insert(
                 "Type".to_string(),
-                notionrs::page::properties::PageProperty::Select(
-                    notionrs::page::properties::PageSelectProperty::from("todo"),
+                notionrs::object::page::PageProperty::Select(
+                    notionrs::object::page::PageSelectProperty::from("todo"),
                 ),
             );
 
             properties.insert(
                 "Severity".to_string(),
-                notionrs::page::properties::PageProperty::Select(
-                    notionrs::page::properties::PageSelectProperty::from("INFO"),
+                notionrs::object::page::PageProperty::Select(
+                    notionrs::object::page::PageSelectProperty::from("INFO"),
                 ),
             );
 
             properties.insert(
                 "Title".to_string(),
-                notionrs::page::properties::PageProperty::Title(
-                    notionrs::page::properties::PageTitleProperty::from(title.clone()),
+                notionrs::object::page::PageProperty::Title(
+                    notionrs::object::page::PageTitleProperty::from(title.clone()),
                 ),
             );
 
@@ -60,8 +60,8 @@ impl ToDoService {
 
         properties.insert(
             "IsDone".to_string(),
-            notionrs::page::properties::PageProperty::Checkbox(
-                notionrs::page::properties::PageCheckboxProperty::from(is_done),
+            notionrs::object::page::PageProperty::Checkbox(
+                notionrs::object::page::PageCheckboxProperty::from(is_done),
             ),
         );
 
@@ -76,7 +76,7 @@ impl ToDoService {
                     "Title".to_string(),
                 ))?;
 
-        let title = if let notionrs::page::PageProperty::Title(title) = title_property {
+        let title = if let notionrs::object::page::PageProperty::Title(title) = title_property {
             Ok(title.to_string())
         } else {
             Err(crate::error::Error::NotionPropertynotFound(
@@ -91,24 +91,25 @@ impl ToDoService {
                     "Severity".to_string(),
                 ))?;
 
-        let severity = if let notionrs::page::PageProperty::Select(severity) = serverity_property {
-            let select_name_str = severity.to_string();
-            Ok(if select_name_str == "INFO" {
-                crate::entity::to_do::Severity::Info
-            } else if select_name_str == "WARN" {
-                crate::entity::to_do::Severity::Warn
-            } else if select_name_str == "ERROR" {
-                crate::entity::to_do::Severity::Error
-            } else if select_name_str == "FATAL" {
-                crate::entity::to_do::Severity::Fatal
+        let severity =
+            if let notionrs::object::page::PageProperty::Select(severity) = serverity_property {
+                let select_name_str = severity.to_string();
+                Ok(if select_name_str == "INFO" {
+                    crate::entity::to_do::Severity::Info
+                } else if select_name_str == "WARN" {
+                    crate::entity::to_do::Severity::Warn
+                } else if select_name_str == "ERROR" {
+                    crate::entity::to_do::Severity::Error
+                } else if select_name_str == "FATAL" {
+                    crate::entity::to_do::Severity::Fatal
+                } else {
+                    crate::entity::to_do::Severity::Unknown
+                })
             } else {
-                crate::entity::to_do::Severity::Unknown
-            })
-        } else {
-            Err(crate::error::Error::NotionPropertynotFound(
-                "Severity".to_string(),
-            ))
-        }?;
+                Err(crate::error::Error::NotionPropertynotFound(
+                    "Severity".to_string(),
+                ))
+            }?;
 
         Ok(crate::entity::to_do::ToDo {
             id: response.id,
@@ -127,9 +128,9 @@ impl ToDoService {
     pub async fn list_notion_to_do(
         &self,
     ) -> Result<Vec<crate::entity::to_do::ToDo>, crate::error::Error> {
-        let filter = notionrs::filter::Filter::and(vec![
-            notionrs::filter::Filter::select_equals("Type", "todo"),
-            notionrs::filter::Filter::checkbox_is_not_checked("IsDone"),
+        let filter = notionrs::object::request::filter::Filter::and(vec![
+            notionrs::object::request::filter::Filter::select_equals("Type", "todo"),
+            notionrs::object::request::filter::Filter::checkbox_is_not_checked("IsDone"),
         ]);
 
         let response = self.to_do_repository.list_notion_to_do(filter).await?;
@@ -159,7 +160,7 @@ impl ToDoService {
                 let is_done = match result.properties.get("IsDone").ok_or(
                     crate::error::Error::NotionPropertynotFound("IsDone".to_string()),
                 )? {
-                    notionrs::page::PageProperty::Checkbox(is_done) => Ok(is_done.checkbox),
+                    notionrs::object::page::PageProperty::Checkbox(is_done) => Ok(is_done.checkbox),
                     _ => Err(crate::error::Error::NotionPropertynotFound(
                         "IsDone".to_string(),
                     )),
@@ -170,7 +171,7 @@ impl ToDoService {
                         .properties
                         .get("Deadline")
                         .and_then(|deadline| match deadline {
-                            notionrs::page::PageProperty::Date(deadline) => {
+                            notionrs::object::page::PageProperty::Date(deadline) => {
                                 deadline.date.clone().map(|d| d.to_string())
                             }
                             _ => None,
@@ -180,7 +181,7 @@ impl ToDoService {
                     .properties
                     .get("Severity")
                     .and_then(|s| {
-                        if let notionrs::page::PageProperty::Select(select) = s {
+                        if let notionrs::object::page::PageProperty::Select(select) = s {
                             if let Some(select_name) = &select.select {
                                 let select_name_str = select_name.to_string();
 

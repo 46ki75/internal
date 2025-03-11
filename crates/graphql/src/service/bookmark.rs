@@ -19,7 +19,7 @@ impl BookmarkService {
                 )?;
 
                 let name = match name_property {
-                    notionrs::page::PageProperty::Title(title) => {
+                    notionrs::object::page::PageProperty::Title(title) => {
                         if title.to_string().trim().is_empty() {
                             None
                         } else {
@@ -38,7 +38,7 @@ impl BookmarkService {
                 )?;
 
                 let url = match url_property {
-                    notionrs::page::PageProperty::Url(url) => {
+                    notionrs::object::page::PageProperty::Url(url) => {
                         if url.to_string().trim().is_empty() {
                             None
                         } else {
@@ -53,7 +53,7 @@ impl BookmarkService {
                 };
 
                 let favicon = bookmark.icon.clone().and_then(|i| match i {
-                    notionrs::Icon::File(file) => Some(file.get_url()),
+                    notionrs::object::icon::Icon::File(file) => Some(file.get_url()),
                     _ => None,
                 });
 
@@ -63,7 +63,7 @@ impl BookmarkService {
 
                 let tags =
                     match tags_property {
-                        notionrs::page::PageProperty::MultiSelect(selects) => selects
+                        notionrs::object::page::PageProperty::MultiSelect(selects) => selects
                             .multi_select
                             .iter()
                             .map(|select| {
@@ -81,16 +81,16 @@ impl BookmarkService {
                                             "color".to_string(),
                                         ),
                                     )? {
-                                        notionrs::others::select::SelectColor::Default => "#868e9c",
-                                        notionrs::others::select::SelectColor::Blue => "#6987b8",
-                                        notionrs::others::select::SelectColor::Brown => "#a17c5b",
-                                        notionrs::others::select::SelectColor::Gray => "#59b57c",
-                                        notionrs::others::select::SelectColor::Green => "#59b57c",
-                                        notionrs::others::select::SelectColor::Orange => "#d48b70",
-                                        notionrs::others::select::SelectColor::Pink => "#c9699e",
-                                        notionrs::others::select::SelectColor::Purple => "#9771bd",
-                                        notionrs::others::select::SelectColor::Red => "#c56565",
-                                        notionrs::others::select::SelectColor::Yellow => "#cdb57b",
+                                        notionrs::object::select::SelectColor::Default => "#868e9c",
+                                        notionrs::object::select::SelectColor::Blue => "#6987b8",
+                                        notionrs::object::select::SelectColor::Brown => "#a17c5b",
+                                        notionrs::object::select::SelectColor::Gray => "#59b57c",
+                                        notionrs::object::select::SelectColor::Green => "#59b57c",
+                                        notionrs::object::select::SelectColor::Orange => "#d48b70",
+                                        notionrs::object::select::SelectColor::Pink => "#c9699e",
+                                        notionrs::object::select::SelectColor::Purple => "#9771bd",
+                                        notionrs::object::select::SelectColor::Red => "#c56565",
+                                        notionrs::object::select::SelectColor::Yellow => "#cdb57b",
                                     }
                                     .to_string(),
                                 })
@@ -134,21 +134,21 @@ impl BookmarkService {
 
         let mut properties: std::collections::HashMap<
             String,
-            notionrs::page::properties::PageProperty,
+            notionrs::object::page::PageProperty,
         > = std::collections::HashMap::new();
 
         properties.insert(
             "name".to_string(),
-            notionrs::page::properties::PageProperty::Title(
-                notionrs::page::PageTitleProperty::from(name),
+            notionrs::object::page::PageProperty::Title(
+                notionrs::object::page::PageTitleProperty::from(name),
             ),
         );
 
         properties.insert(
             "url".to_string(),
-            notionrs::page::properties::PageProperty::Url(notionrs::page::PageUrlProperty::from(
-                url,
-            )),
+            notionrs::object::page::PageProperty::Url(
+                notionrs::object::page::PageUrlProperty::from(url),
+            ),
         );
 
         let response = self
@@ -167,7 +167,7 @@ impl BookmarkService {
                 ))?;
 
         let tags = match tags_property {
-            notionrs::page::PageProperty::MultiSelect(selects) => selects
+            notionrs::object::page::PageProperty::MultiSelect(selects) => selects
                 .multi_select
                 .iter()
                 .map(|select| {
@@ -187,16 +187,16 @@ impl BookmarkService {
                         color: match color.ok_or(crate::error::Error::NotionPropertynotFound(
                             "color".to_string(),
                         ))? {
-                            notionrs::others::select::SelectColor::Default => "#868e9c",
-                            notionrs::others::select::SelectColor::Blue => "#6987b8",
-                            notionrs::others::select::SelectColor::Brown => "#a17c5b",
-                            notionrs::others::select::SelectColor::Gray => "#59b57c",
-                            notionrs::others::select::SelectColor::Green => "#59b57c",
-                            notionrs::others::select::SelectColor::Orange => "#d48b70",
-                            notionrs::others::select::SelectColor::Pink => "#c9699e",
-                            notionrs::others::select::SelectColor::Purple => "#9771bd",
-                            notionrs::others::select::SelectColor::Red => "#c56565",
-                            notionrs::others::select::SelectColor::Yellow => "#cdb57b",
+                            notionrs::object::select::SelectColor::Default => "#868e9c",
+                            notionrs::object::select::SelectColor::Blue => "#6987b8",
+                            notionrs::object::select::SelectColor::Brown => "#a17c5b",
+                            notionrs::object::select::SelectColor::Gray => "#59b57c",
+                            notionrs::object::select::SelectColor::Green => "#59b57c",
+                            notionrs::object::select::SelectColor::Orange => "#d48b70",
+                            notionrs::object::select::SelectColor::Pink => "#c9699e",
+                            notionrs::object::select::SelectColor::Purple => "#9771bd",
+                            notionrs::object::select::SelectColor::Red => "#c56565",
+                            notionrs::object::select::SelectColor::Yellow => "#cdb57b",
                         }
                         .to_string(),
                     })

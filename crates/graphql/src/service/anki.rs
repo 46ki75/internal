@@ -102,36 +102,42 @@ impl AnkiService {
         &self,
         title: Option<String>,
     ) -> Result<crate::entity::anki::Anki, crate::error::Error> {
-        let mut properties: std::collections::HashMap<String, notionrs::page::PageProperty> =
-            std::collections::HashMap::new();
+        let mut properties: std::collections::HashMap<
+            String,
+            notionrs::object::page::PageProperty,
+        > = std::collections::HashMap::new();
 
         properties.insert(
             "title".to_string(),
-            notionrs::page::PageProperty::Title(notionrs::page::PageTitleProperty::from(
-                title.unwrap_or("No Title".to_string()),
-            )),
+            notionrs::object::page::PageProperty::Title(
+                notionrs::object::page::PageTitleProperty::from(
+                    title.unwrap_or("No Title".to_string()),
+                ),
+            ),
         );
 
         let ease_factor = 2.5;
 
         properties.insert(
             "easeFactor".to_string(),
-            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(
-                ease_factor,
-            )),
+            notionrs::object::page::PageProperty::Number(
+                notionrs::object::page::PageNumberProperty::from(ease_factor),
+            ),
         );
 
         properties.insert(
             "repetitionCount".to_string(),
-            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(0)),
+            notionrs::object::page::PageProperty::Number(
+                notionrs::object::page::PageNumberProperty::from(0),
+            ),
         );
 
         let next_review_at = chrono::Utc::now().with_timezone(
             &chrono::FixedOffset::east_opt(9).ok_or(crate::error::Error::InvalidTimezone)?,
         );
 
-        let next_review_at_property = notionrs::page::PageProperty::Date(
-            notionrs::page::PageDateProperty::default()
+        let next_review_at_property = notionrs::object::page::PageProperty::Date(
+            notionrs::object::page::PageDateProperty::default()
                 .start(next_review_at)
                 .clone(),
         );
@@ -139,30 +145,30 @@ impl AnkiService {
         properties.insert("nextReviewAt".to_string(), next_review_at_property);
 
         let children = vec![
-            notionrs::block::Block::Heading1 {
-                heading_1: notionrs::block::heading::HeadingBlock::default()
-                    .rich_text(vec![notionrs::others::rich_text::RichText::from("front")
-                        .color(notionrs::others::color::Color::Brown)]),
+            notionrs::object::block::Block::Heading1 {
+                heading_1: notionrs::object::block::heading::HeadingBlock::default()
+                    .rich_text(vec![notionrs::object::rich_text::RichText::from("front")
+                        .color(notionrs::object::color::Color::Brown)]),
             },
-            notionrs::block::Block::Paragraph {
-                paragraph: notionrs::block::paragraph::ParagraphBlock::from(""),
+            notionrs::object::block::Block::Paragraph {
+                paragraph: notionrs::object::block::paragraph::ParagraphBlock::from(""),
             },
-            notionrs::block::Block::Heading1 {
-                heading_1: notionrs::block::heading::HeadingBlock::default()
-                    .rich_text(vec![notionrs::others::rich_text::RichText::from("back")
-                        .color(notionrs::others::color::Color::Brown)]),
+            notionrs::object::block::Block::Heading1 {
+                heading_1: notionrs::object::block::heading::HeadingBlock::default()
+                    .rich_text(vec![notionrs::object::rich_text::RichText::from("back")
+                        .color(notionrs::object::color::Color::Brown)]),
             },
-            notionrs::block::Block::Paragraph {
-                paragraph: notionrs::block::paragraph::ParagraphBlock::from(""),
+            notionrs::object::block::Block::Paragraph {
+                paragraph: notionrs::object::block::paragraph::ParagraphBlock::from(""),
             },
-            notionrs::block::Block::Heading1 {
-                heading_1: notionrs::block::heading::HeadingBlock::default().rich_text(vec![
-                    notionrs::others::rich_text::RichText::from("explanation")
-                        .color(notionrs::others::color::Color::Brown),
-                ]),
+            notionrs::object::block::Block::Heading1 {
+                heading_1: notionrs::object::block::heading::HeadingBlock::default().rich_text(
+                    vec![notionrs::object::rich_text::RichText::from("explanation")
+                        .color(notionrs::object::color::Color::Brown)],
+                ),
             },
-            notionrs::block::Block::Paragraph {
-                paragraph: notionrs::block::paragraph::ParagraphBlock::from(""),
+            notionrs::object::block::Block::Paragraph {
+                paragraph: notionrs::object::block::paragraph::ParagraphBlock::from(""),
             },
         ];
 
@@ -183,27 +189,29 @@ impl AnkiService {
         repetition_count: u32,
         next_review_at: String,
     ) -> Result<crate::entity::anki::Anki, crate::error::Error> {
-        let mut properties: std::collections::HashMap<String, notionrs::page::PageProperty> =
-            std::collections::HashMap::new();
+        let mut properties: std::collections::HashMap<
+            String,
+            notionrs::object::page::PageProperty,
+        > = std::collections::HashMap::new();
 
         properties.insert(
             "easeFactor".to_string(),
-            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(
-                ease_factor,
-            )),
+            notionrs::object::page::PageProperty::Number(
+                notionrs::object::page::PageNumberProperty::from(ease_factor),
+            ),
         );
 
         properties.insert(
             "repetitionCount".to_string(),
-            notionrs::page::PageProperty::Number(notionrs::page::PageNumberProperty::from(
-                repetition_count,
-            )),
+            notionrs::object::page::PageProperty::Number(
+                notionrs::object::page::PageNumberProperty::from(repetition_count),
+            ),
         );
 
         let next_review_at = chrono::DateTime::parse_from_rfc3339(&next_review_at)?;
 
-        let next_review_at_property = notionrs::page::PageProperty::Date(
-            notionrs::page::PageDateProperty::default()
+        let next_review_at_property = notionrs::object::page::PageProperty::Date(
+            notionrs::object::page::PageDateProperty::default()
                 .start(next_review_at)
                 .clone(),
         );

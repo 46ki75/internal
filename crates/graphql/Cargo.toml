@@ -39,7 +39,7 @@ async-trait = "0.1.87"
 thiserror = "2.0.12"
 log = "0.4.26"
 env_logger = { version = "0.11.7" }
-once_cell = "1.21.0"
+once_cell = "1.21.1"
 aws-sdk-ssm = "1.67.0"
 tracing-subscriber = { version = "0.3.19", features = ["ansi"] }
 tracing = "0.1.41"

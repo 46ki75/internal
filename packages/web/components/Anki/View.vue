@@ -24,7 +24,6 @@
 
 <script setup lang="ts">
 import { ElmHeading1, ElmJsonRendererAsync } from "@elmethis/core";
-import { Icon } from "@iconify/vue";
 
 const ankiStore = useAnkiStore();
 </script>

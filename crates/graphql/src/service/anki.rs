@@ -69,7 +69,7 @@ impl AnkiService {
 
         for block in blocks {
             if let elmethis_notion::block::Block::ElmHeading1(
-                elmethis_notion::block::ElmHeading1 { props },
+                elmethis_notion::block::ElmHeading1 { props, .. },
             ) = &block
             {
                 if props.text == "front" {

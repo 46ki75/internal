@@ -29,6 +29,7 @@
 <script setup lang="ts">
 import { ElmBlockFallback, ElmButton, ElmInlineText } from "@elmethis/core";
 import { onKeyStroke } from "@vueuse/core";
+import { Icon } from "@iconify/vue";
 
 const router = useRouter();
 const ankiStore = useAnkiStore();

@@ -5,7 +5,7 @@ build:
     cargo lambda build --release
 
 deploy: build
-    cargo run --bin deploy
+    scripts/deploy.sh
 
 test:
     cargo test --lib

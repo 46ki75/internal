@@ -23,7 +23,7 @@
     "nuxt": "^3.16.0",
     "pinia": "^3.0.1",
     "polished": "^4.3.1",
-    "sass": "^1.85.1",
+    "sass": "^1.86.0",
     "vue": "latest",
     "vue-router": "latest",
     "zod": "^3.24.2"

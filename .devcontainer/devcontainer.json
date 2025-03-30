@@ -40,7 +40,5 @@
     "ghcr.io/devcontainers-extra/features/zig": {},
     "./features/cargo-toolchain": {}
   },
-  "containerEnv": {
-    "AWS_PROFILE": "internal"
-  }
+  "postCreateCommand": "echo 'eval \"$(starship init bash)\"' >> ~/.bashrc"
 }

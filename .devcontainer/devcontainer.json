@@ -7,22 +7,27 @@
     "vscode": {
       "settings": {},
       "extensions": [
+        "GitHub.vscode-pull-request-github",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "github.vscode-github-actions",
         "usernamehw.errorlens",
         "Gruntfuggly.todo-tree",
         "christian-kohler.path-intellisense",
+        "ms-azuretools.vscode-docker",
+        "DavidAnson.vscode-markdownlint",
+        "yzhang.markdown-all-in-one",
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
-        "ms-azuretools.vscode-docker",
         "Vue.volar",
         "GraphQL.vscode-graphql",
-        "rust-lang.rust-analyzer"
+        "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml",
+        "fill-labs.dependi"
       ]
     }
   },
-  "forwardPorts": [
-    20000,
-    20010
-  ],
+  "forwardPorts": [20000, 20010],
   "features": {
     "ghcr.io/devcontainers/features/github-cli": {},
     "ghcr.io/devcontainers-extra/features/starship": {},
@@ -32,7 +37,8 @@
     },
     "ghcr.io/devcontainers/features/terraform": {},
     "ghcr.io/devcontainers/features/aws-cli": {},
-    "ghcr.io/devcontainers-extra/features/zig": {}
+    "ghcr.io/devcontainers-extra/features/zig": {},
+    "./features/cargo-toolchain": {}
   },
   "containerEnv": {
     "AWS_PROFILE": "internal"

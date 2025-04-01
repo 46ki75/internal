@@ -1,20 +1,20 @@
 <template>
   <template v-if="ankiStore.getCurrentAnki?.blockList != null">
     <ElmHeading1 text="front" id="front" />
-    <ElmJsonRendererAsync
+    <ElmJsonRenderer
       :key="`${ankiStore.getCurrentAnki.pageId}:front`"
       :json="ankiStore.getCurrentAnki.blockList.front"
     />
 
     <template v-if="ankiStore.isShowAnswer">
       <ElmHeading1 text="back" id="back" />
-      <ElmJsonRendererAsync
+      <ElmJsonRenderer
         :key="`${ankiStore.getCurrentAnki.pageId}:back`"
         :json="ankiStore.getCurrentAnki.blockList.back"
       />
 
       <ElmHeading1 text="explanation" id="explanation" />
-      <ElmJsonRendererAsync
+      <ElmJsonRenderer
         :key="`${ankiStore.getCurrentAnki.pageId}:explanation`"
         :json="ankiStore.getCurrentAnki.blockList.explanation"
       />
@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmHeading1, ElmJsonRendererAsync } from "@elmethis/core";
+import { ElmHeading1, ElmJsonRenderer } from "@elmethis/core";
 
 const ankiStore = useAnkiStore();
 </script>

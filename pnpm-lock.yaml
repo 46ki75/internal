@@ -21,8 +21,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       '@elmethis/core':
-        specifier: 1.0.0-alpha.172
-        version: 1.0.0-alpha.172(vue@3.5.13(typescript@5.7.3))
+        specifier: 1.0.0-alpha.173
+        version: 1.0.0-alpha.173(vue@3.5.13(typescript@5.7.3))
       '@pinia/nuxt':
         specifier: 0.10.1
         version: 0.10.1(magicast@0.3.5)(pinia@3.0.1(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3)))
@@ -807,8 +807,8 @@ packages:
     peerDependencies:
       postcss: ^8.4
 
-  '@elmethis/core@1.0.0-alpha.172':
-    resolution: {integrity: sha512-WB2uSOcZgQmxA0XABRvKAIAAobzVdBMrbLeCQ86NltuaZ3nTEHq5ZXRvyZU46qNihDENpDA8Dytw4VH406jw6g==}
+  '@elmethis/core@1.0.0-alpha.173':
+    resolution: {integrity: sha512-/e16hAG7RPXMn6p28ldRoIlafr3oEOQzT+c1D3C8U+Z6HS1+L5YMT4xjQX0+hntI7WkYVrBR5e3ni6+cn0RPVg==}
     peerDependencies:
       vue: '>=3.4.0'
 
@@ -5806,7 +5806,7 @@ snapshots:
     dependencies:
       postcss: 8.5.3
 
-  '@elmethis/core@1.0.0-alpha.172(vue@3.5.13(typescript@5.7.3))':
+  '@elmethis/core@1.0.0-alpha.173(vue@3.5.13(typescript@5.7.3))':
     dependencies:
       '@heroicons/vue': 2.2.0(vue@3.5.13(typescript@5.7.3))
       '@iconify/vue': 4.3.0(vue@3.5.13(typescript@5.7.3))

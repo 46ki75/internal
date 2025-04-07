@@ -1,0 +1,14 @@
+dev: 
+    STAGE_NAME=dev RUST_LOG=internal_graphql=debug cargo lambda watch
+
+build: 
+    cargo lambda build --release
+
+deploy: build
+    scripts/deploy.sh
+
+test:
+    cargo test --lib
+
+invoke:
+    FUNCTION_NAME=notion-notification ./scripts/invoke.sh

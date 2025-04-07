@@ -1,52 +1,136 @@
 use lambda_runtime::{Error, LambdaEvent};
 use serde::{Deserialize, Serialize};
 
-/// This is a made-up example. Incoming messages come into the runtime as unicode
-/// strings in json format, which can map to any structure that implements `serde::Deserialize`
-/// The runtime pays no attention to the contents of the incoming message payload.
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub(crate) struct IncomingMessage {
-    command: String,
+    title: String,
+    severity: Option<Severity>,
+    status: Option<Status>,
+    people: Option<Vec<String>>,
+    url: Option<String>,
 }
 
-/// This is a made-up example of what an outgoing message structure may look like.
-/// There is no restriction on what it can be. The runtime requires responses
-/// to be serialized into json. The runtime pays no attention
-/// to the contents of the outgoing message payload.
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize, Debug, Default)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub(crate) enum Severity {
+    #[default]
+    Info,
+    Warn,
+    Error,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub(crate) enum Status {
+    #[default]
+    New,
+    Open,
+    Suppressed,
+    Resolved,
+}
+
+#[derive(Serialize, Deserialize)]
 pub(crate) struct OutgoingMessage {
     req_id: String,
-    msg: String,
 }
 
-/// This is the main body for the function.
-/// Write your code inside it.
-/// There are some code example in the following URLs:
-/// - https://github.com/awslabs/aws-lambda-rust-runtime/tree/main/examples
-/// - https://github.com/aws-samples/serverless-rust-demo/
-pub(crate) async fn function_handler(event: LambdaEvent<IncomingMessage>) -> Result<OutgoingMessage, Error> {
-    // Extract some useful info from the request
-    let command = event.payload.command;
+pub(crate) async fn function_handler(
+    event: LambdaEvent<IncomingMessage>,
+) -> Result<OutgoingMessage, Error> {
+    let title = event.payload.title;
+    let severity = event.payload.severity.unwrap_or_default();
+    let status = event.payload.status.unwrap_or_default();
+    let people = event.payload.people.unwrap_or(vec![]);
+    let url = event.payload.url;
 
-    // Prepare the outgoing message
-    let resp = OutgoingMessage {
-        req_id: event.context.request_id,
-        msg: format!("Command {}.", command),
-    };
+    let stage_name = std::env::var("STAGE_NAME")?;
 
-    // Return `OutgoingMessage` (it will be serialized to JSON automatically by the runtime)
-    Ok(resp)
-}
+    let aws_sdk_config = aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use lambda_runtime::{Context, LambdaEvent};
+    let ssm_client = std::sync::Arc::new(aws_sdk_ssm::Client::new(&aws_sdk_config));
 
-    #[tokio::test]
-    async fn test_generic_handler() {
-        let event = LambdaEvent::new(IncomingMessage { command: "test".to_string() }, Context::default());
-        let response = function_handler(event).await.unwrap();
-        assert_eq!(response.msg, "Command test.");
+    let notion_api_key = ssm_client
+        .get_parameter()
+        .name(format!("/{stage_name}/46ki75/internal/notion/secret"))
+        .with_decryption(true)
+        .send()
+        .await?
+        .parameter
+        .and_then(|p| p.value)
+        .ok_or("Failed to fetch the Notion secret.")?;
+
+    let database_id = ssm_client
+        .get_parameter()
+        .name(format!(
+            "/shared/46ki75/internal/notion/notification/database/id"
+        ))
+        .send()
+        .await?
+        .parameter
+        .and_then(|p| p.value)
+        .ok_or("Failed to fetch the Notification database ID.")?;
+
+    let notion_client = notionrs::client::Client::new().secret(notion_api_key);
+
+    let mut properties = std::collections::HashMap::new();
+
+    properties.insert(
+        "Title".to_string(),
+        notionrs::object::page::PageProperty::Title(
+            notionrs::object::page::PageTitleProperty::from(title),
+        ),
+    );
+
+    properties.insert(
+        "Severity".to_string(),
+        notionrs::object::page::PageProperty::Select(
+            notionrs::object::page::PageSelectProperty::from(serde_plain::to_string(&severity)?),
+        ),
+    );
+
+    properties.insert(
+        "Status".to_string(),
+        notionrs::object::page::PageProperty::Status(notionrs::object::page::PageStatusProperty {
+            id: None,
+            status: notionrs::object::select::Select::from(serde_plain::to_string(&status)?),
+        }),
+    );
+
+    let users = people
+        .iter()
+        .map(|id| {
+            notionrs::object::user::User::Person(notionrs::object::user::person::Person {
+                id: id.to_owned(),
+                ..Default::default()
+            })
+        })
+        .collect::<Vec<notionrs::object::user::User>>();
+
+    properties.insert(
+        "People".to_string(),
+        notionrs::object::page::PageProperty::People(notionrs::object::page::PagePeopleProperty {
+            id: None,
+            people: users,
+        }),
+    );
+
+    if let Some(url) = url {
+        properties.insert(
+            "URL".to_string(),
+            notionrs::object::page::PageProperty::Url(
+                notionrs::object::page::PageUrlProperty::from(url),
+            ),
+        );
     }
+
+    let request = notion_client
+        .create_page()
+        .database_id(database_id)
+        .properties(properties);
+
+    let _response = request.send().await?;
+
+    Ok(OutgoingMessage {
+        req_id: event.context.request_id,
+    })
 }

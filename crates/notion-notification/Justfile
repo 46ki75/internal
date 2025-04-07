@@ -11,4 +11,4 @@ test:
     cargo test --lib
 
 invoke:
-    FUNCTION_NAME=notion-notification ./scripts/invoke.sh
+    STAGE_NAME=dev FUNCTION_NAME=notion-notification ./scripts/invoke.sh

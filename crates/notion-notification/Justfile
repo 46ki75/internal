@@ -1,11 +1,8 @@
-dev: 
-    STAGE_NAME=dev RUST_LOG=internal_graphql=debug cargo lambda watch
-
 build: 
     cargo lambda build --release
 
-deploy: build
-    scripts/deploy.sh
+deploy  STAGE_NAME: build
+    cargo lambda deploy --binary-name notion-notification "{{STAGE_NAME}}-46ki75-internal-lambda-function-notion-notification"
 
 test:
     cargo test --lib

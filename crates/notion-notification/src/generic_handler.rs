@@ -40,7 +40,7 @@ pub(crate) async fn function_handler(
     let title = event.payload.title;
     let severity = event.payload.severity.unwrap_or_default();
     let status = event.payload.status.unwrap_or_default();
-    let people = event.payload.people.unwrap_or(vec![]);
+    let people = event.payload.people;
     let url = event.payload.url;
 
     let stage_name = std::env::var("STAGE_NAME")?;
@@ -96,15 +96,31 @@ pub(crate) async fn function_handler(
         }),
     );
 
-    let users = people
-        .iter()
-        .map(|id| {
-            notionrs::object::user::User::Person(notionrs::object::user::person::Person {
+    let users = match people {
+        Some(people) => people
+            .iter()
+            .map(|id| notionrs::object::user::User {
                 id: id.to_owned(),
                 ..Default::default()
             })
-        })
-        .collect::<Vec<notionrs::object::user::User>>();
+            .collect::<Vec<notionrs::object::user::User>>(),
+        None => {
+            let user_id = ssm_client
+                .get_parameter()
+                .name(format!("/shared/46ki75/internal/notion/workspace/user/id"))
+                .send()
+                .await?
+                .parameter
+                .and_then(|p| p.value)
+                .ok_or("Failed to fetch the user ID.")?;
+
+            vec![notionrs::object::user::User {
+                object: "user".to_string(),
+                id: user_id,
+                ..Default::default()
+            }]
+        }
+    };
 
     properties.insert(
         "People".to_string(),

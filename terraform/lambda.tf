@@ -135,7 +135,8 @@ resource "aws_lambda_permission" "notion_notification_sns" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.notion_notification.function_name
   principal     = "sns.amazonaws.com"
-  source_arn    = "arn:aws:sns:ap-northeast-1:${data.aws_caller_identity.current.account_id}:${terraform.workspace}-*"
+  source_arn    = "arn:aws:sns:ap-northeast-1:${data.aws_caller_identity.current.account_id}:*"
+  qualifier     = aws_lambda_alias.notion_notification.name
 }
 
 resource "aws_lambda_function" "notion_notification" {

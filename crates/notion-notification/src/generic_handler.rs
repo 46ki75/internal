@@ -10,6 +10,7 @@ pub enum IncomingMessage {
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub(crate) struct RawMessage {
     title: String,
+    content: Option<String>,
     severity: Option<Severity>,
     status: Option<Status>,
     people: Option<Vec<String>>,
@@ -46,6 +47,7 @@ pub(crate) async fn function_handler(
     let _ = match event.payload {
         IncomingMessage::Raw(payload) => {
             let title = payload.title;
+            let content = payload.content;
             let severity = payload.severity.unwrap_or_default();
             let status = payload.status.unwrap_or_default();
             let people = payload.people;
@@ -156,10 +158,24 @@ pub(crate) async fn function_handler(
                 );
             }
 
-            let request = notion_client
-                .create_page()
-                .database_id(database_id)
-                .properties(properties);
+            let request = match content {
+                Some(content) => {
+                    let paragraph = notionrs::object::block::Block::Paragraph {
+                        paragraph: notionrs::object::block::ParagraphBlock::from(content),
+                    };
+
+                    let r = notion_client
+                        .create_page()
+                        .database_id(database_id)
+                        .properties(properties)
+                        .children(vec![paragraph]);
+                    r
+                }
+                None => notion_client
+                    .create_page()
+                    .database_id(database_id)
+                    .properties(properties),
+            };
 
             let _response = request.send().await?;
         }

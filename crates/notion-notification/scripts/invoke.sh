@@ -20,4 +20,4 @@ trap cleanup EXIT
 
 sleep 0.1
 
-cargo lambda invoke "${FUNCTION_NAME}" --data-file ./scripts/event.json
+cargo lambda invoke "${FUNCTION_NAME}" --data-file ./scripts/raw.json

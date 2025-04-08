@@ -158,14 +158,11 @@ impl AnkiRepository for AnkiRepositoryStub {
         &self,
         _id: &str,
     ) -> Result<notionrs::object::page::PageResponse, crate::error::Error> {
-        let user = notionrs::object::user::User::Person(notionrs::object::user::person::Person {
+        let user = notionrs::object::user::User {
             object: "user".to_string(),
             id: "c4afec03-71d3-4114-b992-df84ed2e594c".to_string(),
-            name: None,
-            avatar_url: None,
-            r#type: None,
-            person: None,
-        });
+            ..Default::default()
+        };
 
         let mut properties = std::collections::HashMap::new();
 
@@ -233,14 +230,11 @@ impl AnkiRepository for AnkiRepositoryStub {
         notionrs::object::response::ListResponse<notionrs::object::page::PageResponse>,
         crate::error::Error,
     > {
-        let user = notionrs::object::user::User::Person(notionrs::object::user::person::Person {
+        let user = notionrs::object::user::User {
             object: "user".to_string(),
             id: "c4afec03-71d3-4114-b992-df84ed2e594c".to_string(),
-            name: None,
-            avatar_url: None,
-            r#type: None,
-            person: None,
-        });
+            ..Default::default()
+        };
 
         let mut properties = std::collections::HashMap::new();
 
@@ -347,14 +341,11 @@ impl AnkiRepository for AnkiRepositoryStub {
         );
         properties.insert("tags".to_string(), tags_property);
 
-        let user = notionrs::object::user::User::Person(notionrs::object::user::person::Person {
+        let user = notionrs::object::user::User {
             object: "user".to_string(),
             id: "c4afec03-71d3-4114-b992-df84ed2e594c".to_string(),
-            name: None,
-            avatar_url: None,
-            r#type: None,
-            person: None,
-        });
+            ..Default::default()
+        };
 
         Ok(notionrs::object::page::PageResponse {
             id: "4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e".to_string(),
@@ -419,14 +410,11 @@ impl AnkiRepository for AnkiRepositoryStub {
         );
         properties.insert("tags".to_string(), tags_property);
 
-        let user = notionrs::object::user::User::Person(notionrs::object::user::person::Person {
+        let user = notionrs::object::user::User {
             object: "user".to_string(),
             id: "c4afec03-71d3-4114-b992-df84ed2e594c".to_string(),
-            name: None,
-            avatar_url: None,
-            r#type: None,
-            person: None,
-        });
+            ..Default::default()
+        };
 
         Ok(notionrs::object::page::PageResponse {
             id: "4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e".to_string(),

@@ -4,8 +4,8 @@ dev:
 build: 
     cargo lambda build --release
 
-deploy: build
-    scripts/deploy.sh
+deploy  STAGE_NAME: build
+    cargo lambda deploy --binary-name internal-graphql "{{STAGE_NAME}}-46ki75-internal-lambda-function-graphql"
 
 test:
     cargo test --lib

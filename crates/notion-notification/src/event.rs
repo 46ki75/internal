@@ -33,7 +33,10 @@ impl TryFrom<RawEvent> for crate::notify::Input {
 impl TryFrom<aws_lambda_events::event::sns::SnsRecord> for crate::notify::Input {
     type Error = lambda_runtime::Error;
     fn try_from(value: aws_lambda_events::event::sns::SnsRecord) -> Result<Self, Self::Error> {
-        let title = value.sns.subject.unwrap_or(value.sns.topic_arn.to_string());
+        let title = format!(
+            "[Alarm] {}",
+            value.sns.subject.unwrap_or(value.sns.topic_arn.to_string())
+        );
         let content = vec![notionrs::object::block::Block::Paragraph {
             paragraph: notionrs::object::block::ParagraphBlock::from(value.sns.message),
         }];

@@ -26,12 +26,6 @@ resource "aws_sns_topic_subscription" "error_email" {
   endpoint  = "46ki75@gmail.com"
 }
 
-resource "aws_sns_topic_subscription" "error_lambda" {
-  topic_arn = aws_sns_topic.error.arn
-  protocol  = "lambda"
-  endpoint  = aws_lambda_alias.notion_notification.arn
-}
-
 resource "aws_sns_topic" "warn" {
   name = "${terraform.workspace}-46ki75-internal-sns-topic-warn"
   policy = jsonencode({
@@ -54,10 +48,10 @@ resource "aws_sns_topic" "warn" {
   })
 }
 
-resource "aws_sns_topic_subscription" "warn_lambda" {
+resource "aws_sns_topic_subscription" "warn_email" {
   topic_arn = aws_sns_topic.warn.arn
-  protocol  = "lambda"
-  endpoint  = aws_lambda_alias.notion_notification.arn
+  protocol  = "email"
+  endpoint  = "46ki75@gmail.com"
 }
 
 resource "aws_sns_topic" "info" {
@@ -82,8 +76,8 @@ resource "aws_sns_topic" "info" {
   })
 }
 
-resource "aws_sns_topic_subscription" "info_lambda" {
+resource "aws_sns_topic_subscription" "info_email" {
   topic_arn = aws_sns_topic.info.arn
-  protocol  = "lambda"
-  endpoint  = aws_lambda_alias.notion_notification.arn
+  protocol  = "email"
+  endpoint  = "46ki75@gmail.com"
 }

@@ -7,47 +7,47 @@
 </template>
 
 <script setup lang="ts">
-import { ElmDotLoadingIcon, ElmInlineText } from '@elmethis/core'
-import { useWindowFocus } from '@vueuse/core'
+import { ElmDotLoadingIcon, ElmInlineText } from "@elmethis/core";
+import { useWindowFocus } from "@vueuse/core";
 
-const router = useRouter()
-const authStore = useAuthStore()
+const router = useRouter();
+const authStore = useAuthStore();
 
-const timerId = ref<number | null>(null)
+const timerId = ref<number | null>(null);
 
-const refreshing = ref(false)
+const refreshing = ref(false);
 
 const callback = async () => {
   try {
-    refreshing.value = true
-    const isInSession = await authStore.refreshIfNeed(60 * 10) // 10 minutes
+    refreshing.value = true;
+    const isInSession = await authStore.refresh();
     if (!isInSession) {
-      await router.push('/login')
+      await router.push("/login");
     }
   } catch {
-    await router.push('/login')
+    await router.push("/login");
   } finally {
-    refreshing.value = false
+    refreshing.value = false;
   }
-}
+};
 
-const focused = useWindowFocus()
+const focused = useWindowFocus();
 watch(focused, async () => {
   if (focused.value) {
-    await callback()
+    await callback();
   }
-})
+});
 
 onMounted(async () => {
-  await callback()
-  timerId.value = window.setInterval(callback, 1000 * 60 * 5) // 5 minutes
-})
+  await callback();
+  timerId.value = window.setInterval(callback, 1000 * 60 * 5); // 5 minutes
+});
 
 onUnmounted(() => {
   if (timerId.value) {
-    window.clearInterval(timerId.value)
+    window.clearInterval(timerId.value);
   }
-})
+});
 </script>
 
 <style scoped lang="scss">

@@ -21,8 +21,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       '@elmethis/core':
-        specifier: 1.0.0-alpha.187
-        version: 1.0.0-alpha.187(vue@3.5.13(typescript@5.7.3))
+        specifier: 1.0.0-alpha.189
+        version: 1.0.0-alpha.189(vue@3.5.13(typescript@5.7.3))
       '@pinia/nuxt':
         specifier: 0.11.0
         version: 0.11.0(magicast@0.3.5)(pinia@3.0.2(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3)))
@@ -779,8 +779,8 @@ packages:
     peerDependencies:
       postcss: ^8.4
 
-  '@elmethis/core@1.0.0-alpha.187':
-    resolution: {integrity: sha512-0biXmb4rL4tAYw3ApjYaryAv0R3YS2UHjVJiG02TuSZWndriqDwiJZyocJVczXlvj9Q7Cbu5L9vEJDJ3ldtDqA==}
+  '@elmethis/core@1.0.0-alpha.189':
+    resolution: {integrity: sha512-QGJ1XeTECZhM7BHtcmnKehE7i2/HRAccNCKZ21w/uhxDj4iow0hHYJEh7dpUtbCgqE5qwxeam6yOj2xyI5nizg==}
     peerDependencies:
       vue: '>=3.4.0'
 
@@ -3129,11 +3129,11 @@ packages:
     resolution: {integrity: sha512-1FlR+gjXK7X+AsAHso35MnyN5KqGwJRi/31ft6x0M194ht7S+rWAvd7PHss9xSKMzE0asv1pyIHaJYq+BbacAQ==}
     engines: {node: '>=12'}
 
-  oniguruma-parser@0.5.4:
-    resolution: {integrity: sha512-yNxcQ8sKvURiTwP0mV6bLQCYE7NKfKRRWunhbZnXgxSmB1OXa1lHrN3o4DZd+0Si0kU5blidK7BcROO8qv5TZA==}
+  oniguruma-parser@0.11.2:
+    resolution: {integrity: sha512-F7Ld4oDZJCI5/wCZ8AOffQbqjSzIRpKH7I/iuSs1SkhZeCj0wS6PMZ4W6VA16TWHrAo0Y9bBKEJOe7tvwcTXnw==}
 
-  oniguruma-to-es@4.1.0:
-    resolution: {integrity: sha512-SNwG909cSLo4vPyyPbU/VJkEc9WOXqu2ycBlfd1UCXLqk1IijcQktSBb2yRQ2UFPsDhpkaf+C1dtT3PkLK/yWA==}
+  oniguruma-to-es@4.2.0:
+    resolution: {integrity: sha512-MDPs6KSOLS0tKQ7joqg44dRIRZUyotfTy0r+7oEEs6VwWWP0+E2PPDYWMFN0aqOjRyWHBYq7RfKw9GQk2S2z5g==}
 
   open@10.1.0:
     resolution: {integrity: sha512-mnkeQ1qP5Ue2wd+aivTD3NHd/lZ96Lu0jgf0pwktLPtx6cTZiH7tyeGRRHs0zX0rbrahXPnXlUnbeXyaBBuIaw==}
@@ -5672,7 +5672,7 @@ snapshots:
     dependencies:
       postcss: 8.5.3
 
-  '@elmethis/core@1.0.0-alpha.187(vue@3.5.13(typescript@5.7.3))':
+  '@elmethis/core@1.0.0-alpha.189(vue@3.5.13(typescript@5.7.3))':
     dependencies:
       '@heroicons/vue': 2.2.0(vue@3.5.13(typescript@5.7.3))
       '@iconify/vue': 4.3.0(vue@3.5.13(typescript@5.7.3))
@@ -6336,7 +6336,7 @@ snapshots:
     dependencies:
       '@shikijs/types': 3.2.2
       '@shikijs/vscode-textmate': 10.0.2
-      oniguruma-to-es: 4.1.0
+      oniguruma-to-es: 4.2.0
 
   '@shikijs/engine-oniguruma@3.2.2':
     dependencies:
@@ -8491,12 +8491,12 @@ snapshots:
     dependencies:
       mimic-fn: 4.0.0
 
-  oniguruma-parser@0.5.4: {}
+  oniguruma-parser@0.11.2: {}
 
-  oniguruma-to-es@4.1.0:
+  oniguruma-to-es@4.2.0:
     dependencies:
       emoji-regex-xs: 1.0.0
-      oniguruma-parser: 0.5.4
+      oniguruma-parser: 0.11.2
       regex: 6.0.1
       regex-recursion: 6.0.2
 

@@ -29,7 +29,7 @@ pub trait AnkiRepository: Send + Sync {
     async fn list_blocks_by_id(
         &self,
         page_id: &str,
-    ) -> Result<Vec<elmethis_notion::block::Block>, crate::error::Error>;
+    ) -> Result<Vec<jarkup_rs::Component>, crate::error::Error>;
 }
 
 pub struct AnkiRepositoryImpl {
@@ -138,10 +138,18 @@ impl AnkiRepository for AnkiRepositoryImpl {
     async fn list_blocks_by_id(
         &self,
         page_id: &str,
-    ) -> Result<Vec<elmethis_notion::block::Block>, crate::error::Error> {
+    ) -> Result<Vec<jarkup_rs::Component>, crate::error::Error> {
         let secret = self.config.notion_api_key.as_str();
 
-        let mut client = elmethis_notion::client::Client::new(secret);
+        let notionrs_client = notionrs::client::Client::new().secret(secret);
+
+        let reqwest_client = reqwest::Client::new();
+
+        let client = notion_to_jarkup::client::Client {
+            notionrs_client,
+            reqwest_client,
+            enable_unsupported_block: true,
+        };
 
         tracing::debug!("Sending request to Notion API");
         let blocks = client.convert_block(page_id).await?;
@@ -443,7 +451,7 @@ impl AnkiRepository for AnkiRepositoryStub {
     async fn list_blocks_by_id(
         &self,
         _page_id: &str,
-    ) -> Result<Vec<elmethis_notion::block::Block>, crate::error::Error> {
+    ) -> Result<Vec<jarkup_rs::Component>, crate::error::Error> {
         let blocks = vec![];
 
         Ok(blocks)

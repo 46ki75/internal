@@ -55,9 +55,9 @@ impl AnkiService {
     ) -> Result<crate::entity::anki::AnkiBlock, crate::error::Error> {
         let blocks = self.anki_repository.list_blocks_by_id(id).await?;
 
-        let mut front: Vec<elmethis_notion::block::Block> = Vec::new();
-        let mut back: Vec<elmethis_notion::block::Block> = Vec::new();
-        let mut explanation: Vec<elmethis_notion::block::Block> = Vec::new();
+        let mut front: Vec<jarkup_rs::Component> = Vec::new();
+        let mut back: Vec<jarkup_rs::Component> = Vec::new();
+        let mut explanation: Vec<jarkup_rs::Component> = Vec::new();
 
         enum Marker {
             Front,
@@ -68,26 +68,45 @@ impl AnkiService {
         let mut marker = Marker::Front;
 
         for block in blocks {
-            if let elmethis_notion::block::Block::ElmHeading1(
-                elmethis_notion::block::ElmHeading1 { props, .. },
-            ) = &block
-            {
-                if props.text == "front" {
-                    marker = Marker::Front;
-                    continue;
-                } else if props.text == "back" {
-                    marker = Marker::Back;
-                    continue;
-                } else if props.text == "explanation" {
-                    marker = Marker::Explanation;
-                    continue;
-                }
-            }
+            if let jarkup_rs::Component::BlockComponent(block_component) = &block {
+                if let jarkup_rs::BlockComponent::Heading(heading) = &block_component {
+                    if heading.props.level == jarkup_rs::HeadingLevel::H1 {
+                        let text = heading
+                            .slots
+                            .default
+                            .clone()
+                            .into_iter()
+                            .filter_map(|slot| {
+                                if let jarkup_rs::InlineComponent::Text(text) = slot {
+                                    Some(text.props.text)
+                                } else {
+                                    None
+                                }
+                            })
+                            .collect::<String>()
+                            .trim()
+                            .to_lowercase();
 
-            match marker {
-                Marker::Front => front.push(block),
-                Marker::Back => back.push(block),
-                Marker::Explanation => explanation.push(block),
+                        let text_str = text.as_str();
+
+                        if text_str == "front" {
+                            marker = Marker::Front;
+                            continue;
+                        } else if text_str == "back" {
+                            marker = Marker::Back;
+                            continue;
+                        } else if text_str == "explanation" {
+                            marker = Marker::Explanation;
+                            continue;
+                        }
+                    }
+                }
+
+                match marker {
+                    Marker::Front => front.push(block),
+                    Marker::Back => back.push(block),
+                    Marker::Explanation => explanation.push(block),
+                }
             }
         }
 
@@ -146,25 +165,33 @@ impl AnkiService {
 
         let children = vec![
             notionrs::object::block::Block::Heading1 {
-                heading_1: notionrs::object::block::heading::HeadingBlock::default()
-                    .rich_text(vec![notionrs::object::rich_text::RichText::from("front")
-                        .color(notionrs::object::color::Color::Brown)]),
-            },
-            notionrs::object::block::Block::Paragraph {
-                paragraph: notionrs::object::block::paragraph::ParagraphBlock::from(""),
-            },
-            notionrs::object::block::Block::Heading1 {
-                heading_1: notionrs::object::block::heading::HeadingBlock::default()
-                    .rich_text(vec![notionrs::object::rich_text::RichText::from("back")
-                        .color(notionrs::object::color::Color::Brown)]),
+                heading_1: notionrs::object::block::heading::HeadingBlock::default().rich_text(
+                    vec![
+                        notionrs::object::rich_text::RichText::from("front")
+                            .color(notionrs::object::color::Color::Brown),
+                    ],
+                ),
             },
             notionrs::object::block::Block::Paragraph {
                 paragraph: notionrs::object::block::paragraph::ParagraphBlock::from(""),
             },
             notionrs::object::block::Block::Heading1 {
                 heading_1: notionrs::object::block::heading::HeadingBlock::default().rich_text(
-                    vec![notionrs::object::rich_text::RichText::from("explanation")
-                        .color(notionrs::object::color::Color::Brown)],
+                    vec![
+                        notionrs::object::rich_text::RichText::from("back")
+                            .color(notionrs::object::color::Color::Brown),
+                    ],
+                ),
+            },
+            notionrs::object::block::Block::Paragraph {
+                paragraph: notionrs::object::block::paragraph::ParagraphBlock::from(""),
+            },
+            notionrs::object::block::Block::Heading1 {
+                heading_1: notionrs::object::block::heading::HeadingBlock::default().rich_text(
+                    vec![
+                        notionrs::object::rich_text::RichText::from("explanation")
+                            .color(notionrs::object::color::Color::Brown),
+                    ],
                 ),
             },
             notionrs::object::block::Block::Paragraph {

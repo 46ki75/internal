@@ -16,7 +16,7 @@ pub enum Error {
     NotionRs(String),
 
     #[error("elmethis_notion error: {0}")]
-    ElmethisNotion(#[from] elmethis_notion::error::Error),
+    ElmethisNotion(#[from] notion_to_jarkup::error::Error),
 
     #[error("serde error: {0}")]
     SerdeJson(#[from] serde_json::Error),

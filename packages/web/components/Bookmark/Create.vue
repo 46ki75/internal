@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ElmHeading1 text="Create Bookmark" />
+    <ElmHeading :level="1" text="Create Bookmark" />
 
     <div class="input-container">
       <ElmTextField v-model="name" label="Name" :icon="GlobeIcon" />
@@ -18,25 +18,25 @@
 </template>
 
 <script setup lang="ts">
-import { ElmHeading1, ElmButton, ElmTextField } from '@elmethis/core'
-import { Icon } from '@iconify/vue'
+import { ElmHeading, ElmButton, ElmTextField } from "@elmethis/core";
+import { Icon } from "@iconify/vue";
 
-const bookmarkStore = useBookmarkStore()
+const bookmarkStore = useBookmarkStore();
 
-const name = ref<string | undefined>()
-const url = ref<string | undefined>()
+const name = ref<string | undefined>();
+const url = ref<string | undefined>();
 
 const handleCreate = async () => {
   if (name.value != null && url.value != null) {
     await bookmarkStore.create({
       name: name.value,
-      url: url.value
-    })
+      url: url.value,
+    });
   }
-}
+};
 
-const GlobeIcon = h(Icon, { icon: 'mdi:globe' })
-const LinkIcon = h(Icon, { icon: 'mdi:link-variant' })
+const GlobeIcon = h(Icon, { icon: "mdi:globe" });
+const LinkIcon = h(Icon, { icon: "mdi:link-variant" });
 </script>
 
 <style scoped lang="scss">

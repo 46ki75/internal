@@ -1,5 +1,5 @@
 <template>
-  <ElmHeading1 text="ToDo" />
+  <ElmHeading :level="1" text="ToDo" />
 
   <ElmBlockFallback v-if="todoStore.todoList.length === 0" />
 
@@ -46,7 +46,7 @@
 
         <td>
           <div>
-            <ElmInlineLink
+            <ElmInlineText
               :text="
                 todo.title.length > 50
                   ? todo.title.slice(0, 50) + '...'
@@ -89,36 +89,35 @@
 import {
   ElmBadge,
   ElmBlockFallback,
-  ElmHeading1,
-  ElmInlineLink,
-  ElmInlineText
-} from '@elmethis/core'
-import { Icon } from '@iconify/vue'
-import { useWindowFocus } from '@vueuse/core'
+  ElmHeading,
+  ElmInlineText,
+} from "@elmethis/core";
+import { Icon } from "@iconify/vue";
+import { useWindowFocus } from "@vueuse/core";
 
-const todoStore = useToDoStore()
+const todoStore = useToDoStore();
 
 onMounted(() => {
-  todoStore.fetch()
-})
+  todoStore.fetch();
+});
 
 const colorMap: Record<
-  (typeof todoStore)['todoList'][number]['severity'],
+  (typeof todoStore)["todoList"][number]["severity"],
   string
 > = {
-  UNKNOWN: '#868e9c',
-  INFO: '#59b57c',
-  WARN: '#cdb57b',
-  ERROR: '#c56565',
-  FATAL: 'red'
-}
+  UNKNOWN: "#868e9c",
+  INFO: "#59b57c",
+  WARN: "#cdb57b",
+  ERROR: "#c56565",
+  FATAL: "red",
+};
 
-const focused = useWindowFocus()
+const focused = useWindowFocus();
 watch(focused, async () => {
   if (focused.value) {
-    await todoStore.fetch()
+    await todoStore.fetch();
   }
-})
+});
 </script>
 
 <style scoped lang="scss">
@@ -150,7 +149,7 @@ watch(focused, async () => {
   height: 24px;
   opacity: 0.8;
   color: black;
-  [data-theme='dark'] & {
+  [data-theme="dark"] & {
     filter: invert(1);
   }
 }

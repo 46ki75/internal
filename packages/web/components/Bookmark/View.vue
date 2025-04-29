@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ElmHeading1 text="Bookmarks" />
+    <ElmHeading :level="1" text="Bookmarks" />
     <ElmBlockFallback v-if="bookmarkStore.bookmarkList.length === 0" />
     <div class="global-fade-in" v-else>
       <div
@@ -20,7 +20,7 @@
               :href="bookmark.url ?? ''"
               class="fade-in"
               :style="{
-                animationDelay: `${index * 25}ms`
+                animationDelay: `${index * 25}ms`,
               }"
             />
           </template>
@@ -38,26 +38,25 @@
 import {
   ElmBlockFallback,
   ElmBookmarkIcon,
-  ElmHeading1,
-  ElmInlineText,
+  ElmHeading,
   ElmParagraph,
-  ElmTag
-} from '@elmethis/core'
-import { useWindowFocus } from '@vueuse/core'
+  ElmTag,
+} from "@elmethis/core";
+import { useWindowFocus } from "@vueuse/core";
 
-const bookmarkStore = useBookmarkStore()
+const bookmarkStore = useBookmarkStore();
 
 onMounted(async () => {
-  console.log('fetching bookmarks')
-  await bookmarkStore.fetch()
-})
+  console.log("fetching bookmarks");
+  await bookmarkStore.fetch();
+});
 
-const focused = useWindowFocus()
+const focused = useWindowFocus();
 watch(focused, async () => {
   if (focused.value) {
-    await bookmarkStore.fetch()
+    await bookmarkStore.fetch();
   }
-})
+});
 </script>
 
 <style scoped lang="scss">
@@ -81,7 +80,7 @@ watch(focused, async () => {
   grid-template-columns: repeat(auto-fill, minmax(5rem, 1fr));
   grid-template-rows: repeat(auto-fill, minmax(2rem, 1fr));
   grid-template-areas:
-    'header header'
-    'main sidebar';
+    "header header"
+    "main sidebar";
 }
 </style>

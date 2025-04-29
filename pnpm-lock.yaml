@@ -21,8 +21,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       '@elmethis/core':
-        specifier: 1.0.0-alpha.191
-        version: 1.0.0-alpha.191(vue@3.5.13(typescript@5.8.3))
+        specifier: 1.0.0-alpha.192
+        version: 1.0.0-alpha.192(vue@3.5.13(typescript@5.8.3))
       '@pinia/nuxt':
         specifier: 0.11.0
         version: 0.11.0(magicast@0.3.5)(pinia@3.0.2(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3)))
@@ -794,8 +794,8 @@ packages:
     resolution: {integrity: sha512-KrkT6qO5NxqNfy68sBl6CTSoJ4SNDIS5iQArkibhlbGU4LaDukZ3q2HIkh8aUKDio6o4itU4xDR7t82Y2eP1Bg==}
     engines: {node: '>=14'}
 
-  '@elmethis/core@1.0.0-alpha.191':
-    resolution: {integrity: sha512-SnTYZNJl0bf/sesgrGk2tX8EMztR+l42ZTIS/USRFe0oVnnAXuwOH9CTXezKgEKIDS8UpTah2TXBb4vZ691+sw==}
+  '@elmethis/core@1.0.0-alpha.192':
+    resolution: {integrity: sha512-fDLpnr5CLPlMAvshb5lMLAUeOll1SmbYRAD7LXclO218MH6Iz32FLxgbmjU1lcFuYCxJXNWI+/tgjBTN2MFiVg==}
     peerDependencies:
       vue: '>=3.4.0'
 
@@ -6574,7 +6574,7 @@ snapshots:
       gonzales-pe: 4.3.0
       node-source-walk: 6.0.2
 
-  '@elmethis/core@1.0.0-alpha.191(vue@3.5.13(typescript@5.8.3))':
+  '@elmethis/core@1.0.0-alpha.192(vue@3.5.13(typescript@5.8.3))':
     dependencies:
       '@heroicons/vue': 2.2.0(vue@3.5.13(typescript@5.8.3))
       '@iconify/vue': 4.3.0(vue@3.5.13(typescript@5.8.3))

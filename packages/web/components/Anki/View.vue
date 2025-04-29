@@ -6,9 +6,9 @@
         <ElmInlineText bold text="FRONT" id="front" />
       </div>
       <div class="card-body">
-        <ElmJsonRenderer
+        <ElmJsonComponentRenderer
           :key="`${ankiStore.getCurrentAnki.pageId}:front`"
-          :json="ankiStore.getCurrentAnki.blockList.front"
+          :json-components="ankiStore.getCurrentAnki.blockList.front"
         />
       </div>
     </div>
@@ -20,9 +20,9 @@
           <ElmInlineText bold text="BACK" id="back" />
         </div>
         <div class="card-body">
-          <ElmJsonRenderer
+          <ElmJsonComponentRenderer
             :key="`${ankiStore.getCurrentAnki.pageId}:back`"
-            :json="ankiStore.getCurrentAnki.blockList.back"
+            :json-components="ankiStore.getCurrentAnki.blockList.back"
           />
         </div>
       </div>
@@ -33,9 +33,9 @@
           <ElmInlineText bold text="EXPLANATION" id="explanation" />
         </div>
         <div class="card-body">
-          <ElmJsonRenderer
+          <ElmJsonComponentRenderer
             :key="`${ankiStore.getCurrentAnki.pageId}:explanation`"
-            :json="ankiStore.getCurrentAnki.blockList.explanation"
+            :json-components="ankiStore.getCurrentAnki.blockList.explanation"
           />
         </div>
       </div>
@@ -44,8 +44,8 @@
 </template>
 
 <script setup lang="ts">
-import { ElmJsonRenderer, ElmInlineText } from "@elmethis/core";
-import { Icon } from "@iconify/vue/dist/iconify.js";
+import { ElmJsonComponentRenderer, ElmInlineText } from "@elmethis/core";
+import { Icon } from "@iconify/vue";
 
 const ankiStore = useAnkiStore();
 </script>

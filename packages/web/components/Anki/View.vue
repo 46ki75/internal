@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import { ElmJsonComponentRenderer, ElmInlineText } from "@elmethis/core";
-import { Icon } from "@iconify/vue/dist/iconify.js";
+import { Icon } from "@iconify/vue";
 
 const ankiStore = useAnkiStore();
 </script>

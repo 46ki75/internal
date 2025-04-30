@@ -8,9 +8,7 @@
         :loading="ankiStore.updateLoading"
         block
       >
-        <span>
-          {{ `× FORGETFUL${shift ? " [A]" : ""}` }}
-        </span>
+        <span>× FORGETFUL [Q]</span>
       </ElmButton>
 
       <ElmButton
@@ -18,9 +16,7 @@
         :loading="ankiStore.updateLoading"
         block
       >
-        <span>
-          {{ `× INCORRECT${shift ? " [S]" : ""}` }}
-        </span>
+        <span>× INCORRECT [W]</span>
       </ElmButton>
 
       <ElmButton
@@ -28,8 +24,7 @@
         :loading="ankiStore.updateLoading"
         block
       >
-        <span> </span>
-        {{ `× ALMOST${shift ? " [D]" : ""}` }}
+        <span>× ALMOST [E]</span>
       </ElmButton>
 
       <ElmButton
@@ -38,9 +33,7 @@
         block
         primary
       >
-        <span>
-          {{ `✓ LUCKY${!shift ? " [a]" : ""}` }}
-        </span>
+        <span>✓ LUCKY [A]</span>
       </ElmButton>
 
       <ElmButton
@@ -49,9 +42,7 @@
         block
         primary
       >
-        <span>
-          {{ `✓ CORRECT${!shift ? " [s]" : ""}` }}
-        </span>
+        <span>✓ CONFIDENT [S]</span>
       </ElmButton>
 
       <ElmButton
@@ -60,32 +51,34 @@
         block
         primary
       >
-        <span>
-          {{ `✓ CONFIDENT${!shift ? " [d]" : ""}` }}
-        </span>
+        <span>✓ CONFIDENT [D]</span>
       </ElmButton>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onKeyStroke, useMagicKeys } from "@vueuse/core";
+import { onKeyStroke } from "@vueuse/core";
 import { ElmButton, ElmBlockFallback } from "@elmethis/core";
 
 const ankiStore = useAnkiStore();
 
-const { shift } = useMagicKeys();
+type Key = "q" | "w" | "e" | "a" | "s" | "d";
 
-onKeyStroke(["a", "s", "d"], (e) => {
+onKeyStroke(["q", "w", "e", "a", "s", "d"] as Key[], (e) => {
   if (ankiStore.isShowAnswer) {
     e.preventDefault();
-    if (shift.value) {
-      const rating = e.key === "a" ? 0 : e.key === "s" ? 1 : 2;
-      ankiStore.updateAnkiByPerformanceRating(rating);
-    } else {
-      const rating = e.key === "a" ? 4 : e.key === "s" ? 3 : 5;
-      ankiStore.updateAnkiByPerformanceRating(rating);
-    }
+
+    const map: Record<Key, 1 | 2 | 3 | 4 | 5 | 6> = {
+      q: 1,
+      w: 2,
+      e: 3,
+      a: 4,
+      s: 5,
+      d: 6,
+    };
+
+    ankiStore.updateAnkiByPerformanceRating(map[e.key as Key]);
   }
 });
 </script>

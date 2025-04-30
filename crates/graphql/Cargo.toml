@@ -37,5 +37,5 @@ env_logger = { version = "0.11.8" }
 aws-sdk-ssm = "1.73.0"
 tracing-subscriber = { version = "0.3.19", features = ["ansi"] }
 tracing = "0.1.41"
-notion-to-jarkup = "0.2.0"
+notion-to-jarkup = "0.2.2"
 jarkup-rs = "0.2.2"

@@ -62,10 +62,9 @@ onKeyStroke(["Enter", " "], (e) => {
 
 .update {
   box-sizing: border-box;
-  padding: 0.5rem;
-  margin-block: 0.25rem;
+  padding: 0.25rem;
   border-radius: 0.25rem;
-  width: 100%;
+  width: calc(100% - 1rem);
   max-width: 800px;
   position: fixed;
   bottom: 0;

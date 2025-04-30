@@ -21,8 +21,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       '@elmethis/core':
-        specifier: 1.0.0-alpha.192
-        version: 1.0.0-alpha.192(vue@3.5.13(typescript@5.8.3))
+        specifier: 1.0.0-alpha.194
+        version: 1.0.0-alpha.194(vue@3.5.13(typescript@5.8.3))
       '@pinia/nuxt':
         specifier: 0.11.0
         version: 0.11.0(magicast@0.3.5)(pinia@3.0.2(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3)))
@@ -794,8 +794,8 @@ packages:
     resolution: {integrity: sha512-KrkT6qO5NxqNfy68sBl6CTSoJ4SNDIS5iQArkibhlbGU4LaDukZ3q2HIkh8aUKDio6o4itU4xDR7t82Y2eP1Bg==}
     engines: {node: '>=14'}
 
-  '@elmethis/core@1.0.0-alpha.192':
-    resolution: {integrity: sha512-fDLpnr5CLPlMAvshb5lMLAUeOll1SmbYRAD7LXclO218MH6Iz32FLxgbmjU1lcFuYCxJXNWI+/tgjBTN2MFiVg==}
+  '@elmethis/core@1.0.0-alpha.194':
+    resolution: {integrity: sha512-4iI8QffvdGfYvcOQ6DJh1584mnxLLJzTA64vgTnefW2i2cFSUIRqH8kwvrBT3HckVmeogJU7NLMQCBtukEqEBQ==}
     peerDependencies:
       vue: '>=3.4.0'
 
@@ -1098,11 +1098,6 @@ packages:
 
   '@fastify/busboy@3.1.1':
     resolution: {integrity: sha512-5DGmA8FTdB2XbDeEwc/5ZXBl6UbBAyBOOLlPuBnZ/N1SwdH9Ii+cOX3tBROlDgcTXxjOYnLMVoKk9+FXAw0CJw==}
-
-  '@heroicons/vue@2.2.0':
-    resolution: {integrity: sha512-G3dbSxoeEKqbi/DFalhRxJU4mTXJn7GwZ7ae8NuEQzd1bqdd0jAbdaBZlHPcvPD2xI1iGzNVB4k20Un2AguYPw==}
-    peerDependencies:
-      vue: '>= 3'
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -3801,8 +3796,8 @@ packages:
   oniguruma-parser@0.12.0:
     resolution: {integrity: sha512-fD9o5ebCmEAA9dLysajdQvuKzLL7cj+w7DQjuO3Cb6IwafENfx6iL+RGkmyW82pVRsvgzixsWinHvgxTMJvdIA==}
 
-  oniguruma-to-es@4.3.1:
-    resolution: {integrity: sha512-VtX1kepWO+7HG7IWV5v72JhiqofK7XsiHmtgnvurnNOTdIvE5mrdWYtsOrQyrXCv1L2Ckm08hywp+MFO7rC4Ug==}
+  oniguruma-to-es@4.3.2:
+    resolution: {integrity: sha512-Hxxc18dGbVYzcTp2W64YwxQLYabiYM+dOX5Dtycy3qLvuYE4HIQjwfgEeAtPS6chFJs8UdINTQ83/Rlh+1Qwsg==}
 
   open@10.1.1:
     resolution: {integrity: sha512-zy1wx4+P3PfhXSEPJNtZmJXfhkkIaxU1VauWIrDZw1O7uJRDRJtKr9n3Ic4NgbA16KyOxOXO2ng9gYwCdXuSXA==}
@@ -6574,10 +6569,8 @@ snapshots:
       gonzales-pe: 4.3.0
       node-source-walk: 6.0.2
 
-  '@elmethis/core@1.0.0-alpha.192(vue@3.5.13(typescript@5.8.3))':
+  '@elmethis/core@1.0.0-alpha.194(vue@3.5.13(typescript@5.8.3))':
     dependencies:
-      '@heroicons/vue': 2.2.0(vue@3.5.13(typescript@5.8.3))
-      '@iconify/vue': 4.3.0(vue@3.5.13(typescript@5.8.3))
       '@mdi/js': 7.4.47
       '@vueuse/core': 13.1.0(vue@3.5.13(typescript@5.8.3))
       katex: 0.16.22
@@ -6748,10 +6741,6 @@ snapshots:
     optional: true
 
   '@fastify/busboy@3.1.1': {}
-
-  '@heroicons/vue@2.2.0(vue@3.5.13(typescript@5.8.3))':
-    dependencies:
-      vue: 3.5.13(typescript@5.8.3)
 
   '@iconify/types@2.0.0': {}
 
@@ -7431,7 +7420,7 @@ snapshots:
     dependencies:
       '@shikijs/types': 3.3.0
       '@shikijs/vscode-textmate': 10.0.2
-      oniguruma-to-es: 4.3.1
+      oniguruma-to-es: 4.3.2
 
   '@shikijs/engine-oniguruma@3.3.0':
     dependencies:
@@ -10133,7 +10122,7 @@ snapshots:
 
   oniguruma-parser@0.12.0: {}
 
-  oniguruma-to-es@4.3.1:
+  oniguruma-to-es@4.3.2:
     dependencies:
       oniguruma-parser: 0.12.0
       regex: 6.0.1

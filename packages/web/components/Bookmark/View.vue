@@ -7,7 +7,9 @@
         v-for="b in bookmarkStore.classifiedBookmarkList"
         :style="{ marginBlock: '1rem' }"
       >
-        <ElmTag :text="b.tag.name" :color="b.tag.color" />
+        <div>
+          <ElmInlineText :text="b.tag.name" :color="b.tag.color" />
+        </div>
         <div class="bookmark-container">
           <template v-for="(bookmark, index) in b.bookmarkList">
             <ElmBookmarkIcon
@@ -39,8 +41,8 @@ import {
   ElmBlockFallback,
   ElmBookmarkIcon,
   ElmHeading,
+  ElmInlineText,
   ElmParagraph,
-  ElmTag,
 } from "@elmethis/core";
 import { useWindowFocus } from "@vueuse/core";
 

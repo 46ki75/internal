@@ -71,14 +71,8 @@
         </td>
 
         <td>
-          <ElmBadge :color="colorMap[todo.severity]">
-            <template #left>
-              <Icon icon="mdi:notifications-active" class="icon" />
-            </template>
-            <template #right>
-              <ElmInlineText :text="todo.severity" />
-            </template>
-          </ElmBadge>
+          <Icon icon="mdi:notifications-active" class="icon" />
+          <ElmInlineText :text="todo.severity" />
         </td>
       </tr>
     </tbody>
@@ -86,12 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ElmBadge,
-  ElmBlockFallback,
-  ElmHeading,
-  ElmInlineText,
-} from "@elmethis/core";
+import { ElmBlockFallback, ElmHeading, ElmInlineText } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 import { useWindowFocus } from "@vueuse/core";
 

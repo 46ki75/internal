@@ -196,7 +196,13 @@ impl AnkiRepository for AnkiRepositoryStub {
 
         let next_review_at_property = notionrs::object::page::PageProperty::Date(
             notionrs::object::page::PageDateProperty::from(
-                chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+                notionrs::object::date::DateOrDateTime::DateTime(
+                    time::OffsetDateTime::parse(
+                        "2022-06-28T00:00:00Z",
+                        &time::format_description::well_known::Rfc3339,
+                    )
+                    .unwrap(),
+                ),
             ),
         );
         properties.insert("nextReviewAt".to_string(), next_review_at_property);
@@ -208,8 +214,16 @@ impl AnkiRepository for AnkiRepositoryStub {
 
         Ok(notionrs::object::page::PageResponse {
             id: "4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e".to_string(),
-            created_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
-            last_edited_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+            created_time: time::OffsetDateTime::parse(
+                "2022-06-28T00:00:00Z",
+                &time::format_description::well_known::Rfc3339,
+            )
+            .unwrap(),
+            last_edited_time: time::OffsetDateTime::parse(
+                "2022-06-28T00:00:00Z",
+                &time::format_description::well_known::Rfc3339,
+            )
+            .unwrap(),
             created_by: user.clone(),
             last_edited_by: user,
             cover: None,
@@ -268,7 +282,13 @@ impl AnkiRepository for AnkiRepositoryStub {
 
         let next_review_at_property = notionrs::object::page::PageProperty::Date(
             notionrs::object::page::PageDateProperty::from(
-                chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+                notionrs::object::date::DateOrDateTime::DateTime(
+                    time::OffsetDateTime::parse(
+                        "2022-06-28T00:00:00Z",
+                        &time::format_description::well_known::Rfc3339,
+                    )
+                    .unwrap(),
+                ),
             ),
         );
         properties.insert("nextReviewAt".to_string(), next_review_at_property);
@@ -280,8 +300,16 @@ impl AnkiRepository for AnkiRepositoryStub {
 
         let page = notionrs::object::page::PageResponse {
             id: "4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e".to_string(),
-            created_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
-            last_edited_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+            created_time: time::OffsetDateTime::parse(
+                "2022-06-28T00:00:00Z",
+                &time::format_description::well_known::Rfc3339,
+            )
+            .unwrap(),
+            last_edited_time: time::OffsetDateTime::parse(
+                "2022-06-28T00:00:00Z",
+                &time::format_description::well_known::Rfc3339,
+            )
+            .unwrap(),
             created_by: user.clone(),
             last_edited_by: user,
             cover: None,
@@ -339,7 +367,13 @@ impl AnkiRepository for AnkiRepositoryStub {
 
         let next_review_at_property = notionrs::object::page::PageProperty::Date(
             notionrs::object::page::PageDateProperty::from(
-                chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+                notionrs::object::date::DateOrDateTime::DateTime(
+                    time::OffsetDateTime::parse(
+                        "2022-06-28T00:00:00Z",
+                        &time::format_description::well_known::Rfc3339,
+                    )
+                    .unwrap(),
+                ),
             ),
         );
         properties.insert("nextReviewAt".to_string(), next_review_at_property);
@@ -357,8 +391,16 @@ impl AnkiRepository for AnkiRepositoryStub {
 
         Ok(notionrs::object::page::PageResponse {
             id: "4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e".to_string(),
-            created_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
-            last_edited_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+            created_time: time::OffsetDateTime::parse(
+                "2022-06-28T00:00:00Z",
+                &time::format_description::well_known::Rfc3339,
+            )
+            .unwrap(),
+            last_edited_time: time::OffsetDateTime::parse(
+                "2022-06-28T00:00:00Z",
+                &time::format_description::well_known::Rfc3339,
+            )
+            .unwrap(),
             created_by: user.clone(),
             last_edited_by: user,
             cover: None,
@@ -408,7 +450,13 @@ impl AnkiRepository for AnkiRepositoryStub {
 
         let next_review_at_property = notionrs::object::page::PageProperty::Date(
             notionrs::object::page::PageDateProperty::from(
-                chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+                notionrs::object::date::DateOrDateTime::DateTime(
+                    time::OffsetDateTime::parse(
+                        "2022-06-28T00:00:00Z",
+                        &time::format_description::well_known::Rfc3339,
+                    )
+                    .unwrap(),
+                ),
             ),
         );
         properties.insert("nextReviewAt".to_string(), next_review_at_property);
@@ -426,8 +474,16 @@ impl AnkiRepository for AnkiRepositoryStub {
 
         Ok(notionrs::object::page::PageResponse {
             id: "4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e".to_string(),
-            created_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
-            last_edited_time: chrono::DateTime::parse_from_rfc3339("2022-06-28T00:00:00Z").unwrap(),
+            created_time: time::OffsetDateTime::parse(
+                "2022-06-28T00:00:00Z",
+                &time::format_description::well_known::Rfc3339,
+            )
+            .unwrap(),
+            last_edited_time: time::OffsetDateTime::parse(
+                "2022-06-28T00:00:00Z",
+                &time::format_description::well_known::Rfc3339,
+            )
+            .unwrap(),
             created_by: user.clone(),
             last_edited_by: user,
             cover: None,

@@ -10,7 +10,7 @@ pub enum Error {
     InvalidTimezone,
 
     #[error("Invalid Datetime(RFC3339) Format {0}")]
-    DateTimeParse(#[from] chrono::ParseError),
+    DateTimeParse(#[from] time::error::Parse),
 
     #[error("notionrs error: {0}")]
     NotionRs(String),

@@ -25,7 +25,7 @@ impl AnkiUtil {
             _ => {
                 return Err(crate::error::Error::NotionPropertynotFound(
                     "title".to_string(),
-                ))
+                ));
             }
         };
         // <<< title
@@ -49,7 +49,7 @@ impl AnkiUtil {
             _ => {
                 return Err(crate::error::Error::NotionPropertynotFound(
                     "description".to_string(),
-                ))
+                ));
             }
         };
         // <<< description
@@ -72,7 +72,7 @@ impl AnkiUtil {
                 _ => {
                     return Err(crate::error::Error::NotionPropertynotFound(
                         "easeFactor".to_string(),
-                    ))
+                    ));
                 }
             };
         // <<< ease_factor
@@ -92,7 +92,7 @@ impl AnkiUtil {
             _ => {
                 return Err(crate::error::Error::NotionPropertynotFound(
                     "repetitionCount".to_string(),
-                ))
+                ));
             }
         };
         // <<< repetition_count
@@ -116,11 +116,11 @@ impl AnkiUtil {
                 .ok_or(crate::error::Error::NotionPropertynotFound(
                     "nextReviewAt".to_string(),
                 ))?
-                .to_rfc3339(),
+                .to_string(),
             _ => {
                 return Err(crate::error::Error::NotionPropertynotFound(
                     "nextReviewAt".to_string(),
-                ))
+                ));
             }
         };
         // <<< next_review_at
@@ -167,14 +167,14 @@ impl AnkiUtil {
             _ => {
                 return Err(crate::error::Error::NotionPropertynotFound(
                     "tags".to_string(),
-                ))
+                ));
             }
         }?;
         // <<< tags
 
         let page_id = page_response.id.to_string();
-        let created_at = page_response.created_time.to_rfc3339();
-        let updated_at = page_response.last_edited_time.to_rfc3339();
+        let created_at = page_response.created_time.to_string();
+        let updated_at = page_response.last_edited_time.to_string();
         let url = page_response.url.to_string();
 
         Ok(crate::entity::anki::Anki {

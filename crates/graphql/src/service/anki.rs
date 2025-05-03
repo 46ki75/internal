@@ -151,13 +151,13 @@ impl AnkiService {
             ),
         );
 
-        let next_review_at = chrono::Utc::now().with_timezone(
-            &chrono::FixedOffset::east_opt(9).ok_or(crate::error::Error::InvalidTimezone)?,
-        );
+        let next_review_at = time::OffsetDateTime::now_utc();
 
         let next_review_at_property = notionrs::object::page::PageProperty::Date(
             notionrs::object::page::PageDateProperty::default()
-                .start(next_review_at)
+                .start(notionrs::object::date::DateOrDateTime::DateTime(
+                    next_review_at,
+                ))
                 .clone(),
         );
 
@@ -235,11 +235,16 @@ impl AnkiService {
             ),
         );
 
-        let next_review_at = chrono::DateTime::parse_from_rfc3339(&next_review_at)?;
+        let next_review_at = time::OffsetDateTime::parse(
+            &next_review_at,
+            &time::format_description::well_known::Rfc3339,
+        )?;
 
         let next_review_at_property = notionrs::object::page::PageProperty::Date(
             notionrs::object::page::PageDateProperty::default()
-                .start(next_review_at)
+                .start(notionrs::object::date::DateOrDateTime::DateTime(
+                    next_review_at,
+                ))
                 .clone(),
         );
 

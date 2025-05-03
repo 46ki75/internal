@@ -4,7 +4,7 @@
       v-model="title"
       label="Title"
       :loading="todoStore.createState.loading"
-      :icon="PencilIcon"
+      icon="default"
     />
 
     <ElmButton @click="handleCreate" :loading="todoStore.createState.loading">
@@ -15,24 +15,21 @@
 </template>
 
 <script setup lang="ts">
-import { ElmTextField, ElmButton } from '@elmethis/core'
-import { Icon } from '@iconify/vue'
+import { ElmTextField, ElmButton } from "@elmethis/core";
 
-const PencilIcon = h(Icon, { icon: 'mdi:playlist-edit', class: 'icon' })
+const title = ref<string | undefined>();
 
-const title = ref<string | undefined>()
-
-const todoStore = useToDoStore()
+const todoStore = useToDoStore();
 
 const handleCreate = async () => {
   if (title.value != null) {
     await todoStore.create({
-      title: title.value
-    })
+      title: title.value,
+    });
 
-    title.value = undefined
+    title.value = undefined;
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

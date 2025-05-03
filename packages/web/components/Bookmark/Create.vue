@@ -3,8 +3,8 @@
     <ElmHeading :level="1" text="Create Bookmark" />
 
     <div class="input-container">
-      <ElmTextField v-model="name" label="Name" :icon="GlobeIcon" />
-      <ElmTextField v-model="url" label="URL" :icon="LinkIcon" />
+      <ElmTextField v-model="name" label="Name" icon="default" />
+      <ElmTextField v-model="url" label="URL" icon="default" />
 
       <ElmButton
         block
@@ -19,7 +19,6 @@
 
 <script setup lang="ts">
 import { ElmHeading, ElmButton, ElmTextField } from "@elmethis/core";
-import { Icon } from "@iconify/vue";
 
 const bookmarkStore = useBookmarkStore();
 
@@ -34,9 +33,6 @@ const handleCreate = async () => {
     });
   }
 };
-
-const GlobeIcon = h(Icon, { icon: "mdi:globe" });
-const LinkIcon = h(Icon, { icon: "mdi:link-variant" });
 </script>
 
 <style scoped lang="scss">

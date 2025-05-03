@@ -46,8 +46,8 @@ impl ToDoService {
             is_done: false,
             deadline: None,
             severity: crate::entity::to_do::Severity::Info,
-            created_at: Some(response.created_time.to_rfc3339()),
-            updated_at: Some(response.last_edited_time.to_rfc3339()),
+            created_at: Some(response.created_time.to_string()),
+            updated_at: Some(response.last_edited_time.to_string()),
         })
     }
 
@@ -120,8 +120,8 @@ impl ToDoService {
             is_done,
             deadline: None,
             severity,
-            created_at: Some(response.created_time.to_rfc3339()),
-            updated_at: Some(response.last_edited_time.to_rfc3339()),
+            created_at: Some(response.created_time.to_string()),
+            updated_at: Some(response.last_edited_time.to_string()),
         })
     }
 
@@ -205,8 +205,8 @@ impl ToDoService {
                     })
                     .unwrap_or(crate::entity::to_do::Severity::Unknown);
 
-                let created_at = Some(result.created_time.to_rfc3339());
-                let updated_at = Some(result.last_edited_time.to_rfc3339());
+                let created_at = Some(result.created_time.to_string());
+                let updated_at = Some(result.last_edited_time.to_string());
 
                 Ok(crate::entity::to_do::ToDo {
                     id,

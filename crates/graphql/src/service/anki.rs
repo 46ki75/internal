@@ -1,3 +1,5 @@
+use notionrs::prelude::*;
+
 pub struct AnkiService {
     pub anki_repository: std::sync::Arc<dyn crate::repository::anki::AnkiRepository + Send + Sync>,
 }
@@ -121,40 +123,32 @@ impl AnkiService {
         &self,
         title: Option<String>,
     ) -> Result<crate::entity::anki::Anki, crate::error::Error> {
-        let mut properties: std::collections::HashMap<
-            String,
-            notionrs::object::page::PageProperty,
-        > = std::collections::HashMap::new();
+        let mut properties: std::collections::HashMap<String, PageProperty> =
+            std::collections::HashMap::new();
 
         properties.insert(
             "title".to_string(),
-            notionrs::object::page::PageProperty::Title(
-                notionrs::object::page::PageTitleProperty::from(
-                    title.unwrap_or("No Title".to_string()),
-                ),
-            ),
+            PageProperty::Title(PageTitleProperty::from(
+                title.unwrap_or("No Title".to_string()),
+            )),
         );
 
         let ease_factor = 2.5;
 
         properties.insert(
             "easeFactor".to_string(),
-            notionrs::object::page::PageProperty::Number(
-                notionrs::object::page::PageNumberProperty::from(ease_factor),
-            ),
+            PageProperty::Number(PageNumberProperty::from(ease_factor)),
         );
 
         properties.insert(
             "repetitionCount".to_string(),
-            notionrs::object::page::PageProperty::Number(
-                notionrs::object::page::PageNumberProperty::from(0),
-            ),
+            PageProperty::Number(PageNumberProperty::from(0)),
         );
 
         let next_review_at = time::OffsetDateTime::now_utc();
 
-        let next_review_at_property = notionrs::object::page::PageProperty::Date(
-            notionrs::object::page::PageDateProperty::default()
+        let next_review_at_property = PageProperty::Date(
+            PageDateProperty::default()
                 .start(notionrs::object::date::DateOrDateTime::DateTime(
                     next_review_at,
                 ))
@@ -216,23 +210,17 @@ impl AnkiService {
         repetition_count: u32,
         next_review_at: String,
     ) -> Result<crate::entity::anki::Anki, crate::error::Error> {
-        let mut properties: std::collections::HashMap<
-            String,
-            notionrs::object::page::PageProperty,
-        > = std::collections::HashMap::new();
+        let mut properties: std::collections::HashMap<String, PageProperty> =
+            std::collections::HashMap::new();
 
         properties.insert(
             "easeFactor".to_string(),
-            notionrs::object::page::PageProperty::Number(
-                notionrs::object::page::PageNumberProperty::from(ease_factor),
-            ),
+            PageProperty::Number(PageNumberProperty::from(ease_factor)),
         );
 
         properties.insert(
             "repetitionCount".to_string(),
-            notionrs::object::page::PageProperty::Number(
-                notionrs::object::page::PageNumberProperty::from(repetition_count),
-            ),
+            PageProperty::Number(PageNumberProperty::from(repetition_count)),
         );
 
         let next_review_at = time::OffsetDateTime::parse(
@@ -240,8 +228,8 @@ impl AnkiService {
             &time::format_description::well_known::Rfc3339,
         )?;
 
-        let next_review_at_property = notionrs::object::page::PageProperty::Date(
-            notionrs::object::page::PageDateProperty::default()
+        let next_review_at_property = PageProperty::Date(
+            PageDateProperty::default()
                 .start(notionrs::object::date::DateOrDateTime::DateTime(
                     next_review_at,
                 ))

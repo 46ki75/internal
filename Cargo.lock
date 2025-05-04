@@ -2122,25 +2122,24 @@ dependencies = [
 
 [[package]]
 name = "notion-to-jarkup"
-version = "0.2.2"
+version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3cffc5dd87c4b4a2107d2b46efee9cb4d2f7e907af04292a4333f671496c6b05"
+checksum = "8092b4e7e125b908f650036de1893db3db1cf3a91a8e8870506a5843f353fd2e"
 dependencies = [
  "async-recursion",
  "html-meta-scraper",
  "jarkup-rs",
  "notionrs",
  "reqwest",
- "scraper",
  "thiserror 2.0.12",
  "url",
 ]
 
 [[package]]
 name = "notionrs"
-version = "1.0.0-alpha.41"
+version = "1.0.0-beta.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "236283557482e2a3a8b5381604b57fa107448b40b49e8d6b841a983eda11bb8f"
+checksum = "7b4c46b6096b21120b34992f4ad21de9866cf93ac691528e219bfbff2a4661a3"
 dependencies = [
  "notionrs_macro",
  "reqwest",
@@ -2623,6 +2622,7 @@ dependencies = [
  "bytes",
  "futures-core",
  "futures-util",
+ "h2 0.4.8",
  "http 1.2.0",
  "http-body 1.0.1",
  "http-body-util",

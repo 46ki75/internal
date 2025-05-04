@@ -1,3 +1,5 @@
+use notionrs::prelude::*;
+
 pub struct BookmarkService {
     pub bookmark_repository:
         std::sync::Arc<dyn crate::repository::bookmark::BookmarkRepository + Send + Sync>,
@@ -19,7 +21,7 @@ impl BookmarkService {
                 )?;
 
                 let name = match name_property {
-                    notionrs::object::page::PageProperty::Title(title) => {
+                    PageProperty::Title(title) => {
                         if title.to_string().trim().is_empty() {
                             None
                         } else {
@@ -29,7 +31,7 @@ impl BookmarkService {
                     _ => {
                         return Err(crate::error::Error::NotionPropertynotFound(
                             "name".to_string(),
-                        ))
+                        ));
                     }
                 };
 
@@ -38,7 +40,7 @@ impl BookmarkService {
                 )?;
 
                 let url = match url_property {
-                    notionrs::object::page::PageProperty::Url(url) => {
+                    PageProperty::Url(url) => {
                         if url.to_string().trim().is_empty() {
                             None
                         } else {
@@ -48,7 +50,7 @@ impl BookmarkService {
                     _ => {
                         return Err(crate::error::Error::NotionPropertynotFound(
                             "url".to_string(),
-                        ))
+                        ));
                     }
                 };
 
@@ -63,7 +65,7 @@ impl BookmarkService {
 
                 let tags =
                     match tags_property {
-                        notionrs::object::page::PageProperty::MultiSelect(selects) => selects
+                        PageProperty::MultiSelect(selects) => selects
                             .multi_select
                             .iter()
                             .map(|select| {
@@ -102,7 +104,7 @@ impl BookmarkService {
                         _ => {
                             return Err(crate::error::Error::NotionPropertynotFound(
                                 "tags".to_string(),
-                            ))
+                            ));
                         }
                     };
 
@@ -132,23 +134,17 @@ impl BookmarkService {
 
         let favicon = format!("https://logo.clearbit.com/{}", fqdn);
 
-        let mut properties: std::collections::HashMap<
-            String,
-            notionrs::object::page::PageProperty,
-        > = std::collections::HashMap::new();
+        let mut properties: std::collections::HashMap<String, PageProperty> =
+            std::collections::HashMap::new();
 
         properties.insert(
             "name".to_string(),
-            notionrs::object::page::PageProperty::Title(
-                notionrs::object::page::PageTitleProperty::from(name),
-            ),
+            PageProperty::Title(PageTitleProperty::from(name)),
         );
 
         properties.insert(
             "url".to_string(),
-            notionrs::object::page::PageProperty::Url(
-                notionrs::object::page::PageUrlProperty::from(url),
-            ),
+            PageProperty::Url(PageUrlProperty::from(url)),
         );
 
         let response = self
@@ -167,7 +163,7 @@ impl BookmarkService {
                 ))?;
 
         let tags = match tags_property {
-            notionrs::object::page::PageProperty::MultiSelect(selects) => selects
+            PageProperty::MultiSelect(selects) => selects
                 .multi_select
                 .iter()
                 .map(|select| {
@@ -206,7 +202,7 @@ impl BookmarkService {
             _ => {
                 return Err(crate::error::Error::NotionPropertynotFound(
                     "tags".to_string(),
-                ))
+                ));
             }
         };
 

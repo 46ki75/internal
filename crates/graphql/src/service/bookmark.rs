@@ -1,4 +1,4 @@
-use notionrs::prelude::*;
+use notionrs_types::prelude::*;
 
 pub struct BookmarkService {
     pub bookmark_repository:
@@ -55,7 +55,7 @@ impl BookmarkService {
                 };
 
                 let favicon = bookmark.icon.clone().and_then(|i| match i {
-                    notionrs::object::icon::Icon::File(file) => Some(file.get_url()),
+                    notionrs_types::object::icon::Icon::File(file) => Some(file.get_url()),
                     _ => None,
                 });
 
@@ -83,16 +83,16 @@ impl BookmarkService {
                                             "color".to_string(),
                                         ),
                                     )? {
-                                        notionrs::object::select::SelectColor::Default => "#868e9c",
-                                        notionrs::object::select::SelectColor::Blue => "#6987b8",
-                                        notionrs::object::select::SelectColor::Brown => "#a17c5b",
-                                        notionrs::object::select::SelectColor::Gray => "#59b57c",
-                                        notionrs::object::select::SelectColor::Green => "#59b57c",
-                                        notionrs::object::select::SelectColor::Orange => "#d48b70",
-                                        notionrs::object::select::SelectColor::Pink => "#c9699e",
-                                        notionrs::object::select::SelectColor::Purple => "#9771bd",
-                                        notionrs::object::select::SelectColor::Red => "#c56565",
-                                        notionrs::object::select::SelectColor::Yellow => "#cdb57b",
+                                        notionrs_types::object::select::SelectColor::Default => "#868e9c",
+                                        notionrs_types::object::select::SelectColor::Blue => "#6987b8",
+                                        notionrs_types::object::select::SelectColor::Brown => "#a17c5b",
+                                        notionrs_types::object::select::SelectColor::Gray => "#59b57c",
+                                        notionrs_types::object::select::SelectColor::Green => "#59b57c",
+                                        notionrs_types::object::select::SelectColor::Orange => "#d48b70",
+                                        notionrs_types::object::select::SelectColor::Pink => "#c9699e",
+                                        notionrs_types::object::select::SelectColor::Purple => "#9771bd",
+                                        notionrs_types::object::select::SelectColor::Red => "#c56565",
+                                        notionrs_types::object::select::SelectColor::Yellow => "#cdb57b",
                                     }
                                     .to_string(),
                                 })
@@ -183,16 +183,16 @@ impl BookmarkService {
                         color: match color.ok_or(crate::error::Error::NotionPropertynotFound(
                             "color".to_string(),
                         ))? {
-                            notionrs::object::select::SelectColor::Default => "#868e9c",
-                            notionrs::object::select::SelectColor::Blue => "#6987b8",
-                            notionrs::object::select::SelectColor::Brown => "#a17c5b",
-                            notionrs::object::select::SelectColor::Gray => "#59b57c",
-                            notionrs::object::select::SelectColor::Green => "#59b57c",
-                            notionrs::object::select::SelectColor::Orange => "#d48b70",
-                            notionrs::object::select::SelectColor::Pink => "#c9699e",
-                            notionrs::object::select::SelectColor::Purple => "#9771bd",
-                            notionrs::object::select::SelectColor::Red => "#c56565",
-                            notionrs::object::select::SelectColor::Yellow => "#cdb57b",
+                            notionrs_types::object::select::SelectColor::Default => "#868e9c",
+                            notionrs_types::object::select::SelectColor::Blue => "#6987b8",
+                            notionrs_types::object::select::SelectColor::Brown => "#a17c5b",
+                            notionrs_types::object::select::SelectColor::Gray => "#59b57c",
+                            notionrs_types::object::select::SelectColor::Green => "#59b57c",
+                            notionrs_types::object::select::SelectColor::Orange => "#d48b70",
+                            notionrs_types::object::select::SelectColor::Pink => "#c9699e",
+                            notionrs_types::object::select::SelectColor::Purple => "#9771bd",
+                            notionrs_types::object::select::SelectColor::Red => "#c56565",
+                            notionrs_types::object::select::SelectColor::Yellow => "#cdb57b",
                         }
                         .to_string(),
                     })

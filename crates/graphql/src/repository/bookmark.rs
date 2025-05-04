@@ -2,13 +2,13 @@
 pub trait BookmarkRepository: Send + Sync {
     async fn list_bookmark(
         &self,
-    ) -> Result<Vec<notionrs::object::page::PageResponse>, crate::error::Error>;
+    ) -> Result<Vec<notionrs_types::object::page::PageResponse>, crate::error::Error>;
 
     async fn create_bookmark(
         &self,
-        properties: std::collections::HashMap<String, notionrs::object::page::PageProperty>,
+        properties: std::collections::HashMap<String, notionrs_types::object::page::PageProperty>,
         favicon: &str,
-    ) -> Result<notionrs::object::page::PageResponse, crate::error::Error>;
+    ) -> Result<notionrs_types::object::page::PageResponse, crate::error::Error>;
 }
 
 pub struct BookmarkRepositoryImpl {
@@ -19,7 +19,7 @@ pub struct BookmarkRepositoryImpl {
 impl BookmarkRepository for BookmarkRepositoryImpl {
     async fn list_bookmark(
         &self,
-    ) -> Result<Vec<notionrs::object::page::PageResponse>, crate::error::Error> {
+    ) -> Result<Vec<notionrs_types::object::page::PageResponse>, crate::error::Error> {
         let database_id = self.config.notion_bookmark_database_id.as_str();
 
         let request = self
@@ -47,9 +47,9 @@ impl BookmarkRepository for BookmarkRepositoryImpl {
 
     async fn create_bookmark(
         &self,
-        properties: std::collections::HashMap<String, notionrs::object::page::PageProperty>,
+        properties: std::collections::HashMap<String, notionrs_types::object::page::PageProperty>,
         favicon: &str,
-    ) -> Result<notionrs::object::page::PageResponse, crate::error::Error> {
+    ) -> Result<notionrs_types::object::page::PageResponse, crate::error::Error> {
         let database_id = self.config.notion_bookmark_database_id.as_str();
 
         tracing::debug!("Sending request to Notion API");
@@ -59,10 +59,10 @@ impl BookmarkRepository for BookmarkRepositoryImpl {
             .create_page()
             .database_id(database_id)
             .properties(properties)
-            .icon(notionrs::object::icon::Icon::File(
-                notionrs::object::file::File::External(notionrs::object::file::ExternalFile::from(
-                    favicon,
-                )),
+            .icon(notionrs_types::object::icon::Icon::File(
+                notionrs_types::object::file::File::External(
+                    notionrs_types::object::file::ExternalFile::from(favicon),
+                ),
             ));
 
         tracing::debug!("Sending request to Notion API");
@@ -82,24 +82,24 @@ pub struct BookmarkRepositoryStub;
 impl BookmarkRepository for BookmarkRepositoryStub {
     async fn list_bookmark(
         &self,
-    ) -> Result<Vec<notionrs::object::page::PageResponse>, crate::error::Error> {
+    ) -> Result<Vec<notionrs_types::object::page::PageResponse>, crate::error::Error> {
         let json = include_bytes!("./bookmark.json");
 
         let response =
-            serde_json::from_slice::<notionrs::object::page::PageResponse>(json).unwrap();
+            serde_json::from_slice::<notionrs_types::object::page::PageResponse>(json).unwrap();
 
         Ok(vec![response])
     }
 
     async fn create_bookmark(
         &self,
-        _properties: std::collections::HashMap<String, notionrs::object::page::PageProperty>,
+        _properties: std::collections::HashMap<String, notionrs_types::object::page::PageProperty>,
         _favicon: &str,
-    ) -> Result<notionrs::object::page::PageResponse, crate::error::Error> {
+    ) -> Result<notionrs_types::object::page::PageResponse, crate::error::Error> {
         let json = include_bytes!("./bookmark.json");
 
         let response =
-            serde_json::from_slice::<notionrs::object::page::PageResponse>(json).unwrap();
+            serde_json::from_slice::<notionrs_types::object::page::PageResponse>(json).unwrap();
 
         Ok(response)
     }

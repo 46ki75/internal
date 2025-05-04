@@ -1,4 +1,4 @@
-use notionrs::prelude::*;
+use notionrs_types::prelude::*;
 
 pub struct AnkiService {
     pub anki_repository: std::sync::Arc<dyn crate::repository::anki::AnkiRepository + Send + Sync>,
@@ -149,7 +149,7 @@ impl AnkiService {
 
         let next_review_at_property = PageProperty::Date(
             PageDateProperty::default()
-                .start(notionrs::object::date::DateOrDateTime::DateTime(
+                .start(notionrs_types::object::date::DateOrDateTime::DateTime(
                     next_review_at,
                 ))
                 .clone(),
@@ -158,38 +158,35 @@ impl AnkiService {
         properties.insert("nextReviewAt".to_string(), next_review_at_property);
 
         let children = vec![
-            notionrs::object::block::Block::Heading1 {
-                heading_1: notionrs::object::block::heading::HeadingBlock::default().rich_text(
-                    vec![
-                        notionrs::object::rich_text::RichText::from("front")
-                            .color(notionrs::object::color::Color::Brown),
-                    ],
-                ),
+            notionrs_types::object::block::Block::Heading1 {
+                heading_1: notionrs_types::object::block::heading::HeadingBlock::default()
+                    .rich_text(vec![
+                        notionrs_types::object::rich_text::RichText::from("front")
+                            .color(notionrs_types::object::color::Color::Brown),
+                    ]),
             },
-            notionrs::object::block::Block::Paragraph {
-                paragraph: notionrs::object::block::paragraph::ParagraphBlock::from(""),
+            notionrs_types::object::block::Block::Paragraph {
+                paragraph: notionrs_types::object::block::paragraph::ParagraphBlock::from(""),
             },
-            notionrs::object::block::Block::Heading1 {
-                heading_1: notionrs::object::block::heading::HeadingBlock::default().rich_text(
-                    vec![
-                        notionrs::object::rich_text::RichText::from("back")
-                            .color(notionrs::object::color::Color::Brown),
-                    ],
-                ),
+            notionrs_types::object::block::Block::Heading1 {
+                heading_1: notionrs_types::object::block::heading::HeadingBlock::default()
+                    .rich_text(vec![
+                        notionrs_types::object::rich_text::RichText::from("back")
+                            .color(notionrs_types::object::color::Color::Brown),
+                    ]),
             },
-            notionrs::object::block::Block::Paragraph {
-                paragraph: notionrs::object::block::paragraph::ParagraphBlock::from(""),
+            notionrs_types::object::block::Block::Paragraph {
+                paragraph: notionrs_types::object::block::paragraph::ParagraphBlock::from(""),
             },
-            notionrs::object::block::Block::Heading1 {
-                heading_1: notionrs::object::block::heading::HeadingBlock::default().rich_text(
-                    vec![
-                        notionrs::object::rich_text::RichText::from("explanation")
-                            .color(notionrs::object::color::Color::Brown),
-                    ],
-                ),
+            notionrs_types::object::block::Block::Heading1 {
+                heading_1: notionrs_types::object::block::heading::HeadingBlock::default()
+                    .rich_text(vec![
+                        notionrs_types::object::rich_text::RichText::from("explanation")
+                            .color(notionrs_types::object::color::Color::Brown),
+                    ]),
             },
-            notionrs::object::block::Block::Paragraph {
-                paragraph: notionrs::object::block::paragraph::ParagraphBlock::from(""),
+            notionrs_types::object::block::Block::Paragraph {
+                paragraph: notionrs_types::object::block::paragraph::ParagraphBlock::from(""),
             },
         ];
 
@@ -230,7 +227,7 @@ impl AnkiService {
 
         let next_review_at_property = PageProperty::Date(
             PageDateProperty::default()
-                .start(notionrs::object::date::DateOrDateTime::DateTime(
+                .start(notionrs_types::object::date::DateOrDateTime::DateTime(
                     next_review_at,
                 ))
                 .clone(),

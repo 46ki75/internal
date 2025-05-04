@@ -1,4 +1,4 @@
-use notionrs::prelude::*;
+use notionrs_types::prelude::*;
 
 #[async_trait::async_trait]
 pub trait AnkiRepository: Send + Sync {
@@ -8,12 +8,12 @@ pub trait AnkiRepository: Send + Sync {
         &self,
         page_size: u32,
         next_cursor: Option<String>,
-    ) -> Result<notionrs::object::response::ListResponse<PageResponse>, crate::error::Error>;
+    ) -> Result<notionrs_types::object::response::ListResponse<PageResponse>, crate::error::Error>;
 
     async fn create_anki(
         &self,
         properties: std::collections::HashMap<String, PageProperty>,
-        children: Vec<notionrs::object::block::Block>,
+        children: Vec<notionrs_types::object::block::Block>,
     ) -> Result<PageResponse, crate::error::Error>;
 
     async fn update_anki(
@@ -51,7 +51,8 @@ impl AnkiRepository for AnkiRepositoryImpl {
         &self,
         page_size: u32,
         next_cursor: Option<String>,
-    ) -> Result<notionrs::object::response::ListResponse<PageResponse>, crate::error::Error> {
+    ) -> Result<notionrs_types::object::response::ListResponse<PageResponse>, crate::error::Error>
+    {
         let database_id = self.config.notion_anki_database_id.as_str();
 
         let sorts = vec![Sort::asc("nextReviewAt")];
@@ -81,7 +82,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
     async fn create_anki(
         &self,
         properties: std::collections::HashMap<String, PageProperty>,
-        children: Vec<notionrs::object::block::Block>,
+        children: Vec<notionrs_types::object::block::Block>,
     ) -> Result<PageResponse, crate::error::Error> {
         let database_id = self.config.notion_anki_database_id.as_str();
 
@@ -153,7 +154,7 @@ pub struct AnkiRepositoryStub;
 #[async_trait::async_trait]
 impl AnkiRepository for AnkiRepositoryStub {
     async fn get_anki_by_id(&self, _id: &str) -> Result<PageResponse, crate::error::Error> {
-        let user = notionrs::object::user::User {
+        let user = notionrs_types::object::user::User {
             object: "user".to_string(),
             id: "c4afec03-71d3-4114-b992-df84ed2e594c".to_string(),
             ..Default::default()
@@ -175,7 +176,7 @@ impl AnkiRepository for AnkiRepositoryStub {
         properties.insert("repetitionCount".to_string(), repetition_count_property);
 
         let next_review_at_property = PageProperty::Date(PageDateProperty::from(
-            notionrs::object::date::DateOrDateTime::DateTime(
+            notionrs_types::object::date::DateOrDateTime::DateTime(
                 time::OffsetDateTime::parse(
                     "2022-06-28T00:00:00Z",
                     &time::format_description::well_known::Rfc3339,
@@ -204,8 +205,8 @@ impl AnkiRepository for AnkiRepositoryStub {
             last_edited_by: user,
             cover: None,
             icon: None,
-            parent: notionrs::object::parent::Parent::PageParent(
-                notionrs::object::parent::PageParent {
+            parent: notionrs_types::object::parent::Parent::PageParent(
+                notionrs_types::object::parent::PageParent {
                     r#type: "page_id".to_string(),
                     page_id: "7e39472a-dfeb-41c9-a97c-f66c85e9dafe".to_string(),
                 },
@@ -224,8 +225,9 @@ impl AnkiRepository for AnkiRepositoryStub {
         &self,
         _page_size: u32,
         _next_cursor: Option<String>,
-    ) -> Result<notionrs::object::response::ListResponse<PageResponse>, crate::error::Error> {
-        let user = notionrs::object::user::User {
+    ) -> Result<notionrs_types::object::response::ListResponse<PageResponse>, crate::error::Error>
+    {
+        let user = notionrs_types::object::user::User {
             object: "user".to_string(),
             id: "c4afec03-71d3-4114-b992-df84ed2e594c".to_string(),
             ..Default::default()
@@ -247,7 +249,7 @@ impl AnkiRepository for AnkiRepositoryStub {
         properties.insert("repetitionCount".to_string(), repetition_count_property);
 
         let next_review_at_property = PageProperty::Date(PageDateProperty::from(
-            notionrs::object::date::DateOrDateTime::DateTime(
+            notionrs_types::object::date::DateOrDateTime::DateTime(
                 time::OffsetDateTime::parse(
                     "2022-06-28T00:00:00Z",
                     &time::format_description::well_known::Rfc3339,
@@ -276,8 +278,8 @@ impl AnkiRepository for AnkiRepositoryStub {
             last_edited_by: user,
             cover: None,
             icon: None,
-            parent: notionrs::object::parent::Parent::PageParent(
-                notionrs::object::parent::PageParent {
+            parent: notionrs_types::object::parent::Parent::PageParent(
+                notionrs_types::object::parent::PageParent {
                     r#type: "page_id".to_string(),
                     page_id: "7e39472a-dfeb-41c9-a97c-f66c85e9dafe".to_string(),
                 },
@@ -291,7 +293,7 @@ impl AnkiRepository for AnkiRepositoryStub {
             in_trash: false,
         };
 
-        Ok(notionrs::object::response::ListResponse {
+        Ok(notionrs_types::object::response::ListResponse {
             object: "list".to_string(),
             results: vec![page],
             next_cursor: None,
@@ -303,7 +305,7 @@ impl AnkiRepository for AnkiRepositoryStub {
     async fn create_anki(
         &self,
         properties: std::collections::HashMap<String, PageProperty>,
-        _children: Vec<notionrs::object::block::Block>,
+        _children: Vec<notionrs_types::object::block::Block>,
     ) -> Result<PageResponse, crate::error::Error> {
         let mut properties = properties.clone();
 
@@ -321,7 +323,7 @@ impl AnkiRepository for AnkiRepositoryStub {
         properties.insert("repetitionCount".to_string(), repetition_count_property);
 
         let next_review_at_property = PageProperty::Date(PageDateProperty::from(
-            notionrs::object::date::DateOrDateTime::DateTime(
+            notionrs_types::object::date::DateOrDateTime::DateTime(
                 time::OffsetDateTime::parse(
                     "2022-06-28T00:00:00Z",
                     &time::format_description::well_known::Rfc3339,
@@ -334,7 +336,7 @@ impl AnkiRepository for AnkiRepositoryStub {
         let tags_property = PageProperty::MultiSelect(PageMultiSelectProperty::default());
         properties.insert("tags".to_string(), tags_property);
 
-        let user = notionrs::object::user::User {
+        let user = notionrs_types::object::user::User {
             object: "user".to_string(),
             id: "c4afec03-71d3-4114-b992-df84ed2e594c".to_string(),
             ..Default::default()
@@ -356,8 +358,8 @@ impl AnkiRepository for AnkiRepositoryStub {
             last_edited_by: user,
             cover: None,
             icon: None,
-            parent: notionrs::object::parent::Parent::PageParent(
-                notionrs::object::parent::PageParent {
+            parent: notionrs_types::object::parent::Parent::PageParent(
+                notionrs_types::object::parent::PageParent {
                     r#type: "page_id".to_string(),
                     page_id: "7e39472a-dfeb-41c9-a97c-f66c85e9dafe".to_string(),
                 },
@@ -393,7 +395,7 @@ impl AnkiRepository for AnkiRepositoryStub {
         properties.insert("repetitionCount".to_string(), repetition_count_property);
 
         let next_review_at_property = PageProperty::Date(PageDateProperty::from(
-            notionrs::object::date::DateOrDateTime::DateTime(
+            notionrs_types::object::date::DateOrDateTime::DateTime(
                 time::OffsetDateTime::parse(
                     "2022-06-28T00:00:00Z",
                     &time::format_description::well_known::Rfc3339,
@@ -406,7 +408,7 @@ impl AnkiRepository for AnkiRepositoryStub {
         let tags_property = PageProperty::MultiSelect(PageMultiSelectProperty::default());
         properties.insert("tags".to_string(), tags_property);
 
-        let user = notionrs::object::user::User {
+        let user = notionrs_types::object::user::User {
             object: "user".to_string(),
             id: "c4afec03-71d3-4114-b992-df84ed2e594c".to_string(),
             ..Default::default()
@@ -428,8 +430,8 @@ impl AnkiRepository for AnkiRepositoryStub {
             last_edited_by: user,
             cover: None,
             icon: None,
-            parent: notionrs::object::parent::Parent::PageParent(
-                notionrs::object::parent::PageParent {
+            parent: notionrs_types::object::parent::Parent::PageParent(
+                notionrs_types::object::parent::PageParent {
                     r#type: "page_id".to_string(),
                     page_id: page_id.to_string(),
                 },

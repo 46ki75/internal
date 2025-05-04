@@ -1,4 +1,4 @@
-use notionrs::prelude::*;
+use notionrs_types::prelude::*;
 
 pub struct ToDoService {
     pub to_do_repository:
@@ -121,9 +121,9 @@ impl ToDoService {
     pub async fn list_notion_to_do(
         &self,
     ) -> Result<Vec<crate::entity::to_do::ToDo>, crate::error::Error> {
-        let filter = notionrs::object::request::filter::Filter::and(vec![
-            notionrs::object::request::filter::Filter::select_equals("Type", "todo"),
-            notionrs::object::request::filter::Filter::checkbox_is_not_checked("IsDone"),
+        let filter = notionrs_types::object::request::filter::Filter::and(vec![
+            notionrs_types::object::request::filter::Filter::select_equals("Type", "todo"),
+            notionrs_types::object::request::filter::Filter::checkbox_is_not_checked("IsDone"),
         ]);
 
         let response = self.to_do_repository.list_notion_to_do(filter).await?;

@@ -18,7 +18,9 @@ const USER_POOL_CLIENT_ID = await fetchSSMParameter(
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
-  devServer: { port: 20000 },
+  devServer: {
+    port: 20000,
+  },
   vite: {
     server: {
       proxy: {

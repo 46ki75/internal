@@ -3,8 +3,8 @@
     <ElmHeading :level="1" text="Create Bookmark" />
 
     <div class="input-container">
-      <ElmTextField v-model="name" label="Name" icon="default" />
-      <ElmTextField v-model="url" label="URL" icon="default" />
+      <ElmTextField v-model="name" label="Name" icon="archive" />
+      <ElmTextField v-model="url" label="URL" icon="link" />
 
       <ElmButton
         block

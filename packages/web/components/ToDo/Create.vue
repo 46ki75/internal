@@ -4,11 +4,11 @@
       v-model="title"
       label="Title"
       :loading="todoStore.createState.loading"
-      icon="default"
+      icon="pen"
     />
 
     <ElmButton @click="handleCreate" :loading="todoStore.createState.loading">
-      <Icon icon="mdi:task-add" class="icon" />
+      <!-- <Icon icon="mdi:task-add" class="icon" /> -->
       <span>Create ToDo</span>
     </ElmButton>
   </div>

@@ -5,7 +5,7 @@
       v-model="password"
       label="password"
       required
-      icon="password"
+      icon="lock"
       is-password
     />
 
@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
 import { ElmButton, ElmInlineText, ElmTextField } from "@elmethis/core";
+import { Icon } from "@iconify/vue";
 
 const authStore = useAuthStore();
 const router = useRouter();

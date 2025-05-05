@@ -42,7 +42,7 @@
         block
         primary
       >
-        <span>✓ CONFIDENT [S]</span>
+        <span>✓ CORRECT [S]</span>
       </ElmButton>
 
       <ElmButton

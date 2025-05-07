@@ -93,9 +93,9 @@ const handleClick = async () => {
   align-items: center;
 
   backdrop-filter: blur(2px);
-  background-color: rgba(black, 0.05);
+  background-color: rgba(#25282e, 0.05);
   [data-theme="dark"] & {
-    background-color: rgba(white, 0.1);
+    background-color: rgba(#eff0f2, 0.1);
   }
 }
 

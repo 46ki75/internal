@@ -6,7 +6,7 @@
         leaveActiveClass: 'fade-leave-active',
         enterFromClass: 'fade-enter-from',
         leaveToClass: 'fade-leave-to',
-        mode: 'out-in'
+        mode: 'out-in',
       }"
     />
   </NuxtLayout>
@@ -36,9 +36,9 @@ body {
   font-family: ui-sans-serif, sans-serif;
   margin: 0;
   transition: background-color 300ms;
-  background-color: rgba(black, 0.05);
-  [data-theme='dark'] & {
-    background-color: rgba(black, 0.85);
+  background-color: #eff0f2;
+  [data-theme="dark"] & {
+    background-color: #25282e;
   }
 }
 

@@ -1,51 +1,29 @@
 <template>
   <header class="header">
     <div>
-      <ElmTooltip>
-        <template #original>
-          <NuxtLink to="/">
-            <Icon icon="material-symbols:cottage" class="icon" />
-          </NuxtLink>
-        </template>
+      <ElmSimpleTooltip text="Home">
+        <NuxtLink to="/">
+          <Icon icon="material-symbols:cottage" class="icon" />
+        </NuxtLink>
+      </ElmSimpleTooltip>
 
-        <template #tooltip>
-          <span>HOME</span>
-        </template>
-      </ElmTooltip>
+      <ElmSimpleTooltip text="Anki">
+        <NuxtLink to="/anki">
+          <Icon icon="mdi:tag" class="icon" />
+        </NuxtLink>
+      </ElmSimpleTooltip>
 
-      <ElmTooltip>
-        <template #original>
-          <NuxtLink to="/anki"><Icon icon="mdi:tag" class="icon" /></NuxtLink>
-        </template>
+      <ElmSimpleTooltip text="Swatch">
+        <NuxtLink to="/color">
+          <Icon icon="mdi:color" class="icon" />
+        </NuxtLink>
+      </ElmSimpleTooltip>
 
-        <template #tooltip>
-          <span>anki</span>
-        </template>
-      </ElmTooltip>
-
-      <ElmTooltip>
-        <template #original>
-          <NuxtLink to="/color">
-            <Icon icon="mdi:color" class="icon" />
-          </NuxtLink>
-        </template>
-
-        <template #tooltip>
-          <span>Color</span>
-        </template>
-      </ElmTooltip>
-
-      <ElmTooltip>
-        <template #original>
-          <NuxtLink to="/typing">
-            <Icon icon="material-symbols:keyboard" class="icon" />
-          </NuxtLink>
-        </template>
-
-        <template #tooltip>
-          <span>Typing</span>
-        </template>
-      </ElmTooltip>
+      <ElmSimpleTooltip text="Typing">
+        <NuxtLink to="/typing">
+          <Icon icon="material-symbols:keyboard" class="icon" />
+        </NuxtLink>
+      </ElmSimpleTooltip>
     </div>
 
     <div>
@@ -62,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmLoginIcon, ElmToggleTheme, ElmTooltip } from "@elmethis/core";
+import { ElmLoginIcon, ElmToggleTheme, ElmSimpleTooltip } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 
 const router = useRouter();

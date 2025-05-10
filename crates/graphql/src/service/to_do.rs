@@ -14,11 +14,6 @@ impl ToDoService {
             let mut properties = std::collections::HashMap::new();
 
             properties.insert(
-                "Type".to_string(),
-                PageProperty::Select(PageSelectProperty::from("todo")),
-            );
-
-            properties.insert(
                 "Severity".to_string(),
                 PageProperty::Select(PageSelectProperty::from("INFO")),
             );

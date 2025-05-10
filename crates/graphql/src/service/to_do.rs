@@ -93,8 +93,6 @@ impl ToDoService {
                 crate::entity::to_do::Severity::Warn
             } else if select_name_str == "ERROR" {
                 crate::entity::to_do::Severity::Error
-            } else if select_name_str == "FATAL" {
-                crate::entity::to_do::Severity::Fatal
             } else {
                 crate::entity::to_do::Severity::Unknown
             })
@@ -144,10 +142,14 @@ impl ToDoService {
                     ))?
                     .to_string();
 
-                let description = result
-                    .properties
-                    .get("Description")
-                    .map(|description| description.to_string());
+                let description = result.properties.get("Description").and_then(|d| {
+                    let description = d.to_string();
+                    if description.trim().is_empty() {
+                        None
+                    } else {
+                        Some(description)
+                    }
+                });
 
                 let is_done = match result.properties.get("IsDone").ok_or(
                     crate::error::Error::NotionPropertynotFound("IsDone".to_string()),
@@ -183,8 +185,6 @@ impl ToDoService {
                                     return Some(crate::entity::to_do::Severity::Warn);
                                 } else if select_name_str == "ERROR" {
                                     return Some(crate::entity::to_do::Severity::Error);
-                                } else if select_name_str == "FATAL" {
-                                    return Some(crate::entity::to_do::Severity::Fatal);
                                 } else {
                                     None
                                 }

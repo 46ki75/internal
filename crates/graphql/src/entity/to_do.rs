@@ -19,7 +19,6 @@ pub enum Severity {
     Info,
     Warn,
     Error,
-    Fatal,
 }
 
 #[derive(async_graphql::SimpleObject, Default, Debug)]

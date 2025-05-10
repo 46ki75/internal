@@ -40,7 +40,9 @@ impl Config {
 
         let notion_to_do_database_id = ssm_client
             .get_parameter()
-            .name("/shared/46ki75/internal/notion/todo/database/id")
+            .name(format!(
+                "/{stage_name}/46ki75/internal/notion/todo/database/id"
+            ))
             .with_decryption(true)
             .send();
 

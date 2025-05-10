@@ -122,7 +122,6 @@ impl ToDoService {
         &self,
     ) -> Result<Vec<crate::entity::to_do::ToDo>, crate::error::Error> {
         let filter = notionrs_types::object::request::filter::Filter::and(vec![
-            notionrs_types::object::request::filter::Filter::select_equals("Type", "todo"),
             notionrs_types::object::request::filter::Filter::checkbox_is_not_checked("IsDone"),
         ]);
 

@@ -9,13 +9,16 @@ impl ToDoService {
     pub async fn create_to_do(
         &self,
         title: String,
+        severity: Option<crate::entity::to_do::Severity>,
     ) -> Result<crate::entity::to_do::ToDo, crate::error::Error> {
         let properties = {
             let mut properties = std::collections::HashMap::new();
 
             properties.insert(
                 "Severity".to_string(),
-                PageProperty::Select(PageSelectProperty::from("INFO")),
+                PageProperty::Select(PageSelectProperty::from(
+                    severity.unwrap_or_default().to_string(),
+                )),
             );
 
             properties.insert(
@@ -226,7 +229,7 @@ mod tests {
         let to_do_service = ToDoService { to_do_repository };
 
         let _todos = to_do_service
-            .create_to_do("My Title".to_string())
+            .create_to_do("My Title".to_string(), None)
             .await
             .unwrap();
     }

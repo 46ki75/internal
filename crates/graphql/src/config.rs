@@ -48,7 +48,9 @@ impl Config {
 
         let notion_bookmark_database_id = ssm_client
             .get_parameter()
-            .name("/shared/46ki75/internal/notion/bookmark/database/id")
+            .name(format!(
+                "/{stage_name}/46ki75/internal/notion/bookmark/database/id"
+            ))
             .with_decryption(true)
             .send();
 

@@ -24,34 +24,43 @@ impl BookmarkService {
         name: &str,
         url: &str,
     ) -> Result<crate::entity::bookmark::Bookmark, crate::error::Error> {
-        let parsed_url = url::Url::parse(url)?;
-        let fqdn = parsed_url
-            .host_str()
-            .ok_or(crate::error::Error::FqdnParse(url.to_string()))?;
-
-        let favicon = format!("https://logo.clearbit.com/{}", fqdn);
+        let favicon = self.fetch_facicon_url(url).await;
 
         let mut properties: std::collections::HashMap<String, PageProperty> =
             std::collections::HashMap::new();
 
         properties.insert(
-            "name".to_string(),
+            "Name".to_string(),
             PageProperty::Title(PageTitleProperty::from(name)),
         );
 
         properties.insert(
-            "url".to_string(),
+            "URL".to_string(),
             PageProperty::Url(PageUrlProperty::from(url)),
         );
 
         let response = self
             .bookmark_repository
-            .create_bookmark(properties, &favicon)
+            .create_bookmark(properties, favicon)
             .await?;
 
         let bookmark = crate::entity::bookmark::Bookmark::try_from(response)?;
 
         Ok(bookmark)
+    }
+
+    async fn fetch_facicon_url(&self, url: &str) -> Option<String> {
+        let html = self.bookmark_repository.fetch_html(url).await.ok()?;
+
+        let scraper = html_meta_scraper::MetaScraper::new(&html);
+
+        let favicon = scraper.favicon()?;
+
+        let url = url::Url::parse(url).ok()?;
+
+        let favicon_url = format!("{}://{}{}", url.scheme(), url.host()?, favicon);
+
+        Some(favicon_url)
     }
 }
 

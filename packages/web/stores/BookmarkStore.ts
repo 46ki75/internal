@@ -9,7 +9,7 @@ const query = /* GraphQL */ `
       name
       url
       favicon
-      tags {
+      tag {
         id
         name
         color
@@ -24,13 +24,11 @@ export const bookmarkSchema = z.object({
   name: z.string().nullable(),
   url: z.string().nullable(),
   favicon: z.string().nullable(),
-  tags: z.array(
-    z.object({
-      id: z.string(),
-      name: z.string(),
-      color: z.string(),
-    })
-  ),
+  tag: z.object({
+    id: z.string(),
+    name: z.string(),
+    color: z.string(),
+  }),
   notionUrl: z.string(),
 });
 
@@ -121,7 +119,7 @@ export const useBookmarkStore = defineStore("bookmark", {
                   name
                   url
                   favicon
-                  tags {
+                  tag {
                     id
                     name
                     color
@@ -147,8 +145,8 @@ export const useBookmarkStore = defineStore("bookmark", {
     },
   },
   getters: {
-    tags(): Bookmark["tags"] {
-      const tags = this.bookmarkList.flatMap((bookmark) => bookmark.tags);
+    tags(): Bookmark["tag"][] {
+      const tags = this.bookmarkList.flatMap((bookmark) => bookmark.tag);
       const uniqueTags = uniqBy(tags, (tag) => tag.id);
       return uniqueTags;
     },
@@ -162,10 +160,10 @@ export const useBookmarkStore = defineStore("bookmark", {
 
       const bookmarkList = this.bookmarkList;
       for (const bookmark of bookmarkList) {
-        for (const tag of bookmark.tags) {
-          const index = results.findIndex((result) => result.tag.id === tag.id);
-          results[index].bookmarkList.push(bookmark);
-        }
+        const index = results.findIndex(
+          (result) => result.tag.id === bookmark.tag.id
+        );
+        results[index].bookmarkList.push(bookmark);
       }
 
       return results;

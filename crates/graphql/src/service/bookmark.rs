@@ -54,7 +54,7 @@ impl BookmarkService {
 
         let scraper = html_meta_scraper::MetaScraper::new(&html);
 
-        let favicon = scraper.favicon()?;
+        let favicon = format!("/{}", scraper.favicon()?).replace("//", "/");
 
         let url = url::Url::parse(url).ok()?;
 

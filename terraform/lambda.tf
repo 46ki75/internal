@@ -33,6 +33,7 @@ resource "aws_iam_policy" "lambda_policy_graphql" {
           "dynamodb:GetItem",
           "dynamodb:PutItem",
           "ssm:GetParameter",
+          "ssm:GetParameters",
           "kms:Decrypt",
           "xray:PutTraceSegments",
           "xray:PutTelemetryRecords"

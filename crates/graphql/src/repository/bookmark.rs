@@ -7,8 +7,10 @@ pub trait BookmarkRepository: Send + Sync {
     async fn create_bookmark(
         &self,
         properties: std::collections::HashMap<String, notionrs_types::object::page::PageProperty>,
-        favicon: &str,
+        favicon: Option<String>,
     ) -> Result<notionrs_types::object::page::PageResponse, crate::error::Error>;
+
+    async fn fetch_html(&self, url: &str) -> Result<String, crate::error::Error>;
 }
 
 pub struct BookmarkRepositoryImpl {
@@ -48,22 +50,25 @@ impl BookmarkRepository for BookmarkRepositoryImpl {
     async fn create_bookmark(
         &self,
         properties: std::collections::HashMap<String, notionrs_types::object::page::PageProperty>,
-        favicon: &str,
+        favicon: Option<String>,
     ) -> Result<notionrs_types::object::page::PageResponse, crate::error::Error> {
         let database_id = self.config.notion_bookmark_database_id.as_str();
 
         tracing::debug!("Sending request to Notion API");
-        let request = self
+        let mut request = self
             .config
             .notion_client
             .create_page()
             .database_id(database_id)
-            .properties(properties)
-            .icon(notionrs_types::object::icon::Icon::File(
+            .properties(properties);
+
+        if let Some(url) = favicon {
+            request = request.icon(notionrs_types::object::icon::Icon::File(
                 notionrs_types::object::file::File::External(
-                    notionrs_types::object::file::ExternalFile::from(favicon),
+                    notionrs_types::object::file::ExternalFile::from(url),
                 ),
             ));
+        };
 
         tracing::debug!("Sending request to Notion API");
         let response = request.send().await.map_err(|e| {
@@ -73,6 +78,29 @@ impl BookmarkRepository for BookmarkRepositoryImpl {
         })?;
 
         Ok(response)
+    }
+
+    async fn fetch_html(&self, url: &str) -> Result<String, crate::error::Error> {
+        let client = reqwest::Client::new();
+        let html = client
+            .get(url)
+            .header("user-agent", "Rust/reqwest")
+            .send()
+            .await
+            .map_err(|e| {
+                let error = crate::error::Error::Http(e.to_string());
+                tracing::error!("{}", error);
+                error
+            })?
+            .text()
+            .await
+            .map_err(|e| {
+                let error = crate::error::Error::HttpBodyStream(e.to_string());
+                tracing::error!("{}", error);
+                error
+            })?;
+
+        Ok(html)
     }
 }
 
@@ -94,7 +122,7 @@ impl BookmarkRepository for BookmarkRepositoryStub {
     async fn create_bookmark(
         &self,
         _properties: std::collections::HashMap<String, notionrs_types::object::page::PageProperty>,
-        _favicon: &str,
+        _favicon: Option<String>,
     ) -> Result<notionrs_types::object::page::PageResponse, crate::error::Error> {
         let json = include_bytes!("./bookmark.json");
 
@@ -102,5 +130,9 @@ impl BookmarkRepository for BookmarkRepositoryStub {
             serde_json::from_slice::<notionrs_types::object::page::PageResponse>(json).unwrap();
 
         Ok(response)
+    }
+
+    async fn fetch_html(&self, _url: &str) -> Result<String, crate::error::Error> {
+        Ok(String::from(r#"<link rel="icon" href="/favicon.ico" />"#))
     }
 }

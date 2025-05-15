@@ -13,110 +13,7 @@ impl BookmarkService {
 
         let bookmarks = response
             .iter()
-            .map(|bookmark| {
-                let id = bookmark.id.to_string();
-
-                let name_property = bookmark.properties.get("name").ok_or(
-                    crate::error::Error::NotionPropertynotFound("name".to_string()),
-                )?;
-
-                let name = match name_property {
-                    PageProperty::Title(title) => {
-                        if title.to_string().trim().is_empty() {
-                            None
-                        } else {
-                            Some(title.to_string().trim().to_string())
-                        }
-                    }
-                    _ => {
-                        return Err(crate::error::Error::NotionPropertynotFound(
-                            "name".to_string(),
-                        ));
-                    }
-                };
-
-                let url_property = bookmark.properties.get("url").ok_or(
-                    crate::error::Error::NotionPropertynotFound("url".to_string()),
-                )?;
-
-                let url = match url_property {
-                    PageProperty::Url(url) => {
-                        if url.to_string().trim().is_empty() {
-                            None
-                        } else {
-                            Some(url.to_string().trim().to_string())
-                        }
-                    }
-                    _ => {
-                        return Err(crate::error::Error::NotionPropertynotFound(
-                            "url".to_string(),
-                        ));
-                    }
-                };
-
-                let favicon = bookmark.icon.clone().and_then(|i| match i {
-                    notionrs_types::object::icon::Icon::File(file) => Some(file.get_url()),
-                    _ => None,
-                });
-
-                let tags_property = bookmark.properties.get("tags").ok_or(
-                    crate::error::Error::NotionPropertynotFound("tags".to_string()),
-                )?;
-
-                let tags =
-                    match tags_property {
-                        PageProperty::MultiSelect(selects) => selects
-                            .multi_select
-                            .iter()
-                            .map(|select| {
-                                let id = select.clone().id.ok_or(
-                                    crate::error::Error::NotionPropertynotFound("id".to_string()),
-                                )?;
-                                let name = select.name.to_string();
-                                let color = select.color;
-
-                                Ok(crate::entity::bookmark::BookmarkTag {
-                                    id,
-                                    name,
-                                    color: match color.ok_or(
-                                        crate::error::Error::NotionPropertynotFound(
-                                            "color".to_string(),
-                                        ),
-                                    )? {
-                                        notionrs_types::object::select::SelectColor::Default => "#868e9c",
-                                        notionrs_types::object::select::SelectColor::Blue => "#6987b8",
-                                        notionrs_types::object::select::SelectColor::Brown => "#a17c5b",
-                                        notionrs_types::object::select::SelectColor::Gray => "#59b57c",
-                                        notionrs_types::object::select::SelectColor::Green => "#59b57c",
-                                        notionrs_types::object::select::SelectColor::Orange => "#d48b70",
-                                        notionrs_types::object::select::SelectColor::Pink => "#c9699e",
-                                        notionrs_types::object::select::SelectColor::Purple => "#9771bd",
-                                        notionrs_types::object::select::SelectColor::Red => "#c56565",
-                                        notionrs_types::object::select::SelectColor::Yellow => "#cdb57b",
-                                    }
-                                    .to_string(),
-                                })
-                            })
-                            .collect::<Result<
-                                Vec<crate::entity::bookmark::BookmarkTag>,
-                                crate::error::Error,
-                            >>()?,
-                        _ => {
-                            return Err(crate::error::Error::NotionPropertynotFound(
-                                "tags".to_string(),
-                            ));
-                        }
-                    };
-
-                Ok(crate::entity::bookmark::Bookmark {
-                    id: id.to_string(),
-                    name,
-                    url,
-                    favicon,
-                    tags,
-                    notion_url: bookmark.url.to_string(),
-                })
-            })
+            .map(|bookmark| crate::entity::bookmark::Bookmark::try_from(bookmark.to_owned()))
             .collect::<Result<Vec<crate::entity::bookmark::Bookmark>, crate::error::Error>>()?;
 
         Ok(bookmarks)
@@ -127,93 +24,43 @@ impl BookmarkService {
         name: &str,
         url: &str,
     ) -> Result<crate::entity::bookmark::Bookmark, crate::error::Error> {
-        let parsed_url = url::Url::parse(url)?;
-        let fqdn = parsed_url
-            .host_str()
-            .ok_or(crate::error::Error::FqdnParse(url.to_string()))?;
-
-        let favicon = format!("https://logo.clearbit.com/{}", fqdn);
+        let favicon = self.fetch_facicon_url(url).await;
 
         let mut properties: std::collections::HashMap<String, PageProperty> =
             std::collections::HashMap::new();
 
         properties.insert(
-            "name".to_string(),
+            "Name".to_string(),
             PageProperty::Title(PageTitleProperty::from(name)),
         );
 
         properties.insert(
-            "url".to_string(),
+            "URL".to_string(),
             PageProperty::Url(PageUrlProperty::from(url)),
         );
 
         let response = self
             .bookmark_repository
-            .create_bookmark(properties, &favicon)
+            .create_bookmark(properties, favicon)
             .await?;
 
-        let id = response.id;
+        let bookmark = crate::entity::bookmark::Bookmark::try_from(response)?;
 
-        let tags_property =
-            response
-                .properties
-                .get("tags")
-                .ok_or(crate::error::Error::NotionPropertynotFound(
-                    "color".to_string(),
-                ))?;
+        Ok(bookmark)
+    }
 
-        let tags = match tags_property {
-            PageProperty::MultiSelect(selects) => selects
-                .multi_select
-                .iter()
-                .map(|select| {
-                    let id =
-                        select
-                            .clone()
-                            .id
-                            .ok_or(crate::error::Error::NotionPropertynotFound(
-                                "id".to_string(),
-                            ))?;
-                    let name = select.name.to_string();
-                    let color = select.color;
+    async fn fetch_facicon_url(&self, url: &str) -> Option<String> {
+        let html = self.bookmark_repository.fetch_html(url).await.ok()?;
 
-                    Ok(crate::entity::bookmark::BookmarkTag {
-                        id,
-                        name,
-                        color: match color.ok_or(crate::error::Error::NotionPropertynotFound(
-                            "color".to_string(),
-                        ))? {
-                            notionrs_types::object::select::SelectColor::Default => "#868e9c",
-                            notionrs_types::object::select::SelectColor::Blue => "#6987b8",
-                            notionrs_types::object::select::SelectColor::Brown => "#a17c5b",
-                            notionrs_types::object::select::SelectColor::Gray => "#59b57c",
-                            notionrs_types::object::select::SelectColor::Green => "#59b57c",
-                            notionrs_types::object::select::SelectColor::Orange => "#d48b70",
-                            notionrs_types::object::select::SelectColor::Pink => "#c9699e",
-                            notionrs_types::object::select::SelectColor::Purple => "#9771bd",
-                            notionrs_types::object::select::SelectColor::Red => "#c56565",
-                            notionrs_types::object::select::SelectColor::Yellow => "#cdb57b",
-                        }
-                        .to_string(),
-                    })
-                })
-                .collect::<Result<Vec<crate::entity::bookmark::BookmarkTag>, crate::error::Error>>(
-                )?,
-            _ => {
-                return Err(crate::error::Error::NotionPropertynotFound(
-                    "tags".to_string(),
-                ));
-            }
-        };
+        let scraper = html_meta_scraper::MetaScraper::new(&html);
 
-        Ok(crate::entity::bookmark::Bookmark {
-            id,
-            name: Some(name.to_string()),
-            url: Some(url.to_string()),
-            favicon: Some(favicon),
-            tags,
-            notion_url: response.url,
-        })
+        let favicon = format!("/{}", scraper.favicon()?).replace("//", "/");
+
+        let url = url::Url::parse(url).ok()?;
+
+        let favicon_url = format!("{}://{}{}", url.scheme(), url.host()?, favicon);
+
+        Some(favicon_url)
     }
 }
 

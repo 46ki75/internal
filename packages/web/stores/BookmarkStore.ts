@@ -9,7 +9,7 @@ const query = /* GraphQL */ `
       name
       url
       favicon
-      tags {
+      tag {
         id
         name
         color
@@ -24,26 +24,17 @@ export const bookmarkSchema = z.object({
   name: z.string().nullable(),
   url: z.string().nullable(),
   favicon: z.string().nullable(),
-  tags: z.array(
-    z.object({
+  tag: z
+    .object({
       id: z.string(),
       name: z.string(),
       color: z.string(),
     })
-  ),
+    .optional(),
   notionUrl: z.string(),
 });
 
-type Bookmark = z.infer<typeof bookmarkSchema>;
-
-type ClassifiedBookmarkList = Array<{
-  tag: {
-    id: string;
-    name: string;
-    color: string;
-  };
-  bookmarkList: Bookmark[];
-}>;
+export type Bookmark = z.infer<typeof bookmarkSchema>;
 
 interface BookmarkState {
   loading: boolean;
@@ -121,7 +112,7 @@ export const useBookmarkStore = defineStore("bookmark", {
                   name
                   url
                   favicon
-                  tags {
+                  tag {
                     id
                     name
                     color
@@ -145,30 +136,21 @@ export const useBookmarkStore = defineStore("bookmark", {
         this.createLoading = false;
       }
     },
+    getBookmarkListByTagId(tagId?: string): Bookmark[] {
+      return this.bookmarkList.filter((bookmark) => bookmark.tag?.id === tagId);
+    },
   },
   getters: {
-    tags(): Bookmark["tags"] {
-      const tags = this.bookmarkList.flatMap((bookmark) => bookmark.tags);
-      const uniqueTags = uniqBy(tags, (tag) => tag.id);
+    tags(): Bookmark["tag"][] {
+      const tags = this.bookmarkList.flatMap((bookmark) => bookmark.tag);
+      const uniqueTags = uniqBy(
+        tags.filter((tag) => tag != null),
+        (tag) => tag.id
+      );
       return uniqueTags;
     },
-    classifiedBookmarkList(): ClassifiedBookmarkList {
-      const results: ClassifiedBookmarkList = [];
-      const uniqueTags = this.tags;
-
-      for (const tag of uniqueTags) {
-        results.push({ tag, bookmarkList: [] });
-      }
-
-      const bookmarkList = this.bookmarkList;
-      for (const bookmark of bookmarkList) {
-        for (const tag of bookmark.tags) {
-          const index = results.findIndex((result) => result.tag.id === tag.id);
-          results[index].bookmarkList.push(bookmark);
-        }
-      }
-
-      return results;
+    getUntaggedBookmarkList(): Bookmark[] {
+      return this.bookmarkList.filter((bookmark) => bookmark.tag == null);
     },
   },
 });

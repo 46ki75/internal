@@ -19,7 +19,21 @@ pub enum Severity {
     Info,
     Warn,
     Error,
-    Fatal,
+}
+
+impl std::fmt::Display for Severity {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Severity::Unknown => "INFO",
+                Severity::Info => "INFO",
+                Severity::Warn => "WARN",
+                Severity::Error => "ERROR",
+            }
+        )
+    }
 }
 
 #[derive(async_graphql::SimpleObject, Default, Debug)]

@@ -9,18 +9,16 @@ impl ToDoService {
     pub async fn create_to_do(
         &self,
         title: String,
+        severity: Option<crate::entity::to_do::Severity>,
     ) -> Result<crate::entity::to_do::ToDo, crate::error::Error> {
         let properties = {
             let mut properties = std::collections::HashMap::new();
 
             properties.insert(
-                "Type".to_string(),
-                PageProperty::Select(PageSelectProperty::from("todo")),
-            );
-
-            properties.insert(
                 "Severity".to_string(),
-                PageProperty::Select(PageSelectProperty::from("INFO")),
+                PageProperty::Select(PageSelectProperty::from(
+                    severity.unwrap_or_default().to_string(),
+                )),
             );
 
             properties.insert(
@@ -93,8 +91,6 @@ impl ToDoService {
                 crate::entity::to_do::Severity::Warn
             } else if select_name_str == "ERROR" {
                 crate::entity::to_do::Severity::Error
-            } else if select_name_str == "FATAL" {
-                crate::entity::to_do::Severity::Fatal
             } else {
                 crate::entity::to_do::Severity::Unknown
             })
@@ -122,7 +118,6 @@ impl ToDoService {
         &self,
     ) -> Result<Vec<crate::entity::to_do::ToDo>, crate::error::Error> {
         let filter = notionrs_types::object::request::filter::Filter::and(vec![
-            notionrs_types::object::request::filter::Filter::select_equals("Type", "todo"),
             notionrs_types::object::request::filter::Filter::checkbox_is_not_checked("IsDone"),
         ]);
 
@@ -145,10 +140,14 @@ impl ToDoService {
                     ))?
                     .to_string();
 
-                let description = result
-                    .properties
-                    .get("Description")
-                    .map(|description| description.to_string());
+                let description = result.properties.get("Description").and_then(|d| {
+                    let description = d.to_string();
+                    if description.trim().is_empty() {
+                        None
+                    } else {
+                        Some(description)
+                    }
+                });
 
                 let is_done = match result.properties.get("IsDone").ok_or(
                     crate::error::Error::NotionPropertynotFound("IsDone".to_string()),
@@ -184,8 +183,6 @@ impl ToDoService {
                                     return Some(crate::entity::to_do::Severity::Warn);
                                 } else if select_name_str == "ERROR" {
                                     return Some(crate::entity::to_do::Severity::Error);
-                                } else if select_name_str == "FATAL" {
-                                    return Some(crate::entity::to_do::Severity::Fatal);
                                 } else {
                                     None
                                 }
@@ -232,7 +229,7 @@ mod tests {
         let to_do_service = ToDoService { to_do_repository };
 
         let _todos = to_do_service
-            .create_to_do("My Title".to_string())
+            .create_to_do("My Title".to_string(), None)
             .await
             .unwrap();
     }

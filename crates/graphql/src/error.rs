@@ -38,4 +38,13 @@ pub enum Error {
 
     #[error("DynamoDB Type error: {0}")]
     DynamoDbType(String),
+
+    #[error("HTTP request failed: {0}")]
+    Http(String),
+
+    #[error("HTTP body stream error while receiving response: {0}")]
+    HttpBodyStream(String),
+
+    #[error("Parameter not found: {0}")]
+    ParameterNotFound(String),
 }

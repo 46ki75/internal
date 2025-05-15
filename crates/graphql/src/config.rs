@@ -26,91 +26,19 @@ impl Config {
 
         let ssm_client = std::sync::Arc::new(aws_sdk_ssm::Client::new(&aws_sdk_config));
 
-        let notion_api_key_future = ssm_client
-            .get_parameter()
-            .name(format!("/{stage_name}/46ki75/internal/notion/secret"))
-            .with_decryption(true)
-            .send();
+        let names: Vec<String> = vec![
+            format!("/{stage_name}/46ki75/internal/notion/secret"),
+            format!("/{stage_name}/46ki75/internal/notion/anki/database/id"),
+            format!("/{stage_name}/46ki75/internal/notion/todo/database/id"),
+            format!("/{stage_name}/46ki75/internal/notion/bookmark/database/id"),
+        ];
 
-        let notion_anki_database_id = ssm_client
-            .get_parameter()
-            .name(format!(
-                "/{stage_name}/46ki75/internal/notion/anki/database/id"
-            ))
-            .with_decryption(true)
-            .send();
+        let values = Self::fetch_ssm_parameters(ssm_client.into(), names).await?;
 
-        let notion_to_do_database_id = ssm_client
-            .get_parameter()
-            .name(format!(
-                "/{stage_name}/46ki75/internal/notion/todo/database/id"
-            ))
-            .with_decryption(true)
-            .send();
-
-        let notion_bookmark_database_id = ssm_client
-            .get_parameter()
-            .name(format!(
-                "/{stage_name}/46ki75/internal/notion/bookmark/database/id"
-            ))
-            .with_decryption(true)
-            .send();
-
-        let (
-            notion_api_key_response,
-            notion_anki_response,
-            notion_to_do_response,
-            notion_bookmark_response,
-        ) = tokio::join!(
-            notion_api_key_future,
-            notion_anki_database_id,
-            notion_to_do_database_id,
-            notion_bookmark_database_id
-        );
-
-        let notion_api_key = notion_api_key_response
-            .map_err(|e| crate::error::Error::SsmFetchParameter(e.to_string()))?
-            .parameter
-            .ok_or(crate::error::Error::SsmFetchParameter(
-                "No parameter found".to_string(),
-            ))?
-            .value
-            .ok_or(crate::error::Error::SsmFetchParameter(
-                "No value found".to_string(),
-            ))?;
-
-        let notion_anki_database_id = notion_anki_response
-            .map_err(|e| crate::error::Error::SsmFetchParameter(e.to_string()))?
-            .parameter
-            .ok_or(crate::error::Error::SsmFetchParameter(
-                "No parameter found".to_string(),
-            ))?
-            .value
-            .ok_or(crate::error::Error::SsmFetchParameter(
-                "No value found".to_string(),
-            ))?;
-
-        let notion_to_do_database_id = notion_to_do_response
-            .map_err(|e| crate::error::Error::SsmFetchParameter(e.to_string()))?
-            .parameter
-            .ok_or(crate::error::Error::SsmFetchParameter(
-                "No parameter found".to_string(),
-            ))?
-            .value
-            .ok_or(crate::error::Error::SsmFetchParameter(
-                "No value found".to_string(),
-            ))?;
-
-        let notion_bookmark_database_id = notion_bookmark_response
-            .map_err(|e| crate::error::Error::SsmFetchParameter(e.to_string()))?
-            .parameter
-            .ok_or(crate::error::Error::SsmFetchParameter(
-                "No parameter found".to_string(),
-            ))?
-            .value
-            .ok_or(crate::error::Error::SsmFetchParameter(
-                "No value found".to_string(),
-            ))?;
+        let notion_api_key = values[0].to_owned();
+        let notion_anki_database_id = values[1].to_owned();
+        let notion_to_do_database_id = values[2].to_owned();
+        let notion_bookmark_database_id = values[3].to_owned();
 
         let notion_client =
             std::sync::Arc::new(notionrs::client::Client::new().secret(&notion_api_key));
@@ -131,5 +59,49 @@ impl Config {
             notion_to_jarkup_client,
             dynamodb_client,
         })
+    }
+
+    async fn fetch_ssm_parameters(
+        ssm_client: std::sync::Arc<aws_sdk_ssm::Client>,
+        names: Vec<String>,
+    ) -> Result<Vec<String>, crate::error::Error> {
+        let mut map: std::collections::HashMap<String, String> = std::collections::HashMap::new();
+
+        let parameters = ssm_client
+            .get_parameters()
+            .with_decryption(true)
+            .set_names(Some(names.clone()))
+            .send()
+            .await
+            .map_err(|e| crate::error::Error::SsmFetchParameter(e.to_string()))?
+            .parameters
+            .ok_or(crate::error::Error::SsmFetchParameter(
+                "No parameter found".to_string(),
+            ))?;
+
+        for parameter in parameters {
+            let key = parameter.name.unwrap();
+            let value = parameter
+                .value
+                .ok_or(crate::error::Error::SsmFetchParameter(format!(
+                    "No value found: {}",
+                    key
+                )))?;
+            map.insert(key, value);
+        }
+
+        let mut results: Vec<String> = Vec::new();
+
+        for name in names {
+            let value = map
+                .get(name.as_str())
+                .ok_or(crate::error::Error::SsmFetchParameter(format!(
+                    "No value found: {}",
+                    name
+                )))?;
+            results.push(value.to_owned());
+        }
+
+        Ok(results)
     }
 }

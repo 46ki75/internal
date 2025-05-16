@@ -1,14 +1,31 @@
 <template>
-  <div>
-    <ElmButton block primary @click="handleRegisterPasskey">
-      <Icon icon="mdi:key-plus" class="icon passkey" />
-      <ElmInlineText text="Registar Passkey" class="passkey" />
-    </ElmButton>
+  <div class="profile">
+    <div class="inner">
+      <ElmButton block primary @click="handleRegisterPasskey">
+        <Icon icon="mdi:key-plus" class="icon passkey" />
+        <ElmInlineText text="Registar Passkey" class="passkey" />
+      </ElmButton>
 
-    <div>
-      <div v-for="device in authStore.devicesState.results">
-        <div>ID: {{ device.id }}</div>
-        <div>attributes: {{ JSON.stringify(device.attributes) }}</div>
+      <div>
+        <div v-for="device in authStore.devicesState.results">
+          <div>ID: {{ device.id }}</div>
+          <div v-for="attribute in device.attributes">
+            attributes: {{ attribute }}
+          </div>
+          <div>Device Name: {{ device.name }}</div>
+          <div>初回ログイン日時: {{ device.createDate }}</div>
+          <div>最終ログイン日時: {{ device.lastAuthenticatedDate }}</div>
+        </div>
+      </div>
+
+      <div class="device-container">
+        <ProfileDevice
+          v-for="device in authStore.devicesState.results"
+          :id="device.id"
+          :name="device.name"
+          :create-date="device.createDate"
+          :last-authenticated-date="device.lastAuthenticatedDate"
+        />
       </div>
     </div>
   </div>
@@ -38,5 +55,23 @@ onMounted(async () => {
 
 .passkey {
   filter: invert(1);
+}
+
+.device-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.profile {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.inner {
+  width: 100%;
+  max-width: 1000px;
 }
 </style>

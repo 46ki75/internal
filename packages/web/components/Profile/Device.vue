@@ -75,7 +75,6 @@ onMounted(async () => {
   padding: 0.5rem;
   border-radius: 0.25rem;
   box-shadow: 0 0 0.125rem rgba(black, 0.3);
-  overflow: hidden;
 
   display: flex;
   align-items: center;
@@ -105,7 +104,7 @@ onMounted(async () => {
 }
 
 .right {
-  width: 100%;
+  width: calc(100% - 4.5rem);
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
@@ -113,13 +112,10 @@ onMounted(async () => {
 }
 
 .name {
-  box-sizing: border-box;
-  width: calc(100% - 4.5rem);
   font-weight: bold;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  word-break: keep-all;
 
   color: #494f59;
 

@@ -11,6 +11,7 @@ import { ElmDotLoadingIcon, ElmInlineText } from "@elmethis/core";
 import { useWindowFocus } from "@vueuse/core";
 
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 
 const timerId = ref<number | null>(null);
@@ -48,6 +49,16 @@ onUnmounted(() => {
     window.clearInterval(timerId.value);
   }
 });
+
+watch(
+  () => route.fullPath,
+  async () => {
+    await nextTick();
+    if (!authStore.inSession) {
+      await router.push("/login");
+    }
+  }
+);
 </script>
 
 <style scoped lang="scss">

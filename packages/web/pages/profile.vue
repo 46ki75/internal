@@ -4,6 +4,13 @@
       <Icon icon="mdi:key-plus" class="icon passkey" />
       <ElmInlineText text="Registar Passkey" class="passkey" />
     </ElmButton>
+
+    <div>
+      <div v-for="device in authStore.devicesState.results">
+        <div>ID: {{ device.id }}</div>
+        <div>attributes: {{ JSON.stringify(device.attributes) }}</div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -16,6 +23,10 @@ const authStore = useAuthStore();
 const handleRegisterPasskey = async () => {
   await authStore.registerPasskey();
 };
+
+onMounted(async () => {
+  await authStore.fetchDevices();
+});
 </script>
 
 <style scoped lang="scss">

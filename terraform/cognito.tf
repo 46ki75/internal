@@ -6,7 +6,10 @@ resource "aws_cognito_user_pool" "default" {
     allow_admin_create_user_only = true
   }
 
-
+  device_configuration {
+    challenge_required_on_new_device      = true
+    device_only_remembered_on_user_prompt = false
+  }
 
   sign_in_policy {
     allowed_first_auth_factors = ["PASSWORD", "WEB_AUTHN"]

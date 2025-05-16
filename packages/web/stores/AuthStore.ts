@@ -2,6 +2,7 @@ import { Amplify } from "aws-amplify";
 import {
   associateWebAuthnCredential,
   fetchAuthSession,
+  fetchDevices,
   getCurrentUser,
   signIn,
   signOut,
@@ -31,6 +32,12 @@ interface AuthState {
   };
 
   refreshState: {
+    loading: boolean;
+    error: boolean;
+  };
+
+  devicesState: {
+    results: Awaited<ReturnType<typeof fetchDevices>>;
     loading: boolean;
     error: boolean;
   };
@@ -72,6 +79,12 @@ export const useAuthStore = defineStore("auth", {
       },
 
       refreshState: {
+        loading: false,
+        error: false,
+      },
+
+      devicesState: {
+        results: [],
         loading: false,
         error: false,
       },
@@ -136,6 +149,20 @@ export const useAuthStore = defineStore("auth", {
         this.signInState.loading = false;
       }
       await this.refresh();
+    },
+
+    async fetchDevices() {
+      this.devicesState.loading = true;
+      this.devicesState.error = false;
+
+      try {
+        const devices = await fetchDevices();
+        this.devicesState.results = devices;
+      } catch {
+        this.devicesState.error = true;
+      } finally {
+        this.devicesState.loading = false;
+      }
     },
 
     /**

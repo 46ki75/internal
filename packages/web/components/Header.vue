@@ -24,6 +24,12 @@
           <Icon icon="material-symbols:keyboard" class="icon" />
         </NuxtLink>
       </ElmSimpleTooltip>
+
+      <ElmSimpleTooltip text="Profile">
+        <NuxtLink to="/profile">
+          <Icon icon="mdi:user" class="icon" />
+        </NuxtLink>
+      </ElmSimpleTooltip>
     </div>
 
     <div>

@@ -1,30 +1,19 @@
 <template>
   <div class="profile">
     <div class="inner">
-      <ElmButton block primary @click="handleRegisterPasskey">
-        <Icon icon="mdi:key-plus" class="icon passkey" />
-        <ElmInlineText text="Registar Passkey" class="passkey" />
-      </ElmButton>
-
-      <div>
-        <div v-for="device in authStore.devicesState.results">
-          <div>ID: {{ device.id }}</div>
-          <div v-for="attribute in device.attributes">
-            attributes: {{ attribute }}
-          </div>
-          <div>Device Name: {{ device.name }}</div>
-          <div>初回ログイン日時: {{ device.createDate }}</div>
-          <div>最終ログイン日時: {{ device.lastAuthenticatedDate }}</div>
-        </div>
-      </div>
-
       <div class="device-container">
+        <ElmButton block primary @click="handleRegisterPasskey">
+          <Icon icon="mdi:key-plus" class="icon passkey" />
+          <ElmInlineText text="Registar Passkey" class="passkey" />
+        </ElmButton>
+
         <ProfileDevice
           v-for="device in authStore.devicesState.results"
-          :id="device.id"
+          :key="device.id"
           :name="device.name"
           :create-date="device.createDate"
           :last-authenticated-date="device.lastAuthenticatedDate"
+          :ip="(device.attributes as any).last_ip_used"
         />
       </div>
     </div>

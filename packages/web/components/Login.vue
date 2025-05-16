@@ -18,6 +18,11 @@
       <ElmInlineText text="LOGIN" />
     </ElmButton>
 
+    <ElmButton block primary @click="handleSignInWithPasskey">
+      <Icon icon="mdi:send-variant" class="icon" />
+      <ElmInlineText text="Sign In with Passkey" />
+    </ElmButton>
+
     <p v-if="error" :style="{ color: 'red' }">{{ error }}</p>
   </div>
 </template>
@@ -47,6 +52,19 @@ const handleSignIn = async () => {
       username: username.value,
       password: password.value,
     });
+
+    if (authStore.inSession) {
+      router.push("/");
+    }
+  }
+};
+
+const handleSignInWithPasskey = async () => {
+  if (username.value == null || username.value == "") {
+    console.log("password is empty");
+    error.value = "Please enter username and password";
+  } else {
+    await authStore.signInWithPasskey({ username: username.value });
 
     if (authStore.inSession) {
       router.push("/");

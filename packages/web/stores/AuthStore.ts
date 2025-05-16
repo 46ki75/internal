@@ -1,7 +1,12 @@
+import { Amplify } from "aws-amplify";
+import {
+  associateWebAuthnCredential,
+  fetchAuthSession,
+  getCurrentUser,
+  signIn,
+  signOut,
+} from "aws-amplify/auth";
 import { defineStore } from "pinia";
-import { AuthRepositoryImpl } from "~/repository/AuthRepository";
-
-const authRepository = new AuthRepositoryImpl();
 
 interface AuthState {
   session: {
@@ -33,6 +38,17 @@ interface AuthState {
 
 export const useAuthStore = defineStore("auth", {
   state: (): AuthState => {
+    const config = useRuntimeConfig();
+
+    Amplify.configure({
+      Auth: {
+        Cognito: {
+          userPoolId: config.public.USER_POOL_ID,
+          userPoolClientId: config.public.USER_POOL_CLIENT_ID,
+        },
+      },
+    });
+
     return {
       session: {
         useId: undefined,
@@ -72,7 +88,10 @@ export const useAuthStore = defineStore("auth", {
       this.signInState.loading = true;
       this.signInState.error = false;
       try {
-        const _ = await authRepository.signIn({ username, password });
+        const _ = await signIn({
+          username,
+          password,
+        });
       } catch (e: any) {
         this.signInState.error = true;
         throw new Error(e);
@@ -81,15 +100,40 @@ export const useAuthStore = defineStore("auth", {
       }
       await this.refresh();
     },
+
     async signOut() {
       this.signOut.loadingState = true;
       this.signOut.error = false;
       try {
-        authRepository.signOut();
+        await signOut();
       } catch {
         this.signOut.error = true;
       } finally {
         this.signOut.loadingState = false;
+      }
+      await this.refresh();
+    },
+
+    async registerPasskey() {
+      await associateWebAuthnCredential();
+    },
+
+    async signInWithPasskey({ username }: { username: string }) {
+      this.signInState.loading = true;
+      this.signInState.error = false;
+      try {
+        const _ = await signIn({
+          username,
+          options: {
+            authFlowType: "USER_AUTH",
+            preferredChallenge: "WEB_AUTHN",
+          },
+        });
+      } catch (e: any) {
+        this.signInState.error = true;
+        throw new Error(e);
+      } finally {
+        this.signInState.loading = false;
       }
       await this.refresh();
     },
@@ -112,7 +156,30 @@ export const useAuthStore = defineStore("auth", {
           idTokenExpiresAt,
           userId,
           username,
-        } = await authRepository.refresh();
+        } = await (async () => {
+          const { tokens } = await fetchAuthSession({ forceRefresh: true });
+
+          if (tokens == null) throw new Error("No tokens found");
+          if (tokens.accessToken == null)
+            throw new Error("No access token found");
+          if (tokens.accessToken.payload.exp == null)
+            throw new Error("No access token expiration found");
+          if (tokens.idToken == null)
+            throw new Error("No access token expiration found");
+          if (tokens.idToken.payload.exp == null)
+            throw new Error("No id token expiration found");
+
+          const { userId, username } = await getCurrentUser();
+
+          return {
+            accessToken: tokens.accessToken.toString(),
+            accessTokenExpiresAt: tokens.accessToken.payload.exp,
+            idToken: tokens.idToken.toString(),
+            idTokenExpiresAt: tokens.idToken.payload.exp,
+            userId,
+            username,
+          };
+        })();
 
         this.session.accessToken = accessToken;
         this.session.accessTokenExpiresAt = accessTokenExpiresAt;

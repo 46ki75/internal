@@ -5,6 +5,17 @@ resource "aws_cognito_user_pool" "default" {
   admin_create_user_config {
     allow_admin_create_user_only = true
   }
+
+
+
+  sign_in_policy {
+    allowed_first_auth_factors = ["PASSWORD", "WEB_AUTHN"]
+  }
+
+  web_authn_configuration {
+    relying_party_id  = terraform.workspace == "prod" ? "internal.46ki75.com" : terraform.workspace == "stg" ? "stg-internal.46ki75.com" : "dev-internal.46ki75.com"
+    user_verification = "preferred"
+  }
 }
 
 output "user_pool_id" {
@@ -29,6 +40,8 @@ resource "aws_cognito_user_pool_client" "spa" {
     access_token  = "minutes"
     id_token      = "minutes"
   }
+
+  explicit_auth_flows = ["ALLOW_USER_AUTH", "ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
 }
 
 output "user_pool_client_id" {

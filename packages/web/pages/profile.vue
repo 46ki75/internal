@@ -4,10 +4,14 @@
       <div class="device-container">
         <ElmHeading :level="2">WebAuthn Credentials (Passkeys)</ElmHeading>
 
-        <ElmCodeBlock
+        <ProfileWebAuthn
           v-for="result in authStore.WebAuthnCredentialState.results"
-          :code="JSON.stringify(result, null, 4)"
-          language="json"
+          :credential-id="result.credentialId"
+          :friendlyCredentialName="result.friendlyCredentialName"
+          :relying-party-id="result.relyingPartyId"
+          :authenticator-transports="result.authenticatorTransports"
+          :authenticator-attachment="result.authenticatorAttachment"
+          :created-at="result.createdAt"
         />
 
         <ElmButton block primary @click="handleRegisterPasskey">
@@ -31,12 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ElmButton,
-  ElmCodeBlock,
-  ElmHeading,
-  ElmInlineText,
-} from "@elmethis/core";
+import { ElmButton, ElmHeading, ElmInlineText } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 
 const authStore = useAuthStore();

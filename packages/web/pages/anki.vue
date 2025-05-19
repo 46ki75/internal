@@ -4,9 +4,7 @@
   </main>
 </template>
 
-<script setup lang="ts">
-import { ElmToggle } from "@elmethis/core";
-</script>
+<script setup lang="ts"></script>
 
 <style scoped lang="scss">
 .main {

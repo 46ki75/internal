@@ -4,6 +4,7 @@ import {
   fetchAuthSession,
   fetchDevices,
   getCurrentUser,
+  listWebAuthnCredentials,
   signIn,
   signOut,
 } from "aws-amplify/auth";
@@ -38,6 +39,12 @@ interface AuthState {
 
   devicesState: {
     results: Awaited<ReturnType<typeof fetchDevices>>;
+    loading: boolean;
+    error: boolean;
+  };
+
+  WebAuthnCredentialState: {
+    results: Awaited<ReturnType<typeof listWebAuthnCredentials>>["credentials"];
     loading: boolean;
     error: boolean;
   };
@@ -84,6 +91,12 @@ export const useAuthStore = defineStore("auth", {
       },
 
       devicesState: {
+        results: [],
+        loading: false,
+        error: false,
+      },
+
+      WebAuthnCredentialState: {
         results: [],
         loading: false,
         error: false,
@@ -162,6 +175,20 @@ export const useAuthStore = defineStore("auth", {
         this.devicesState.error = true;
       } finally {
         this.devicesState.loading = false;
+      }
+    },
+
+    async fetchWebAuthnCredentials() {
+      this.WebAuthnCredentialState.loading = true;
+      this.WebAuthnCredentialState.error = false;
+
+      try {
+        const webAuthnCredentials = await listWebAuthnCredentials();
+        this.WebAuthnCredentialState.results = webAuthnCredentials.credentials;
+      } catch {
+        this.WebAuthnCredentialState.error = true;
+      } finally {
+        this.WebAuthnCredentialState.loading = false;
       }
     },
 

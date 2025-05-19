@@ -2,10 +2,20 @@
   <div class="profile">
     <div class="inner">
       <div class="device-container">
+        <ElmHeading :level="2">WebAuthn Credentials (Passkeys)</ElmHeading>
+
+        <ElmCodeBlock
+          v-for="result in authStore.WebAuthnCredentialState.results"
+          :code="JSON.stringify(result, null, 4)"
+          language="json"
+        />
+
         <ElmButton block primary @click="handleRegisterPasskey">
           <Icon icon="mdi:key-plus" class="icon passkey" />
           <ElmInlineText text="Registar Passkey" class="passkey" />
         </ElmButton>
+
+        <ElmHeading :level="2">Device tracking</ElmHeading>
 
         <ProfileDevice
           v-for="device in authStore.devicesState.results"
@@ -21,7 +31,12 @@
 </template>
 
 <script setup lang="ts">
-import { ElmButton, ElmInlineText } from "@elmethis/core";
+import {
+  ElmButton,
+  ElmCodeBlock,
+  ElmHeading,
+  ElmInlineText,
+} from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 
 const authStore = useAuthStore();
@@ -32,6 +47,7 @@ const handleRegisterPasskey = async () => {
 
 onMounted(async () => {
   await authStore.fetchDevices();
+  await authStore.fetchWebAuthnCredentials();
 });
 </script>
 

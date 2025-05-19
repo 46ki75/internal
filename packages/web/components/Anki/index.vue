@@ -57,7 +57,6 @@ onKeyStroke(["Enter", " "], (e) => {
 .wrapper {
   width: 100%;
   max-width: 800px;
-  margin-bottom: 100vh;
 }
 
 .update {

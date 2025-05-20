@@ -24,18 +24,19 @@ impl BookmarkRepository for BookmarkRepositoryImpl {
     ) -> Result<Vec<notionrs_types::object::page::PageResponse>, crate::error::Error> {
         let database_id = self.config.notion_bookmark_database_id.as_str();
 
-        let request = self
-            .config
-            .notion_client
-            .query_database_all()
-            .database_id(database_id);
+        let request = notionrs::Client::paginate(
+            self.config
+                .notion_client
+                .query_database()
+                .database_id(database_id),
+        );
 
         tracing::debug!("Sending request to Notion API");
 
         let span = tracing::info_span!("my_span");
         let response = span
             .in_scope(async || {
-                request.send().await.map_err(|e| {
+                request.await.map_err(|e| {
                     let error_message = format!("Notion API error: {}", e);
                     log::error!("{}", error_message);
                     crate::error::Error::NotionRs(error_message)

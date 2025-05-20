@@ -74,15 +74,16 @@ impl ToDoRepository for ToDoRepositoryImpl {
     ) -> Result<Vec<notionrs_types::object::page::PageResponse>, crate::error::Error> {
         let database_id = self.config.notion_to_do_database_id.as_str();
 
-        let request = self
-            .config
-            .notion_client
-            .query_database_all()
-            .filter(filter)
-            .database_id(database_id);
+        let request = notionrs::Client::paginate(
+            self.config
+                .notion_client
+                .query_database()
+                .filter(filter)
+                .database_id(database_id),
+        );
 
         tracing::debug!("Sending request to Notion API");
-        let response = request.send().await.map_err(|e| {
+        let response = request.await.map_err(|e| {
             let error_message = format!("Notion API error: {}", e);
             log::error!("{}", error_message);
             crate::error::Error::NotionRs(error_message)

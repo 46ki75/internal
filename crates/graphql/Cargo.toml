@@ -35,7 +35,7 @@ async-trait = "0.1.88"
 thiserror = "2.0.12"
 log = "0.4.27"
 env_logger = { version = "0.11.8" }
-aws-sdk-ssm = "1.77.0"
+aws-sdk-ssm = "1.78.0"
 tracing-subscriber = { version = "0.3.19", features = ["ansi"] }
 tracing = "0.1.41"
 notion-to-jarkup = "0.4.2"

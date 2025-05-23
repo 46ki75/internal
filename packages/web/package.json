@@ -12,7 +12,7 @@
     "postdeploy": "./invalidate.sh"
   },
   "dependencies": {
-    "@aws-sdk/client-ssm": "^3.812.0",
+    "@aws-sdk/client-ssm": "^3.816.0",
     "@com.46ki75/graphql": "^0.2.2",
     "@elmethis/core": "0.2.4",
     "@pinia/nuxt": "0.11.0",

@@ -18,7 +18,7 @@ edition = "2024"
 reqwest = { version = "0.12.15", features = [
     "rustls-tls",
 ], default-features = false }
-async-graphql = "7.0.16"
+async-graphql = "7.0.17"
 chrono = "0.4.41"
 lambda_http = "0.14.0"
 notionrs = { version = "1.0.0-beta.4", features = ["rustls-tls"] }

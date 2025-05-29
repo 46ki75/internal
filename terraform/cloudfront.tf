@@ -6,6 +6,40 @@ resource "aws_cloudfront_origin_access_control" "web" {
   signing_protocol                  = "sigv4"
 }
 
+resource "aws_cloudfront_response_headers_policy" "default" {
+
+  name = "${terraform.workspace}-46ki75-internal-cloudfront-response_headers_policy-web"
+
+  security_headers_config {
+
+    strict_transport_security {
+      override                   = true
+      access_control_max_age_sec = 31536000
+      include_subdomains         = true
+    }
+
+    content_type_options {
+      override = true
+    }
+
+    frame_options {
+      override     = true
+      frame_option = "SAMEORIGIN"
+    }
+
+    xss_protection {
+      override   = true
+      mode_block = true
+      protection = true
+    }
+
+    referrer_policy {
+      override        = true
+      referrer_policy = "no-referrer"
+    }
+  }
+}
+
 resource "aws_cloudfront_distribution" "default" {
   depends_on = [aws_acm_certificate.cloudfront_cert]
 
@@ -61,6 +95,8 @@ resource "aws_cloudfront_distribution" "default" {
       event_type   = "viewer-request"
       function_arn = aws_cloudfront_function.rename_uri.arn
     }
+
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.default.id
   }
 
   origin {
@@ -97,6 +133,8 @@ resource "aws_cloudfront_distribution" "default" {
       }
       headers = ["Authorization"]
     }
+
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.default.id
   }
 
   origin {

@@ -1,4 +1,4 @@
-use lambda_http::{run, service_fn, Error};
+use lambda_http::{Error, run, service_fn};
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {

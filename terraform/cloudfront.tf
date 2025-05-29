@@ -31,6 +31,28 @@ resource "aws_cloudfront_cache_policy" "s3" {
   }
 }
 
+resource "aws_cloudfront_cache_policy" "disabled" {
+  name = "${terraform.workspace}-46ki75-web-cloudfront-cache_policy-disabled"
+
+  default_ttl = 0
+  min_ttl     = 0
+  max_ttl     = 0
+
+  parameters_in_cache_key_and_forwarded_to_origin {
+    cookies_config {
+      cookie_behavior = "none"
+    }
+
+    headers_config {
+      header_behavior = "none"
+    }
+
+    query_strings_config {
+      query_string_behavior = "none"
+    }
+  }
+}
+
 resource "aws_cloudfront_response_headers_policy" "default" {
 
   name = "${terraform.workspace}-46ki75-internal-cloudfront-response_headers_policy-web"
@@ -109,8 +131,8 @@ resource "aws_cloudfront_distribution" "default" {
       function_arn = aws_cloudfront_function.rename_uri.arn
     }
 
-    response_headers_policy_id = aws_cloudfront_response_headers_policy.default.id
     cache_policy_id            = aws_cloudfront_cache_policy.s3.id
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.default.id
   }
 
   origin {
@@ -136,18 +158,7 @@ resource "aws_cloudfront_distribution" "default" {
     viewer_protocol_policy = "redirect-to-https"
     target_origin_id       = "api-backend"
 
-    default_ttl = 0
-    min_ttl     = 0
-    max_ttl     = 0
-
-    forwarded_values {
-      query_string = true
-      cookies {
-        forward = "none"
-      }
-      headers = ["Authorization"]
-    }
-
+    cache_policy_id            = aws_cloudfront_cache_policy.disabled.id
     response_headers_policy_id = aws_cloudfront_response_headers_policy.default.id
   }
 

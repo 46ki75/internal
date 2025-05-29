@@ -6,6 +6,31 @@ resource "aws_cloudfront_origin_access_control" "web" {
   signing_protocol                  = "sigv4"
 }
 
+resource "aws_cloudfront_cache_policy" "s3" {
+  name = "${terraform.workspace}-46ki75-web-cloudfront-cache_policy-s3"
+
+  default_ttl = 3600 * 24 * 30 * 6  # 6  [Month]
+  min_ttl     = 3600 * 24 * 30 * 1  # 1  [Month]
+  max_ttl     = 3600 * 24 * 30 * 12 # 12 [Month]
+
+  parameters_in_cache_key_and_forwarded_to_origin {
+    cookies_config {
+      cookie_behavior = "none"
+    }
+
+    headers_config {
+      header_behavior = "none"
+    }
+
+    query_strings_config {
+      query_string_behavior = "none"
+    }
+
+    enable_accept_encoding_brotli = true
+    enable_accept_encoding_gzip   = true
+  }
+}
+
 resource "aws_cloudfront_response_headers_policy" "default" {
 
   name = "${terraform.workspace}-46ki75-internal-cloudfront-response_headers_policy-web"
@@ -79,24 +104,13 @@ resource "aws_cloudfront_distribution" "default" {
     viewer_protocol_policy = "redirect-to-https"
     target_origin_id       = "s3-web"
 
-    default_ttl = 3600 * 24 * 30
-    min_ttl     = 0
-    max_ttl     = 3600 * 24 * 30 * 12
-
-    forwarded_values {
-      query_string = false
-      cookies {
-        forward = "none"
-      }
-      headers = ["etag"]
-    }
-
     function_association {
       event_type   = "viewer-request"
       function_arn = aws_cloudfront_function.rename_uri.arn
     }
 
     response_headers_policy_id = aws_cloudfront_response_headers_policy.default.id
+    cache_policy_id            = aws_cloudfront_cache_policy.s3.id
   }
 
   origin {

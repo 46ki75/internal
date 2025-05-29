@@ -133,6 +133,8 @@ resource "aws_cloudfront_distribution" "default" {
 
     cache_policy_id            = aws_cloudfront_cache_policy.s3.id
     response_headers_policy_id = aws_cloudfront_response_headers_policy.default.id
+
+    compress = true
   }
 
   origin {
@@ -160,6 +162,8 @@ resource "aws_cloudfront_distribution" "default" {
 
     cache_policy_id            = aws_cloudfront_cache_policy.disabled.id
     response_headers_policy_id = aws_cloudfront_response_headers_policy.default.id
+
+    compress = true
   }
 
   origin {

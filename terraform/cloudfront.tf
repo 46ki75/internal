@@ -53,6 +53,24 @@ resource "aws_cloudfront_cache_policy" "disabled" {
   }
 }
 
+resource "aws_cloudfront_origin_request_policy" "all_viewer" {
+
+  name = "${terraform.workspace}-46ki75-internal-cloudfront-origin_request_policy-all_viewer"
+
+  cookies_config {
+    cookie_behavior = "all"
+  }
+  headers_config {
+    header_behavior = "allExcept"
+    headers {
+      items = ["Host"]
+    }
+  }
+  query_strings_config {
+    query_string_behavior = "all"
+  }
+}
+
 resource "aws_cloudfront_response_headers_policy" "default" {
 
   name = "${terraform.workspace}-46ki75-internal-cloudfront-response_headers_policy-web"
@@ -132,6 +150,7 @@ resource "aws_cloudfront_distribution" "default" {
     }
 
     cache_policy_id            = aws_cloudfront_cache_policy.s3.id
+    origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
     response_headers_policy_id = aws_cloudfront_response_headers_policy.default.id
 
     compress = true
@@ -161,6 +180,7 @@ resource "aws_cloudfront_distribution" "default" {
     target_origin_id       = "api-backend"
 
     cache_policy_id            = aws_cloudfront_cache_policy.disabled.id
+    origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
     response_headers_policy_id = aws_cloudfront_response_headers_policy.default.id
 
     compress = true

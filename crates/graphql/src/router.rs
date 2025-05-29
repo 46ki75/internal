@@ -8,7 +8,7 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
         .get_or_try_init(|| async {
             let app = axum::Router::new()
                 .route(
-                    "/api/health",
+                    "/api-gateway/api/health",
                     axum::routing::get(|| async {
                         #[derive(serde::Serialize)]
                         struct Status {
@@ -21,8 +21,16 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                     }),
                 )
                 .route(
-                    "/api/graphql",
+                    "/api-gateway/api/graphql",
                     axum::routing::post(crate::graphql_handler::graphql_handler),
+                )
+                .route(
+                    "/{*path}",
+                    axum::routing::any(
+                        |axum::extract::Path(path): axum::extract::Path<String>| async move {
+                            format!("You requested: {}", path)
+                        },
+                    ),
                 )
                 .layer(tower_http::compression::CompressionLayer::new());
 

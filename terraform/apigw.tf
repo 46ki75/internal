@@ -15,7 +15,7 @@ resource "aws_apigatewayv2_integration" "backend" {
 
 resource "aws_apigatewayv2_route" "backend" {
   api_id             = aws_apigatewayv2_api.backend.id
-  route_key          = "ANY /api/graphql"
+  route_key          = "ANY /api/{proxy+}"
   target             = "integrations/${aws_apigatewayv2_integration.backend.id}"
   authorization_type = "JWT"
   authorizer_id      = aws_apigatewayv2_authorizer.backend.id
@@ -23,7 +23,7 @@ resource "aws_apigatewayv2_route" "backend" {
 
 resource "aws_apigatewayv2_stage" "backend" {
   api_id      = aws_apigatewayv2_api.backend.id
-  name        = terraform.workspace
+  name        = "api-gateway"
   auto_deploy = true
 
 

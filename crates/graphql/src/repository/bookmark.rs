@@ -13,23 +13,19 @@ pub trait BookmarkRepository: Send + Sync {
     async fn fetch_html(&self, url: &str) -> Result<String, crate::error::Error>;
 }
 
-pub struct BookmarkRepositoryImpl {
-    pub config: std::sync::Arc<crate::config::Config>,
-}
+pub struct BookmarkRepositoryImpl {}
 
 #[async_trait::async_trait]
 impl BookmarkRepository for BookmarkRepositoryImpl {
     async fn list_bookmark(
         &self,
     ) -> Result<Vec<notionrs_types::object::page::PageResponse>, crate::error::Error> {
-        let database_id = self.config.notion_bookmark_database_id.as_str();
+        let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
-        let request = notionrs::Client::paginate(
-            self.config
-                .notion_client
-                .query_database()
-                .database_id(database_id),
-        );
+        let database_id = crate::cache::get_or_init_notion_bookmark_database_id().await?;
+
+        let request =
+            notionrs::Client::paginate(notionrs_client.query_database().database_id(database_id));
 
         tracing::debug!("Sending request to Notion API");
 
@@ -53,12 +49,12 @@ impl BookmarkRepository for BookmarkRepositoryImpl {
         properties: std::collections::HashMap<String, notionrs_types::object::page::PageProperty>,
         favicon: Option<String>,
     ) -> Result<notionrs_types::object::page::PageResponse, crate::error::Error> {
-        let database_id = self.config.notion_bookmark_database_id.as_str();
+        let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
+
+        let database_id = crate::cache::get_or_init_notion_bookmark_database_id().await?;
 
         tracing::debug!("Sending request to Notion API");
-        let mut request = self
-            .config
-            .notion_client
+        let mut request = notionrs_client
             .create_page()
             .database_id(database_id)
             .properties(properties);

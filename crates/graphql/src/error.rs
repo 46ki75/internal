@@ -4,7 +4,7 @@ pub enum Error {
     EnvironmentalVariableNotFound(String),
 
     #[error("SSM Parameter error: {0}")]
-    SsmFetchParameter(String),
+    SsmParameter(String),
 
     #[error("Invalid timezone")]
     InvalidTimezone,

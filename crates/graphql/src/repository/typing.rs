@@ -17,22 +17,20 @@ pub trait TypingRepository {
     ) -> Result<crate::record::typing::TypingRecord, crate::error::Error>;
 }
 
-pub struct TypingRepositoryImpl {
-    pub config: std::sync::Arc<crate::config::Config>,
-}
+pub struct TypingRepositoryImpl {}
 
 #[async_trait::async_trait]
 impl TypingRepository for TypingRepositoryImpl {
     async fn typing_list(
         &self,
     ) -> Result<Vec<crate::record::typing::TypingRecord>, crate::error::Error> {
-        let stage_name = self.config.stage_name.as_str();
+        let stage_name = crate::cache::get_or_init_stage_name().await?;
 
         let table_name = format!("{stage_name}-46ki75-internal-dynamodb-table");
 
-        let request = self
-            .config
-            .dynamodb_client
+        let dynamodb_client = crate::cache::get_or_init_dynamodb_client().await;
+
+        let request = dynamodb_client
             .query()
             .table_name(table_name)
             .key_condition_expression("PK = :pk")
@@ -58,13 +56,13 @@ impl TypingRepository for TypingRepositoryImpl {
         text: String,
         description: String,
     ) -> Result<crate::record::typing::TypingRecord, crate::error::Error> {
-        let stage_name = self.config.stage_name.as_str();
+        let stage_name = crate::cache::get_or_init_stage_name().await?;
 
         let table_name = format!("{stage_name}-46ki75-internal-dynamodb-table");
 
-        let request = self
-            .config
-            .dynamodb_client
+        let dynamodb_client = crate::cache::get_or_init_dynamodb_client().await;
+
+        let request = dynamodb_client
             .put_item()
             .table_name(table_name)
             .item(
@@ -101,13 +99,13 @@ impl TypingRepository for TypingRepositoryImpl {
         &self,
         id: String,
     ) -> Result<crate::record::typing::TypingRecord, crate::error::Error> {
-        let stage_name = self.config.stage_name.as_str();
+        let stage_name = crate::cache::get_or_init_stage_name().await?;
 
         let table_name = format!("{stage_name}-46ki75-internal-dynamodb-table");
 
-        let request = self
-            .config
-            .dynamodb_client
+        let dynamodb_client = crate::cache::get_or_init_dynamodb_client().await;
+
+        let request = dynamodb_client
             .delete_item()
             .table_name(table_name)
             .key(

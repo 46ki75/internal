@@ -17,9 +17,7 @@ pub trait ToDoRepository {
     ) -> Result<Vec<notionrs_types::object::page::PageResponse>, crate::error::Error>;
 }
 
-pub struct ToDoRepositoryImpl {
-    pub config: std::sync::Arc<crate::config::Config>,
-}
+pub struct ToDoRepositoryImpl {}
 
 #[async_trait::async_trait]
 impl ToDoRepository for ToDoRepositoryImpl {
@@ -27,11 +25,11 @@ impl ToDoRepository for ToDoRepositoryImpl {
         &self,
         properties: std::collections::HashMap<String, notionrs_types::object::page::PageProperty>,
     ) -> Result<notionrs_types::object::page::PageResponse, crate::error::Error> {
-        let database_id = self.config.notion_to_do_database_id.as_str();
+        let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
-        let request = self
-            .config
-            .notion_client
+        let database_id = crate::cache::get_or_init_notion_to_do_database_id().await?;
+
+        let request = notionrs_client
             .create_page()
             .database_id(database_id)
             .properties(properties);
@@ -51,9 +49,9 @@ impl ToDoRepository for ToDoRepositoryImpl {
         id: String,
         properties: std::collections::HashMap<String, notionrs_types::object::page::PageProperty>,
     ) -> Result<notionrs_types::object::page::PageResponse, crate::error::Error> {
-        let request = self
-            .config
-            .notion_client
+        let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
+
+        let request = notionrs_client
             .update_page()
             .page_id(&id)
             .properties(properties);
@@ -72,11 +70,12 @@ impl ToDoRepository for ToDoRepositoryImpl {
         &self,
         filter: notionrs_types::object::request::filter::Filter,
     ) -> Result<Vec<notionrs_types::object::page::PageResponse>, crate::error::Error> {
-        let database_id = self.config.notion_to_do_database_id.as_str();
+        let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
+
+        let database_id = crate::cache::get_or_init_notion_to_do_database_id().await?;
 
         let request = notionrs::Client::paginate(
-            self.config
-                .notion_client
+            notionrs_client
                 .query_database()
                 .filter(filter)
                 .database_id(database_id),

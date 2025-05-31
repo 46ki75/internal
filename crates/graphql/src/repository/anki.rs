@@ -28,14 +28,14 @@ pub trait AnkiRepository: Send + Sync {
     ) -> Result<Vec<jarkup_rs::Component>, crate::error::Error>;
 }
 
-pub struct AnkiRepositoryImpl {
-    pub config: std::sync::Arc<crate::config::Config>,
-}
+pub struct AnkiRepositoryImpl {}
 
 #[async_trait::async_trait]
 impl AnkiRepository for AnkiRepositoryImpl {
     async fn get_anki_by_id(&self, id: &str) -> Result<PageResponse, crate::error::Error> {
-        let request = self.config.notion_client.get_page().page_id(id);
+        let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
+
+        let request = notionrs_client.get_page().page_id(id);
 
         tracing::debug!("Sending request to Notion API");
         let response = request.send().await.map_err(|e| {
@@ -53,13 +53,13 @@ impl AnkiRepository for AnkiRepositoryImpl {
         next_cursor: Option<String>,
     ) -> Result<notionrs_types::object::response::ListResponse<PageResponse>, crate::error::Error>
     {
-        let database_id = self.config.notion_anki_database_id.as_str();
+        let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
+
+        let database_id = crate::cache::get_or_init_notion_anki_database_id().await?;
 
         let sorts = vec![Sort::asc("nextReviewAt")];
 
-        let mut request = self
-            .config
-            .notion_client
+        let mut request = notionrs_client
             .query_database()
             .database_id(database_id)
             .sorts(sorts)
@@ -84,11 +84,11 @@ impl AnkiRepository for AnkiRepositoryImpl {
         properties: std::collections::HashMap<String, PageProperty>,
         children: Vec<notionrs_types::object::block::Block>,
     ) -> Result<PageResponse, crate::error::Error> {
-        let database_id = self.config.notion_anki_database_id.as_str();
+        let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
-        let request = self
-            .config
-            .notion_client
+        let database_id = crate::cache::get_or_init_notion_anki_database_id().await?;
+
+        let request = notionrs_client
             .create_page()
             .database_id(database_id)
             .properties(properties)
@@ -109,9 +109,9 @@ impl AnkiRepository for AnkiRepositoryImpl {
         page_id: &str,
         properties: std::collections::HashMap<String, PageProperty>,
     ) -> Result<PageResponse, crate::error::Error> {
-        let request = self
-            .config
-            .notion_client
+        let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
+
+        let request = notionrs_client
             .update_page()
             .page_id(page_id)
             .properties(properties);
@@ -130,17 +130,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
         &self,
         page_id: &str,
     ) -> Result<Vec<jarkup_rs::Component>, crate::error::Error> {
-        let secret = self.config.notion_api_key.as_str();
-
-        let notionrs_client = notionrs::client::Client::new().secret(secret);
-
-        let reqwest_client = reqwest::Client::new();
-
-        let client = notion_to_jarkup::client::Client {
-            notionrs_client,
-            reqwest_client,
-            enable_unsupported_block: true,
-        };
+        let client = crate::cache::get_or_init_notion_to_jarkup_client().await?;
 
         tracing::debug!("Sending request to Notion API");
         let blocks = client.convert_block(page_id).await?;

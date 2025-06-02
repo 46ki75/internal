@@ -6,13 +6,13 @@
         :key="`${currentIndex}-${index}-${target.char}`"
         :text="target.char"
         :style="{
-          fontFamily: 'Source Code Pro',
+          fontFamily: 'SauceCodePro NFM, monospace',
           fontSize: '1.5rem',
           textDecoration:
             target.status === 'current' || target.status === 'incorrect'
               ? 'underline'
               : 'none',
-          opacity: target.status === 'typed' ? 0.2 : 1
+          opacity: target.status === 'typed' ? 0.2 : 1,
         }"
         :color="target.status === 'incorrect' ? 'red' : undefined"
       />
@@ -29,49 +29,54 @@
 </template>
 
 <script setup lang="ts">
-import { ElmBlockFallback, ElmInlineText, useTyping } from '@elmethis/core'
-import { shuffle } from 'lodash-es'
+import { ElmBlockFallback, ElmInlineText, useTyping } from "@elmethis/core";
+import { onKeyStroke } from "@vueuse/core";
+import { shuffle } from "lodash-es";
 
 interface Typing {
-  id: string
-  text: string
-  description: string
+  id: string;
+  text: string;
+  description: string;
 }
 
-const typingStore = useTypingStore()
+onKeyStroke(" ", (e) => {
+  e.preventDefault();
+});
 
-const targetTypingList = ref<Typing[]>([])
+const typingStore = useTypingStore();
 
-const currentIndex = ref(0)
+const targetTypingList = ref<Typing[]>([]);
 
-const { start, targetArray, isFinished } = useTyping()
+const currentIndex = ref(0);
+
+const { start, targetArray, isFinished } = useTyping();
 
 const init = (typingList: Typing[]) => {
-  currentIndex.value = 0
-  targetTypingList.value = shuffle(typingList)
-  start(targetTypingList.value[currentIndex.value].text.toString())
-}
+  currentIndex.value = 0;
+  targetTypingList.value = shuffle(typingList);
+  start(targetTypingList.value[currentIndex.value].text.toString());
+};
 
 onMounted(async () => {
-  await typingStore.fetch()
-  init(typingStore.typingList as Typing[])
-})
+  await typingStore.fetch();
+  init(typingStore.typingList as Typing[]);
+});
 
 watch(isFinished, async () => {
   if (isFinished.value) {
-    currentIndex.value = currentIndex.value + 1
-    start(targetTypingList.value[currentIndex.value].text.toString())
+    currentIndex.value = currentIndex.value + 1;
+    start(targetTypingList.value[currentIndex.value].text.toString());
   }
-})
+});
 
 watch(currentIndex, () => {
   if (
     targetTypingList.value.length !== 0 &&
     currentIndex.value === targetTypingList.value.length
   ) {
-    init(typingStore.typingList as Typing[])
+    init(typingStore.typingList as Typing[]);
   }
-})
+});
 </script>
 
 <style scoped lang="scss">

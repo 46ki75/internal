@@ -6,7 +6,7 @@
         :key="`${currentIndex}-${index}-${target.char}`"
         :text="target.char"
         :style="{
-          fontFamily: 'Source Code Pro',
+          fontFamily: 'SauceCodePro NFM, monospace',
           fontSize: '1.5rem',
           textDecoration:
             target.status === 'current' || target.status === 'incorrect'
@@ -30,6 +30,7 @@
 
 <script setup lang="ts">
 import { ElmBlockFallback, ElmInlineText, useTyping } from "@elmethis/core";
+import { onKeyStroke } from "@vueuse/core";
 import { shuffle } from "lodash-es";
 
 interface Typing {
@@ -37,6 +38,10 @@ interface Typing {
   text: string;
   description: string;
 }
+
+onKeyStroke(" ", (e) => {
+  e.preventDefault();
+});
 
 const typingStore = useTypingStore();
 

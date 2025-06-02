@@ -1,11 +1,11 @@
 pub mod cache;
+pub mod dto;
 pub mod entity;
 pub mod error;
 pub mod execute;
 pub mod graphql_handler;
 pub mod mutation;
 pub mod query;
-pub mod record;
 pub mod repository;
 pub mod resolver;
 pub mod router;

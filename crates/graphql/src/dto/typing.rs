@@ -1,10 +1,10 @@
-pub struct TypingRecord {
+pub struct TypingDto {
     pub id: String,
     pub text: String,
     pub description: String,
 }
 
-impl TryFrom<aws_sdk_dynamodb::operation::put_item::PutItemOutput> for TypingRecord {
+impl TryFrom<aws_sdk_dynamodb::operation::put_item::PutItemOutput> for TypingDto {
     type Error = crate::error::Error;
 
     fn try_from(
@@ -45,7 +45,7 @@ impl TryFrom<aws_sdk_dynamodb::operation::put_item::PutItemOutput> for TypingRec
             })?
             .to_string();
 
-        Ok(TypingRecord {
+        Ok(TypingDto {
             id,
             text,
             description,
@@ -53,7 +53,7 @@ impl TryFrom<aws_sdk_dynamodb::operation::put_item::PutItemOutput> for TypingRec
     }
 }
 
-pub struct TypingRecords(pub Vec<TypingRecord>);
+pub struct TypingRecords(pub Vec<TypingDto>);
 
 impl TryFrom<aws_sdk_dynamodb::operation::query::QueryOutput> for TypingRecords {
     type Error = crate::error::Error;
@@ -99,13 +99,13 @@ impl TryFrom<aws_sdk_dynamodb::operation::query::QueryOutput> for TypingRecords 
                     })?
                     .to_string();
 
-                Ok(TypingRecord {
+                Ok(TypingDto {
                     id,
                     text,
                     description,
                 })
             })
-            .collect::<Result<Vec<TypingRecord>, crate::error::Error>>()?;
+            .collect::<Result<Vec<TypingDto>, crate::error::Error>>()?;
 
         Ok(TypingRecords(records))
     }

@@ -1,29 +1,25 @@
 #[async_trait::async_trait]
 pub trait TypingRepository {
-    async fn typing_list(
-        &self,
-    ) -> Result<Vec<crate::record::typing::TypingRecord>, crate::error::Error>;
+    async fn typing_list(&self) -> Result<Vec<crate::dto::typing::TypingDto>, crate::error::Error>;
 
     async fn upsert_typing(
         &self,
         id: String,
         text: String,
         description: String,
-    ) -> Result<crate::record::typing::TypingRecord, crate::error::Error>;
+    ) -> Result<crate::dto::typing::TypingDto, crate::error::Error>;
 
     async fn delete_typing(
         &self,
         id: String,
-    ) -> Result<crate::record::typing::TypingRecord, crate::error::Error>;
+    ) -> Result<crate::dto::typing::TypingDto, crate::error::Error>;
 }
 
 pub struct TypingRepositoryImpl {}
 
 #[async_trait::async_trait]
 impl TypingRepository for TypingRepositoryImpl {
-    async fn typing_list(
-        &self,
-    ) -> Result<Vec<crate::record::typing::TypingRecord>, crate::error::Error> {
+    async fn typing_list(&self) -> Result<Vec<crate::dto::typing::TypingDto>, crate::error::Error> {
         let stage_name = crate::cache::get_or_init_stage_name().await?;
 
         let table_name = format!("{stage_name}-46ki75-internal-dynamodb-table");
@@ -45,7 +41,7 @@ impl TypingRepository for TypingRepositoryImpl {
             .await
             .map_err(|e| crate::error::Error::DynamoDb(e.to_string()))?;
 
-        let items = crate::record::typing::TypingRecords::try_from(response)?.0;
+        let items = crate::dto::typing::TypingRecords::try_from(response)?.0;
 
         Ok(items)
     }
@@ -55,7 +51,7 @@ impl TypingRepository for TypingRepositoryImpl {
         id: String,
         text: String,
         description: String,
-    ) -> Result<crate::record::typing::TypingRecord, crate::error::Error> {
+    ) -> Result<crate::dto::typing::TypingDto, crate::error::Error> {
         let stage_name = crate::cache::get_or_init_stage_name().await?;
 
         let table_name = format!("{stage_name}-46ki75-internal-dynamodb-table");
@@ -88,7 +84,7 @@ impl TypingRepository for TypingRepositoryImpl {
             .await
             .map_err(|e| crate::error::Error::DynamoDb(e.to_string()))?;
 
-        Ok(crate::record::typing::TypingRecord {
+        Ok(crate::dto::typing::TypingDto {
             id,
             text,
             description,
@@ -98,7 +94,7 @@ impl TypingRepository for TypingRepositoryImpl {
     async fn delete_typing(
         &self,
         id: String,
-    ) -> Result<crate::record::typing::TypingRecord, crate::error::Error> {
+    ) -> Result<crate::dto::typing::TypingDto, crate::error::Error> {
         let stage_name = crate::cache::get_or_init_stage_name().await?;
 
         let table_name = format!("{stage_name}-46ki75-internal-dynamodb-table");
@@ -123,7 +119,7 @@ impl TypingRepository for TypingRepositoryImpl {
             .await
             .map_err(|e| crate::error::Error::DynamoDb(e.to_string()))?;
 
-        Ok(crate::record::typing::TypingRecord {
+        Ok(crate::dto::typing::TypingDto {
             id,
             text: "".to_string(),
             description: "".to_string(),
@@ -135,16 +131,14 @@ pub struct TypingRepositoryStub;
 
 #[async_trait::async_trait]
 impl TypingRepository for TypingRepositoryStub {
-    async fn typing_list(
-        &self,
-    ) -> Result<Vec<crate::record::typing::TypingRecord>, crate::error::Error> {
+    async fn typing_list(&self) -> Result<Vec<crate::dto::typing::TypingDto>, crate::error::Error> {
         Ok(vec![
-            crate::record::typing::TypingRecord {
+            crate::dto::typing::TypingDto {
                 id: "93165a44-43c8-4790-84ad-08de54ec549a".to_string(),
                 text: "text".to_string(),
                 description: "description".to_string(),
             },
-            crate::record::typing::TypingRecord {
+            crate::dto::typing::TypingDto {
                 id: "13479686-da77-47c7-9fb2-858002c6c9bf".to_string(),
                 text: "text".to_string(),
                 description: "description".to_string(),
@@ -157,8 +151,8 @@ impl TypingRepository for TypingRepositoryStub {
         _id: String,
         _text: String,
         _description: String,
-    ) -> Result<crate::record::typing::TypingRecord, crate::error::Error> {
-        Ok(crate::record::typing::TypingRecord {
+    ) -> Result<crate::dto::typing::TypingDto, crate::error::Error> {
+        Ok(crate::dto::typing::TypingDto {
             id: "680008c4-d898-4202-8102-137cd9256595".to_string(),
             text: "text".to_string(),
             description: "description".to_string(),
@@ -168,8 +162,8 @@ impl TypingRepository for TypingRepositoryStub {
     async fn delete_typing(
         &self,
         _id: String,
-    ) -> Result<crate::record::typing::TypingRecord, crate::error::Error> {
-        Ok(crate::record::typing::TypingRecord {
+    ) -> Result<crate::dto::typing::TypingDto, crate::error::Error> {
+        Ok(crate::dto::typing::TypingDto {
             id: "680008c4-d898-4202-8102-137cd9256595".to_string(),
             text: "text".to_string(),
             description: "description".to_string(),

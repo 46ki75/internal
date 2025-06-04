@@ -15,8 +15,8 @@ pub mod util;
 
 /// Handler function of AWS Lambda.
 pub async fn function_handler(
-    event: lambda_http::Request,
-) -> Result<lambda_http::Response<lambda_http::Body>, lambda_http::Error> {
+    event: http::Request<lambda_http::Body>,
+) -> Result<http::Response<axum::body::Body>, lambda_http::Error> {
     tracing::debug!("HTTP Request: {} {}", event.method(), event.uri().path());
 
     let app = crate::router::init_router().await?;

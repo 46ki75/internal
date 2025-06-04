@@ -9,26 +9,18 @@ pub async fn execute_axum(
     app: axum::Router,
     event: lambda_http::Request,
 ) -> Result<lambda_http::Response<lambda_http::Body>, lambda_http::Error> {
-    let (parts, body) = event.into_parts();
+    let (lambda_parts, lambda_body) = event.into_parts();
 
     let axum_response = app
-        .oneshot(axum::http::Request::from_parts(parts, body))
+        .oneshot(axum::http::Request::from_parts(lambda_parts, lambda_body))
         .await?;
 
-    let status = axum_response.status();
-    let headers = axum_response.headers().clone();
-    let body = axum_response.into_body();
-    let body_bytes = axum::body::to_bytes(body, usize::MAX).await?;
+    let (axum_parts, axum_body) = axum_response.into_parts();
 
-    let mut lambda_response = lambda_http::Response::builder().status(status);
+    let body_bytes = axum::body::to_bytes(axum_body, usize::MAX).await?;
+    let lambda_body = lambda_http::Body::Binary(body_bytes.to_vec());
 
-    for (key, value) in headers {
-        if let Some(key) = key {
-            lambda_response = lambda_response.header(key.as_str(), value.to_str().unwrap());
-        }
-    }
+    let lambda_response = lambda_http::Response::from_parts(axum_parts, lambda_body);
 
-    Ok(lambda_response
-        .body(lambda_http::Body::Binary(body_bytes.to_vec()))
-        .map_err(Box::new)?)
+    Ok(lambda_response)
 }

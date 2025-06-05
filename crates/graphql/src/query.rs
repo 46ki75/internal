@@ -20,7 +20,7 @@ impl QueryRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: crate::resolver::anki::query::AnkiInput,
-    ) -> Result<crate::entity::anki::Anki, async_graphql::Error> {
+    ) -> Result<crate::resolver::anki::Anki, async_graphql::Error> {
         self.anki_query_resolver.anki(ctx, input).await
     }
 
@@ -28,7 +28,7 @@ impl QueryRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: Option<crate::resolver::anki::query::AnkiListInput>,
-    ) -> Result<crate::entity::anki::AnkiConnection, async_graphql::Error> {
+    ) -> Result<crate::resolver::anki::AnkiConnection, async_graphql::Error> {
         self.anki_query_resolver.anki_list(ctx, input).await
     }
 

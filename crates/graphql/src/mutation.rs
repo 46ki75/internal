@@ -17,7 +17,7 @@ impl MutationRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: crate::resolver::anki::mutation::CreateAnkiInput,
-    ) -> Result<crate::entity::anki::Anki, async_graphql::Error> {
+    ) -> Result<crate::resolver::anki::Anki, async_graphql::Error> {
         self.anki_mutation_resolver.create_anki(ctx, input).await
     }
 
@@ -25,7 +25,7 @@ impl MutationRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: crate::resolver::anki::mutation::UpdateAnkiInput,
-    ) -> Result<crate::entity::anki::Anki, async_graphql::Error> {
+    ) -> Result<crate::resolver::anki::Anki, async_graphql::Error> {
         self.anki_mutation_resolver.update_anki(ctx, input).await
     }
 

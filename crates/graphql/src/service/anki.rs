@@ -8,7 +8,7 @@ impl AnkiService {
     pub async fn get_anki_by_id(
         &self,
         id: &str,
-    ) -> Result<crate::entity::anki::Anki, crate::error::Error> {
+    ) -> Result<crate::entity::anki::AnkiEntity, crate::error::Error> {
         let page = self.anki_repository.get_anki_by_id(id).await?;
 
         let anki = crate::util::anki::AnkiUtil::convert_page_response(page)?;
@@ -20,7 +20,7 @@ impl AnkiService {
         &self,
         page_size: u32,
         next_cursor: Option<String>,
-    ) -> Result<crate::entity::anki::AnkiConnection, crate::error::Error> {
+    ) -> Result<(Vec<crate::entity::anki::AnkiEntity>, Option<String>), crate::error::Error> {
         let pages = self
             .anki_repository
             .list_anki(page_size, next_cursor)
@@ -30,31 +30,17 @@ impl AnkiService {
             .results
             .into_iter()
             .map(crate::util::anki::AnkiUtil::convert_page_response)
-            .collect::<Result<Vec<crate::entity::anki::Anki>, crate::error::Error>>()?;
+            .collect::<Result<Vec<crate::entity::anki::AnkiEntity>, crate::error::Error>>()?;
 
-        let anki_edge = anki_list
-            .into_iter()
-            .map(|anki| crate::entity::anki::AnkiEdge {
-                cursor: anki.page_id.to_string(),
-                node: anki,
-            })
-            .collect::<Vec<crate::entity::anki::AnkiEdge>>();
+        let next_cursor = pages.next_cursor;
 
-        let anki_connection = crate::entity::anki::AnkiConnection {
-            edges: anki_edge,
-            page_info: crate::entity::PageInfo {
-                next_cursor: pages.next_cursor,
-                ..Default::default()
-            },
-        };
-
-        Ok(anki_connection)
+        Ok((anki_list, next_cursor))
     }
 
     pub async fn list_blocks(
         &self,
         id: &str,
-    ) -> Result<crate::entity::anki::AnkiBlock, crate::error::Error> {
+    ) -> Result<crate::entity::anki::AnkiBlockEntity, crate::error::Error> {
         let blocks = self.anki_repository.list_blocks_by_id(id).await?;
 
         let mut front: Vec<jarkup_rs::Component> = Vec::new();
@@ -112,7 +98,7 @@ impl AnkiService {
             }
         }
 
-        Ok(crate::entity::anki::AnkiBlock {
+        Ok(crate::entity::anki::AnkiBlockEntity {
             front: serde_json::to_value(front)?,
             back: serde_json::to_value(back)?,
             explanation: serde_json::to_value(explanation)?,
@@ -122,7 +108,7 @@ impl AnkiService {
     pub async fn create_anki(
         &self,
         title: Option<String>,
-    ) -> Result<crate::entity::anki::Anki, crate::error::Error> {
+    ) -> Result<crate::entity::anki::AnkiEntity, crate::error::Error> {
         let mut properties: std::collections::HashMap<String, PageProperty> =
             std::collections::HashMap::new();
 
@@ -206,7 +192,7 @@ impl AnkiService {
         ease_factor: f64,
         repetition_count: u32,
         next_review_at: String,
-    ) -> Result<crate::entity::anki::Anki, crate::error::Error> {
+    ) -> Result<crate::entity::anki::AnkiEntity, crate::error::Error> {
         let mut properties: std::collections::HashMap<String, PageProperty> =
             std::collections::HashMap::new();
 

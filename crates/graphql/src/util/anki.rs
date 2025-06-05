@@ -3,7 +3,7 @@ pub struct AnkiUtil;
 impl AnkiUtil {
     pub fn convert_page_response(
         page_response: notionrs_types::object::page::PageResponse,
-    ) -> Result<crate::entity::anki::Anki, crate::error::Error> {
+    ) -> Result<crate::entity::anki::AnkiEntity, crate::error::Error> {
         let properties = page_response.properties;
 
         // >>> title
@@ -62,19 +62,18 @@ impl AnkiUtil {
                     "easeFactor".to_string(),
                 ))?;
 
-        let ease_factor =
-            match ease_factor_property {
-                notionrs_types::object::page::PageProperty::Number(ease_factor) => ease_factor
-                    .number
-                    .ok_or(crate::error::Error::NotionPropertynotFound(
-                        "easeFactor".to_string(),
-                    ))?,
-                _ => {
-                    return Err(crate::error::Error::NotionPropertynotFound(
-                        "easeFactor".to_string(),
-                    ));
-                }
-            };
+        let ease_factor = match ease_factor_property {
+            notionrs_types::object::page::PageProperty::Number(ease_factor) => ease_factor
+                .number
+                .ok_or(
+                crate::error::Error::NotionPropertynotFound("easeFactor".to_string()),
+            )?,
+            _ => {
+                return Err(crate::error::Error::NotionPropertynotFound(
+                    "easeFactor".to_string(),
+                ));
+            }
+        };
         // <<< ease_factor
 
         // >>> repetition_count
@@ -83,12 +82,13 @@ impl AnkiUtil {
         )?;
 
         let repetition_count = match repetition_count_property {
-            notionrs_types::object::page::PageProperty::Number(repetition_count) => repetition_count
-                .number
-                .ok_or(crate::error::Error::NotionPropertynotFound(
-                    "repetitionCount".to_string(),
-                ))?
-                as u32,
+            notionrs_types::object::page::PageProperty::Number(repetition_count) => {
+                repetition_count
+                    .number
+                    .ok_or(crate::error::Error::NotionPropertynotFound(
+                        "repetitionCount".to_string(),
+                    ))? as u32
+            }
             _ => {
                 return Err(crate::error::Error::NotionPropertynotFound(
                     "repetitionCount".to_string(),
@@ -134,36 +134,36 @@ impl AnkiUtil {
                 ))?;
 
         let tags = match tags_property {
-            notionrs_types::object::page::PageProperty::MultiSelect(tags) => {
-                tags.multi_select
-                    .iter()
-                    .map(|tag| {
-                        Ok(crate::entity::anki::AnkiTag {
-                            id: tag.clone().id.ok_or(
-                                crate::error::Error::NotionPropertynotFound("tag.id".to_string()),
-                            )?,
-                            name: tag.name.to_string(),
-                            color: match tag.color.ok_or(
-                                crate::error::Error::NotionPropertynotFound(
-                                    "tag.color".to_string(),
-                                ),
-                            )? {
-                                notionrs_types::object::select::SelectColor::Default => "#868e9c",
-                                notionrs_types::object::select::SelectColor::Blue => "#6987b8",
-                                notionrs_types::object::select::SelectColor::Brown => "#a17c5b",
-                                notionrs_types::object::select::SelectColor::Gray => "#59b57c",
-                                notionrs_types::object::select::SelectColor::Green => "#59b57c",
-                                notionrs_types::object::select::SelectColor::Orange => "#d48b70",
-                                notionrs_types::object::select::SelectColor::Pink => "#c9699e",
-                                notionrs_types::object::select::SelectColor::Purple => "#9771bd",
-                                notionrs_types::object::select::SelectColor::Red => "#c56565",
-                                notionrs_types::object::select::SelectColor::Yellow => "#cdb57b",
-                            }
-                            .to_string(),
-                        })
+            notionrs_types::object::page::PageProperty::MultiSelect(tags) => tags
+                .multi_select
+                .iter()
+                .map(|tag| {
+                    Ok(crate::entity::anki::AnkiTagEntity {
+                        id: tag
+                            .clone()
+                            .id
+                            .ok_or(crate::error::Error::NotionPropertynotFound(
+                                "tag.id".to_string(),
+                            ))?,
+                        name: tag.name.to_string(),
+                        color: match tag.color.ok_or(
+                            crate::error::Error::NotionPropertynotFound("tag.color".to_string()),
+                        )? {
+                            notionrs_types::object::select::SelectColor::Default => "#868e9c",
+                            notionrs_types::object::select::SelectColor::Blue => "#6987b8",
+                            notionrs_types::object::select::SelectColor::Brown => "#a17c5b",
+                            notionrs_types::object::select::SelectColor::Gray => "#59b57c",
+                            notionrs_types::object::select::SelectColor::Green => "#59b57c",
+                            notionrs_types::object::select::SelectColor::Orange => "#d48b70",
+                            notionrs_types::object::select::SelectColor::Pink => "#c9699e",
+                            notionrs_types::object::select::SelectColor::Purple => "#9771bd",
+                            notionrs_types::object::select::SelectColor::Red => "#c56565",
+                            notionrs_types::object::select::SelectColor::Yellow => "#cdb57b",
+                        }
+                        .to_string(),
                     })
-                    .collect::<Result<Vec<crate::entity::anki::AnkiTag>, crate::error::Error>>()
-            }
+                })
+                .collect::<Result<Vec<crate::entity::anki::AnkiTagEntity>, crate::error::Error>>(),
             _ => {
                 return Err(crate::error::Error::NotionPropertynotFound(
                     "tags".to_string(),
@@ -177,7 +177,7 @@ impl AnkiUtil {
         let updated_at = page_response.last_edited_time.to_string();
         let url = page_response.url.to_string();
 
-        Ok(crate::entity::anki::Anki {
+        Ok(crate::entity::anki::AnkiEntity {
             page_id,
             title,
             description,

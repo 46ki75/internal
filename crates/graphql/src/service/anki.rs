@@ -193,6 +193,7 @@ impl AnkiService {
         repetition_count: Option<u32>,
         next_review_at: Option<String>,
         is_review_required: Option<bool>,
+        in_trash: Option<bool>,
     ) -> Result<crate::entity::anki::AnkiEntity, crate::error::Error> {
         let mut properties: std::collections::HashMap<String, PageProperty> =
             std::collections::HashMap::new();
@@ -237,7 +238,7 @@ impl AnkiService {
 
         let page_response = self
             .anki_repository
-            .update_anki(page_id, properties)
+            .update_anki(page_id, properties, in_trash)
             .await?;
 
         let anki = page_response.try_into()?;
@@ -290,6 +291,7 @@ mod tests {
                 Some(2.5),
                 Some(0),
                 Some("2021-09-01T00:00:00+09:00".to_string()),
+                None,
                 None,
             )
             .await

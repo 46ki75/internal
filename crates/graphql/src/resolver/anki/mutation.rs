@@ -28,6 +28,7 @@ impl AnkiMutationResolver {
         repetition_count: Option<u32>,
         next_review_at: Option<String>,
         is_review_required: Option<bool>,
+        in_trash: Option<bool>,
     ) -> Result<super::Anki, async_graphql::Error> {
         let anki_service = ctx.data::<std::sync::Arc<crate::service::anki::AnkiService>>()?;
 
@@ -38,6 +39,7 @@ impl AnkiMutationResolver {
                 repetition_count,
                 next_review_at,
                 is_review_required,
+                in_trash,
             )
             .await
             .map_err(|e| e.to_string())?;

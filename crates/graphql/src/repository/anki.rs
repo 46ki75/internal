@@ -20,6 +20,7 @@ pub trait AnkiRepository: Send + Sync {
         &self,
         page_id: &str,
         properties: std::collections::HashMap<String, PageProperty>,
+        in_trash: Option<bool>,
     ) -> Result<PageResponse, crate::error::Error>;
 
     async fn list_blocks_by_id(
@@ -108,13 +109,21 @@ impl AnkiRepository for AnkiRepositoryImpl {
         &self,
         page_id: &str,
         properties: std::collections::HashMap<String, PageProperty>,
+        in_trash: Option<bool>,
     ) -> Result<PageResponse, crate::error::Error> {
         let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
-        let request = notionrs_client
-            .update_page()
-            .page_id(page_id)
-            .properties(properties);
+        let request = match in_trash {
+            Some(in_trash) => notionrs_client
+                .update_page()
+                .page_id(page_id)
+                .properties(properties)
+                .in_trash(in_trash),
+            None => notionrs_client
+                .update_page()
+                .page_id(page_id)
+                .properties(properties),
+        };
 
         tracing::debug!("Sending request to Notion API");
         let response = request.send().await.map_err(|e| {
@@ -383,6 +392,7 @@ impl AnkiRepository for AnkiRepositoryStub {
         &self,
         page_id: &str,
         properties: std::collections::HashMap<String, PageProperty>,
+        in_trash: Option<bool>,
     ) -> Result<PageResponse, crate::error::Error> {
         let mut properties = properties.clone();
 
@@ -452,7 +462,7 @@ impl AnkiRepository for AnkiRepositoryStub {
             public_url: None,
             developer_survey: None,
             request_id: None,
-            in_trash: false,
+            in_trash: in_trash.unwrap_or_default(),
         })
     }
 

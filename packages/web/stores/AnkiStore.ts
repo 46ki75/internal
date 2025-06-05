@@ -9,6 +9,11 @@ interface AnkiStoreState {
   createState: {
     loading: boolean;
   };
+
+  markAnkiAsReviewRequiredState: {
+    loading: boolean;
+    error: string | null;
+  };
 }
 
 export const ankiResponseSchema = z.object({
@@ -31,6 +36,7 @@ export const ankiResponseSchema = z.object({
           })
         ),
         url: z.string(),
+        isReviewRequired: z.boolean(),
         blockList: z
           .object({
             front: z.any(),
@@ -62,6 +68,10 @@ export const useAnkiStore = defineStore("anki", {
     updateLoading: false,
     createState: {
       loading: false,
+    },
+    markAnkiAsReviewRequiredState: {
+      loading: false,
+      error: null,
     },
   }),
   actions: {
@@ -101,6 +111,7 @@ export const useAnkiStore = defineStore("anki", {
                       color
                     }
                     url
+                    isReviewRequired
                     blockList {
                       front
                       back
@@ -157,6 +168,7 @@ export const useAnkiStore = defineStore("anki", {
                       color
                     }
                     url
+                    isReviewRequired
                     blockList {
                       front
                       back
@@ -201,13 +213,13 @@ export const useAnkiStore = defineStore("anki", {
             Authorization: `${authStore.session.accessToken}`,
           },
           body: {
-            query: `#graphql
+            query: /* GraphQL */ `
               mutation CreateAnki($title: String!) {
-                createAnki(input: {title: $title}) {
+                createAnki(title: $title) {
                   url
                 }
               }
-          `,
+            `,
             variables: { title: "" },
           },
         }
@@ -244,18 +256,26 @@ export const useAnkiStore = defineStore("anki", {
             Authorization: `${authStore.session.accessToken}`,
           },
           body: {
-            query: `#graphql
-            mutation UpdateAnki($pageId: String!, $easeFactor: Float!, $repetitionCount: Int!, $nextReviewAt: String!) {
-              updateAnki(
-                input: {pageId: $pageId, easeFactor: $easeFactor, repetitionCount: $repetitionCount, nextReviewAt: $nextReviewAt}
+            query: /* GraphQL */ `
+              mutation UpdateAnki(
+                $pageId: String!
+                $easeFactor: Float!
+                $repetitionCount: Int!
+                $nextReviewAt: String!
               ) {
-                pageId
-                easeFactor
-                repetitionCount
-                nextReviewAt
+                updateAnki(
+                  pageId: $pageId
+                  easeFactor: $easeFactor
+                  repetitionCount: $repetitionCount
+                  nextReviewAt: $nextReviewAt
+                ) {
+                  pageId
+                  easeFactor
+                  repetitionCount
+                  nextReviewAt
+                }
               }
-            }
-          `,
+            `,
             variables: { pageId, easeFactor, repetitionCount, nextReviewAt },
           },
         });
@@ -336,6 +356,50 @@ export const useAnkiStore = defineStore("anki", {
       } else {
         const url = currentAnki.url.replace("https://", "notion://");
         window.open(url, "_blank");
+      }
+    },
+
+    async toggleCurrentAnkiReviewRequired() {
+      this.markAnkiAsReviewRequiredState.error = null;
+      this.markAnkiAsReviewRequiredState.loading = true;
+
+      try {
+        const authStore = useAuthStore();
+        await authStore.refreshIfNeed();
+
+        const [anki] = this.ankiList;
+
+        const _ = await $fetch("/api/graphql", {
+          method: "POST",
+          headers: {
+            Authorization: `${authStore.session.accessToken}`,
+          },
+          body: {
+            query: /* GraphQL */ `
+              mutation MarkAsReviewRequiredAnki(
+                $pageId: String!
+                $isReviewRequired: Boolean!
+              ) {
+                updateAnki(
+                  pageId: $pageId
+                  isReviewRequired: $isReviewRequired
+                ) {
+                  __typename
+                }
+              }
+            `,
+            variables: {
+              pageId: anki.pageId,
+              isReviewRequired: !anki.isReviewRequired,
+            },
+          },
+        });
+        const newAnki = { ...anki, isReviewRequired: !anki.isReviewRequired };
+        this.ankiList[0] = newAnki;
+      } catch (error) {
+        this.markAnkiAsReviewRequiredState.error = String(error);
+      } finally {
+        this.markAnkiAsReviewRequiredState.loading = false;
       }
     },
   },

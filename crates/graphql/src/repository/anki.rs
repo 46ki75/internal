@@ -20,6 +20,7 @@ pub trait AnkiRepository: Send + Sync {
         &self,
         page_id: &str,
         properties: std::collections::HashMap<String, PageProperty>,
+        in_trash: Option<bool>,
     ) -> Result<PageResponse, crate::error::Error>;
 
     async fn list_blocks_by_id(
@@ -108,13 +109,21 @@ impl AnkiRepository for AnkiRepositoryImpl {
         &self,
         page_id: &str,
         properties: std::collections::HashMap<String, PageProperty>,
+        in_trash: Option<bool>,
     ) -> Result<PageResponse, crate::error::Error> {
         let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
-        let request = notionrs_client
-            .update_page()
-            .page_id(page_id)
-            .properties(properties);
+        let request = match in_trash {
+            Some(in_trash) => notionrs_client
+                .update_page()
+                .page_id(page_id)
+                .properties(properties)
+                .in_trash(in_trash),
+            None => notionrs_client
+                .update_page()
+                .page_id(page_id)
+                .properties(properties),
+        };
 
         tracing::debug!("Sending request to Notion API");
         let response = request.send().await.map_err(|e| {
@@ -178,6 +187,11 @@ impl AnkiRepository for AnkiRepositoryStub {
 
         let tags_property = PageProperty::MultiSelect(PageMultiSelectProperty::default());
         properties.insert("tags".to_string(), tags_property);
+
+        properties.insert(
+            "isReviewRequired".to_owned(),
+            PageProperty::Checkbox(PageCheckboxProperty::from(false)),
+        );
 
         Ok(PageResponse {
             id: "4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e".to_string(),
@@ -251,6 +265,11 @@ impl AnkiRepository for AnkiRepositoryStub {
 
         let tags_property = PageProperty::MultiSelect(PageMultiSelectProperty::default());
         properties.insert("tags".to_string(), tags_property);
+
+        properties.insert(
+            "isReviewRequired".to_owned(),
+            PageProperty::Checkbox(PageCheckboxProperty::from(false)),
+        );
 
         let page = PageResponse {
             id: "4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e".to_string(),
@@ -326,6 +345,11 @@ impl AnkiRepository for AnkiRepositoryStub {
         let tags_property = PageProperty::MultiSelect(PageMultiSelectProperty::default());
         properties.insert("tags".to_string(), tags_property);
 
+        properties.insert(
+            "isReviewRequired".to_owned(),
+            PageProperty::Checkbox(PageCheckboxProperty::from(false)),
+        );
+
         let user = notionrs_types::object::user::User {
             object: "user".to_string(),
             id: "c4afec03-71d3-4114-b992-df84ed2e594c".to_string(),
@@ -368,6 +392,7 @@ impl AnkiRepository for AnkiRepositoryStub {
         &self,
         page_id: &str,
         properties: std::collections::HashMap<String, PageProperty>,
+        in_trash: Option<bool>,
     ) -> Result<PageResponse, crate::error::Error> {
         let mut properties = properties.clone();
 
@@ -397,6 +422,11 @@ impl AnkiRepository for AnkiRepositoryStub {
 
         let tags_property = PageProperty::MultiSelect(PageMultiSelectProperty::default());
         properties.insert("tags".to_string(), tags_property);
+
+        properties.insert(
+            "isReviewRequired".to_owned(),
+            PageProperty::Checkbox(PageCheckboxProperty::from(false)),
+        );
 
         let user = notionrs_types::object::user::User {
             object: "user".to_string(),
@@ -432,7 +462,7 @@ impl AnkiRepository for AnkiRepositoryStub {
             public_url: None,
             developer_survey: None,
             request_id: None,
-            in_trash: false,
+            in_trash: in_trash.unwrap_or_default(),
         })
     }
 

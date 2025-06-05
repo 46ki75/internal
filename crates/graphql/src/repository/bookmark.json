@@ -25,7 +25,7 @@
   "archived": false,
   "in_trash": false,
   "properties": {
-    "tags": {
+    "Tag": {
       "id": "KS%5Er",
       "type": "multi_select",
       "multi_select": [
@@ -36,12 +36,12 @@
         }
       ]
     },
-    "url": {
+    "URL": {
       "id": "S~xm",
       "type": "url",
       "url": "https://direct.bk.mufg.jp/index.html"
     },
-    "name": {
+    "Name": {
       "id": "title",
       "type": "title",
       "title": [

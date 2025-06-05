@@ -1,5 +1,5 @@
-#[derive(async_graphql::SimpleObject, Default, Debug)]
-pub struct ToDo {
+#[derive(Default, Debug)]
+pub struct ToDoEntity {
     pub id: String,
     pub url: String,
     pub source: String,
@@ -7,13 +7,13 @@ pub struct ToDo {
     pub description: Option<String>,
     pub is_done: bool,
     pub deadline: Option<String>,
-    pub severity: Severity,
+    pub severity: ToDoSeverityEntity,
     pub created_at: Option<String>,
     pub updated_at: Option<String>,
 }
 
-#[derive(async_graphql::Enum, Default, Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Severity {
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ToDoSeverityEntity {
     #[default]
     Unknown,
     Info,
@@ -21,29 +21,28 @@ pub enum Severity {
     Error,
 }
 
-impl std::fmt::Display for Severity {
+impl std::fmt::Display for ToDoSeverityEntity {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
             "{}",
             match self {
-                Severity::Unknown => "INFO",
-                Severity::Info => "INFO",
-                Severity::Warn => "WARN",
-                Severity::Error => "ERROR",
+                ToDoSeverityEntity::Unknown => "INFO",
+                ToDoSeverityEntity::Info => "INFO",
+                ToDoSeverityEntity::Warn => "WARN",
+                ToDoSeverityEntity::Error => "ERROR",
             }
         )
     }
 }
 
-#[derive(async_graphql::SimpleObject, Default, Debug)]
-pub struct ToDoConnection {
-    pub edges: Vec<ToDoEdge>,
-    pub page_info: crate::entity::PageInfo,
-}
-
-#[derive(async_graphql::SimpleObject, Default, Debug)]
-pub struct ToDoEdge {
-    pub node: ToDo,
-    pub cursor: String,
+impl From<crate::resolver::to_do::ToDoSeverity> for ToDoSeverityEntity {
+    fn from(value: crate::resolver::to_do::ToDoSeverity) -> Self {
+        match value {
+            crate::resolver::to_do::ToDoSeverity::Unknown => Self::Unknown,
+            crate::resolver::to_do::ToDoSeverity::Info => Self::Info,
+            crate::resolver::to_do::ToDoSeverity::Warn => Self::Warn,
+            crate::resolver::to_do::ToDoSeverity::Error => Self::Error,
+        }
+    }
 }

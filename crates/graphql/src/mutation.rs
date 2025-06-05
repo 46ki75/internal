@@ -43,7 +43,7 @@ impl MutationRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: crate::resolver::to_do::mutation::CreateToDoInput,
-    ) -> Result<crate::entity::to_do::ToDo, async_graphql::Error> {
+    ) -> Result<crate::resolver::to_do::ToDo, async_graphql::Error> {
         self.to_do_mutation_resolver.create_to_do(ctx, input).await
     }
 
@@ -51,7 +51,7 @@ impl MutationRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: crate::resolver::to_do::mutation::UpdateToDoInput,
-    ) -> Result<crate::entity::to_do::ToDo, async_graphql::Error> {
+    ) -> Result<crate::resolver::to_do::ToDo, async_graphql::Error> {
         self.to_do_mutation_resolver.update_to_do(ctx, input).await
     }
 

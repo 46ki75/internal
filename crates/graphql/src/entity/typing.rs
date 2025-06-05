@@ -1,5 +1,5 @@
-#[derive(async_graphql::SimpleObject, Default, Debug)]
-pub struct Typing {
+#[derive(Default, Debug)]
+pub struct TypingEntity {
     pub id: String,
     pub text: String,
     pub description: String,

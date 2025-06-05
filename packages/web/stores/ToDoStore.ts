@@ -19,7 +19,7 @@ type ToDoSchemaType = z.infer<typeof ToDoSchema>;
 
 const query = /* GraphQL */ `
   query ToDoList {
-    todoList {
+    toDoList {
       id
       source
       title
@@ -68,7 +68,7 @@ const updateMutation = /* GraphQL */ `
 export const useToDoStore = defineStore("todo", {
   state: () => {
     return {
-      todoList: [] as ToDoSchemaType[],
+      toDoList: [] as ToDoSchemaType[],
 
       fetchState: {
         loading: false,
@@ -97,7 +97,7 @@ export const useToDoStore = defineStore("todo", {
       try {
         const response = await $fetch<{
           data: {
-            todoList: ToDoSchemaType[];
+            toDoList: ToDoSchemaType[];
           };
         }>("/api/graphql", {
           method: "POST",
@@ -108,7 +108,7 @@ export const useToDoStore = defineStore("todo", {
           body: JSON.stringify({ query }),
         });
 
-        this.todoList = response.data.todoList;
+        this.toDoList = response.data.toDoList;
       } catch (error: unknown) {
         this.fetchState.error = (error as Error)?.message;
       } finally {
@@ -136,7 +136,7 @@ export const useToDoStore = defineStore("todo", {
           }),
         });
 
-        this.todoList.push(response.data.createTodo);
+        this.toDoList.push(response.data.createTodo);
       } catch (error: unknown) {
         this.createState.error = (error as Error)?.message;
       } finally {
@@ -164,7 +164,7 @@ export const useToDoStore = defineStore("todo", {
           }),
         });
 
-        this.todoList = this.todoList.filter((todo) => todo.id !== id);
+        this.toDoList = this.toDoList.filter((todo) => todo.id !== id);
       } catch (error: unknown) {
         this.updateState.error = (error as Error)?.message;
       } finally {

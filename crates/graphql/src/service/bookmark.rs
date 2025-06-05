@@ -8,13 +8,14 @@ pub struct BookmarkService {
 impl BookmarkService {
     pub async fn list_bookmark(
         &self,
-    ) -> Result<Vec<crate::entity::bookmark::Bookmark>, crate::error::Error> {
+    ) -> Result<Vec<crate::entity::bookmark::BookmarkEntity>, crate::error::Error> {
         let response = self.bookmark_repository.list_bookmark().await?;
 
         let bookmarks = response
             .iter()
-            .map(|bookmark| crate::entity::bookmark::Bookmark::try_from(bookmark.to_owned()))
-            .collect::<Result<Vec<crate::entity::bookmark::Bookmark>, crate::error::Error>>()?;
+            .map(|bookmark| crate::entity::bookmark::BookmarkEntity::try_from(bookmark.to_owned()))
+            .collect::<Result<Vec<crate::entity::bookmark::BookmarkEntity>, crate::error::Error>>(
+            )?;
 
         Ok(bookmarks)
     }
@@ -23,7 +24,7 @@ impl BookmarkService {
         &self,
         name: &str,
         url: &str,
-    ) -> Result<crate::entity::bookmark::Bookmark, crate::error::Error> {
+    ) -> Result<crate::entity::bookmark::BookmarkEntity, crate::error::Error> {
         let favicon = self.fetch_facicon_url(url).await;
 
         let mut properties: std::collections::HashMap<String, PageProperty> =
@@ -44,7 +45,7 @@ impl BookmarkService {
             .create_bookmark(properties, favicon)
             .await?;
 
-        let bookmark = crate::entity::bookmark::Bookmark::try_from(response)?;
+        let bookmark = crate::entity::bookmark::BookmarkEntity::try_from(response)?;
 
         Ok(bookmark)
     }

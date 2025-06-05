@@ -1,16 +1,15 @@
 use notionrs_types::prelude::*;
 
-#[derive(async_graphql::SimpleObject)]
-pub struct Bookmark {
+pub struct BookmarkEntity {
     pub id: String,
     pub name: Option<String>,
     pub url: Option<String>,
     pub favicon: Option<String>,
-    pub tag: Option<BookmarkTag>,
+    pub tag: Option<BookmarkTagEntity>,
     pub notion_url: String,
 }
 
-impl TryFrom<PageResponse> for Bookmark {
+impl TryFrom<PageResponse> for BookmarkEntity {
     type Error = crate::error::Error;
     fn try_from(value: PageResponse) -> Result<Self, Self::Error> {
         let id = value.id;
@@ -37,7 +36,7 @@ impl TryFrom<PageResponse> for Bookmark {
 
         let select = if let PageProperty::Select(select) = tag {
             select.clone().select.and_then(|select| {
-                Some(BookmarkTag {
+                Some(BookmarkTagEntity {
                     id: select
                         .id
                         .ok_or_else(|| {
@@ -80,7 +79,7 @@ impl TryFrom<PageResponse> for Bookmark {
             None
         };
 
-        Ok(Bookmark {
+        Ok(BookmarkEntity {
             id,
             name: Some(name.to_string()),
             url: Some(url.to_string()),
@@ -91,8 +90,7 @@ impl TryFrom<PageResponse> for Bookmark {
     }
 }
 
-#[derive(async_graphql::SimpleObject)]
-pub struct BookmarkTag {
+pub struct BookmarkTagEntity {
     pub id: String,
     pub name: String,
     pub color: String,

@@ -26,6 +26,7 @@ pub struct Anki {
     pub updated_at: String,
     pub tags: Vec<AnkiTag>,
     pub url: String,
+    pub is_review_required: bool,
 }
 
 #[derive(async_graphql::SimpleObject)]
@@ -59,6 +60,7 @@ impl From<crate::entity::anki::AnkiEntity> for Anki {
                 .map(|tag| AnkiTag::from(tag))
                 .collect(),
             url: value.url,
+            is_review_required: value.is_review_required,
         }
     }
 }

@@ -11,7 +11,7 @@ impl AnkiService {
     ) -> Result<crate::entity::anki::AnkiEntity, crate::error::Error> {
         let page = self.anki_repository.get_anki_by_id(id).await?;
 
-        let anki = crate::util::anki::AnkiUtil::convert_page_response(page)?;
+        let anki = page.try_into()?;
 
         Ok(anki)
     }
@@ -29,7 +29,7 @@ impl AnkiService {
         let anki_list = pages
             .results
             .into_iter()
-            .map(crate::util::anki::AnkiUtil::convert_page_response)
+            .map(|anki| anki.try_into())
             .collect::<Result<Vec<crate::entity::anki::AnkiEntity>, crate::error::Error>>()?;
 
         let next_cursor = pages.next_cursor;
@@ -181,7 +181,7 @@ impl AnkiService {
             .create_anki(properties, children)
             .await?;
 
-        let anki = crate::util::anki::AnkiUtil::convert_page_response(page_response)?;
+        let anki = page_response.try_into()?;
 
         Ok(anki)
     }
@@ -232,7 +232,7 @@ impl AnkiService {
             .update_anki(page_id, properties)
             .await?;
 
-        let anki = crate::util::anki::AnkiUtil::convert_page_response(page_response)?;
+        let anki = page_response.try_into()?;
 
         Ok(anki)
     }

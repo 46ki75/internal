@@ -1,7 +1,7 @@
 <template>
   <ElmHeading :level="1" text="ToDo" />
 
-  <ElmBlockFallback v-if="todoStore.todoList.length === 0" />
+  <ElmBlockFallback v-if="todoStore.toDoList.length === 0" />
 
   <table class="todo global-fade-in" v-else>
     <thead>
@@ -23,7 +23,7 @@
 
     <tbody>
       <tr
-        v-for="(todo, index) in todoStore.todoList"
+        v-for="(todo, index) in todoStore.toDoList"
         :key="todo.id"
         class="fade-in"
         :style="{ '--animation-delay': `${index * 50}ms` }"
@@ -91,7 +91,7 @@ onMounted(() => {
 });
 
 const colorMap: Record<
-  (typeof todoStore)["todoList"][number]["severity"],
+  (typeof todoStore)["toDoList"][number]["severity"],
   string
 > = {
   UNKNOWN: "#868e9c",

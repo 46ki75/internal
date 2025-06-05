@@ -1,11 +1,12 @@
+#[derive(Debug, Default)]
 pub struct AnkiQueryResolver;
 
-#[derive(async_graphql::InputObject)]
+#[derive(async_graphql::InputObject, Debug, Default)]
 pub struct AnkiInput {
     pub page_id: String,
 }
 
-#[derive(async_graphql::InputObject)]
+#[derive(async_graphql::InputObject, Debug, Default)]
 pub struct AnkiListInput {
     page_size: Option<u32>,
     next_cursor: Option<String>,

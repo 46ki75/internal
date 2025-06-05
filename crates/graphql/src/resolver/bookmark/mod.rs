@@ -1,7 +1,7 @@
 pub mod mutation;
 pub mod query;
 
-#[derive(async_graphql::SimpleObject)]
+#[derive(async_graphql::SimpleObject, Debug, Default)]
 pub struct Bookmark {
     pub id: String,
     pub name: Option<String>,
@@ -11,7 +11,7 @@ pub struct Bookmark {
     pub notion_url: String,
 }
 
-#[derive(async_graphql::SimpleObject)]
+#[derive(async_graphql::SimpleObject, Debug, Default)]
 pub struct BookmarkTag {
     pub id: String,
     pub name: String,

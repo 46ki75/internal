@@ -1,5 +1,7 @@
+#[derive(Debug, Default)]
 pub struct TypingQueryResolver;
 
+#[async_graphql::Object]
 impl TypingQueryResolver {
     pub async fn typing_list(
         &self,

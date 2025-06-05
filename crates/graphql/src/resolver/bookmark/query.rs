@@ -1,5 +1,7 @@
+#[derive(Debug, Default)]
 pub struct BookmarkQueryResolver;
 
+#[async_graphql::Object]
 impl BookmarkQueryResolver {
     pub async fn list_bookmark(
         &self,

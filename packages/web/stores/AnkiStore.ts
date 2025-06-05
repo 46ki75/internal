@@ -201,13 +201,13 @@ export const useAnkiStore = defineStore("anki", {
             Authorization: `${authStore.session.accessToken}`,
           },
           body: {
-            query: `#graphql
+            query: /* GraphQL */ `
               mutation CreateAnki($title: String!) {
-                createAnki(input: {title: $title}) {
+                createAnki(title: $title) {
                   url
                 }
               }
-          `,
+            `,
             variables: { title: "" },
           },
         }
@@ -244,18 +244,26 @@ export const useAnkiStore = defineStore("anki", {
             Authorization: `${authStore.session.accessToken}`,
           },
           body: {
-            query: `#graphql
-            mutation UpdateAnki($pageId: String!, $easeFactor: Float!, $repetitionCount: Int!, $nextReviewAt: String!) {
-              updateAnki(
-                input: {pageId: $pageId, easeFactor: $easeFactor, repetitionCount: $repetitionCount, nextReviewAt: $nextReviewAt}
+            query: /* GraphQL */ `
+              mutation UpdateAnki(
+                $pageId: String!
+                $easeFactor: Float!
+                $repetitionCount: Int!
+                $nextReviewAt: String!
               ) {
-                pageId
-                easeFactor
-                repetitionCount
-                nextReviewAt
+                updateAnki(
+                  pageId: $pageId
+                  easeFactor: $easeFactor
+                  repetitionCount: $repetitionCount
+                  nextReviewAt: $nextReviewAt
+                ) {
+                  pageId
+                  easeFactor
+                  repetitionCount
+                  nextReviewAt
+                }
               }
-            }
-          `,
+            `,
             variables: { pageId, easeFactor, repetitionCount, nextReviewAt },
           },
         });

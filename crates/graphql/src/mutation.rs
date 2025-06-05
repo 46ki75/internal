@@ -59,7 +59,7 @@ impl MutationRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: crate::resolver::typing::mutation::TypingUpsertInput,
-    ) -> Result<crate::entity::typing::Typing, async_graphql::Error> {
+    ) -> Result<crate::resolver::typing::Typing, async_graphql::Error> {
         self.typing_mutation_resolver
             .upsert_typing(ctx, input)
             .await
@@ -69,7 +69,7 @@ impl MutationRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: crate::resolver::typing::mutation::TypingDeleteInput,
-    ) -> Result<crate::entity::typing::Typing, async_graphql::Error> {
+    ) -> Result<crate::resolver::typing::Typing, async_graphql::Error> {
         self.typing_mutation_resolver
             .delete_typing(ctx, input)
             .await

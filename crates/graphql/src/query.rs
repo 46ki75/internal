@@ -49,7 +49,7 @@ impl QueryRoot {
     pub async fn typing_list(
         &self,
         ctx: &async_graphql::Context<'_>,
-    ) -> Result<Vec<crate::entity::typing::Typing>, async_graphql::Error> {
+    ) -> Result<Vec<crate::resolver::typing::Typing>, async_graphql::Error> {
         self.typing_query_resolver.typing_list(ctx).await
     }
 }

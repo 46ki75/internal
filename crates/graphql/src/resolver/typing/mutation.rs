@@ -16,13 +16,14 @@ impl TypingMutationResolver {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: TypingUpsertInput,
-    ) -> Result<crate::entity::typing::Typing, async_graphql::Error> {
+    ) -> Result<super::Typing, async_graphql::Error> {
         let typing_service = ctx.data::<std::sync::Arc<crate::service::typing::TypingService>>()?;
 
         let result = typing_service
             .upsert_typing(input.text, input.description)
             .await
-            .map_err(|e| e.to_string())?;
+            .map_err(|e| e.to_string())?
+            .into();
 
         Ok(result)
     }
@@ -31,13 +32,14 @@ impl TypingMutationResolver {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: TypingDeleteInput,
-    ) -> Result<crate::entity::typing::Typing, async_graphql::Error> {
+    ) -> Result<super::Typing, async_graphql::Error> {
         let typing_service = ctx.data::<std::sync::Arc<crate::service::typing::TypingService>>()?;
 
         let result = typing_service
             .delete_typing(input.id)
             .await
-            .map_err(|e| e.to_string())?;
+            .map_err(|e| e.to_string())?
+            .into();
 
         Ok(result)
     }

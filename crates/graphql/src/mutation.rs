@@ -33,7 +33,7 @@ impl MutationRoot {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: crate::resolver::bookmark::mutation::CreateBookmarkInput,
-    ) -> Result<crate::entity::bookmark::Bookmark, async_graphql::Error> {
+    ) -> Result<crate::resolver::bookmark::Bookmark, async_graphql::Error> {
         self.bookmark_mutation_resolver
             .create_bookmark(ctx, input)
             .await

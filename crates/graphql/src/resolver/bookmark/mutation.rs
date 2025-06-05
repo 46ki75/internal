@@ -12,14 +12,15 @@ impl BookmarkMutationResolver {
         &self,
         ctx: &async_graphql::Context<'_>,
         input: CreateBookmarkInput,
-    ) -> Result<crate::entity::bookmark::Bookmark, async_graphql::Error> {
+    ) -> Result<super::Bookmark, async_graphql::Error> {
         let bookmark_service =
             ctx.data::<std::sync::Arc<crate::service::bookmark::BookmarkService>>()?;
 
         let bookmark = bookmark_service
             .create_bookmark(&input.name, &input.url)
             .await
-            .map_err(|e| async_graphql::Error::new(e.to_string()))?;
+            .map_err(|e| async_graphql::Error::new(e.to_string()))?
+            .into();
 
         Ok(bookmark)
     }

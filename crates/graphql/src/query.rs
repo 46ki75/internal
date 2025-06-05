@@ -35,7 +35,7 @@ impl QueryRoot {
     pub async fn bookmark_list(
         &self,
         ctx: &async_graphql::Context<'_>,
-    ) -> Result<Vec<crate::entity::bookmark::Bookmark>, async_graphql::Error> {
+    ) -> Result<Vec<crate::resolver::bookmark::Bookmark>, async_graphql::Error> {
         self.bookmark_query_resolver.list_bookmark(ctx).await
     }
 

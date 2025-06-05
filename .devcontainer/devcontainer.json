@@ -29,7 +29,7 @@
   },
   "forwardPorts": [
     20000,
-    20010
+    9000
   ],
   "features": {
     "ghcr.io/devcontainers/features/github-cli": {},

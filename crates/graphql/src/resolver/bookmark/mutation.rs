@@ -1,6 +1,7 @@
+#[derive(Debug, Default)]
 pub struct BookmarkMutationResolver;
 
-#[derive(async_graphql::InputObject)]
+#[derive(async_graphql::InputObject, Debug, Default)]
 pub struct CreateBookmarkInput {
     pub name: String,
     pub url: String,

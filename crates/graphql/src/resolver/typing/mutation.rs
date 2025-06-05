@@ -1,16 +1,18 @@
+#[derive(Debug, Default)]
 pub struct TypingMutationResolver;
 
-#[derive(async_graphql::InputObject)]
+#[derive(async_graphql::InputObject, Debug, Default)]
 pub struct TypingUpsertInput {
     pub text: String,
     pub description: String,
 }
 
-#[derive(async_graphql::InputObject)]
+#[derive(async_graphql::InputObject, Debug, Default)]
 pub struct TypingDeleteInput {
     pub id: String,
 }
 
+#[async_graphql::Object]
 impl TypingMutationResolver {
     pub async fn upsert_typing(
         &self,

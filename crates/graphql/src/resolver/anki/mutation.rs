@@ -1,11 +1,12 @@
+#[derive(Debug, Default)]
 pub struct AnkiMutationResolver;
 
-#[derive(async_graphql::InputObject)]
+#[derive(async_graphql::InputObject, Debug, Default)]
 pub struct CreateAnkiInput {
     title: Option<String>,
 }
 
-#[derive(async_graphql::InputObject)]
+#[derive(async_graphql::InputObject, Debug, Default)]
 pub struct UpdateAnkiInput {
     page_id: String,
     ease_factor: f64,

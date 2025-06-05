@@ -1,12 +1,13 @@
+#[derive(Debug, Default)]
 pub struct ToDoMutationResolver;
 
-#[derive(async_graphql::InputObject, Debug)]
+#[derive(async_graphql::InputObject, Debug, Default)]
 pub struct CreateToDoInput {
     pub title: String,
     pub severity: Option<super::ToDoSeverity>,
 }
 
-#[derive(async_graphql::InputObject, Debug)]
+#[derive(async_graphql::InputObject, Debug, Default)]
 pub struct UpdateToDoInput {
     pub id: String,
     pub is_done: bool,

@@ -31,6 +31,6 @@
   "devDependencies": {
     "@iconify/vue": "^5.0.0",
     "@types/lodash-es": "^4.17.12",
-    "postcss-preset-env": "^10.1.6"
+    "postcss-preset-env": "^10.2.1"
   }
 }

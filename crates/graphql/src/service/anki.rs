@@ -188,42 +188,48 @@ impl AnkiService {
 
     pub async fn update_anki(
         &self,
-        page_id: String,
-        ease_factor: f64,
-        repetition_count: u32,
-        next_review_at: String,
+        page_id: &str,
+        ease_factor: Option<f64>,
+        repetition_count: Option<u32>,
+        next_review_at: Option<String>,
     ) -> Result<crate::entity::anki::AnkiEntity, crate::error::Error> {
         let mut properties: std::collections::HashMap<String, PageProperty> =
             std::collections::HashMap::new();
 
-        properties.insert(
-            "easeFactor".to_string(),
-            PageProperty::Number(PageNumberProperty::from(ease_factor)),
-        );
+        if let Some(ease_factor) = ease_factor {
+            properties.insert(
+                "easeFactor".to_string(),
+                PageProperty::Number(PageNumberProperty::from(ease_factor)),
+            );
+        };
 
-        properties.insert(
-            "repetitionCount".to_string(),
-            PageProperty::Number(PageNumberProperty::from(repetition_count)),
-        );
+        if let Some(repetition_count) = repetition_count {
+            properties.insert(
+                "repetitionCount".to_string(),
+                PageProperty::Number(PageNumberProperty::from(repetition_count)),
+            );
+        };
 
-        let next_review_at = time::OffsetDateTime::parse(
-            &next_review_at,
-            &time::format_description::well_known::Rfc3339,
-        )?;
+        if let Some(next_review_at) = next_review_at {
+            let next_review_at = time::OffsetDateTime::parse(
+                &next_review_at,
+                &time::format_description::well_known::Rfc3339,
+            )?;
 
-        let next_review_at_property = PageProperty::Date(
-            PageDateProperty::default()
-                .start(notionrs_types::object::date::DateOrDateTime::DateTime(
-                    next_review_at,
-                ))
-                .clone(),
-        );
+            let next_review_at_property = PageProperty::Date(
+                PageDateProperty::default()
+                    .start(notionrs_types::object::date::DateOrDateTime::DateTime(
+                        next_review_at,
+                    ))
+                    .clone(),
+            );
 
-        properties.insert("nextReviewAt".to_string(), next_review_at_property);
+            properties.insert("nextReviewAt".to_string(), next_review_at_property);
+        };
 
         let page_response = self
             .anki_repository
-            .update_anki(&page_id, properties)
+            .update_anki(page_id, properties)
             .await?;
 
         let anki = crate::util::anki::AnkiUtil::convert_page_response(page_response)?;
@@ -272,10 +278,10 @@ mod tests {
 
         let _ = anki_service
             .update_anki(
-                "28b8e5f3-ba43-44a8-b790-bfc8c62b7628".to_string(),
-                2.5,
-                0,
-                "2021-09-01T00:00:00+09:00".to_string(),
+                "28b8e5f3-ba43-44a8-b790-bfc8c62b7628",
+                Some(2.5),
+                Some(0),
+                Some("2021-09-01T00:00:00+09:00".to_string()),
             )
             .await
             .unwrap();

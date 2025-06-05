@@ -192,6 +192,7 @@ impl AnkiService {
         ease_factor: Option<f64>,
         repetition_count: Option<u32>,
         next_review_at: Option<String>,
+        is_review_required: Option<bool>,
     ) -> Result<crate::entity::anki::AnkiEntity, crate::error::Error> {
         let mut properties: std::collections::HashMap<String, PageProperty> =
             std::collections::HashMap::new();
@@ -225,6 +226,13 @@ impl AnkiService {
             );
 
             properties.insert("nextReviewAt".to_string(), next_review_at_property);
+        };
+
+        if let Some(is_review_required) = is_review_required {
+            properties.insert(
+                "isReviewRequired".to_owned(),
+                PageProperty::Checkbox(PageCheckboxProperty::from(is_review_required)),
+            );
         };
 
         let page_response = self
@@ -282,6 +290,7 @@ mod tests {
                 Some(2.5),
                 Some(0),
                 Some("2021-09-01T00:00:00+09:00".to_string()),
+                None,
             )
             .await
             .unwrap();

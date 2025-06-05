@@ -179,6 +179,11 @@ impl AnkiRepository for AnkiRepositoryStub {
         let tags_property = PageProperty::MultiSelect(PageMultiSelectProperty::default());
         properties.insert("tags".to_string(), tags_property);
 
+        properties.insert(
+            "isReviewRequired".to_owned(),
+            PageProperty::Checkbox(PageCheckboxProperty::from(false)),
+        );
+
         Ok(PageResponse {
             id: "4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e".to_string(),
             created_time: time::OffsetDateTime::parse(
@@ -251,6 +256,11 @@ impl AnkiRepository for AnkiRepositoryStub {
 
         let tags_property = PageProperty::MultiSelect(PageMultiSelectProperty::default());
         properties.insert("tags".to_string(), tags_property);
+
+        properties.insert(
+            "isReviewRequired".to_owned(),
+            PageProperty::Checkbox(PageCheckboxProperty::from(false)),
+        );
 
         let page = PageResponse {
             id: "4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e".to_string(),
@@ -326,6 +336,11 @@ impl AnkiRepository for AnkiRepositoryStub {
         let tags_property = PageProperty::MultiSelect(PageMultiSelectProperty::default());
         properties.insert("tags".to_string(), tags_property);
 
+        properties.insert(
+            "isReviewRequired".to_owned(),
+            PageProperty::Checkbox(PageCheckboxProperty::from(false)),
+        );
+
         let user = notionrs_types::object::user::User {
             object: "user".to_string(),
             id: "c4afec03-71d3-4114-b992-df84ed2e594c".to_string(),
@@ -397,6 +412,11 @@ impl AnkiRepository for AnkiRepositoryStub {
 
         let tags_property = PageProperty::MultiSelect(PageMultiSelectProperty::default());
         properties.insert("tags".to_string(), tags_property);
+
+        properties.insert(
+            "isReviewRequired".to_owned(),
+            PageProperty::Checkbox(PageCheckboxProperty::from(false)),
+        );
 
         let user = notionrs_types::object::user::User {
             object: "user".to_string(),

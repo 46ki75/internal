@@ -35,7 +35,7 @@ const query = /* GraphQL */ `
 
 const createMutation = /* GraphQL */ `
   mutation CreateToDO($title: String!) {
-    createTodo(input: { title: $title }) {
+    createToDo(input: { title: $title }) {
       id
       source
       title
@@ -51,7 +51,7 @@ const createMutation = /* GraphQL */ `
 
 const updateMutation = /* GraphQL */ `
   mutation UpdateToDo($id: String!, $isDone: Boolean!) {
-    updateTodo(input: { id: $id, isDone: $isDone }) {
+    updateToDo(input: { id: $id, isDone: $isDone }) {
       id
       source
       title
@@ -123,7 +123,7 @@ export const useToDoStore = defineStore("todo", {
 
       try {
         const response = await $fetch<{
-          data: { createTodo: ToDoSchemaType };
+          data: { createToDo: ToDoSchemaType };
         }>("/api/graphql", {
           method: "POST",
           headers: {
@@ -136,7 +136,7 @@ export const useToDoStore = defineStore("todo", {
           }),
         });
 
-        this.toDoList.push(response.data.createTodo);
+        this.toDoList.push(response.data.createToDo);
       } catch (error: unknown) {
         this.createState.error = (error as Error)?.message;
       } finally {
@@ -151,7 +151,7 @@ export const useToDoStore = defineStore("todo", {
 
       try {
         const response = await $fetch<{
-          data: { updateTodo: ToDoSchemaType };
+          data: { updateToDo: ToDoSchemaType };
         }>("/api/graphql", {
           method: "POST",
           headers: {

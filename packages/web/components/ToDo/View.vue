@@ -3,7 +3,11 @@
 
   <ElmBlockFallback v-if="todoStore.toDoList.length === 0" />
 
-  <table class="todo global-fade-in" v-else>
+  <table
+    class="todo"
+    v-else
+    :style="{ '--opacity': todoStore.updateState.loading ? 0.25 : 1 }"
+  >
     <thead>
       <tr>
         <th>
@@ -62,10 +66,11 @@
         </td>
 
         <td>
-          <ToDoCheck
+          <Icon
             v-if="todo.source === 'Notion:todo'"
-            :id="todo.id"
-            v-model="todo.isDone"
+            class="check"
+            icon="mdi:check"
+            @click="handleCheck(todo.id)"
           />
           <ElmInlineText v-else text="-" />
         </td>
@@ -101,6 +106,12 @@ const colorMap: Record<
   FATAL: "red",
 };
 
+const handleCheck = async (id: string) => {
+  if (!todoStore.updateState.loading) {
+    await todoStore.update({ id, isDone: true });
+  }
+};
+
 const focused = useWindowFocus();
 watch(focused, async () => {
   if (focused.value) {
@@ -128,6 +139,8 @@ watch(focused, async () => {
 
 .todo {
   width: 100%;
+  opacity: var(--opacity);
+  transition: opacity 100ms;
 
   thead {
     text-align: left;
@@ -140,6 +153,18 @@ watch(focused, async () => {
   color: black;
   [data-theme="dark"] & {
     filter: invert(1);
+  }
+}
+
+.check {
+  color: #868e9c;
+  padding: 0.25rem;
+  border-radius: 0.125rem;
+  transition: background-color 100ms;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(#868e9c, 0.2);
   }
 }
 

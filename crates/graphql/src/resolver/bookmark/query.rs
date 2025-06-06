@@ -3,7 +3,7 @@ pub struct BookmarkQueryResolver;
 
 #[async_graphql::Object]
 impl BookmarkQueryResolver {
-    pub async fn list_bookmark(
+    pub async fn bookmark_list(
         &self,
         ctx: &async_graphql::Context<'_>,
     ) -> Result<Vec<super::Bookmark>, async_graphql::Error> {

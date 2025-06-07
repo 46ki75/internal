@@ -51,10 +51,10 @@ onUnmounted(() => {
 });
 
 watch(
-  () => route.fullPath,
+  [() => route.fullPath, () => authStore.refreshState.loading],
   async () => {
     await nextTick();
-    if (!authStore.inSession) {
+    if (!authStore.refreshState.loading && !authStore.inSession) {
       await router.push("/login");
     }
   }

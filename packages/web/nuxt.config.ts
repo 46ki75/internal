@@ -14,6 +14,12 @@ const USER_POOL_CLIENT_ID = await fetchSSMParameter(
   `/${process.env.STAGE_NAME}/46ki75/internal/cognito/userpool/client/id`
 );
 
+const ENDPOINT = `https://${
+  process.env.STAGE_NAME === "prod"
+    ? "internal"
+    : process.env.STAGE_NAME + "-internal"
+}.46ki75.com`;
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
@@ -27,7 +33,7 @@ export default defineNuxtConfig({
     server: {
       proxy: {
         "/api/graphql": {
-          target: `http://localhost:9000/lambda-url/internal-graphql/api-gateway`,
+          target: `${ENDPOINT}`,
           changeOrigin: true,
         },
       },

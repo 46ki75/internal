@@ -139,7 +139,13 @@ export const useBookmarkStore = defineStore("bookmark", {
       }
     },
     getBookmarkListByTagId(tagId?: string): Bookmark[] {
-      return this.bookmarkList.filter((bookmark) => bookmark.tag?.id === tagId);
+      const configStore = useConfigStore();
+
+      return this.bookmarkList
+        .filter((bookmark) => bookmark.tag?.id === tagId)
+        .filter((bookmark) =>
+          configStore.inWork ? bookmark.nsfw === false : true
+        );
     },
   },
   getters: {
@@ -152,7 +158,13 @@ export const useBookmarkStore = defineStore("bookmark", {
       return uniqueTags;
     },
     getUntaggedBookmarkList(): Bookmark[] {
-      return this.bookmarkList.filter((bookmark) => bookmark.tag == null);
+      const configStore = useConfigStore();
+
+      return this.bookmarkList
+        .filter((bookmark) => bookmark.tag == null)
+        .filter((bookmark) =>
+          configStore.inWork ? bookmark.nsfw === false : true
+        );
     },
   },
 });

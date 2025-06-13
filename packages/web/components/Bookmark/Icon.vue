@@ -33,7 +33,7 @@
         :alt="`favicon of ${name ?? href}`"
       />
 
-      <ElmMdiIcon v-else :d="mdiEarth" size="2.5rem" style="opacity: 0.7" />
+      <ElmMdiIcon v-else :d="mdiEarth" size="2rem" style="opacity: 0.7" />
 
       <div :class="$style.text">
         <ElmInlineText :text="name ?? href" size=".6rem" />
@@ -66,7 +66,6 @@ withDefaults(defineProps<ElmBookmarkIconProps>(), {});
 
 <style module lang="scss">
 .wrapper {
-  padding: 0.125rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -88,6 +87,7 @@ withDefaults(defineProps<ElmBookmarkIconProps>(), {});
   border-radius: 0.125rem;
   cursor: pointer;
   transition: background-color 100ms;
+
   &:hover {
     background-color: rgba(black, 0.1);
     [data-theme="dark"] & {
@@ -100,8 +100,8 @@ withDefaults(defineProps<ElmBookmarkIconProps>(), {});
   all: unset;
   box-sizing: border-box;
   padding: 0.5rem;
-  width: 5rem;
-  height: 5.5rem;
+  width: 100%;
+  height: 5rem;
   border-radius: 0.25rem;
   display: flex;
   flex-direction: column;
@@ -118,8 +118,8 @@ withDefaults(defineProps<ElmBookmarkIconProps>(), {});
 }
 
 .favicon {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2rem;
+  height: 2rem;
 }
 
 .text {

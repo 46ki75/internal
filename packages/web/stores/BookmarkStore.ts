@@ -15,14 +15,15 @@ const query = /* GraphQL */ `
         color
       }
       notionUrl
+      nsfw
     }
   }
 `;
 
 export const bookmarkSchema = z.object({
   id: z.string(),
-  name: z.string().nullable(),
-  url: z.string().nullable(),
+  name: z.string(),
+  url: z.string(),
   favicon: z.string().nullable(),
   tag: z
     .object({
@@ -32,6 +33,7 @@ export const bookmarkSchema = z.object({
     })
     .optional(),
   notionUrl: z.string(),
+  nsfw: z.boolean(),
 });
 
 export type Bookmark = z.infer<typeof bookmarkSchema>;

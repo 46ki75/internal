@@ -8,6 +8,7 @@ pub struct Bookmark {
     pub url: Option<String>,
     pub favicon: Option<String>,
     pub tag: Option<BookmarkTag>,
+    pub nsfw: bool,
     pub notion_url: String,
 }
 
@@ -26,6 +27,7 @@ impl From<crate::entity::bookmark::BookmarkEntity> for Bookmark {
             url: value.url,
             favicon: value.favicon,
             tag: value.tag.map(|tag| BookmarkTag::from(tag)),
+            nsfw: value.nsfw,
             notion_url: value.notion_url,
         }
     }

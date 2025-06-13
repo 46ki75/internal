@@ -32,7 +32,29 @@
       </ElmSimpleTooltip>
     </div>
 
-    <div>
+    <div class="right">
+      <transition mode="out-in">
+        <Icon
+          v-if="configStore.inWork"
+          icon="ic:outline-work"
+          class="icon"
+          @click="configStore.toggleInWork()"
+        />
+
+        <Icon
+          v-else
+          icon="ic:outline-work-off"
+          class="icon"
+          @click="configStore.toggleInWork()"
+        />
+      </transition>
+
+      <!-- <Icon
+        :icon="configStore.inWork ? 'ic:outline-work' : 'ic:outline-work-off'"
+        class="icon"
+        @click="configStore.toggleInWork()"
+      /> -->
+
       <ElmToggleTheme />
 
       <span @click="handleClick()">
@@ -52,6 +74,7 @@ import { Icon } from "@iconify/vue";
 const router = useRouter();
 
 const authStore = useAuthStore();
+const configStore = useConfigStore();
 
 const handleClick = async () => {
   if (authStore.inSession) {
@@ -81,6 +104,14 @@ const handleClick = async () => {
   [data-theme="dark"] & {
     background-color: rgba(#eff0f2, 0.1);
   }
+}
+
+.right {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .signin {
@@ -124,5 +155,20 @@ const handleClick = async () => {
   &:hover {
     background-color: rgba(gray, 0.25);
   }
+}
+
+.v-enter-to,
+.v-leave-from {
+  opacity: 1;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 100ms;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>

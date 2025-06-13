@@ -13,7 +13,13 @@
               tag?.id
             )"
           >
-            <BookmarkIcon :index="index" :bookmark="bookmark" />
+            <BookmarkIcon
+              :name="bookmark.name"
+              :favicon="bookmark.favicon"
+              :href="bookmark.url"
+              :notionUrl="bookmark.notionUrl"
+              :nsfw="bookmark.nsfw"
+            />
           </template>
         </div>
       </div>
@@ -25,7 +31,13 @@
         <template
           v-for="(bookmark, index) in bookmarkStore.getUntaggedBookmarkList"
         >
-          <BookmarkIcon :index="index" :bookmark="bookmark" />
+          <BookmarkIcon
+            :name="bookmark.name"
+            :favicon="bookmark.favicon"
+            :href="bookmark.url"
+            :notionUrl="bookmark.notionUrl"
+            :nsfw="bookmark.nsfw"
+          />
         </template>
       </div>
     </div>
@@ -39,7 +51,6 @@
 <script setup lang="ts">
 import {
   ElmBlockFallback,
-  ElmBookmarkIcon,
   ElmHeading,
   ElmInlineText,
   ElmParagraph,
@@ -69,5 +80,6 @@ watch(focused, async () => {
   grid-template-areas:
     "header header"
     "main sidebar";
+  gap: 0.25rem;
 }
 </style>

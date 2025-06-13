@@ -15,14 +15,15 @@ const query = /* GraphQL */ `
         color
       }
       notionUrl
+      nsfw
     }
   }
 `;
 
 export const bookmarkSchema = z.object({
   id: z.string(),
-  name: z.string().nullable(),
-  url: z.string().nullable(),
+  name: z.string(),
+  url: z.string(),
   favicon: z.string().nullable(),
   tag: z
     .object({
@@ -32,6 +33,7 @@ export const bookmarkSchema = z.object({
     })
     .optional(),
   notionUrl: z.string(),
+  nsfw: z.boolean(),
 });
 
 export type Bookmark = z.infer<typeof bookmarkSchema>;
@@ -137,7 +139,13 @@ export const useBookmarkStore = defineStore("bookmark", {
       }
     },
     getBookmarkListByTagId(tagId?: string): Bookmark[] {
-      return this.bookmarkList.filter((bookmark) => bookmark.tag?.id === tagId);
+      const configStore = useConfigStore();
+
+      return this.bookmarkList
+        .filter((bookmark) => bookmark.tag?.id === tagId)
+        .filter((bookmark) =>
+          configStore.inWork ? bookmark.nsfw === false : true
+        );
     },
   },
   getters: {
@@ -150,7 +158,13 @@ export const useBookmarkStore = defineStore("bookmark", {
       return uniqueTags;
     },
     getUntaggedBookmarkList(): Bookmark[] {
-      return this.bookmarkList.filter((bookmark) => bookmark.tag == null);
+      const configStore = useConfigStore();
+
+      return this.bookmarkList
+        .filter((bookmark) => bookmark.tag == null)
+        .filter((bookmark) =>
+          configStore.inWork ? bookmark.nsfw === false : true
+        );
     },
   },
 });

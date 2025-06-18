@@ -49,8 +49,8 @@ importers:
   packages/extension:
     dependencies:
       '@elmethis/command-palette':
-        specifier: ^0.1.1
-        version: 0.1.1(vue@3.5.17(typescript@5.8.3))
+        specifier: ^0.1.2
+        version: 0.1.2(vue@3.5.17(typescript@5.8.3))
       '@vueuse/core':
         specifier: ^13.3.0
         version: 13.3.0(vue@3.5.17(typescript@5.8.3))
@@ -865,8 +865,8 @@ packages:
     resolution: {integrity: sha512-Y6+WUMsTFWE5jb20IFP4YGa5IrGY/+a/FbOSjDF/wz9gepU2hwCYSXRHP/vPwBvwcY3SVMASt4yXxbXNXigmZQ==}
     engines: {node: '>=18'}
 
-  '@elmethis/command-palette@0.1.1':
-    resolution: {integrity: sha512-HtPJr9yx7GcphfW0ItPivcGO6tBrTXEM4hWsPYXt+X38ELLD09BpQTaj1nhhukoBpEBmTkryJYurMOlKq9vdkw==}
+  '@elmethis/command-palette@0.1.2':
+    resolution: {integrity: sha512-82rAS1uYvJHjXfIthX9119EX72eKk9FQozHai7fcwjcEePsm0dMHzAfO9yxs4w1Cib17LSDcOyOC7WIBIn5QRg==}
     peerDependencies:
       vue: ^3.4.0
 
@@ -6936,7 +6936,7 @@ snapshots:
       gonzales-pe: 4.3.0
       node-source-walk: 7.0.1
 
-  '@elmethis/command-palette@0.1.1(vue@3.5.17(typescript@5.8.3))':
+  '@elmethis/command-palette@0.1.2(vue@3.5.17(typescript@5.8.3))':
     dependencies:
       '@vueuse/core': 13.3.0(vue@3.5.17(typescript@5.8.3))
       fuse.js: 7.1.0

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/vue3-vite";
 import BookmarkIcon from "./BookmarkIcon.vue";
 
 const meta: Meta<typeof BookmarkIcon> = {
-  title: "Bookmark/BookmarkIcon",
+  title: "Components/Bookmark/BookmarkIcon",
   component: BookmarkIcon,
   tags: ["autodocs"],
   args: {},

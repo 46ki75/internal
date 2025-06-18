@@ -41,7 +41,7 @@ whenever(Ctrl_Shift_P, () => {
 <style module lang="scss">
 .fixed {
   position: fixed;
-  z-index: 5;
+  z-index: 10000;
   top: 0;
   left: 0;
   width: 100vw;

@@ -18,6 +18,7 @@ withDefaults(defineProps<BookmarkListProps>(), {});
 <style module lang="scss">
 .box {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.25rem;
 }
 </style>

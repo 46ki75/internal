@@ -1,12 +1,15 @@
 <template>
   <div>
-    <div v-if="isShown" :class="$style.fixed"></div>
+    <div v-if="isShown" :class="$style.fixed">
+      <CommandPalette />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { onKeyStroke, useMagicKeys, whenever } from "@vueuse/core";
 import { ref } from "vue";
+import CommandPalette from "./components/CommandPalette.vue";
 
 export interface CommandPaletteProps {}
 
@@ -47,5 +50,8 @@ whenever(Ctrl_Shift_P, () => {
   width: 100vw;
   height: 100vh;
   background-color: rgba(#3e434b, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

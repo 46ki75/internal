@@ -1,9 +1,11 @@
 import { createApp } from "vue";
 import App from "./CommandPalette.vue";
 
+const id = "internal-extension-command-palette";
+
 const body = document.querySelector("body");
 const child = document.createElement("div");
-child.setAttribute("id", "app");
+child.setAttribute("id", id);
 body?.appendChild(child);
 
-createApp(App).mount("#app");
+createApp(App).mount(`#${id}`);

@@ -21,7 +21,7 @@
       />
     </header>
     <a
-      :class="$style.container"
+      :class="$style['link-container']"
       :href="href"
       target="_blank"
       rel="noopener noreferrer"
@@ -36,7 +36,7 @@
       <ElmMdiIcon v-else :d="mdiEarth" size="2rem" style="opacity: 0.7" />
 
       <div :class="$style.text">
-        <ElmInlineText :text="name ?? href" size=".6rem" />
+        <ElmInlineText :text="name ?? href" size="0.5em" />
       </div>
     </a>
   </div>
@@ -64,7 +64,7 @@ withDefaults(defineProps<BookmarkIconProps>(), {});
 
 <style module lang="scss">
 .wrapper {
-  max-width: 5rem;
+  max-width: 4rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -95,17 +95,18 @@ withDefaults(defineProps<BookmarkIconProps>(), {});
   }
 }
 
-.container {
+.link-container {
   all: unset;
+  overflow: hidden;
   box-sizing: border-box;
   padding: 0.5rem;
   width: 100%;
-  height: 5rem;
+  height: 4rem;
   border-radius: 0.25rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
   cursor: pointer;
   transition: background-color 100ms;
   &:hover {
@@ -117,16 +118,17 @@ withDefaults(defineProps<BookmarkIconProps>(), {});
 }
 
 .favicon {
+  flex-shrink: 0;
   width: 2rem;
   height: 2rem;
 }
 
 .text {
+  flex-grow: 0;
   width: 4rem;
   text-align: center;
   vertical-align: middle;
   line-height: 0.75rem;
-  overflow: hidden;
   text-overflow: ellipsis;
 }
 </style>

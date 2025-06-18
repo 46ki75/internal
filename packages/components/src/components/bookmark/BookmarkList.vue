@@ -17,8 +17,7 @@ withDefaults(defineProps<BookmarkListProps>(), {});
 
 <style module lang="scss">
 .box {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(5rem, 1fr));
+  display: flex;
   gap: 0.25rem;
 }
 </style>

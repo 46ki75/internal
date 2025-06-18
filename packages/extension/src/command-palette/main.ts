@@ -1,5 +1,5 @@
 import { createApp } from "vue";
-import App from "./CommandPalette.vue";
+import App from "./App.vue";
 
 const id = "internal-extension-command-palette";
 

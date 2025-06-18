@@ -66,6 +66,9 @@ importers:
       aws-amplify:
         specifier: ^6.15.1
         version: 6.15.1
+      components:
+        specifier: file:../components
+        version: link:../components
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="isShown" :class="$style.fixed">
-      <CommandPalette />
+      <CommandPalette v-model="isShown" />
     </div>
   </div>
 </template>

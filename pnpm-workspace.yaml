@@ -1,2 +1,4 @@
 packages:
-  - 'packages/*'
+  - "packages/web"
+  - "packages/components"
+  - "packages/extension"

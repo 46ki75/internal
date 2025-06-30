@@ -2,7 +2,7 @@ dev:
     STAGE_NAME=dev RUST_LOG=internal_graphql=debug cargo lambda watch
 
 build: 
-    cargo lambda build --release
+    cargo lambda build --arm64 --release
 
 deploy  STAGE_NAME: build
     cargo lambda deploy --binary-name internal-graphql "{{STAGE_NAME}}-46ki75-internal-lambda-function-graphql"

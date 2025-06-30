@@ -55,7 +55,7 @@ resource "aws_lambda_function" "graphql" {
   filename      = "./assets/bootstrap.zip"
   handler       = "bootstrap.handler"
   runtime       = "provided.al2023"
-  architectures = ["x86_64"]
+  architectures = ["arm64"]
   publish       = true # Publish a new version
   timeout       = 30
 

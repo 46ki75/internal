@@ -66,6 +66,7 @@ onKeyStroke(["Enter", " "], (e) => {
   width: calc(100% - 1rem);
   max-width: 800px;
   position: fixed;
+  z-index: 100;
   bottom: 0;
 
   background-color: rgba(#f2f2f2, 0.9);

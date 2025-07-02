@@ -19,7 +19,7 @@
     "@storybook/vue3-vite": "^9.0.15",
     "@vitejs/plugin-vue": "^6.0.0",
     "@vue/tsconfig": "^0.7.0",
-    "storybook": "^9.0.14",
+    "storybook": "^9.0.15",
     "typescript": "~5.8.3",
     "vite": "^7.0.0",
     "vue-tsc": "^3.0.1"

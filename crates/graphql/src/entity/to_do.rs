@@ -6,6 +6,7 @@ pub struct ToDoEntity {
     pub title: String,
     pub description: Option<String>,
     pub is_done: bool,
+    pub is_recurring: bool,
     pub deadline: Option<String>,
     pub severity: ToDoSeverityEntity,
     pub created_at: Option<String>,

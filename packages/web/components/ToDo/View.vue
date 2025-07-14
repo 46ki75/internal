@@ -13,6 +13,7 @@
         <th>
           <ElmInlineText text="SRC" />
         </th>
+        <th></th>
         <th>
           <ElmInlineText text="Title" />
         </th>
@@ -49,20 +50,42 @@
         </td>
 
         <td>
-          <div>
+          <Icon
+            v-if="todo.isRecurring"
+            class="recurring"
+            icon="mdi:sync"
+            color="#59b57c"
+            height="1.25rem"
+          />
+        </td>
+
+        <td>
+          <a
+            class="title-description"
+            :href="
+              todo.source.toLocaleLowerCase().includes('notion')
+                ? todo.url.replace('https://', 'notion://')
+                : todo.url
+            "
+            target="_blank"
+            rel="noopener norefferer"
+          >
             <ElmInlineText
               :text="
                 todo.title.length > 50
                   ? todo.title.slice(0, 50) + '...'
                   : todo.title
               "
-              :href="
-                todo.source.toLocaleLowerCase().includes('notion')
-                  ? todo.url.replace('https://', 'notion://')
-                  : todo.url
-              "
+              color="#6987b8"
             />
-          </div>
+            <div class="description">
+              <ElmInlineText
+                v-if="todo.description"
+                :text="todo.description"
+                size=".75rem"
+              />
+            </div>
+          </a>
         </td>
 
         <td>
@@ -70,14 +93,14 @@
             v-if="todo.source === 'Notion:todo'"
             class="check"
             icon="mdi:check"
+            height="1.25rem"
             @click="handleCheck(todo.id)"
           />
           <ElmInlineText v-else text="-" />
         </td>
 
         <td>
-          <Icon icon="mdi:notifications-active" class="icon" />
-          <ElmInlineText :text="todo.severity" />
+          <ToDoSeverity :level="todo.severity" />
         </td>
       </tr>
     </tbody>
@@ -88,6 +111,7 @@
 import { ElmBlockFallback, ElmHeading, ElmInlineText } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 import { useWindowFocus } from "@vueuse/core";
+import { ToDoSeverity } from "../../../components/src";
 
 const todoStore = useToDoStore();
 
@@ -154,6 +178,27 @@ watch(focused, async () => {
   [data-theme="dark"] & {
     filter: invert(1);
   }
+}
+
+.title-description {
+  all: unset;
+  box-sizing: border-box;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.25rem;
+  transition: background-color 100ms;
+
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(#6987b8, 0.15);
+  }
+}
+
+.description {
+  box-sizing: border-box;
+  padding-left: 0.5rem;
 }
 
 .check {

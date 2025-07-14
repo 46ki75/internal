@@ -38,6 +38,7 @@ impl ToDoService {
             description: None,
             source: "Notion:todo".to_string(),
             is_done: false,
+            is_recurring: false,
             deadline: None,
             severity: crate::entity::to_do::ToDoSeverityEntity::Info,
             created_at: Some(response.created_time.to_string()),
@@ -107,6 +108,7 @@ impl ToDoService {
             title,
             description: None,
             is_done,
+            is_recurring: false,
             deadline: None,
             severity,
             created_at: Some(response.created_time.to_string()),
@@ -158,6 +160,15 @@ impl ToDoService {
                     )),
                 }?;
 
+                let is_recurring = match result.properties.get("IsRecurring").ok_or(
+                    crate::error::Error::NotionPropertynotFound("IsRecurring".to_string()),
+                )? {
+                    PageProperty::Checkbox(is_done) => Ok(is_done.checkbox),
+                    _ => Err(crate::error::Error::NotionPropertynotFound(
+                        "IsRecurring".to_string(),
+                    )),
+                }?;
+
                 let deadline =
                     result
                         .properties
@@ -205,6 +216,7 @@ impl ToDoService {
                     title,
                     description,
                     is_done,
+                    is_recurring,
                     deadline,
                     severity,
                     created_at,

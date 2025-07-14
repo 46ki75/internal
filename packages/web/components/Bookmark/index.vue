@@ -36,12 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ElmBlockFallback,
-  ElmHeading,
-  ElmInlineText,
-  ElmParagraph,
-} from "@elmethis/core";
+import { ElmBlockFallback, ElmHeading, ElmParagraph } from "@elmethis/core";
 import { useWindowFocus } from "@vueuse/core";
 
 import {

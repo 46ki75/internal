@@ -39,11 +39,20 @@ impl ToDoService {
 
         let response = self.to_do_repository.create_to_do(properties).await?;
 
+        let description = response.properties.get("Description").and_then(|d| {
+            let description = d.to_string();
+            if description.trim().is_empty() {
+                None
+            } else {
+                Some(description)
+            }
+        });
+
         Ok(crate::entity::to_do::ToDoEntity {
             id: response.id,
             url: response.url,
             title,
-            description: None,
+            description,
             source: "Notion:todo".to_string(),
             is_done: false,
             is_recurring: false,

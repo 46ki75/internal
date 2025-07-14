@@ -4,6 +4,7 @@ pub struct ToDoMutationResolver;
 #[derive(async_graphql::InputObject, Debug, Default)]
 pub struct CreateToDoInput {
     pub title: String,
+    pub description: Option<String>,
     pub severity: Option<super::ToDoSeverity>,
 }
 
@@ -25,7 +26,7 @@ impl ToDoMutationResolver {
         let severity = input.severity.map(|s| s.into());
 
         let to_do = to_do_service
-            .create_to_do(input.title, severity)
+            .create_to_do(input.title, input.description, severity)
             .await
             .map_err(|e| e.to_string())?
             .into();

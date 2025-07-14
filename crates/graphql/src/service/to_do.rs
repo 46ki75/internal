@@ -9,6 +9,7 @@ impl ToDoService {
     pub async fn create_to_do(
         &self,
         title: String,
+        description: Option<String>,
         severity: Option<crate::entity::to_do::ToDoSeverityEntity>,
     ) -> Result<crate::entity::to_do::ToDoEntity, crate::error::Error> {
         let properties = {
@@ -25,6 +26,13 @@ impl ToDoService {
                 "Title".to_string(),
                 PageProperty::Title(PageTitleProperty::from(title.clone())),
             );
+
+            if let Some(description) = description {
+                properties.insert(
+                    "Description".to_string(),
+                    PageProperty::RichText(PageRichTextProperty::from(description.clone())),
+                );
+            };
 
             properties
         };
@@ -241,7 +249,11 @@ mod tests {
         let to_do_service = ToDoService { to_do_repository };
 
         let _todos = to_do_service
-            .create_to_do("My Title".to_string(), None)
+            .create_to_do(
+                "My Title".to_string(),
+                Some("My Description".to_string()),
+                None,
+            )
             .await
             .unwrap();
     }

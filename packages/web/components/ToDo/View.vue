@@ -60,20 +60,32 @@
         </td>
 
         <td>
-          <div>
+          <a
+            class="title-description"
+            :href="
+              todo.source.toLocaleLowerCase().includes('notion')
+                ? todo.url.replace('https://', 'notion://')
+                : todo.url
+            "
+            target="_blank"
+            rel="noopener norefferer"
+          >
             <ElmInlineText
               :text="
                 todo.title.length > 50
                   ? todo.title.slice(0, 50) + '...'
                   : todo.title
               "
-              :href="
-                todo.source.toLocaleLowerCase().includes('notion')
-                  ? todo.url.replace('https://', 'notion://')
-                  : todo.url
-              "
+              color="#6987b8"
             />
-          </div>
+            <div class="description">
+              <ElmInlineText
+                v-if="todo.description"
+                :text="todo.description"
+                size=".75rem"
+              />
+            </div>
+          </a>
         </td>
 
         <td>
@@ -165,6 +177,27 @@ watch(focused, async () => {
   [data-theme="dark"] & {
     filter: invert(1);
   }
+}
+
+.title-description {
+  all: unset;
+  box-sizing: border-box;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.25rem;
+  transition: background-color 100ms;
+
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(#6987b8, 0.15);
+  }
+}
+
+.description {
+  box-sizing: border-box;
+  padding-left: 0.5rem;
 }
 
 .check {

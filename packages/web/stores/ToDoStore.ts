@@ -34,8 +34,8 @@ const query = /* GraphQL */ `
 `;
 
 const createMutation = /* GraphQL */ `
-  mutation CreateToDO($title: String!) {
-    createToDo(input: { title: $title }) {
+  mutation CreateToDO($title: String!, $description: String) {
+    createToDo(input: { title: $title, description: $description }) {
       id
       source
       title
@@ -117,7 +117,13 @@ export const useToDoStore = defineStore("todo", {
         this.fetchState.loading = false;
       }
     },
-    async create({ title }: { title: string }) {
+    async create({
+      title,
+      description,
+    }: {
+      title: string;
+      description?: string;
+    }) {
       this.createState.loading = true;
 
       const authStore = useAuthStore();
@@ -134,7 +140,7 @@ export const useToDoStore = defineStore("todo", {
           },
           body: JSON.stringify({
             query: createMutation,
-            variables: { title },
+            variables: { title, description },
           }),
         });
 

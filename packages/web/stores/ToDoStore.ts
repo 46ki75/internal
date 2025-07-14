@@ -7,6 +7,7 @@ const ToDoSchema = z.object({
   title: z.string(),
   description: z.string().nullable().optional(),
   isDone: z.boolean(),
+  isRecurring: z.boolean(),
   deadline: z.string().nullable().optional(),
   severity: z
     .enum(["UNKNOWN", "INFO", "WARN", "ERROR", "FATAL"])
@@ -26,6 +27,7 @@ const query = /* GraphQL */ `
       description
       url
       isDone
+      isRecurring
       severity
       createdAt
       updatedAt
@@ -42,6 +44,7 @@ const createMutation = /* GraphQL */ `
       description
       url
       isDone
+      isRecurring
       severity
       createdAt
       updatedAt
@@ -58,6 +61,7 @@ const updateMutation = /* GraphQL */ `
       description
       url
       isDone
+      isRecurring
       severity
       createdAt
       updatedAt

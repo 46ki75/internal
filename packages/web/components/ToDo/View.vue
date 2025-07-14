@@ -13,6 +13,7 @@
         <th>
           <ElmInlineText text="SRC" />
         </th>
+        <th></th>
         <th>
           <ElmInlineText text="Title" />
         </th>
@@ -45,6 +46,16 @@
             class="favicon"
             src="https://github.githubassets.com/favicons/favicon.svg"
             alt="notion"
+          />
+        </td>
+
+        <td>
+          <Icon
+            v-if="todo.isRecurring"
+            class="recurring"
+            icon="mdi:sync"
+            color="#59b57c"
+            height="1.25rem"
           />
         </td>
 

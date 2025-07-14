@@ -93,14 +93,14 @@
             v-if="todo.source === 'Notion:todo'"
             class="check"
             icon="mdi:check"
+            height="1.25rem"
             @click="handleCheck(todo.id)"
           />
           <ElmInlineText v-else text="-" />
         </td>
 
         <td>
-          <Icon icon="mdi:notifications-active" class="icon" />
-          <ElmInlineText :text="todo.severity" />
+          <ToDoSeverity :level="todo.severity" />
         </td>
       </tr>
     </tbody>
@@ -111,6 +111,7 @@
 import { ElmBlockFallback, ElmHeading, ElmInlineText } from "@elmethis/core";
 import { Icon } from "@iconify/vue";
 import { useWindowFocus } from "@vueuse/core";
+import { ToDoSeverity } from "../../../components/src";
 
 const todoStore = useToDoStore();
 

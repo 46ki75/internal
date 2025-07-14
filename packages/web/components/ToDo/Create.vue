@@ -8,7 +8,7 @@
     />
 
     <ElmButton @click="handleCreate" :loading="todoStore.createState.loading">
-      <!-- <Icon icon="mdi:task-add" class="icon" /> -->
+      <Icon icon="mdi:task-add" class="icon" />
       <span>Create ToDo</span>
     </ElmButton>
   </div>
@@ -16,6 +16,7 @@
 
 <script setup lang="ts">
 import { ElmTextField, ElmButton } from "@elmethis/core";
+import { Icon } from "@iconify/vue";
 
 const title = ref<string | undefined>();
 

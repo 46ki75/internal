@@ -9,9 +9,7 @@ const ToDoSchema = z.object({
   isDone: z.boolean(),
   isRecurring: z.boolean(),
   deadline: z.string().nullable().optional(),
-  severity: z
-    .enum(["UNKNOWN", "INFO", "WARN", "ERROR", "FATAL"])
-    .default("UNKNOWN"),
+  severity: z.enum(["UNKNOWN", "INFO", "WARN", "ERROR"]).default("UNKNOWN"),
   createdAt: z.string().nullable().optional(),
   updatedAt: z.string().nullable().optional(),
 });

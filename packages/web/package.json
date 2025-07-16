@@ -19,7 +19,7 @@
     "@vueuse/core": "^13.5.0",
     "aws-amplify": "^6.15.3",
     "lodash-es": "^4.17.21",
-    "nuxt": "^3.17.7",
+    "nuxt": "^4.0.0",
     "pinia": "^3.0.3",
     "polished": "^4.3.1",
     "sass": "^1.89.2",

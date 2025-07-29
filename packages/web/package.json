@@ -16,7 +16,7 @@
     "@com.46ki75/graphql": "^0.2.2",
     "@elmethis/core": "0.2.10",
     "@pinia/nuxt": "0.11.2",
-    "@vueuse/core": "^13.5.0",
+    "@vueuse/core": "^13.6.0",
     "aws-amplify": "^6.15.4",
     "lodash-es": "^4.17.21",
     "nuxt": "^4.0.1",

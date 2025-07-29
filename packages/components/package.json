@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@storybook/vue3-vite": "^9.0.18",
-    "@vitejs/plugin-vue": "^6.0.0",
+    "@vitejs/plugin-vue": "^6.0.1",
     "@vue/tsconfig": "^0.7.0",
     "storybook": "^9.0.18",
     "typescript": "~5.8.3",

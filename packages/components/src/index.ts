@@ -10,3 +10,7 @@ export {
   default as ToDoSeverity,
   type ToDoSeverityProps,
 } from "./components/todo/ToDoSeverity.vue";
+export {
+  default as TypingTable,
+  type TypingTableProps,
+} from "./components/typing/TypingTable.vue";

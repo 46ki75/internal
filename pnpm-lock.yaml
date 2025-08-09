@@ -6,11 +6,7 @@ settings:
 
 importers:
 
-  .:
-    devDependencies:
-      '@biomejs/biome':
-        specifier: ^2.1.4
-        version: 2.1.4
+  .: {}
 
   packages/components:
     dependencies:
@@ -6848,6 +6844,7 @@ snapshots:
       '@biomejs/cli-linux-x64-musl': 2.1.4
       '@biomejs/cli-win32-arm64': 2.1.4
       '@biomejs/cli-win32-x64': 2.1.4
+    optional: true
 
   '@biomejs/cli-darwin-arm64@2.1.4':
     optional: true

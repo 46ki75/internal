@@ -1,9 +1,9 @@
 import { TypingRepositoryImpl } from "~/repository/TypingRepository";
 
 interface Typing {
-  id: String;
-  text: String;
-  description: String;
+  id: string;
+  text: string;
+  description: string;
 }
 
 const typingRepository = new TypingRepositoryImpl();

@@ -23,10 +23,11 @@ impl TypingService {
 
     pub async fn upsert_typing(
         &self,
+        id: Option<String>,
         text: String,
         description: String,
     ) -> Result<crate::entity::typing::TypingEntity, crate::error::Error> {
-        let id = uuid::Uuid::new_v4().to_string();
+        let id = id.unwrap_or(uuid::Uuid::new_v4().to_string());
 
         let record = self
             .typing_repository
@@ -78,7 +79,7 @@ mod tests {
         let typing_service = TypingService { typing_repository };
 
         let _ = typing_service
-            .upsert_typing("text".to_string(), "description".to_string())
+            .upsert_typing(None, "text".to_string(), "description".to_string())
             .await?;
 
         Ok(())

@@ -55,22 +55,3 @@ data "aws_ssm_parameter" "password" {
   name            = "/${terraform.workspace}/46ki75/internal/cognito/userpool/user/password"
   with_decryption = true
 }
-
-resource "aws_cognito_user" "shirayuki" {
-  user_pool_id = aws_cognito_user_pool.default.id
-  username     = "shirayuki"
-  password     = data.aws_ssm_parameter.password.value
-  enabled      = true
-}
-
-resource "aws_cognito_user_group" "admin" {
-  user_pool_id = aws_cognito_user_pool.default.id
-  name         = "admin"
-  description  = "Administrators"
-}
-
-resource "aws_cognito_user_in_group" "shirayuki_in_admin" {
-  user_pool_id = aws_cognito_user_pool.default.id
-  username     = aws_cognito_user.shirayuki.username
-  group_name   = aws_cognito_user_group.admin.name
-}

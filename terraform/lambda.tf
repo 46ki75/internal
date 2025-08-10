@@ -32,6 +32,7 @@ resource "aws_iam_policy" "lambda_policy_graphql" {
           "dynamodb:Query",
           "dynamodb:GetItem",
           "dynamodb:PutItem",
+          "dynamodb:DeleteItem",
           "ssm:GetParameter",
           "ssm:GetParameters",
           "kms:Decrypt",

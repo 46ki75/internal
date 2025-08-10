@@ -73,5 +73,25 @@ export const useTypingStore = defineStore("typing", {
         this.loading = false;
       }
     },
+
+    async delete(id: string) {
+      this.loading = true;
+
+      const authStore = useAuthStore();
+      await authStore.refreshIfNeed();
+
+      try {
+        const response = await typingRepository.delete({
+          accessToken: `${authStore.session.accessToken}`,
+          id,
+        });
+
+        await this.fetch();
+      } catch (error) {
+        this.error = (error as Error)?.message;
+      } finally {
+        this.loading = false;
+      }
+    },
   },
 });

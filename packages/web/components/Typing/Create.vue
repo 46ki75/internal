@@ -19,6 +19,7 @@
       <TypingTable
         v-if="typingStore.typingList"
         :data="typingStore.typingList"
+        :delete-function="typingStore.delete"
       />
     </div>
   </div>

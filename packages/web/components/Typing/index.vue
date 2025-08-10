@@ -32,7 +32,6 @@
 import { ElmBlockFallback, ElmInlineText, useTyping } from "@elmethis/core";
 import { onKeyStroke } from "@vueuse/core";
 import { shuffle } from "lodash-es";
-import TypingTable from "../../../components/src/components/typing/TypingTable.vue";
 
 interface Typing {
   id: string;

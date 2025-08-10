@@ -86,4 +86,37 @@ export class TypingRepositoryImpl implements TypingRepository {
 
     return response.data.upsertTyping;
   }
+
+  async delete({
+    accessToken,
+    id,
+  }: {
+    accessToken: string;
+    id?: string | null;
+  }): Promise<TypingEntity> {
+    const response = await $fetch<{ data: { upsertTyping: TypingEntity } }>(
+      "/api/graphql",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${accessToken}`,
+        },
+        body: JSON.stringify({
+          query: /* GraphQL */ `
+            mutation DeleteTyping($id: String!) {
+              deleteTyping(input: { id: $id }) {
+                id
+                text
+                description
+              }
+            }
+          `,
+          variables: { id },
+        }),
+      }
+    );
+
+    return response.data.upsertTyping;
+  }
 }

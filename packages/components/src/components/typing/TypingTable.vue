@@ -9,7 +9,12 @@
     </thead>
     <tbody>
       <tr v-for="value in data" :key="value.id">
-        <td><ElmInlineText :text="value.id" /></td>
+        <td :class="$style.flex">
+          <div :class="$style.icon" @click="deleteFunction(value.id)">
+            <ElmMdiIcon :d="mdiDelete" color="#c56565" size="1.25rem" />
+          </div>
+          <ElmInlineText :text="value.id" />
+        </td>
         <td><ElmInlineText :text="value.text" /></td>
         <td><ElmInlineText :text="value.description" /></td>
       </tr>
@@ -18,7 +23,8 @@
 </template>
 
 <script setup lang="ts">
-import { ElmInlineText } from "@elmethis/core";
+import { ElmInlineText, ElmMdiIcon } from "@elmethis/core";
+import { mdiDelete } from "@mdi/js";
 
 export interface TypingTableProps {
   data: Array<{
@@ -26,6 +32,7 @@ export interface TypingTableProps {
     text: string;
     description: string;
   }>;
+  deleteFunction: (id: string) => Promise<void>;
 }
 
 withDefaults(defineProps<TypingTableProps>(), {});
@@ -43,6 +50,24 @@ withDefaults(defineProps<TypingTableProps>(), {});
   td {
     padding: 0.75rem 0.25rem;
     border-bottom: 1px dashed rgba(gray, 0.5);
+  }
+}
+
+.flex {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.icon {
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 100ms;
+
+  &:hover {
+    background-color: rgba(#868e9c, 0.2);
   }
 }
 </style>

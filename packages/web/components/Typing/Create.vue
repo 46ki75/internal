@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="wrapper">
+      <ElmTextField v-model="id" label="ID" :loading="typingStore.loading" />
       <ElmTextField
         v-model="text"
         label="Text"
@@ -29,16 +30,23 @@ import TypingTable from "../../../components/src/components/typing/TypingTable.v
 
 const typingStore = useTypingStore();
 
+const id = ref("");
 const text = ref("");
 const description = ref("");
 
 const handleSubmit = async () => {
   await typingStore.upsert();
+  id.value = "";
   text.value = "";
   description.value = "";
+  typingStore.setId("");
   typingStore.setText("");
   typingStore.setDescription("");
 };
+
+watch(id, () => {
+  typingStore.setId(id.value);
+});
 
 watch(text, () => {
   typingStore.setText(text.value);

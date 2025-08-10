@@ -14,12 +14,17 @@ export const useTypingStore = defineStore("typing", {
       typingList: [] as Typing[],
       loading: false,
       error: null as string | null,
+      id: "",
       text: "",
       description: "string",
     };
   },
 
   actions: {
+    setId(id: string) {
+      this.id = id;
+    },
+
     setText(text: string) {
       this.text = text;
     },
@@ -56,11 +61,12 @@ export const useTypingStore = defineStore("typing", {
       try {
         const response = await typingRepository.upsert({
           accessToken: `${authStore.session.accessToken}`,
+          id: this.id.trim() === "" ? null : this.id.trim(),
           text: this.text,
           description: this.description,
         });
 
-        this.typingList = [...this.typingList, response];
+        await this.fetch();
       } catch (error) {
         this.error = (error as Error)?.message;
       } finally {

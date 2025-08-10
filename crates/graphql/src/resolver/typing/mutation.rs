@@ -3,6 +3,7 @@ pub struct TypingMutationResolver;
 
 #[derive(async_graphql::InputObject, Debug, Default)]
 pub struct TypingUpsertInput {
+    pub id: Option<String>,
     pub text: String,
     pub description: String,
 }
@@ -22,7 +23,7 @@ impl TypingMutationResolver {
         let typing_service = ctx.data::<std::sync::Arc<crate::service::typing::TypingService>>()?;
 
         let result = typing_service
-            .upsert_typing(input.text, input.description)
+            .upsert_typing(input.id, input.text, input.description)
             .await
             .map_err(|e| e.to_string())?
             .into();

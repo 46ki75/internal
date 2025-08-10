@@ -46,10 +46,12 @@ export class TypingRepositoryImpl implements TypingRepository {
 
   async upsert({
     accessToken,
+    id,
     text,
     description,
   }: {
     accessToken: string;
+    id?: string | null;
     text: string;
     description: string;
   }): Promise<TypingEntity> {
@@ -63,15 +65,21 @@ export class TypingRepositoryImpl implements TypingRepository {
         },
         body: JSON.stringify({
           query: /* GraphQL */ `
-            mutation CreateTyping($text: String!, $description: String!) {
-              upsertTyping(input: { text: $text, description: $description }) {
+            mutation UpsertTyping(
+              $id: String
+              $text: String!
+              $description: String!
+            ) {
+              upsertTyping(
+                input: { id: $id, text: $text, description: $description }
+              ) {
                 id
                 text
                 description
               }
             }
           `,
-          variables: { text, description },
+          variables: { id, text, description },
         }),
       }
     );

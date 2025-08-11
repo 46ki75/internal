@@ -76,6 +76,17 @@ pub async fn get_or_init_dynamodb_client() -> &'static aws_sdk_dynamodb::Client 
         .await
 }
 
+static COGNITO_IDP_CLIENT: tokio::sync::OnceCell<aws_sdk_cognitoidentityprovider::Client> =
+    tokio::sync::OnceCell::const_new();
+
+pub async fn get_or_init_cognito_idp() -> &'static aws_sdk_cognitoidentityprovider::Client {
+    COGNITO_IDP_CLIENT
+        .get_or_init(|| async {
+            aws_sdk_cognitoidentityprovider::Client::new(get_or_init_aws_sdk_config().await)
+        })
+        .await
+}
+
 static NOTION_API_KEY: tokio::sync::OnceCell<String> = tokio::sync::OnceCell::const_new();
 
 /// Fetches the Notion API key from cache or initializes it if not already loaded.

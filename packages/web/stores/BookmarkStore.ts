@@ -45,9 +45,15 @@ interface BookmarkState {
   error: string | null;
 
   bookmarkListOriginal: Ref<Bookmark[]>;
-  bookmarkList: Bookmark[];
+  convertedBookmarkList: Ref<
+    Array<{
+      tag: Exclude<Bookmark["tag"], undefined>;
+      bookmarkList: Bookmark[];
+    }>
+  >;
 
-  fuseInstance: Fuse<Bookmark> | null;
+  searchKeyword: Ref<string>;
+  fuseInstance: Ref<Fuse<Bookmark>>;
 
   createLoading: boolean;
   createError: string | null;
@@ -57,14 +63,72 @@ export const useBookmarkStore = defineStore("bookmark", {
   state: (): BookmarkState => {
     const bookmarkListOriginal = useLocalStorage<Bookmark[]>("Bookmark", []);
 
+    const fuseInstance = ref<Fuse<Bookmark>>(
+      new Fuse(bookmarkListOriginal.value, {
+        keys: ["name"],
+        threshold: 0.5,
+      })
+    );
+
+    const searchKeyword = ref<string>("");
+
+    const convertedBookmarkList = computed<
+      Array<{
+        tag: Exclude<Bookmark["tag"], undefined>;
+        bookmarkList: Bookmark[];
+      }>
+    >(() => {
+      const convert = (
+        bookmarkList: Bookmark[]
+      ): Array<{
+        tag: Exclude<Bookmark["tag"], undefined>;
+        bookmarkList: Bookmark[];
+      }> => {
+        const results: Array<{
+          tag: Exclude<Bookmark["tag"], undefined>;
+          bookmarkList: Bookmark[];
+        }> = [
+          ...uniqBy(
+            bookmarkList.map(({ tag }) => tag),
+            "id"
+          ).filter((tag) => tag != null),
+          { id: "UNTAGGED", name: "Untagged", color: "#808080" },
+        ].map((tag) => ({
+          tag,
+          bookmarkList: bookmarkList.filter((bookmark) => {
+            if (tag.id === "UNTAGGED") {
+              return bookmark.tag == null;
+            } else {
+              return bookmark.tag?.id === tag.id;
+            }
+          }),
+        }));
+
+        return results;
+      };
+
+      if (searchKeyword.value.trim() === "") {
+        return convert(bookmarkListOriginal.value);
+      } else {
+        const result = fuseInstance.value?.search(searchKeyword.value);
+
+        if (result != null) {
+          return convert(result.map(({ item }) => item));
+        }
+
+        return convert(bookmarkListOriginal.value);
+      }
+    });
+
     return {
       loading: false,
       error: null,
 
       bookmarkListOriginal,
-      bookmarkList: [],
+      convertedBookmarkList,
 
-      fuseInstance: null,
+      fuseInstance,
+      searchKeyword,
 
       createLoading: false,
       createError: null,
@@ -99,17 +163,6 @@ export const useBookmarkStore = defineStore("bookmark", {
         this.error = "Couldn't fetch bookmark list";
       } finally {
         this.loading = false;
-      }
-    },
-
-    async search(keyword: string) {
-      if (keyword.trim() === "") {
-        this.bookmarkList = this.bookmarkListOriginal;
-      } else {
-        const result = this.fuseInstance?.search(keyword);
-        if (result != null) {
-          this.bookmarkList = result.map(({ item }) => item);
-        }
       }
     },
 
@@ -151,7 +204,7 @@ export const useBookmarkStore = defineStore("bookmark", {
           },
         });
 
-        this.bookmarkList.push(response.data.createBookmark);
+        this.bookmarkListOriginal.push(response.data.createBookmark);
 
         const { notionUrl } = response.data.createBookmark;
 
@@ -162,34 +215,6 @@ export const useBookmarkStore = defineStore("bookmark", {
         this.createLoading = false;
       }
     },
-    getBookmarkListByTagId(tagId?: string): Bookmark[] {
-      const configStore = useConfigStore();
-
-      return this.bookmarkList
-        .filter((bookmark) => bookmark.tag?.id === tagId)
-        .filter((bookmark) =>
-          configStore.inWork ? bookmark.nsfw === false : true
-        );
-    },
   },
-  getters: {
-    tags(): Bookmark["tag"][] {
-      const tags = this.bookmarkList.flatMap((bookmark) => bookmark.tag);
-      const uniqueTags = uniqBy(
-        tags.filter((tag) => tag != null),
-        (tag) => tag.id
-      );
-      return uniqueTags;
-    },
-
-    getUntaggedBookmarkList(): Bookmark[] {
-      const configStore = useConfigStore();
-
-      return this.bookmarkList
-        .filter((bookmark) => bookmark.tag == null)
-        .filter((bookmark) =>
-          configStore.inWork ? bookmark.nsfw === false : true
-        );
-    },
-  },
+  getters: {},
 });

@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { uniqBy } from "lodash-es";
 import { z } from "zod";
 import Fuse from "fuse.js";
+import { useLocalStorage } from "@vueuse/core";
 
 const query = /* GraphQL */ `
   query BookmarkList {
@@ -43,8 +44,8 @@ interface BookmarkState {
   loading: boolean;
   error: string | null;
 
+  bookmarkListOriginal: Ref<Bookmark[]>;
   bookmarkList: Bookmark[];
-  bookmarkListOriginal: Bookmark[];
 
   fuseInstance: Fuse<Bookmark> | null;
 
@@ -53,18 +54,22 @@ interface BookmarkState {
 }
 
 export const useBookmarkStore = defineStore("bookmark", {
-  state: (): BookmarkState => ({
-    loading: false,
-    error: null,
+  state: (): BookmarkState => {
+    const bookmarkListOriginal = useLocalStorage<Bookmark[]>("Bookmark", []);
 
-    bookmarkList: [],
-    bookmarkListOriginal: [],
+    return {
+      loading: false,
+      error: null,
 
-    fuseInstance: null,
+      bookmarkListOriginal,
+      bookmarkList: [],
 
-    createLoading: false,
-    createError: null,
-  }),
+      fuseInstance: null,
+
+      createLoading: false,
+      createError: null,
+    };
+  },
   actions: {
     async fetch() {
       this.loading = true;
@@ -72,9 +77,6 @@ export const useBookmarkStore = defineStore("bookmark", {
 
       const authStore = useAuthStore();
       await authStore.refreshIfNeed();
-
-      const cache = window.localStorage.getItem("Bookmark");
-      if (cache != null) this.bookmarkList = JSON.parse(cache);
 
       try {
         const result: {
@@ -93,11 +95,6 @@ export const useBookmarkStore = defineStore("bookmark", {
           keys: ["name"],
           threshold: 0.5,
         });
-
-        window.localStorage.setItem(
-          "Bookmark",
-          JSON.stringify(this.bookmarkList)
-        );
       } catch {
         this.error = "Couldn't fetch bookmark list";
       } finally {

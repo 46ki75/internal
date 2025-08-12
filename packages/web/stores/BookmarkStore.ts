@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { uniqBy } from "lodash-es";
 import { z } from "zod";
 import Fuse from "fuse.js";
+import { useLocalStorage } from "@vueuse/core";
 
 const query = /* GraphQL */ `
   query BookmarkList {
@@ -43,28 +44,96 @@ interface BookmarkState {
   loading: boolean;
   error: string | null;
 
-  bookmarkList: Bookmark[];
-  bookmarkListOriginal: Bookmark[];
+  bookmarkListOriginal: Ref<Bookmark[]>;
+  convertedBookmarkList: Ref<
+    Array<{
+      tag: Exclude<Bookmark["tag"], undefined>;
+      bookmarkList: Bookmark[];
+    }>
+  >;
 
-  fuseInstance: Fuse<Bookmark> | null;
+  searchKeyword: Ref<string>;
+  fuseInstance: Ref<Fuse<Bookmark>>;
 
   createLoading: boolean;
   createError: string | null;
 }
 
 export const useBookmarkStore = defineStore("bookmark", {
-  state: (): BookmarkState => ({
-    loading: false,
-    error: null,
+  state: (): BookmarkState => {
+    const bookmarkListOriginal = useLocalStorage<Bookmark[]>("Bookmark", []);
 
-    bookmarkList: [],
-    bookmarkListOriginal: [],
+    const fuseInstance = ref<Fuse<Bookmark>>(
+      new Fuse(bookmarkListOriginal.value, {
+        keys: ["name"],
+        threshold: 0.5,
+      })
+    );
 
-    fuseInstance: null,
+    const searchKeyword = ref<string>("");
 
-    createLoading: false,
-    createError: null,
-  }),
+    const convertedBookmarkList = computed<
+      Array<{
+        tag: Exclude<Bookmark["tag"], undefined>;
+        bookmarkList: Bookmark[];
+      }>
+    >(() => {
+      const convert = (
+        bookmarkList: Bookmark[]
+      ): Array<{
+        tag: Exclude<Bookmark["tag"], undefined>;
+        bookmarkList: Bookmark[];
+      }> => {
+        const results: Array<{
+          tag: Exclude<Bookmark["tag"], undefined>;
+          bookmarkList: Bookmark[];
+        }> = [
+          ...uniqBy(
+            bookmarkList.map(({ tag }) => tag),
+            "id"
+          ).filter((tag) => tag != null),
+          { id: "UNTAGGED", name: "Untagged", color: "#808080" },
+        ].map((tag) => ({
+          tag,
+          bookmarkList: bookmarkList.filter((bookmark) => {
+            if (tag.id === "UNTAGGED") {
+              return bookmark.tag == null;
+            } else {
+              return bookmark.tag?.id === tag.id;
+            }
+          }),
+        }));
+
+        return results;
+      };
+
+      if (searchKeyword.value.trim() === "") {
+        return convert(bookmarkListOriginal.value);
+      } else {
+        const result = fuseInstance.value?.search(searchKeyword.value);
+
+        if (result != null) {
+          return convert(result.map(({ item }) => item));
+        }
+
+        return convert(bookmarkListOriginal.value);
+      }
+    });
+
+    return {
+      loading: false,
+      error: null,
+
+      bookmarkListOriginal,
+      convertedBookmarkList,
+
+      fuseInstance,
+      searchKeyword,
+
+      createLoading: false,
+      createError: null,
+    };
+  },
   actions: {
     async fetch() {
       this.loading = true;
@@ -72,9 +141,6 @@ export const useBookmarkStore = defineStore("bookmark", {
 
       const authStore = useAuthStore();
       await authStore.refreshIfNeed();
-
-      const cache = window.localStorage.getItem("Bookmark");
-      if (cache != null) this.bookmarkList = JSON.parse(cache);
 
       try {
         const result: {
@@ -93,26 +159,10 @@ export const useBookmarkStore = defineStore("bookmark", {
           keys: ["name"],
           threshold: 0.5,
         });
-
-        window.localStorage.setItem(
-          "Bookmark",
-          JSON.stringify(this.bookmarkList)
-        );
       } catch {
         this.error = "Couldn't fetch bookmark list";
       } finally {
         this.loading = false;
-      }
-    },
-
-    async search(keyword: string) {
-      if (keyword.trim() === "") {
-        this.bookmarkList = this.bookmarkListOriginal;
-      } else {
-        const result = this.fuseInstance?.search(keyword);
-        if (result != null) {
-          this.bookmarkList = result.map(({ item }) => item);
-        }
       }
     },
 
@@ -154,7 +204,7 @@ export const useBookmarkStore = defineStore("bookmark", {
           },
         });
 
-        this.bookmarkList.push(response.data.createBookmark);
+        this.bookmarkListOriginal.push(response.data.createBookmark);
 
         const { notionUrl } = response.data.createBookmark;
 
@@ -165,34 +215,6 @@ export const useBookmarkStore = defineStore("bookmark", {
         this.createLoading = false;
       }
     },
-    getBookmarkListByTagId(tagId?: string): Bookmark[] {
-      const configStore = useConfigStore();
-
-      return this.bookmarkList
-        .filter((bookmark) => bookmark.tag?.id === tagId)
-        .filter((bookmark) =>
-          configStore.inWork ? bookmark.nsfw === false : true
-        );
-    },
   },
-  getters: {
-    tags(): Bookmark["tag"][] {
-      const tags = this.bookmarkList.flatMap((bookmark) => bookmark.tag);
-      const uniqueTags = uniqBy(
-        tags.filter((tag) => tag != null),
-        (tag) => tag.id
-      );
-      return uniqueTags;
-    },
-
-    getUntaggedBookmarkList(): Bookmark[] {
-      const configStore = useConfigStore();
-
-      return this.bookmarkList
-        .filter((bookmark) => bookmark.tag == null)
-        .filter((bookmark) =>
-          configStore.inWork ? bookmark.nsfw === false : true
-        );
-    },
-  },
+  getters: {},
 });

@@ -2,33 +2,39 @@
   <div>
     <ElmHeading :level="1" text="Bookmarks" />
 
-    <ElmTextField v-model="keyword" label="keyword" icon="text" />
+    <ElmTextField
+      v-model="bookmarkStore.searchKeyword"
+      label="keyword"
+      icon="text"
+    />
 
-    <ElmBlockFallback v-if="bookmarkStore.bookmarkList.length === 0" />
+    <ElmBlockFallback v-if="bookmarkStore.convertedBookmarkList.length === 0" />
 
     <div class="global-fade-in" v-else>
-      <div v-for="tag in bookmarkStore.tags" :style="{ marginBlock: '1rem' }">
+      <div
+        v-for="bookmark in bookmarkStore.convertedBookmarkList"
+        :style="{ marginBlock: '1rem' }"
+      >
         <BookmarkTag
-          v-if="tag"
-          :label="tag.name"
-          :color="tag.color"
+          v-if="bookmark.tag"
+          :label="bookmark.tag.name"
+          :color="bookmark.tag.color"
           :style="{ marginBlock: '1rem' }"
         />
         <BookmarkList
           :bookmarks="
-            convertBookmarks(bookmarkStore.getBookmarkListByTagId(tag?.id))
+            bookmark.bookmarkList.map(
+              ({ name, url, favicon, notionUrl, nsfw }) => ({
+                name,
+                href: url,
+                favicon,
+                notionUrl,
+                nsfw,
+              })
+            )
           "
         />
       </div>
-
-      <BookmarkTag
-        label="Untagged"
-        color="gray"
-        :style="{ marginBlock: '1rem' }"
-      />
-      <BookmarkList
-        :bookmarks="convertBookmarks(bookmarkStore.getUntaggedBookmarkList)"
-      />
     </div>
 
     <ElmParagraph v-if="bookmarkStore.error != null">{{
@@ -66,25 +72,6 @@ watch(focused, async () => {
   if (focused.value) {
     await bookmarkStore.fetch();
   }
-});
-
-const convertBookmarks = (
-  bookmarks: Bookmark[]
-): BookmarkListProps["bookmarks"] => {
-  const results = bookmarks.map((bookmark) => ({
-    name: bookmark.name,
-    href: bookmark.url,
-    favicon: bookmark.favicon,
-    notionUrl: bookmark.notionUrl,
-    nsfw: bookmark.nsfw,
-  }));
-  return results;
-};
-
-const keyword = ref("");
-
-watch(keyword, (p) => {
-  bookmarkStore.search(p);
 });
 </script>
 

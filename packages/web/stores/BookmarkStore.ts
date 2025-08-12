@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { uniqBy } from "lodash-es";
 import { z } from "zod";
+import Fuse from "fuse.js";
 
 const query = /* GraphQL */ `
   query BookmarkList {
@@ -41,7 +42,11 @@ export type Bookmark = z.infer<typeof bookmarkSchema>;
 interface BookmarkState {
   loading: boolean;
   error: string | null;
+
   bookmarkList: Bookmark[];
+  bookmarkListOriginal: Bookmark[];
+
+  fuseInstance: Fuse<Bookmark> | null;
 
   createLoading: boolean;
   createError: string | null;
@@ -51,7 +56,12 @@ export const useBookmarkStore = defineStore("bookmark", {
   state: (): BookmarkState => ({
     loading: false,
     error: null,
+
     bookmarkList: [],
+    bookmarkListOriginal: [],
+
+    fuseInstance: null,
+
     createLoading: false,
     createError: null,
   }),
@@ -77,7 +87,12 @@ export const useBookmarkStore = defineStore("bookmark", {
           body: { query },
         });
 
-        this.bookmarkList = result.data.bookmarkList;
+        this.bookmarkListOriginal = result.data.bookmarkList;
+
+        this.fuseInstance = new Fuse(this.bookmarkListOriginal, {
+          keys: ["name"],
+          threshold: 0.5,
+        });
 
         window.localStorage.setItem(
           "Bookmark",
@@ -89,6 +104,18 @@ export const useBookmarkStore = defineStore("bookmark", {
         this.loading = false;
       }
     },
+
+    async search(keyword: string) {
+      if (keyword.trim() === "") {
+        this.bookmarkList = this.bookmarkListOriginal;
+      } else {
+        const result = this.fuseInstance?.search(keyword);
+        if (result != null) {
+          this.bookmarkList = result.map(({ item }) => item);
+        }
+      }
+    },
+
     async create({ name, url }: { name: string; url: string }) {
       this.createLoading = true;
 
@@ -157,6 +184,7 @@ export const useBookmarkStore = defineStore("bookmark", {
       );
       return uniqueTags;
     },
+
     getUntaggedBookmarkList(): Bookmark[] {
       const configStore = useConfigStore();
 

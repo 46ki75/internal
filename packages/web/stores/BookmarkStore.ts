@@ -77,9 +77,9 @@ export const useBookmarkStore = defineStore("bookmark", {
       if (cache != null) this.bookmarkList = JSON.parse(cache);
 
       try {
-        const result = await $fetch<{
+        const result: {
           data: { bookmarkList: Bookmark[] };
-        }>("/api/graphql", {
+        } = await $fetch("/api/graphql", {
           method: "POST",
           headers: {
             Authorization: authStore.session.accessToken as string,
@@ -123,11 +123,11 @@ export const useBookmarkStore = defineStore("bookmark", {
       await authStore.refreshIfNeed();
 
       try {
-        const response = await $fetch<{
+        const response: {
           data: {
             createBookmark: Bookmark;
           };
-        }>("/api/graphql", {
+        } = await $fetch("/api/graphql", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

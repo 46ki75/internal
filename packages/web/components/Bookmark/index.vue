@@ -1,7 +1,11 @@
 <template>
   <div>
     <ElmHeading :level="1" text="Bookmarks" />
+
+    <ElmTextField v-model="keyword" label="keyword" icon="text" />
+
     <ElmBlockFallback v-if="bookmarkStore.bookmarkList.length === 0" />
+
     <div class="global-fade-in" v-else>
       <div v-for="tag in bookmarkStore.tags" :style="{ marginBlock: '1rem' }">
         <BookmarkTag
@@ -36,7 +40,12 @@
 </template>
 
 <script setup lang="ts">
-import { ElmBlockFallback, ElmHeading, ElmParagraph } from "@elmethis/core";
+import {
+  ElmBlockFallback,
+  ElmHeading,
+  ElmParagraph,
+  ElmTextField,
+} from "@elmethis/core";
 import { useWindowFocus } from "@vueuse/core";
 
 import {
@@ -71,6 +80,12 @@ const convertBookmarks = (
   }));
   return results;
 };
+
+const keyword = ref("");
+
+watch(keyword, (p) => {
+  bookmarkStore.search(p);
+});
 </script>
 
 <style scoped lang="scss">

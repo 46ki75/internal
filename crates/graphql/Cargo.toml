@@ -29,7 +29,7 @@ tokio = { version = "1.47.1", features = ["macros"] }
 url = "2.5.4"
 
 aws-config = "1.8.5"
-aws-sdk-dynamodb = "1.87.0"
+aws-sdk-dynamodb = "1.88.0"
 uuid = { version = "1.18.0", features = ["v4"] }
 async-trait = "0.1.88"
 thiserror = "2.0.14"

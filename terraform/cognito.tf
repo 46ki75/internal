@@ -50,8 +50,3 @@ resource "aws_cognito_user_pool_client" "spa" {
 output "user_pool_client_id" {
   value = aws_cognito_user_pool_client.spa.id
 }
-
-data "aws_ssm_parameter" "password" {
-  name            = "/${terraform.workspace}/46ki75/internal/cognito/userpool/user/password"
-  with_decryption = true
-}

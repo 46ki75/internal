@@ -11,8 +11,8 @@ importers:
   packages/components:
     dependencies:
       '@elmethis/core':
-        specifier: 0.4.4
-        version: 0.4.4(vue@3.5.18(typescript@5.9.2))
+        specifier: 0.4.7
+        version: 0.4.7(vue@3.5.18(typescript@5.9.2))
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -54,8 +54,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       '@elmethis/core':
-        specifier: 0.4.4
-        version: 0.4.4(vue@3.5.18(typescript@5.9.2))
+        specifier: 0.4.7
+        version: 0.4.7(vue@3.5.18(typescript@5.9.2))
       '@pinia/nuxt':
         specifier: 0.11.2
         version: 0.11.2(magicast@0.3.5)(pinia@3.0.3(typescript@5.9.2)(vue@3.5.18(typescript@5.9.2)))
@@ -846,8 +846,8 @@ packages:
     resolution: {integrity: sha512-Y6+WUMsTFWE5jb20IFP4YGa5IrGY/+a/FbOSjDF/wz9gepU2hwCYSXRHP/vPwBvwcY3SVMASt4yXxbXNXigmZQ==}
     engines: {node: '>=18'}
 
-  '@elmethis/core@0.4.4':
-    resolution: {integrity: sha512-dkLn13tggM8GRsDSQg1pUFUgHlyFyuLSjVooGlNTYwEQW4OdcV0hVpHd9LsLxDfcXvFlmnXkwZfeFuT1i71K/Q==}
+  '@elmethis/core@0.4.7':
+    resolution: {integrity: sha512-81ny3OG6RUHJVpINAbCOXMS+Y98XA7UQyVP1F44cQR2+xkPjLpLlPyFAwHE+pkSl+j1vLdX3Syp3j1Au7AAUKQ==}
     peerDependencies:
       vue: ^3.4.0
 
@@ -7155,10 +7155,10 @@ snapshots:
       gonzales-pe: 4.3.0
       node-source-walk: 7.0.1
 
-  '@elmethis/core@0.4.4(vue@3.5.18(typescript@5.9.2))':
+  '@elmethis/core@0.4.7(vue@3.5.18(typescript@5.9.2))':
     dependencies:
       '@mdi/js': 7.4.47
-      '@vueuse/core': 13.6.0(vue@3.5.18(typescript@5.9.2))
+      '@vueuse/core': 13.7.0(vue@3.5.18(typescript@5.9.2))
       katex: 0.16.22
       lodash-es: 4.17.21
       nanoid: 5.1.5

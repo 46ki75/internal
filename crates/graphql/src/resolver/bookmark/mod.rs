@@ -9,6 +9,7 @@ pub struct Bookmark {
     pub favicon: Option<String>,
     pub tag: Option<BookmarkTag>,
     pub nsfw: bool,
+    pub favorite: bool,
     pub notion_url: String,
 }
 
@@ -28,6 +29,7 @@ impl From<crate::entity::bookmark::BookmarkEntity> for Bookmark {
             favicon: value.favicon,
             tag: value.tag.map(|tag| BookmarkTag::from(tag)),
             nsfw: value.nsfw,
+            favorite: value.favorite,
             notion_url: value.notion_url,
         }
     }

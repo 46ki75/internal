@@ -7,6 +7,7 @@ pub struct BookmarkEntity {
     pub favicon: Option<String>,
     pub tag: Option<BookmarkTagEntity>,
     pub nsfw: bool,
+    pub favorite: bool,
     pub notion_url: String,
 }
 
@@ -40,6 +41,13 @@ impl TryFrom<PageResponse> for BookmarkEntity {
             .ok_or(crate::error::Error::NotionPropertynotFound(String::from(
                 "NSFW",
             )))?;
+
+        let favorite =
+            properties
+                .get("Favorite")
+                .ok_or(crate::error::Error::NotionPropertynotFound(String::from(
+                    "Favorite",
+                )))?;
 
         let select = if let PageProperty::Select(select) = tag {
             select.clone().select.and_then(|select| {
@@ -95,6 +103,10 @@ impl TryFrom<PageResponse> for BookmarkEntity {
             nsfw: match nsfw {
                 PageProperty::Checkbox(page_checkbox_property) => page_checkbox_property.checkbox,
                 _ => true,
+            },
+            favorite: match favorite {
+                PageProperty::Checkbox(page_checkbox_property) => page_checkbox_property.checkbox,
+                _ => false,
             },
             notion_url: value.url,
         })

@@ -11,6 +11,22 @@
     <ElmBlockFallback v-if="bookmarkStore.convertedBookmarkList.length === 0" />
 
     <div class="global-fade-in" v-else>
+      <div class="favorite-container">
+        <BookmarkList
+          :bookmarks="
+            bookmarkStore.bookmarkListOriginal
+              .filter(({ favorite }) => favorite)
+              .map(({ name, url, favicon, notionUrl, nsfw }) => ({
+                name,
+                href: url,
+                favicon,
+                notionUrl,
+                nsfw,
+              }))
+          "
+        />
+      </div>
+
       <div
         v-for="bookmark in bookmarkStore.convertedBookmarkList"
         :style="{ marginBlock: '1rem' }"
@@ -84,5 +100,13 @@ watch(focused, async () => {
     "header header"
     "main sidebar";
   gap: 0.25rem;
+}
+
+.favorite-container {
+  margin-block: 1rem;
+  box-sizing: border-box;
+  padding: 0.5rem;
+  border: 1px solid #bfa056;
+  border-radius: 0.25rem;
 }
 </style>

@@ -18,6 +18,7 @@ const query = /* GraphQL */ `
       }
       notionUrl
       nsfw
+      favorite
     }
   }
 `;
@@ -36,6 +37,7 @@ export const bookmarkSchema = z.object({
     .optional(),
   notionUrl: z.string(),
   nsfw: z.boolean(),
+  favorite: z.boolean(),
 });
 
 export type Bookmark = z.infer<typeof bookmarkSchema>;

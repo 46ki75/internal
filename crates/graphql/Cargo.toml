@@ -36,7 +36,7 @@ thiserror = "2.0.16"
 log = "0.4.27"
 env_logger = { version = "0.11.8" }
 aws-sdk-ssm = "1.91.0"
-tracing-subscriber = { version = "0.3.19", features = ["ansi"] }
+tracing-subscriber = { version = "0.3.20", features = ["ansi"] }
 tracing = "0.1.41"
 notion-to-jarkup = "0.5"
 jarkup-rs = "0.4.0"

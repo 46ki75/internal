@@ -14,7 +14,7 @@
       </ElmSimpleTooltip>
 
       <ElmSimpleTooltip text="Swatch">
-        <NuxtLink to="/color">
+        <NuxtLink to="/swatch">
           <Icon icon="mdi:color" class="icon" />
         </NuxtLink>
       </ElmSimpleTooltip>

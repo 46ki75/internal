@@ -7,6 +7,7 @@
         { name: 'amber', code: '#d48b70' },
         { name: 'gold', code: '#cdb57b' },
         { name: 'emerald', code: '#59b57c' },
+        { name: 'cyan', code: '#59a7b5' },
         { name: 'blue', code: '#6987b8' },
         { name: 'purple', code: '#9771bd' },
         { name: 'pink', code: '#c9699e' },

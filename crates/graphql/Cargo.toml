@@ -40,7 +40,7 @@ tracing-subscriber = { version = "0.3.20", features = ["ansi"] }
 tracing = "0.1.41"
 notion-to-jarkup = "0.5"
 jarkup-rs = "0.4.0"
-time = { version = "0.3.41", features = ["parsing"] }
+time = { version = "0.3.43", features = ["parsing"] }
 bytes = "1.10.1"
 html-meta-scraper = "0.2.0"
 axum = "0.8.4"

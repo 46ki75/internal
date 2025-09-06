@@ -33,9 +33,7 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                     ),
                 )
                 .layer(tower_http::compression::CompressionLayer::new())
-                .layer(axum::middleware::from_fn(
-                    crate::middleware::authentication_middleware,
-                ));
+                .layer(crate::layer::auth::AuthLayer::new());
 
             Ok(app)
         })

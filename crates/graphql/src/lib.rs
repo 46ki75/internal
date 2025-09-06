@@ -4,7 +4,7 @@ pub mod entity;
 pub mod error;
 pub mod execute;
 pub mod graphql_handler;
-pub mod middleware;
+pub mod layer;
 pub mod mutation;
 pub mod query;
 pub mod repository;

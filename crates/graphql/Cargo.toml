@@ -45,7 +45,10 @@ bytes = "1.10.1"
 html-meta-scraper = "0.2.0"
 axum = "0.8.4"
 tower = "0.5.2"
-tower-http = { version = "0.6.6", features = ["compression-full"] }
+tower-http = { version = "0.6.6", features = [
+    "compression-gzip",
+    "compression-br",
+] }
 http = "1.3.1"
 aws-sdk-cognitoidentityprovider = "1.97.0"
 futures = "0.3.31"

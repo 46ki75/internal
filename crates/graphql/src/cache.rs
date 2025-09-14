@@ -105,52 +105,55 @@ pub async fn get_or_init_notion_api_key() -> Result<&'static String, crate::erro
         .await
 }
 
-static NOTION_ANKI_DATABASE_ID: tokio::sync::OnceCell<String> = tokio::sync::OnceCell::const_new();
-
-pub async fn get_or_init_notion_anki_database_id() -> Result<&'static String, crate::error::Error> {
-    NOTION_ANKI_DATABASE_ID
-        .get_or_try_init(|| async {
-            let stage_name = get_or_init_stage_name().await?;
-            let id = try_get_ssm_parameter_async(
-                get_or_init_ssm_client().await.clone(),
-                format!("/{stage_name}/46ki75/internal/notion/anki/database/id").as_str(),
-            )
-            .await?;
-
-            Ok(id)
-        })
-        .await
-}
-
-static NOTION_TO_DO_DATABASE_ID: tokio::sync::OnceCell<String> = tokio::sync::OnceCell::const_new();
-
-pub async fn get_or_init_notion_to_do_database_id() -> Result<&'static String, crate::error::Error>
-{
-    NOTION_TO_DO_DATABASE_ID
-        .get_or_try_init(|| async {
-            let stage_name = get_or_init_stage_name().await?;
-            let id = try_get_ssm_parameter_async(
-                get_or_init_ssm_client().await.clone(),
-                format!("/{stage_name}/46ki75/internal/notion/todo/database/id").as_str(),
-            )
-            .await?;
-
-            Ok(id)
-        })
-        .await
-}
-
-static NOTION_BOOKMARK_DATABASE_ID: tokio::sync::OnceCell<String> =
+static NOTION_ANKI_DATA_SOURCE_ID: tokio::sync::OnceCell<String> =
     tokio::sync::OnceCell::const_new();
 
-pub async fn get_or_init_notion_bookmark_database_id()
--> Result<&'static String, crate::error::Error> {
-    NOTION_BOOKMARK_DATABASE_ID
+pub async fn get_or_init_notion_anki_data_source_id() -> Result<&'static String, crate::error::Error>
+{
+    NOTION_ANKI_DATA_SOURCE_ID
         .get_or_try_init(|| async {
             let stage_name = get_or_init_stage_name().await?;
             let id = try_get_ssm_parameter_async(
                 get_or_init_ssm_client().await.clone(),
-                format!("/{stage_name}/46ki75/internal/notion/bookmark/database/id").as_str(),
+                format!("/{stage_name}/46ki75/internal/notion/anki/data_source/id").as_str(),
+            )
+            .await?;
+
+            Ok(id)
+        })
+        .await
+}
+
+static NOTION_TO_DO_DATA_SOURCE_ID: tokio::sync::OnceCell<String> =
+    tokio::sync::OnceCell::const_new();
+
+pub async fn get_or_init_notion_to_do_data_source_id()
+-> Result<&'static String, crate::error::Error> {
+    NOTION_TO_DO_DATA_SOURCE_ID
+        .get_or_try_init(|| async {
+            let stage_name = get_or_init_stage_name().await?;
+            let id = try_get_ssm_parameter_async(
+                get_or_init_ssm_client().await.clone(),
+                format!("/{stage_name}/46ki75/internal/notion/todo/data_source/id").as_str(),
+            )
+            .await?;
+
+            Ok(id)
+        })
+        .await
+}
+
+static NOTION_BOOKMARK_DATA_SOURCE_ID: tokio::sync::OnceCell<String> =
+    tokio::sync::OnceCell::const_new();
+
+pub async fn get_or_init_notion_bookmark_data_source_id()
+-> Result<&'static String, crate::error::Error> {
+    NOTION_BOOKMARK_DATA_SOURCE_ID
+        .get_or_try_init(|| async {
+            let stage_name = get_or_init_stage_name().await?;
+            let id = try_get_ssm_parameter_async(
+                get_or_init_ssm_client().await.clone(),
+                format!("/{stage_name}/46ki75/internal/notion/bookmark/data_source/id").as_str(),
             )
             .await?;
 
@@ -169,7 +172,7 @@ pub async fn get_or_init_notionrs_client() -> Result<&'static notionrs::Client, 
         .get_or_try_init(|| async {
             let secret = get_or_init_notion_api_key().await?;
 
-            let client = notionrs::Client::new().secret(secret.as_str());
+            let client = notionrs::Client::new(secret.as_str());
 
             Ok(client)
         })
@@ -186,7 +189,7 @@ pub async fn get_or_init_notion_to_jarkup_client()
         .get_or_try_init(|| async {
             let secret = get_or_init_notion_api_key().await?;
 
-            let notionrs_client = notionrs::Client::new().secret(secret.as_str());
+            let notionrs_client = notionrs::Client::new(secret.as_str());
 
             let client = notion_to_jarkup::client::Client {
                 notionrs_client,

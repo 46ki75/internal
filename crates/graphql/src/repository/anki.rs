@@ -56,13 +56,13 @@ impl AnkiRepository for AnkiRepositoryImpl {
     {
         let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
-        let database_id = crate::cache::get_or_init_notion_anki_database_id().await?;
+        let data_source_id = crate::cache::get_or_init_notion_anki_data_source_id().await?;
 
         let sorts = vec![Sort::asc("nextReviewAt")];
 
         let mut request = notionrs_client
-            .query_database()
-            .database_id(database_id)
+            .query_data_source()
+            .data_source_id(data_source_id)
             .sorts(sorts)
             .page_size(page_size);
 
@@ -87,11 +87,11 @@ impl AnkiRepository for AnkiRepositoryImpl {
     ) -> Result<PageResponse, crate::error::Error> {
         let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
-        let database_id = crate::cache::get_or_init_notion_anki_database_id().await?;
+        let data_source_id = crate::cache::get_or_init_notion_anki_data_source_id().await?;
 
         let request = notionrs_client
             .create_page()
-            .database_id(database_id)
+            .data_source_id(data_source_id)
             .properties(properties)
             .children(children);
 

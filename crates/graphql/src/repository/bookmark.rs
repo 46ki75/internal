@@ -1,3 +1,6 @@
+use futures::TryStreamExt;
+use notionrs::PaginateExt;
+
 #[async_trait::async_trait]
 pub trait BookmarkRepository: Send + Sync {
     async fn list_bookmark(
@@ -22,10 +25,13 @@ impl BookmarkRepository for BookmarkRepositoryImpl {
     ) -> Result<Vec<notionrs_types::object::page::PageResponse>, crate::error::Error> {
         let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
-        let database_id = crate::cache::get_or_init_notion_bookmark_database_id().await?;
+        let data_source_id = crate::cache::get_or_init_notion_bookmark_data_source_id().await?;
 
-        let request =
-            notionrs::Client::paginate(notionrs_client.query_database().database_id(database_id));
+        let request = notionrs_client
+            .query_data_source()
+            .data_source_id(data_source_id)
+            .into_stream()
+            .try_collect();
 
         tracing::debug!("Sending request to Notion API");
 
@@ -51,12 +57,12 @@ impl BookmarkRepository for BookmarkRepositoryImpl {
     ) -> Result<notionrs_types::object::page::PageResponse, crate::error::Error> {
         let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
-        let database_id = crate::cache::get_or_init_notion_bookmark_database_id().await?;
+        let data_source_id = crate::cache::get_or_init_notion_bookmark_data_source_id().await?;
 
         tracing::debug!("Sending request to Notion API");
         let mut request = notionrs_client
             .create_page()
-            .database_id(database_id)
+            .data_source_id(data_source_id)
             .properties(properties);
 
         if let Some(url) = favicon {

@@ -84,9 +84,16 @@ const handleEnter = () => {
   ) {
     const first = bookmarkStore.convertedBookmarkList[0];
     if (first != null) {
-      const firstBoookmark = first.bookmarkList[0];
-      if (firstBoookmark != null) {
-        location.assign(firstBoookmark.url);
+      const firstBookmark = first.bookmarkList[0];
+      if (firstBookmark != null) {
+        const link = document.createElement("a");
+        link.href = firstBookmark.url;
+        link.rel = "noopener noreferrer";
+        link.target = "_self";
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
     }
   }

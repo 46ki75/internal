@@ -3,6 +3,12 @@ import { ElmInlineText } from "@elmethis/core";
 </script>
 
 <template>
+  <NuxtLoadingIndicator
+    color="#cdb57b"
+    :height="4"
+    :duration="2000"
+    :throttle="50"
+  />
   <Header />
 
   <main class="main">

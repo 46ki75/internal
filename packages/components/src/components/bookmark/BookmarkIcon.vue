@@ -4,7 +4,7 @@
       <a
         :href="notionUrl.replace('https://', 'notion://')"
         target="_blank"
-        rel="noopener norefferer"
+        rel="noopener noreferrer"
       >
         <ElmMdiIcon
           :class="$style.edit"
@@ -23,7 +23,7 @@
     <a
       :class="$style['link-container']"
       :href="href"
-      target="_blank"
+      target="_self"
       rel="noopener noreferrer"
     >
       <img

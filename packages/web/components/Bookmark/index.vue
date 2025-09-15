@@ -6,6 +6,8 @@
       v-model="bookmarkStore.searchKeyword"
       label="keyword"
       icon="text"
+      @keyup.enter="handleEnter"
+      ref="searchTarget"
     />
 
     <ElmBlockFallback v-if="bookmarkStore.convertedBookmarkList.length === 0" />
@@ -70,15 +72,30 @@ import {
 } from "@elmethis/core";
 import { useWindowFocus } from "@vueuse/core";
 
-import {
-  BookmarkTag,
-  BookmarkList,
-  type BookmarkListProps,
-} from "../../../components/src";
+import { BookmarkTag, BookmarkList } from "../../../components/src";
 
 const bookmarkStore = useBookmarkStore();
 
+const handleEnter = () => {
+  if (
+    bookmarkStore.searchKeyword != null &&
+    bookmarkStore.searchKeyword.trim() !== "" &&
+    bookmarkStore.convertedBookmarkList.length > 0
+  ) {
+    const first = bookmarkStore.convertedBookmarkList[0];
+    if (first != null) {
+      const firstBoookmark = first.bookmarkList[0];
+      if (firstBoookmark != null) {
+        location.assign(firstBoookmark.url);
+      }
+    }
+  }
+};
+
+const searchRef = useTemplateRef("searchTarget");
+
 onMounted(async () => {
+  searchRef.value?.focus();
   console.log("fetching bookmarks");
   await bookmarkStore.fetch();
 });

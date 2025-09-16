@@ -11,8 +11,8 @@ importers:
   packages/components:
     dependencies:
       '@elmethis/core':
-        specifier: 0.6.1
-        version: 0.6.1(vue@3.5.21(typescript@5.9.2))
+        specifier: 0.6.3
+        version: 0.6.3(vue@3.5.21(typescript@5.9.2))
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -54,8 +54,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       '@elmethis/core':
-        specifier: 0.6.1
-        version: 0.6.1(vue@3.5.21(typescript@5.9.2))
+        specifier: 0.6.3
+        version: 0.6.3(vue@3.5.21(typescript@5.9.2))
       '@pinia/nuxt':
         specifier: 0.11.2
         version: 0.11.2(magicast@0.3.5)(pinia@3.0.3(typescript@5.9.2)(vue@3.5.21(typescript@5.9.2)))
@@ -848,8 +848,8 @@ packages:
     peerDependencies:
       postcss: ^8.4
 
-  '@elmethis/core@0.6.1':
-    resolution: {integrity: sha512-sKj5im3a/8z7CDoNGVR3KFTV8hTHAWklzbgR1NMNXMBH5nf8Ph8wKbMRjZl3slEO6C+3mPYrSOr0rYlWhomVVQ==}
+  '@elmethis/core@0.6.3':
+    resolution: {integrity: sha512-pqQUB1x1PY0tMg5fsdmQJb9bs9FfhFFWX4nKFkRCpeeI+PFov6t+tnb4xPHcK5KDTGSD1M68jTGDAZuN3jV6Tg==}
     peerDependencies:
       vue: ^3.4.0
 
@@ -3669,8 +3669,8 @@ packages:
   magicast@0.3.5:
     resolution: {integrity: sha512-L0WhttDl+2BOsybvEOLK7fW3UA0OQ0IQ2d6Zl2x/a6vVRs3bAY0ECOSHHeL5jD+SbOpOCUEi0y1DgHEn9Qn1AQ==}
 
-  marked@16.2.1:
-    resolution: {integrity: sha512-r3UrXED9lMlHF97jJByry90cwrZBBvZmjG1L68oYfuPMW+uDTnuMbyJDymCWwbTE+f+3LhpNDKfpR3a3saFyjA==}
+  marked@16.3.0:
+    resolution: {integrity: sha512-K3UxuKu6l6bmA5FUwYho8CfJBlsUWAooKtdGgMcERSpF7gcBUrCGsLH7wDaaNOzwq18JzSUDyoEb/YsrqMac3w==}
     engines: {node: '>= 20'}
     hasBin: true
 
@@ -6730,13 +6730,13 @@ snapshots:
     dependencies:
       postcss: 8.5.6
 
-  '@elmethis/core@0.6.1(vue@3.5.21(typescript@5.9.2))':
+  '@elmethis/core@0.6.3(vue@3.5.21(typescript@5.9.2))':
     dependencies:
       '@mdi/js': 7.4.47
       '@vueuse/core': 13.9.0(vue@3.5.21(typescript@5.9.2))
       katex: 0.16.22
       lodash-es: 4.17.21
-      marked: 16.2.1
+      marked: 16.3.0
       nanoid: 5.1.5
       polished: 4.3.1
       shiki: 3.12.2
@@ -9824,7 +9824,7 @@ snapshots:
       '@babel/types': 7.28.4
       source-map-js: 1.2.1
 
-  marked@16.2.1: {}
+  marked@16.3.0: {}
 
   math-intrinsics@1.1.0: {}
 

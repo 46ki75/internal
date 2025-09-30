@@ -57,6 +57,7 @@ resource "aws_cognito_resource_server" "m2m4debug" {
   scope {
     # The prefix `{identifier}/` is automatically added, 
     # resulting in the full scope name `{identifier}/{scope_name}`.
+    # e.g., `m2m4debug/read`
     scope_name        = "read"
     scope_description = "Read access to debug resources"
   }

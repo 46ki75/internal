@@ -33,7 +33,8 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                     ),
                 )
                 .layer(tower_http::compression::CompressionLayer::new())
-                .layer(crate::layer::auth::AuthLayer::new());
+                // .layer(crate::layer::auth::AuthLayer::new())
+                ;
 
             Ok(app)
         })

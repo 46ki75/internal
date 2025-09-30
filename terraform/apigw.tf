@@ -70,8 +70,13 @@ resource "aws_apigatewayv2_authorizer" "backend" {
   identity_sources = ["$request.header.Authorization"]
 
   jwt_configuration {
-    audience = [aws_cognito_user_pool_client.spa.id]
-    issuer   = "https://${aws_cognito_user_pool.default.endpoint}"
+    audience = [
+      # SPA
+      aws_cognito_user_pool_client.spa.id,
+      # M2M (for Debugging)
+      aws_cognito_user_pool_client.m2m4debug.id
+    ]
+    issuer = "https://${aws_cognito_user_pool.default.endpoint}"
   }
 }
 # <<< Authorizer

@@ -23,6 +23,11 @@ pub struct AuthMiddleware<S> {
 }
 
 impl<S> AuthMiddleware<S> {
+    // TODO:
+    // This function does not work because it allows credentials that are tied to a user identity.
+    // However some access tokens are issued by M2M OAuth clients (using the Client Credentials Grant).
+    // Therefore, we need to update this code to verify whether the received token is valid.
+
     async fn validate_access_token(
         headers: &http::HeaderMap<http::HeaderValue>,
     ) -> Result<(), axum::response::Response> {

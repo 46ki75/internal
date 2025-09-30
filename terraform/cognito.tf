@@ -48,7 +48,18 @@ resource "aws_cognito_user_pool_client" "spa" {
   explicit_auth_flows = ["ALLOW_USER_AUTH", "ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
 }
 
-# M2M (for Debugging)
+# M2M (for Debug)
+resource "aws_cognito_resource_server" "m2m4debug" {
+  identifier   = "m2m4debug"
+  name         = "Debug Resource Server"
+  user_pool_id = aws_cognito_user_pool.default.id
+
+  scope {
+    scope_name        = "read"
+    scope_description = "Read access to debug resources"
+  }
+}
+
 resource "aws_cognito_user_pool_client" "m2m4debug" {
   user_pool_id    = aws_cognito_user_pool.default.id
   name            = "${terraform.workspace}-46ki75-internal-cognito-client-m2m4debug"
@@ -62,18 +73,7 @@ resource "aws_cognito_user_pool_client" "m2m4debug" {
 
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_flows                  = ["client_credentials"]
-  allowed_oauth_scopes                 = ["debug/read"] # custom scope
+  allowed_oauth_scopes                 = [aws_cognito_resource_server.m2m4debug.scope_identifiers[0]]
 
   explicit_auth_flows = []
-}
-
-resource "aws_cognito_resource_server" "debug" {
-  identifier   = "debug"
-  name         = "Debug Resource Server"
-  user_pool_id = aws_cognito_user_pool.default.id
-
-  scope {
-    scope_name        = "read"
-    scope_description = "Read access to debug resources"
-  }
 }

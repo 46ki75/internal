@@ -55,6 +55,8 @@ resource "aws_cognito_resource_server" "m2m4debug" {
   user_pool_id = aws_cognito_user_pool.default.id
 
   scope {
+    # The prefix `{identifier}/` is automatically added, 
+    # resulting in the full scope name `{identifier}/{scope_name}`.
     scope_name        = "read"
     scope_description = "Read access to debug resources"
   }

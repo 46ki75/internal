@@ -98,7 +98,11 @@ impl TryFrom<PageResponse> for BookmarkEntity {
             id,
             name: Some(name.to_string()),
             url: Some(url.to_string()),
-            favicon: value.icon.map(|f| f.to_string()),
+            favicon: value.icon.map(|f| match f {
+                Icon::File(file) => file.get_url(),
+                Icon::Emoji(emoji) => emoji.emoji.to_string(),
+                Icon::CustomEmoji(custom_emoji) => custom_emoji.custom_emoji.url,
+            }),
             tag: select,
             nsfw: match nsfw {
                 PageProperty::Checkbox(page_checkbox_property) => page_checkbox_property.checkbox,

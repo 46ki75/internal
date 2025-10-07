@@ -26,7 +26,7 @@
     "sass": "^1.93.2",
     "vue": "latest",
     "vue-router": "latest",
-    "zod": "^4.1.11"
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@iconify/vue": "^5.0.0",

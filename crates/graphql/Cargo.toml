@@ -39,7 +39,7 @@ env_logger = { version = "0.11.8" }
 aws-sdk-ssm = "1.96.0"
 tracing-subscriber = { version = "0.3.20", features = ["ansi"] }
 tracing = "0.1.41"
-jarkup-rs = "0.4.0"
+jarkup-rs = "0.5.1"
 time = { version = "0.3.44", features = ["parsing"] }
 bytes = "1.10.1"
 html-meta-scraper = "0.2.0"

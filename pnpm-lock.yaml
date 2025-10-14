@@ -11,8 +11,8 @@ importers:
   packages/components:
     dependencies:
       '@elmethis/core':
-        specifier: 0.7.0
-        version: 0.7.0(vue@3.5.22(typescript@5.9.3))
+        specifier: 0.8.0
+        version: 0.8.0(vue@3.5.22(typescript@5.9.3))
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -54,8 +54,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       '@elmethis/core':
-        specifier: 0.7.0
-        version: 0.7.0(vue@3.5.22(typescript@5.9.3))
+        specifier: 0.8.0
+        version: 0.8.0(vue@3.5.22(typescript@5.9.3))
       '@pinia/nuxt':
         specifier: 0.11.2
         version: 0.11.2(magicast@0.3.5)(pinia@3.0.3(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))
@@ -877,8 +877,8 @@ packages:
     peerDependencies:
       postcss: ^8.4
 
-  '@elmethis/core@0.7.0':
-    resolution: {integrity: sha512-8kaX4hvrSGnlUIyn3+SZhfc0HO8+u3X2pAex/glTQw48MDV+DtSfHRP79KXU3ZqrjwicWv/c7Qgk2ph28QItXg==}
+  '@elmethis/core@0.8.0':
+    resolution: {integrity: sha512-5lamhYMUqpj8ZzZanjSf4hVFb2WWMRfgT+dW8IyztOOoLh6AQsaCtgQGJW84Tkg/gjfO5n6JKGOxiartjHiRkA==}
     peerDependencies:
       vue: ^3.4.0
 
@@ -7134,7 +7134,7 @@ snapshots:
     dependencies:
       postcss: 8.5.6
 
-  '@elmethis/core@0.7.0(vue@3.5.22(typescript@5.9.3))':
+  '@elmethis/core@0.8.0(vue@3.5.22(typescript@5.9.3))':
     dependencies:
       '@mdi/js': 7.4.47
       '@vueuse/core': 13.9.0(vue@3.5.22(typescript@5.9.3))

@@ -43,5 +43,11 @@
     "ghcr.io/devcontainers-extra/features/zig": {},
     "./features/cargo-toolchain": {}
   },
-  "postCreateCommand": "echo 'eval \"$(starship init bash)\"' >> ~/.bashrc"
+  "postCreateCommand": "echo 'eval \"$(starship init bash)\"' >> ~/.bashrc",
+  "remoteEnv": {
+    "AWS_PROFILE": "internal"
+  },
+  "mounts": [
+    "type=bind,source=${localEnv:HOME}/.aws/,target=/home/vscode/.aws/"
+  ]
 }

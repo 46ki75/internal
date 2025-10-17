@@ -248,7 +248,7 @@ export const useAnkiStore = defineStore("anki", {
         const authStore = useAuthStore();
         await authStore.refreshIfNeed();
 
-        const _ = await $fetch<{
+        $fetch<{
           data: { updateAnki: { url: string } };
         }>("/api/graphql", {
           method: "POST",

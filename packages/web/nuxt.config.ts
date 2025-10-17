@@ -1,3 +1,4 @@
+import { defineNuxtConfig } from "nuxt/config";
 import { fetchSSMParameter } from "./utils/fetchSsmParameter";
 
 const STAGE_NAME = process.env.STAGE_NAME ?? "dev";

@@ -18,10 +18,15 @@ async def fetch(url: str):
     )
 
     # クローラー実行設定
-    run_config = CrawlerRunConfig(scan_full_page=True, scroll_delay=0.01, verbose=True)
+    run_config = CrawlerRunConfig(
+        scan_full_page=True,
+        scroll_delay=0.01,
+        verbose=True,
+        excluded_tags=["form", "header", "footer", "button", "input", "nav", "script"],
+    )
 
     async with AsyncWebCrawler(config=browser_config) as crawler:
-        result = await crawler.arun(url=url, config=run_config)
+        result = await crawler.arun(url=url, config=run_config, fit_markdown=True)
         return result.markdown
 
 
@@ -34,7 +39,9 @@ def handler(event, context):
 
 
 async def main():
-    markdown = await fetch(url="https://example.com")
+    markdown = await fetch(
+        url="https://docs.aws.amazon.com/lambda/latest/dg/services-iot.html"
+    )
     print(markdown)
 
 

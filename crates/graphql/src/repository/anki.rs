@@ -222,6 +222,7 @@ impl AnkiRepository for AnkiRepositoryStub {
             developer_survey: None,
             request_id: None,
             in_trash: false,
+            is_locked: false,
         })
     }
 
@@ -300,6 +301,7 @@ impl AnkiRepository for AnkiRepositoryStub {
             developer_survey: None,
             request_id: None,
             in_trash: false,
+            is_locked: false,
         };
 
         Ok(notionrs_types::object::response::ListResponse {
@@ -385,6 +387,7 @@ impl AnkiRepository for AnkiRepositoryStub {
             developer_survey: None,
             request_id: None,
             in_trash: false,
+            is_locked: false,
         })
     }
 
@@ -463,6 +466,7 @@ impl AnkiRepository for AnkiRepositoryStub {
             developer_survey: None,
             request_id: None,
             in_trash: in_trash.unwrap_or_default(),
+            is_locked: false,
         })
     }
 

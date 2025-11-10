@@ -24,3 +24,7 @@ resource "aws_s3_bucket_policy" "web" {
     ]
   })
 }
+
+resource "aws_s3_bucket" "tts" {
+  bucket = "${terraform.workspace}-46ki75-internal-s3-bucket-tts"
+}

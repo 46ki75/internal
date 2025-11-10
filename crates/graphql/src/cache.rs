@@ -213,3 +213,19 @@ pub async fn get_or_init_reqwest_client() -> Result<&'static reqwest::Client, cr
         })
         .await
 }
+
+static FINEVOICE_API_KEY: tokio::sync::OnceCell<String> = tokio::sync::OnceCell::const_new();
+
+pub async fn get_or_init_finevoice_api_key() -> Result<&'static String, crate::error::Error> {
+    FINEVOICE_API_KEY
+        .get_or_try_init(|| async {
+            let notion_api_key = try_get_ssm_parameter_async(
+                get_or_init_ssm_client().await.clone(),
+                format!("/shared/46ki75/internal/finevoice/secret").as_str(),
+            )
+            .await?;
+
+            Ok(notion_api_key)
+        })
+        .await
+}

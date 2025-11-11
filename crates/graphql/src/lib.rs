@@ -12,6 +12,7 @@ pub mod resolver;
 pub mod router;
 pub mod schema;
 pub mod service;
+pub mod tts;
 
 /// Handler function of AWS Lambda.
 pub async fn function_handler(

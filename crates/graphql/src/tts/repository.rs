@@ -1,18 +1,21 @@
 use http::header::CONTENT_TYPE;
 use serde::Deserialize;
 
-pub trait TtsRepository {
+pub trait TtsRepository: Send + Sync {
     fn text_to_speach(
+        &self,
         text: &str,
     ) -> std::pin::Pin<
         Box<dyn std::future::Future<Output = Result<bytes::Bytes, crate::error::Error>> + Send>,
     >;
 }
 
+#[derive(Debug)]
 pub struct TtsRepositoryImpl {}
 
 impl TtsRepository for TtsRepositoryImpl {
     fn text_to_speach(
+        &self,
         text: &str,
     ) -> std::pin::Pin<
         Box<dyn std::future::Future<Output = Result<bytes::Bytes, crate::error::Error>> + Send>,

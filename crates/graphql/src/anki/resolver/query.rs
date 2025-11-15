@@ -1,3 +1,5 @@
+use super::super::service::*;
+
 #[derive(Debug, Default)]
 pub struct AnkiQueryResolver;
 
@@ -19,7 +21,7 @@ impl AnkiQueryResolver {
         ctx: &async_graphql::Context<'_>,
         input: AnkiInput,
     ) -> Result<super::Anki, async_graphql::Error> {
-        let anki_service = ctx.data::<std::sync::Arc<crate::service::anki::AnkiService>>()?;
+        let anki_service = ctx.data::<std::sync::Arc<AnkiService>>()?;
 
         let anki_entity = anki_service
             .get_anki_by_id(&input.page_id)
@@ -36,7 +38,7 @@ impl AnkiQueryResolver {
         ctx: &async_graphql::Context<'_>,
         input: Option<AnkiListInput>,
     ) -> Result<super::AnkiConnection, async_graphql::Error> {
-        let anki_service = ctx.data::<std::sync::Arc<crate::service::anki::AnkiService>>()?;
+        let anki_service = ctx.data::<std::sync::Arc<AnkiService>>()?;
 
         let input = input.unwrap_or(AnkiListInput {
             page_size: None,
@@ -60,7 +62,7 @@ impl AnkiQueryResolver {
             edges: anki_edges,
             page_info: crate::resolver::PageInfo {
                 has_next_page: next_cursor.is_some(),
-                next_cursor: next_cursor,
+                next_cursor,
                 ..Default::default()
             },
         };
@@ -75,7 +77,7 @@ impl super::Anki {
         &self,
         ctx: &async_graphql::Context<'_>,
     ) -> Result<super::AnkiBlock, async_graphql::Error> {
-        let anki_service = ctx.data::<std::sync::Arc<crate::service::anki::AnkiService>>()?;
+        let anki_service = ctx.data::<std::sync::Arc<AnkiService>>()?;
 
         let result = anki_service
             .list_blocks(&self.page_id)

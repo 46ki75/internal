@@ -14,9 +14,9 @@ pub async fn try_init_schema() -> Result<
 
             tracing::debug!("Injecting dependencies: Anki");
             let anki_repository =
-                std::sync::Arc::new(crate::repository::anki::AnkiRepositoryImpl {});
+                std::sync::Arc::new(crate::anki::repository::AnkiRepositoryImpl {});
             let anki_service =
-                std::sync::Arc::new(crate::service::anki::AnkiService { anki_repository });
+                std::sync::Arc::new(crate::anki::service::AnkiService { anki_repository });
 
             tracing::debug!("Injecting dependencies: Bookmark");
             let bookmark_repository =

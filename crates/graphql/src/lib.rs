@@ -1,3 +1,4 @@
+pub mod anki;
 pub mod cache;
 pub mod dto;
 pub mod entity;

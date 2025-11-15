@@ -1,3 +1,5 @@
+use super::super::service::*;
+
 #[derive(Debug, Default)]
 pub struct AnkiMutationResolver;
 
@@ -8,7 +10,7 @@ impl AnkiMutationResolver {
         ctx: &async_graphql::Context<'_>,
         title: Option<String>,
     ) -> Result<super::Anki, async_graphql::Error> {
-        let anki_service = ctx.data::<std::sync::Arc<crate::service::anki::AnkiService>>()?;
+        let anki_service = ctx.data::<std::sync::Arc<AnkiService>>()?;
 
         let anki_entity = anki_service
             .create_anki(title)
@@ -30,7 +32,7 @@ impl AnkiMutationResolver {
         is_review_required: Option<bool>,
         in_trash: Option<bool>,
     ) -> Result<super::Anki, async_graphql::Error> {
-        let anki_service = ctx.data::<std::sync::Arc<crate::service::anki::AnkiService>>()?;
+        let anki_service = ctx.data::<std::sync::Arc<AnkiService>>()?;
 
         let anki_entity = anki_service
             .update_anki(

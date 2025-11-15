@@ -1,14 +1,12 @@
+use super::{entity::*, repository::*};
 use notionrs_types::prelude::*;
 
 pub struct AnkiService {
-    pub anki_repository: std::sync::Arc<dyn crate::repository::anki::AnkiRepository + Send + Sync>,
+    pub anki_repository: std::sync::Arc<dyn AnkiRepository + Send + Sync>,
 }
 
 impl AnkiService {
-    pub async fn get_anki_by_id(
-        &self,
-        id: &str,
-    ) -> Result<crate::entity::anki::AnkiEntity, crate::error::Error> {
+    pub async fn get_anki_by_id(&self, id: &str) -> Result<AnkiEntity, crate::error::Error> {
         let page = self.anki_repository.get_anki_by_id(id).await?;
 
         let anki = page.try_into()?;
@@ -20,7 +18,7 @@ impl AnkiService {
         &self,
         page_size: u32,
         next_cursor: Option<String>,
-    ) -> Result<(Vec<crate::entity::anki::AnkiEntity>, Option<String>), crate::error::Error> {
+    ) -> Result<(Vec<AnkiEntity>, Option<String>), crate::error::Error> {
         let pages = self
             .anki_repository
             .list_anki(page_size, next_cursor)
@@ -30,17 +28,14 @@ impl AnkiService {
             .results
             .into_iter()
             .map(|anki| anki.try_into())
-            .collect::<Result<Vec<crate::entity::anki::AnkiEntity>, crate::error::Error>>()?;
+            .collect::<Result<Vec<AnkiEntity>, crate::error::Error>>()?;
 
         let next_cursor = pages.next_cursor;
 
         Ok((anki_list, next_cursor))
     }
 
-    pub async fn list_blocks(
-        &self,
-        id: &str,
-    ) -> Result<crate::entity::anki::AnkiBlockEntity, crate::error::Error> {
+    pub async fn list_blocks(&self, id: &str) -> Result<AnkiBlockEntity, crate::error::Error> {
         let blocks = self.anki_repository.list_blocks_by_id(id).await?;
 
         let mut front: Vec<jarkup_rs::Component> = Vec::new();
@@ -98,7 +93,7 @@ impl AnkiService {
             }
         }
 
-        Ok(crate::entity::anki::AnkiBlockEntity {
+        Ok(AnkiBlockEntity {
             front: serde_json::to_value(front)?,
             back: serde_json::to_value(back)?,
             explanation: serde_json::to_value(explanation)?,
@@ -108,7 +103,7 @@ impl AnkiService {
     pub async fn create_anki(
         &self,
         title: Option<String>,
-    ) -> Result<crate::entity::anki::AnkiEntity, crate::error::Error> {
+    ) -> Result<AnkiEntity, crate::error::Error> {
         let mut properties: std::collections::HashMap<String, PageProperty> =
             std::collections::HashMap::new();
 
@@ -194,7 +189,7 @@ impl AnkiService {
         next_review_at: Option<String>,
         is_review_required: Option<bool>,
         in_trash: Option<bool>,
-    ) -> Result<crate::entity::anki::AnkiEntity, crate::error::Error> {
+    ) -> Result<AnkiEntity, crate::error::Error> {
         let mut properties: std::collections::HashMap<String, PageProperty> =
             std::collections::HashMap::new();
 
@@ -250,7 +245,6 @@ impl AnkiService {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::repository::anki::AnkiRepositoryStub;
 
     #[tokio::test]
     async fn separate_blocks() {

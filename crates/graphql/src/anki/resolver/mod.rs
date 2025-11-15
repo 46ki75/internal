@@ -1,5 +1,6 @@
 pub mod mutation;
 pub mod query;
+use super::entity::*;
 
 #[derive(async_graphql::SimpleObject)]
 pub struct AnkiConnection {
@@ -43,8 +44,8 @@ pub struct AnkiBlock {
     pub explanation: serde_json::Value,
 }
 
-impl From<crate::entity::anki::AnkiEntity> for Anki {
-    fn from(value: crate::entity::anki::AnkiEntity) -> Self {
+impl From<AnkiEntity> for Anki {
+    fn from(value: AnkiEntity) -> Self {
         Self {
             page_id: value.page_id,
             title: value.title,
@@ -65,8 +66,8 @@ impl From<crate::entity::anki::AnkiEntity> for Anki {
     }
 }
 
-impl From<crate::entity::anki::AnkiTagEntity> for AnkiTag {
-    fn from(value: crate::entity::anki::AnkiTagEntity) -> Self {
+impl From<AnkiTagEntity> for AnkiTag {
+    fn from(value: AnkiTagEntity) -> Self {
         Self {
             id: value.id,
             name: value.name,
@@ -75,8 +76,8 @@ impl From<crate::entity::anki::AnkiTagEntity> for AnkiTag {
     }
 }
 
-impl From<crate::entity::anki::AnkiBlockEntity> for AnkiBlock {
-    fn from(value: crate::entity::anki::AnkiBlockEntity) -> Self {
+impl From<AnkiBlockEntity> for AnkiBlock {
+    fn from(value: AnkiBlockEntity) -> Self {
         Self {
             front: value.front,
             back: value.back,

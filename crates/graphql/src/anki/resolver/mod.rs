@@ -55,11 +55,7 @@ impl From<AnkiEntity> for Anki {
             next_review_at: value.next_review_at,
             created_at: value.created_at,
             updated_at: value.updated_at,
-            tags: value
-                .tags
-                .into_iter()
-                .map(|tag| AnkiTag::from(tag))
-                .collect(),
+            tags: value.tags.into_iter().map(AnkiTag::from).collect(),
             url: value.url,
             is_review_required: value.is_review_required,
         }

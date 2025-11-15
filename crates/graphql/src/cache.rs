@@ -221,7 +221,7 @@ pub async fn get_or_init_finevoice_api_key() -> Result<&'static String, crate::e
         .get_or_try_init(|| async {
             let notion_api_key = try_get_ssm_parameter_async(
                 get_or_init_ssm_client().await.clone(),
-                format!("/shared/46ki75/internal/finevoice/secret").as_str(),
+                "/shared/46ki75/internal/finevoice/secret",
             )
             .await?;
 

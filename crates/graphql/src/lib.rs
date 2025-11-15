@@ -1,3 +1,5 @@
+#![allow(clippy::too_many_arguments)]
+
 pub mod anki;
 pub mod cache;
 pub mod dto;

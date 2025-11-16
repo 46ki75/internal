@@ -11,13 +11,11 @@ const USER_POOL_CLIENT_ID = await fetchSSMParameter(
   `/${STAGE_NAME}/46ki75/internal/cognito/userpool/client/id`
 );
 
-const ENDPOINT = `https://${
-  STAGE_NAME === "prod" ? "internal" : STAGE_NAME + "-internal"
-}.46ki75.com`;
+const ENDPOINT = `https://${STAGE_NAME === "prod" ? "internal" : STAGE_NAME + "-internal"
+  }.46ki75.com`;
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: "2024-11-01",
   devtools: { enabled: false },
   ssr: false,
   devServer: {
@@ -34,11 +32,6 @@ export default defineNuxtConfig({
       },
     },
     css: {
-      preprocessorOptions: {
-        scss: {
-          api: "modern-compiler",
-        },
-      },
     },
   },
   modules: ["@pinia/nuxt"],

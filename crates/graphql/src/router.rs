@@ -34,6 +34,7 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
 
             let (router, auto_generated_api) = OpenApiRouter::new()
                 .routes(routes!(crate::bookmark::controller::bookmark_list))
+                .routes(routes!(crate::bookmark::controller::create_bookmark))
                 .with_state(app_state)
                 .split_for_parts();
 

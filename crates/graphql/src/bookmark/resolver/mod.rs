@@ -1,6 +1,8 @@
 pub mod mutation;
 pub mod query;
 
+use super::entity::*;
+
 #[derive(async_graphql::SimpleObject, Debug, Default)]
 pub struct Bookmark {
     pub id: String,
@@ -20,8 +22,8 @@ pub struct BookmarkTag {
     pub color: String,
 }
 
-impl From<crate::entity::bookmark::BookmarkEntity> for Bookmark {
-    fn from(value: crate::entity::bookmark::BookmarkEntity) -> Self {
+impl From<BookmarkEntity> for Bookmark {
+    fn from(value: BookmarkEntity) -> Self {
         Self {
             id: value.id,
             name: value.name,
@@ -35,8 +37,8 @@ impl From<crate::entity::bookmark::BookmarkEntity> for Bookmark {
     }
 }
 
-impl From<crate::entity::bookmark::BookmarkTagEntity> for BookmarkTag {
-    fn from(value: crate::entity::bookmark::BookmarkTagEntity) -> Self {
+impl From<BookmarkTagEntity> for BookmarkTag {
+    fn from(value: BookmarkTagEntity) -> Self {
         Self {
             id: value.id,
             name: value.name,

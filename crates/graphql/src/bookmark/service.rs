@@ -1,21 +1,19 @@
+use super::entity::*;
+use super::repository::*;
 use notionrs_types::prelude::*;
 
 pub struct BookmarkService {
-    pub bookmark_repository:
-        std::sync::Arc<dyn crate::repository::bookmark::BookmarkRepository + Send + Sync>,
+    pub bookmark_repository: std::sync::Arc<dyn BookmarkRepository + Send + Sync>,
 }
 
 impl BookmarkService {
-    pub async fn list_bookmark(
-        &self,
-    ) -> Result<Vec<crate::entity::bookmark::BookmarkEntity>, crate::error::Error> {
+    pub async fn list_bookmark(&self) -> Result<Vec<BookmarkEntity>, crate::error::Error> {
         let response = self.bookmark_repository.list_bookmark().await?;
 
         let bookmarks = response
             .iter()
-            .map(|bookmark| crate::entity::bookmark::BookmarkEntity::try_from(bookmark.to_owned()))
-            .collect::<Result<Vec<crate::entity::bookmark::BookmarkEntity>, crate::error::Error>>(
-            )?;
+            .map(|bookmark| BookmarkEntity::try_from(bookmark.to_owned()))
+            .collect::<Result<Vec<BookmarkEntity>, crate::error::Error>>()?;
 
         Ok(bookmarks)
     }
@@ -24,7 +22,7 @@ impl BookmarkService {
         &self,
         name: &str,
         url: &str,
-    ) -> Result<crate::entity::bookmark::BookmarkEntity, crate::error::Error> {
+    ) -> Result<BookmarkEntity, crate::error::Error> {
         let favicon = self.fetch_facicon_url(url).await;
 
         let mut properties: std::collections::HashMap<String, PageProperty> =
@@ -45,7 +43,7 @@ impl BookmarkService {
             .create_bookmark(properties, favicon)
             .await?;
 
-        let bookmark = crate::entity::bookmark::BookmarkEntity::try_from(response)?;
+        let bookmark = BookmarkEntity::try_from(response)?;
 
         Ok(bookmark)
     }
@@ -72,8 +70,7 @@ mod tests {
 
     #[tokio::test]
     async fn list_bookmark() {
-        let bookmark_repository =
-            std::sync::Arc::new(crate::repository::bookmark::BookmarkRepositoryStub);
+        let bookmark_repository = std::sync::Arc::new(BookmarkRepositoryStub);
 
         let bookmark_service = BookmarkService {
             bookmark_repository,
@@ -88,8 +85,7 @@ mod tests {
 
     #[tokio::test]
     async fn create_bookmark() {
-        let bookmark_repository =
-            std::sync::Arc::new(crate::repository::bookmark::BookmarkRepositoryStub);
+        let bookmark_repository = std::sync::Arc::new(BookmarkRepositoryStub);
 
         let bookmark_service = BookmarkService {
             bookmark_repository,

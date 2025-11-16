@@ -20,8 +20,8 @@ pub async fn try_init_schema() -> Result<
 
             tracing::debug!("Injecting dependencies: Bookmark");
             let bookmark_repository =
-                std::sync::Arc::new(crate::repository::bookmark::BookmarkRepositoryImpl {});
-            let bookmark_service = std::sync::Arc::new(crate::service::bookmark::BookmarkService {
+                std::sync::Arc::new(crate::bookmark::repository::BookmarkRepositoryImpl {});
+            let bookmark_service = std::sync::Arc::new(crate::bookmark::service::BookmarkService {
                 bookmark_repository,
             });
 

@@ -1,3 +1,5 @@
+use super::super::service::*;
+
 #[derive(Debug, Default)]
 pub struct BookmarkMutationResolver;
 
@@ -14,8 +16,7 @@ impl BookmarkMutationResolver {
         ctx: &async_graphql::Context<'_>,
         input: CreateBookmarkInput,
     ) -> Result<super::Bookmark, async_graphql::Error> {
-        let bookmark_service =
-            ctx.data::<std::sync::Arc<crate::service::bookmark::BookmarkService>>()?;
+        let bookmark_service = ctx.data::<std::sync::Arc<BookmarkService>>()?;
 
         let bookmark = bookmark_service
             .create_bookmark(&input.name, &input.url)

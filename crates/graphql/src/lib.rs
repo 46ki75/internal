@@ -1,6 +1,7 @@
 #![allow(clippy::too_many_arguments)]
 
 pub mod anki;
+pub mod bookmark;
 pub mod cache;
 pub mod dto;
 pub mod entity;

@@ -3,21 +3,18 @@
 pub mod anki;
 pub mod bookmark;
 pub mod cache;
-pub mod dto;
-pub mod entity;
 pub mod error;
 pub mod execute;
 pub mod graphql_handler;
 pub mod layer;
 pub mod mutation;
 pub mod query;
-pub mod repository;
 pub mod resolver;
 pub mod router;
 pub mod schema;
-pub mod service;
 pub mod to_do;
 pub mod tts;
+pub mod typing;
 
 /// Handler function of AWS Lambda.
 pub async fn function_handler(

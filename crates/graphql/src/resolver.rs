@@ -1,5 +1,3 @@
-pub mod typing;
-
 #[derive(async_graphql::SimpleObject, Default, Debug)]
 pub struct PageInfo {
     pub has_next_page: bool,

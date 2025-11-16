@@ -32,10 +32,10 @@ pub async fn try_init_schema() -> Result<
                 std::sync::Arc::new(crate::to_do::service::ToDoService { to_do_repository });
 
             tracing::debug!("Injecting dependencies: Typing");
-            let typing_repository: std::sync::Arc<crate::repository::typing::TypingRepositoryImpl> =
-                std::sync::Arc::new(crate::repository::typing::TypingRepositoryImpl {});
+            let typing_repository: std::sync::Arc<crate::typing::repository::TypingRepositoryImpl> =
+                std::sync::Arc::new(crate::typing::repository::TypingRepositoryImpl {});
             let typing_service =
-                std::sync::Arc::new(crate::service::typing::TypingService { typing_repository });
+                std::sync::Arc::new(crate::typing::service::TypingService { typing_repository });
 
             tracing::debug!("Building schema: QueryRoot");
             let query_root = crate::query::QueryRoot::default();

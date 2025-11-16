@@ -1,6 +1,8 @@
 pub mod mutation;
 pub mod query;
 
+use super::entity::*;
+
 #[derive(async_graphql::SimpleObject, Default, Debug)]
 pub struct Typing {
     pub id: String,
@@ -8,8 +10,8 @@ pub struct Typing {
     pub description: String,
 }
 
-impl From<crate::entity::typing::TypingEntity> for Typing {
-    fn from(value: crate::entity::typing::TypingEntity) -> Self {
+impl From<TypingEntity> for Typing {
+    fn from(value: TypingEntity) -> Self {
         Self {
             id: value.id,
             text: value.text,

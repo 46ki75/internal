@@ -1,22 +1,22 @@
+use super::entity::*;
+use super::repository::*;
+
 pub struct TypingService {
-    pub typing_repository:
-        std::sync::Arc<dyn crate::repository::typing::TypingRepository + Send + Sync>,
+    pub typing_repository: std::sync::Arc<dyn TypingRepository + Send + Sync>,
 }
 
 impl TypingService {
-    pub async fn typing_list(
-        &self,
-    ) -> Result<Vec<crate::entity::typing::TypingEntity>, crate::error::Error> {
+    pub async fn typing_list(&self) -> Result<Vec<TypingEntity>, crate::error::Error> {
         let records = self.typing_repository.typing_list().await?;
 
         let results = records
             .into_iter()
-            .map(|record| crate::entity::typing::TypingEntity {
+            .map(|record| TypingEntity {
                 id: record.id,
                 text: record.text,
                 description: record.description,
             })
-            .collect::<Vec<crate::entity::typing::TypingEntity>>();
+            .collect::<Vec<TypingEntity>>();
 
         Ok(results)
     }
@@ -26,7 +26,7 @@ impl TypingService {
         id: Option<String>,
         text: String,
         description: String,
-    ) -> Result<crate::entity::typing::TypingEntity, crate::error::Error> {
+    ) -> Result<TypingEntity, crate::error::Error> {
         let id = id.unwrap_or(uuid::Uuid::new_v4().to_string());
 
         let record = self
@@ -34,20 +34,17 @@ impl TypingService {
             .upsert_typing(id, text, description)
             .await?;
 
-        Ok(crate::entity::typing::TypingEntity {
+        Ok(TypingEntity {
             id: record.id,
             text: record.text,
             description: record.description,
         })
     }
 
-    pub async fn delete_typing(
-        &self,
-        id: String,
-    ) -> Result<crate::entity::typing::TypingEntity, crate::error::Error> {
+    pub async fn delete_typing(&self, id: String) -> Result<TypingEntity, crate::error::Error> {
         let record = self.typing_repository.delete_typing(id).await?;
 
-        Ok(crate::entity::typing::TypingEntity {
+        Ok(TypingEntity {
             id: record.id,
             text: record.text,
             description: record.description,
@@ -61,8 +58,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_typing_list() -> Result<(), crate::error::Error> {
-        let typing_repository =
-            std::sync::Arc::new(crate::repository::typing::TypingRepositoryStub);
+        let typing_repository = std::sync::Arc::new(TypingRepositoryStub);
 
         let typing_service = TypingService { typing_repository };
 
@@ -73,8 +69,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_upsert_typing() -> Result<(), crate::error::Error> {
-        let typing_repository =
-            std::sync::Arc::new(crate::repository::typing::TypingRepositoryStub);
+        let typing_repository = std::sync::Arc::new(TypingRepositoryStub);
 
         let typing_service = TypingService { typing_repository };
 
@@ -87,8 +82,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_delete_typing() -> Result<(), crate::error::Error> {
-        let typing_repository =
-            std::sync::Arc::new(crate::repository::typing::TypingRepositoryStub);
+        let typing_repository = std::sync::Arc::new(TypingRepositoryStub);
 
         let typing_service = TypingService { typing_repository };
 

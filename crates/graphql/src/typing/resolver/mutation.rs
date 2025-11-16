@@ -1,3 +1,5 @@
+use super::super::service::*;
+
 #[derive(Debug, Default)]
 pub struct TypingMutationResolver;
 
@@ -20,7 +22,7 @@ impl TypingMutationResolver {
         ctx: &async_graphql::Context<'_>,
         input: TypingUpsertInput,
     ) -> Result<super::Typing, async_graphql::Error> {
-        let typing_service = ctx.data::<std::sync::Arc<crate::service::typing::TypingService>>()?;
+        let typing_service = ctx.data::<std::sync::Arc<TypingService>>()?;
 
         let result = typing_service
             .upsert_typing(input.id, input.text, input.description)
@@ -36,7 +38,7 @@ impl TypingMutationResolver {
         ctx: &async_graphql::Context<'_>,
         input: TypingDeleteInput,
     ) -> Result<super::Typing, async_graphql::Error> {
-        let typing_service = ctx.data::<std::sync::Arc<crate::service::typing::TypingService>>()?;
+        let typing_service = ctx.data::<std::sync::Arc<TypingService>>()?;
 
         let result = typing_service
             .delete_typing(input.id)

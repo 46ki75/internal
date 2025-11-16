@@ -1,3 +1,5 @@
+use super::super::service::*;
+
 #[derive(Debug, Default)]
 pub struct TypingQueryResolver;
 
@@ -7,7 +9,7 @@ impl TypingQueryResolver {
         &self,
         ctx: &async_graphql::Context<'_>,
     ) -> Result<Vec<super::Typing>, async_graphql::Error> {
-        let typing_service = ctx.data::<std::sync::Arc<crate::service::typing::TypingService>>()?;
+        let typing_service = ctx.data::<std::sync::Arc<TypingService>>()?;
 
         let results = typing_service
             .typing_list()

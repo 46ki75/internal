@@ -1,4 +1,3 @@
-pub mod to_do;
 pub mod typing;
 
 #[derive(async_graphql::SimpleObject, Default, Debug)]

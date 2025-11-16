@@ -1,8 +1,9 @@
+use super::entity::*;
+use super::repository::*;
 use notionrs_types::prelude::*;
 
 pub struct ToDoService {
-    pub to_do_repository:
-        std::sync::Arc<dyn crate::repository::to_do::ToDoRepository + Send + Sync>,
+    pub to_do_repository: std::sync::Arc<dyn ToDoRepository + Send + Sync>,
 }
 
 impl ToDoService {
@@ -10,8 +11,8 @@ impl ToDoService {
         &self,
         title: String,
         description: Option<String>,
-        severity: Option<crate::entity::to_do::ToDoSeverityEntity>,
-    ) -> Result<crate::entity::to_do::ToDoEntity, crate::error::Error> {
+        severity: Option<ToDoSeverityEntity>,
+    ) -> Result<ToDoEntity, crate::error::Error> {
         let properties = {
             let mut properties = std::collections::HashMap::new();
 
@@ -48,7 +49,7 @@ impl ToDoService {
             }
         });
 
-        Ok(crate::entity::to_do::ToDoEntity {
+        Ok(ToDoEntity {
             id: response.id,
             url: response.url,
             title,
@@ -57,7 +58,7 @@ impl ToDoService {
             is_done: false,
             is_recurring: false,
             deadline: None,
-            severity: crate::entity::to_do::ToDoSeverityEntity::Info,
+            severity: ToDoSeverityEntity::Info,
             created_at: Some(response.created_time.to_string()),
             updated_at: Some(response.last_edited_time.to_string()),
         })
@@ -67,7 +68,7 @@ impl ToDoService {
         &self,
         id: String,
         is_done: bool,
-    ) -> Result<crate::entity::to_do::ToDoEntity, crate::error::Error> {
+    ) -> Result<ToDoEntity, crate::error::Error> {
         let mut properties = std::collections::HashMap::new();
 
         properties.insert(
@@ -104,13 +105,13 @@ impl ToDoService {
         let severity = if let PageProperty::Select(severity) = serverity_property {
             let select_name_str = severity.to_string();
             Ok(if select_name_str == "INFO" {
-                crate::entity::to_do::ToDoSeverityEntity::Info
+                ToDoSeverityEntity::Info
             } else if select_name_str == "WARN" {
-                crate::entity::to_do::ToDoSeverityEntity::Warn
+                ToDoSeverityEntity::Warn
             } else if select_name_str == "ERROR" {
-                crate::entity::to_do::ToDoSeverityEntity::Error
+                ToDoSeverityEntity::Error
             } else {
-                crate::entity::to_do::ToDoSeverityEntity::Unknown
+                ToDoSeverityEntity::Unknown
             })
         } else {
             Err(crate::error::Error::NotionPropertynotFound(
@@ -118,7 +119,7 @@ impl ToDoService {
             ))
         }?;
 
-        Ok(crate::entity::to_do::ToDoEntity {
+        Ok(ToDoEntity {
             id: response.id,
             url: response.url,
             source: "Notion:todo".to_string(),
@@ -133,9 +134,7 @@ impl ToDoService {
         })
     }
 
-    pub async fn list_notion_to_do(
-        &self,
-    ) -> Result<Vec<crate::entity::to_do::ToDoEntity>, crate::error::Error> {
+    pub async fn list_notion_to_do(&self) -> Result<Vec<ToDoEntity>, crate::error::Error> {
         let filter = notionrs_types::object::request::filter::Filter::and(vec![
             notionrs_types::object::request::filter::Filter::checkbox_is_not_checked("IsDone"),
         ]);
@@ -197,7 +196,7 @@ impl ToDoService {
                             _ => None,
                         });
 
-                let severity: crate::entity::to_do::ToDoSeverityEntity = result
+                let severity: ToDoSeverityEntity = result
                     .properties
                     .get("Severity")
                     .and_then(|s| {
@@ -206,11 +205,11 @@ impl ToDoService {
                                 let select_name_str = select_name.to_string();
 
                                 if select_name_str == "INFO" {
-                                    Some(crate::entity::to_do::ToDoSeverityEntity::Info)
+                                    Some(ToDoSeverityEntity::Info)
                                 } else if select_name_str == "WARN" {
-                                    return Some(crate::entity::to_do::ToDoSeverityEntity::Warn);
+                                    return Some(ToDoSeverityEntity::Warn);
                                 } else if select_name_str == "ERROR" {
-                                    return Some(crate::entity::to_do::ToDoSeverityEntity::Error);
+                                    return Some(ToDoSeverityEntity::Error);
                                 } else {
                                     None
                                 }
@@ -221,12 +220,12 @@ impl ToDoService {
                             None
                         }
                     })
-                    .unwrap_or(crate::entity::to_do::ToDoSeverityEntity::Unknown);
+                    .unwrap_or(ToDoSeverityEntity::Unknown);
 
                 let created_at = Some(result.created_time.to_string());
                 let updated_at = Some(result.last_edited_time.to_string());
 
-                Ok(crate::entity::to_do::ToDoEntity {
+                Ok(ToDoEntity {
                     id,
                     url,
                     source,
@@ -240,7 +239,7 @@ impl ToDoService {
                     updated_at,
                 })
             })
-            .collect::<Result<Vec<crate::entity::to_do::ToDoEntity>, crate::error::Error>>()?;
+            .collect::<Result<Vec<ToDoEntity>, crate::error::Error>>()?;
 
         Ok(todos)
     }
@@ -253,7 +252,7 @@ mod tests {
 
     #[tokio::test]
     async fn create_to_do() {
-        let to_do_repository = std::sync::Arc::new(crate::repository::to_do::ToDoRepositoryStub);
+        let to_do_repository = std::sync::Arc::new(ToDoRepositoryStub);
 
         let to_do_service = ToDoService { to_do_repository };
 
@@ -269,7 +268,7 @@ mod tests {
 
     #[tokio::test]
     async fn update_to_do() {
-        let to_do_repository = std::sync::Arc::new(crate::repository::to_do::ToDoRepositoryStub);
+        let to_do_repository = std::sync::Arc::new(ToDoRepositoryStub);
 
         let to_do_service = ToDoService { to_do_repository };
 
@@ -281,7 +280,7 @@ mod tests {
 
     #[tokio::test]
     async fn list_notion_todo() {
-        let to_do_repository = std::sync::Arc::new(crate::repository::to_do::ToDoRepositoryStub);
+        let to_do_repository = std::sync::Arc::new(ToDoRepositoryStub);
 
         let to_do_service = ToDoService { to_do_repository };
 

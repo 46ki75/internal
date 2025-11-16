@@ -2,6 +2,6 @@
 pub struct MutationRoot(
     crate::anki::resolver::mutation::AnkiMutationResolver,
     crate::bookmark::resolver::mutation::BookmarkMutationResolver,
-    crate::resolver::to_do::mutation::ToDoMutationResolver,
+    crate::to_do::resolver::mutation::ToDoMutationResolver,
     crate::resolver::typing::mutation::TypingMutationResolver,
 );

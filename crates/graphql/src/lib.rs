@@ -16,6 +16,7 @@ pub mod resolver;
 pub mod router;
 pub mod schema;
 pub mod service;
+pub mod to_do;
 pub mod tts;
 
 /// Handler function of AWS Lambda.

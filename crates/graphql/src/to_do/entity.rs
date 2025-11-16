@@ -1,3 +1,5 @@
+use super::resolver::*;
+
 #[derive(Default, Debug)]
 pub struct ToDoEntity {
     pub id: String,
@@ -37,13 +39,13 @@ impl std::fmt::Display for ToDoSeverityEntity {
     }
 }
 
-impl From<crate::resolver::to_do::ToDoSeverity> for ToDoSeverityEntity {
-    fn from(value: crate::resolver::to_do::ToDoSeverity) -> Self {
+impl From<ToDoSeverity> for ToDoSeverityEntity {
+    fn from(value: ToDoSeverity) -> Self {
         match value {
-            crate::resolver::to_do::ToDoSeverity::Unknown => Self::Unknown,
-            crate::resolver::to_do::ToDoSeverity::Info => Self::Info,
-            crate::resolver::to_do::ToDoSeverity::Warn => Self::Warn,
-            crate::resolver::to_do::ToDoSeverity::Error => Self::Error,
+            ToDoSeverity::Unknown => Self::Unknown,
+            ToDoSeverity::Info => Self::Info,
+            ToDoSeverity::Warn => Self::Warn,
+            ToDoSeverity::Error => Self::Error,
         }
     }
 }

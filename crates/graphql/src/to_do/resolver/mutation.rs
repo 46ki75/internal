@@ -1,3 +1,5 @@
+use super::super::service::*;
+
 #[derive(Debug, Default)]
 pub struct ToDoMutationResolver;
 
@@ -21,7 +23,7 @@ impl ToDoMutationResolver {
         ctx: &async_graphql::Context<'_>,
         input: CreateToDoInput,
     ) -> Result<super::ToDo, async_graphql::Error> {
-        let to_do_service = ctx.data::<std::sync::Arc<crate::service::to_do::ToDoService>>()?;
+        let to_do_service = ctx.data::<std::sync::Arc<ToDoService>>()?;
 
         let severity = input.severity.map(|s| s.into());
 
@@ -39,7 +41,7 @@ impl ToDoMutationResolver {
         ctx: &async_graphql::Context<'_>,
         input: UpdateToDoInput,
     ) -> Result<super::ToDo, async_graphql::Error> {
-        let to_do_service = ctx.data::<std::sync::Arc<crate::service::to_do::ToDoService>>()?;
+        let to_do_service = ctx.data::<std::sync::Arc<ToDoService>>()?;
 
         let to_do = to_do_service
             .update_to_do(input.id, input.is_done)

@@ -1,6 +1,8 @@
 pub mod mutation;
 pub mod query;
 
+use super::entity::*;
+
 #[derive(async_graphql::SimpleObject, Default, Debug)]
 pub struct ToDo {
     pub id: String,
@@ -40,8 +42,8 @@ impl std::fmt::Display for ToDoSeverity {
     }
 }
 
-impl From<crate::entity::to_do::ToDoEntity> for ToDo {
-    fn from(value: crate::entity::to_do::ToDoEntity) -> Self {
+impl From<ToDoEntity> for ToDo {
+    fn from(value: ToDoEntity) -> Self {
         Self {
             id: value.id,
             url: value.url,
@@ -58,13 +60,13 @@ impl From<crate::entity::to_do::ToDoEntity> for ToDo {
     }
 }
 
-impl From<crate::entity::to_do::ToDoSeverityEntity> for ToDoSeverity {
-    fn from(value: crate::entity::to_do::ToDoSeverityEntity) -> Self {
+impl From<ToDoSeverityEntity> for ToDoSeverity {
+    fn from(value: ToDoSeverityEntity) -> Self {
         match value {
-            crate::entity::to_do::ToDoSeverityEntity::Unknown => Self::Unknown,
-            crate::entity::to_do::ToDoSeverityEntity::Info => Self::Info,
-            crate::entity::to_do::ToDoSeverityEntity::Warn => Self::Warn,
-            crate::entity::to_do::ToDoSeverityEntity::Error => Self::Error,
+            ToDoSeverityEntity::Unknown => Self::Unknown,
+            ToDoSeverityEntity::Info => Self::Info,
+            ToDoSeverityEntity::Warn => Self::Warn,
+            ToDoSeverityEntity::Error => Self::Error,
         }
     }
 }

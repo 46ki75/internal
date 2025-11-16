@@ -1,3 +1,5 @@
+use super::super::service::*;
+
 #[derive(Debug, Default)]
 pub struct ToDoQueryResolver;
 
@@ -7,7 +9,7 @@ impl ToDoQueryResolver {
         &self,
         ctx: &async_graphql::Context<'_>,
     ) -> Result<Vec<super::ToDo>, async_graphql::Error> {
-        let to_do_service = ctx.data::<std::sync::Arc<crate::service::to_do::ToDoService>>()?;
+        let to_do_service = ctx.data::<std::sync::Arc<ToDoService>>()?;
 
         let notion_to_do_list = to_do_service
             .list_notion_to_do()

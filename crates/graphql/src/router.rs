@@ -1,11 +1,14 @@
 //! Initializes and returns axum router.
 
+use std::sync::Arc;
+
 use utoipa::OpenApi;
 use utoipa_axum::{router::OpenApiRouter, routes};
 
 #[derive(Clone)]
 pub struct AxumAppState {
-    pub bookmark_service: std::sync::Arc<crate::bookmark::service::BookmarkService>,
+    pub bookmark_service: Arc<crate::bookmark::service::BookmarkService>,
+    pub to_do_service: Arc<crate::to_do::service::ToDoService>,
 }
 
 #[derive(OpenApi)]
@@ -25,16 +28,23 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
     ROUTER
         .get_or_try_init(|| async {
             let bookmark_repository =
-                std::sync::Arc::new(crate::bookmark::repository::BookmarkRepositoryImpl {});
-            let bookmark_service = std::sync::Arc::new(crate::bookmark::service::BookmarkService {
+                Arc::new(crate::bookmark::repository::BookmarkRepositoryImpl {});
+            let bookmark_service = Arc::new(crate::bookmark::service::BookmarkService {
                 bookmark_repository,
             });
 
-            let app_state = std::sync::Arc::new(AxumAppState { bookmark_service });
+            let to_do_repository = Arc::new(crate::to_do::repository::ToDoRepositoryImpl {});
+            let to_do_service = Arc::new(crate::to_do::service::ToDoService { to_do_repository });
+
+            let app_state = Arc::new(AxumAppState {
+                bookmark_service,
+                to_do_service,
+            });
 
             let (router, auto_generated_api) = OpenApiRouter::new()
                 .routes(routes!(crate::bookmark::controller::bookmark_list))
                 .routes(routes!(crate::bookmark::controller::create_bookmark))
+                .routes(routes!(crate::to_do::controller::to_do_list))
                 .with_state(app_state)
                 .split_for_parts();
 

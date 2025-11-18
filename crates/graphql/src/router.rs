@@ -45,6 +45,8 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                 .routes(routes!(crate::bookmark::controller::bookmark_list))
                 .routes(routes!(crate::bookmark::controller::create_bookmark))
                 .routes(routes!(crate::to_do::controller::to_do_list))
+                .routes(routes!(crate::to_do::controller::create_to_do))
+                .routes(routes!(crate::to_do::controller::update_to_do))
                 .with_state(app_state)
                 .split_for_parts();
 

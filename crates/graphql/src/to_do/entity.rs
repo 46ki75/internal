@@ -1,3 +1,4 @@
+use super::request::*;
 use super::resolver::*;
 
 #[derive(Default, Debug)]
@@ -46,6 +47,17 @@ impl From<ToDoSeverity> for ToDoSeverityEntity {
             ToDoSeverity::Info => Self::Info,
             ToDoSeverity::Warn => Self::Warn,
             ToDoSeverity::Error => Self::Error,
+        }
+    }
+}
+
+impl From<ToDoSeverityRequest> for ToDoSeverityEntity {
+    fn from(value: ToDoSeverityRequest) -> Self {
+        match value {
+            ToDoSeverityRequest::Unknown => Self::Unknown,
+            ToDoSeverityRequest::Info => Self::Info,
+            ToDoSeverityRequest::Warn => Self::Warn,
+            ToDoSeverityRequest::Error => Self::Error,
         }
     }
 }

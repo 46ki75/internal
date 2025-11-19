@@ -85,7 +85,7 @@ pub async fn create_bookmark(
             let body = axum::body::Body::from(body_string);
             axum::response::Response::builder()
                 .status(StatusCode::OK)
-                .header(CONTENT_TYPE, "aplication/json")
+                .header(CONTENT_TYPE, "application/json")
                 .body(body)
                 .map_err(|e| {
                     let status = StatusCode::INTERNAL_SERVER_ERROR;

@@ -1,7 +1,7 @@
 #[derive(async_graphql::MergedObject, Debug, Default)]
 pub struct QueryRoot(
-    crate::resolver::anki::query::AnkiQueryResolver,
-    crate::resolver::bookmark::query::BookmarkQueryResolver,
-    crate::resolver::to_do::query::ToDoQueryResolver,
-    crate::resolver::typing::query::TypingQueryResolver,
+    crate::anki::resolver::query::AnkiQueryResolver,
+    crate::bookmark::resolver::query::BookmarkQueryResolver,
+    crate::to_do::resolver::query::ToDoQueryResolver,
+    crate::typing::resolver::query::TypingQueryResolver,
 );

@@ -14,28 +14,28 @@ pub async fn try_init_schema() -> Result<
 
             tracing::debug!("Injecting dependencies: Anki");
             let anki_repository =
-                std::sync::Arc::new(crate::repository::anki::AnkiRepositoryImpl {});
+                std::sync::Arc::new(crate::anki::repository::AnkiRepositoryImpl {});
             let anki_service =
-                std::sync::Arc::new(crate::service::anki::AnkiService { anki_repository });
+                std::sync::Arc::new(crate::anki::service::AnkiService { anki_repository });
 
             tracing::debug!("Injecting dependencies: Bookmark");
             let bookmark_repository =
-                std::sync::Arc::new(crate::repository::bookmark::BookmarkRepositoryImpl {});
-            let bookmark_service = std::sync::Arc::new(crate::service::bookmark::BookmarkService {
+                std::sync::Arc::new(crate::bookmark::repository::BookmarkRepositoryImpl {});
+            let bookmark_service = std::sync::Arc::new(crate::bookmark::service::BookmarkService {
                 bookmark_repository,
             });
 
             tracing::debug!("Injecting dependencies: ToDO");
             let to_do_repository =
-                std::sync::Arc::new(crate::repository::to_do::ToDoRepositoryImpl {});
+                std::sync::Arc::new(crate::to_do::repository::ToDoRepositoryImpl {});
             let to_do_service =
-                std::sync::Arc::new(crate::service::to_do::ToDoService { to_do_repository });
+                std::sync::Arc::new(crate::to_do::service::ToDoService { to_do_repository });
 
             tracing::debug!("Injecting dependencies: Typing");
-            let typing_repository: std::sync::Arc<crate::repository::typing::TypingRepositoryImpl> =
-                std::sync::Arc::new(crate::repository::typing::TypingRepositoryImpl {});
+            let typing_repository: std::sync::Arc<crate::typing::repository::TypingRepositoryImpl> =
+                std::sync::Arc::new(crate::typing::repository::TypingRepositoryImpl {});
             let typing_service =
-                std::sync::Arc::new(crate::service::typing::TypingService { typing_repository });
+                std::sync::Arc::new(crate::typing::service::TypingService { typing_repository });
 
             tracing::debug!("Building schema: QueryRoot");
             let query_root = crate::query::QueryRoot::default();

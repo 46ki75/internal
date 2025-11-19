@@ -20,7 +20,7 @@ reqwest = { version = "0.12.24", features = [
 ], default-features = false }
 async-graphql = "7.0.17"
 chrono = "0.4.42"
-lambda_http = "1.0.0"
+lambda_http = "1.0.1"
 notionrs = { version = "0.4.2", features = ["rustls-tls"] }
 notionrs_types = "0.4.1"
 notion-to-jarkup = "0.9.0"
@@ -43,7 +43,7 @@ jarkup-rs = "0.5.1"
 time = { version = "0.3.44", features = ["parsing"] }
 bytes = "1.11.0"
 html-meta-scraper = "0.2.0"
-axum = "0.8.6"
+axum = "0.8.7"
 tower = "0.5.2"
 tower-http = { version = "0.6.6", features = [
     "compression-gzip",

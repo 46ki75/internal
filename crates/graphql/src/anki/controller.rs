@@ -148,3 +148,48 @@ pub async fn block_list(
                 })
         })
 }
+
+#[utoipa::path(
+    post,
+    path = "/api/v1/anki",
+    request_body = CreateAnkiRequest,
+    responses(
+        (status = 200, description = "Anki", body = AnkiResponse),
+        (status = 500, description = "Internal Server Error", body = String)
+    )
+)]
+pub async fn create_anki(
+    axum::extract::State(state): axum::extract::State<std::sync::Arc<crate::router::AxumAppState>>,
+    axum::extract::Json(request): axum::extract::Json<CreateAnkiRequest>,
+) -> impl IntoResponse {
+    let anki_service = state.anki_service.clone();
+
+    let anki_entity: AnkiResponse = anki_service
+        .create_anki(request.title)
+        .await
+        .map_err(|e| {
+            let status = StatusCode::INTERNAL_SERVER_ERROR;
+            let message = e.to_string();
+            (status, message)
+        })?
+        .into();
+
+    serde_json::to_string(&anki_entity)
+        .map_err(|e| {
+            let status = StatusCode::INTERNAL_SERVER_ERROR;
+            let message = e.to_string();
+            (status, message)
+        })
+        .map(|body_string| {
+            let body = axum::body::Body::from(body_string);
+            axum::response::Response::builder()
+                .status(200)
+                .header(CONTENT_TYPE, "application/json")
+                .body(body)
+                .map_err(|e| {
+                    let status = StatusCode::INTERNAL_SERVER_ERROR;
+                    let message = e.to_string();
+                    (status, message)
+                })
+        })
+}

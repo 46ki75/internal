@@ -10,7 +10,7 @@ use crate::to_do::response::ToDoResponse;
         ("Authorization" = String, Header),
     ),
     responses(
-        (status = 200, description = "Bookmark", body = ToDoResponse),
+        (status = 200, description = "Bookmark", body = Vec<ToDoResponse>),
         (status = 500, description = "Internal Server Error", body = String)
     )
 )]

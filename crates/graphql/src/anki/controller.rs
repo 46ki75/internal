@@ -101,3 +101,50 @@ pub async fn anki_list(
                 })
         })
 }
+
+#[utoipa::path(
+    get,
+    path = "/api/v1/anki/block/{page_id}",
+    params(
+            ("page_id" = String, Path, description = "UUIDv4"),
+    ),
+    responses(
+        (status = 200, description = "Anki", body = AnkiBlockResponse),
+        (status = 500, description = "Internal Server Error", body = String)
+    )
+)]
+pub async fn block_list(
+    axum::extract::State(state): axum::extract::State<std::sync::Arc<crate::router::AxumAppState>>,
+    axum::extract::Path(page_id): axum::extract::Path<String>,
+) -> impl IntoResponse {
+    let anki_service = state.anki_service.clone();
+
+    let result: AnkiBlockResponse = anki_service
+        .list_blocks(&page_id)
+        .await
+        .map_err(|e| {
+            let status = StatusCode::INTERNAL_SERVER_ERROR;
+            let message = e.to_string();
+            (status, message)
+        })?
+        .into();
+
+    serde_json::to_string(&result)
+        .map_err(|e| {
+            let status = StatusCode::INTERNAL_SERVER_ERROR;
+            let message = e.to_string();
+            (status, message)
+        })
+        .and_then(|body_string| {
+            let body = axum::body::Body::from(body_string);
+            axum::response::Response::builder()
+                .status(200)
+                .header(CONTENT_TYPE, "application/json")
+                .body(body)
+                .map_err(|e| {
+                    let status = StatusCode::INTERNAL_SERVER_ERROR;
+                    let message = e.to_string();
+                    (status, message)
+                })
+        })
+}

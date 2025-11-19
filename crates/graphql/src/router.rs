@@ -54,6 +54,7 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                 .routes(routes!(crate::to_do::controller::update_to_do))
                 .routes(routes!(crate::anki::controller::anki))
                 .routes(routes!(crate::anki::controller::anki_list))
+                .routes(routes!(crate::anki::controller::block_list))
                 .with_state(app_state)
                 .split_for_parts();
 

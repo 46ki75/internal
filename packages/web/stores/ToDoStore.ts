@@ -1,76 +1,10 @@
-import { z } from "zod";
-
-const ToDoSchema = z.object({
-  id: z.string(),
-  url: z.string(),
-  source: z.string(),
-  title: z.string(),
-  description: z.string().nullable().optional(),
-  isDone: z.boolean(),
-  isRecurring: z.boolean(),
-  deadline: z.string().nullable().optional(),
-  severity: z.enum(["UNKNOWN", "INFO", "WARN", "ERROR"]).default("UNKNOWN"),
-  createdAt: z.string().nullable().optional(),
-  updatedAt: z.string().nullable().optional(),
-});
-
-type ToDoSchemaType = z.infer<typeof ToDoSchema>;
-
-const query = /* GraphQL */ `
-  query ToDoList {
-    toDoList {
-      id
-      source
-      title
-      description
-      url
-      isDone
-      isRecurring
-      severity
-      createdAt
-      updatedAt
-    }
-  }
-`;
-
-const createMutation = /* GraphQL */ `
-  mutation CreateToDO($title: String!, $description: String) {
-    createToDo(input: { title: $title, description: $description }) {
-      id
-      source
-      title
-      description
-      url
-      isDone
-      isRecurring
-      severity
-      createdAt
-      updatedAt
-    }
-  }
-`;
-
-const updateMutation = /* GraphQL */ `
-  mutation UpdateToDo($id: String!, $isDone: Boolean!) {
-    updateToDo(input: { id: $id, isDone: $isDone }) {
-      id
-      source
-      title
-      description
-      url
-      isDone
-      isRecurring
-      severity
-      createdAt
-      updatedAt
-    }
-  }
-`;
+import { openApiClient } from "~/openapi/client";
+import type { components } from "~/openapi/schema";
 
 export const useToDoStore = defineStore("todo", {
   state: () => {
     return {
-      toDoList: [] as ToDoSchemaType[],
+      toDoList: [] as components["schemas"]["ToDoResponse"][],
 
       fetchState: {
         loading: false,
@@ -96,21 +30,21 @@ export const useToDoStore = defineStore("todo", {
       const authStore = useAuthStore();
       await authStore.refreshIfNeed();
 
+      if (authStore.session.accessToken == null) {
+        this.fetchState.error = "Failed to fetch access token.";
+        return;
+      }
+
       try {
-        const response = await $fetch<{
-          data: {
-            toDoList: ToDoSchemaType[];
-          };
-        }>("/api/graphql", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: authStore.session.accessToken as string,
+        const response = await openApiClient.GET("/api/v1/to-do", {
+          params: {
+            header: { Authorization: authStore.session.accessToken },
           },
-          body: JSON.stringify({ query }),
         });
 
-        this.toDoList = response.data.toDoList;
+        if (response.data == null) return;
+
+        this.toDoList = response.data;
       } catch (error: unknown) {
         this.fetchState.error = (error as Error)?.message;
       } finally {
@@ -129,22 +63,24 @@ export const useToDoStore = defineStore("todo", {
       const authStore = useAuthStore();
       await authStore.refreshIfNeed();
 
+      if (authStore.session.accessToken == null) {
+        this.fetchState.error = "Failed to fetch access token.";
+        return;
+      }
+
       try {
-        const response = await $fetch<{
-          data: { createToDo: ToDoSchemaType };
-        }>("/api/graphql", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: authStore.session.accessToken as string,
+        const response = await openApiClient.POST("/api/v1/to-do", {
+          params: { header: { Authorization: authStore.session.accessToken } },
+          body: {
+            title,
+            description,
+            severity: "Info",
           },
-          body: JSON.stringify({
-            query: createMutation,
-            variables: { title, description },
-          }),
         });
 
-        this.toDoList.push(response.data.createToDo);
+        if (response.data == null) return;
+
+        this.toDoList.push(response.data);
       } catch (error: unknown) {
         this.createState.error = (error as Error)?.message;
       } finally {
@@ -157,22 +93,18 @@ export const useToDoStore = defineStore("todo", {
       const authStore = useAuthStore();
       await authStore.refreshIfNeed();
 
+      if (authStore.session.accessToken == null) {
+        this.fetchState.error = "Failed to fetch access token.";
+        return;
+      }
+
       try {
-        const response = await $fetch<{
-          data: { updateToDo: ToDoSchemaType };
-        }>("/api/graphql", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: authStore.session.accessToken as string,
-          },
-          body: JSON.stringify({
-            query: updateMutation,
-            variables: { id, isDone },
-          }),
+        await openApiClient.PUT("/api/v1/to-do", {
+          params: { header: { Authorization: authStore.session.accessToken } },
+          body: { id, is_done: isDone },
         });
 
-        this.toDoList = this.toDoList.filter((todo) => todo.id !== id);
+        this.toDoList = this.toDoList.filter((toDo) => toDo);
       } catch (error: unknown) {
         this.updateState.error = (error as Error)?.message;
       } finally {

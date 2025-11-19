@@ -165,7 +165,7 @@ resource "aws_cloudfront_distribution" "default" {
 
   # >>> [API GW] origin
   ordered_cache_behavior {
-    path_pattern = "/api/graphql"
+    path_pattern = "/api/*"
     allowed_methods = [
       "DELETE",
       "GET",

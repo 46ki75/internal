@@ -24,7 +24,7 @@ import {
 } from "@mdi/js";
 
 export interface ToDoSeverityProps {
-  level: "UNKNOWN" | "INFO" | "WARN" | "ERROR";
+  level: "Unknown" | "Info" | "Warn" | "Error";
 }
 
 const ICON_MAP: Record<
@@ -34,19 +34,19 @@ const ICON_MAP: Record<
     color: string;
   }
 > = {
-  UNKNOWN: {
+  Unknown: {
     icon: mdiCrosshairsQuestion,
     color: "#9771bd",
   },
-  INFO: {
+  Info: {
     icon: mdiInformation,
     color: "#6987b8",
   },
-  WARN: {
+  Warn: {
     icon: mdiAlert,
     color: "#b69545",
   },
-  ERROR: {
+  Error: {
     icon: mdiAlertOctagon,
     color: "#c56565",
   },

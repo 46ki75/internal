@@ -12,3 +12,12 @@ pub struct ListAnkiQueryParams {
 pub struct CreateAnkiRequest {
     pub title: Option<String>,
 }
+
+#[derive(Debug, Deserialize, ToSchema)]
+pub struct UpdateAnkiRequest {
+    pub ease_factor: Option<f64>,
+    pub repetition_count: Option<u32>,
+    pub next_review_at: Option<String>,
+    pub is_review_required: Option<bool>,
+    pub in_trash: Option<bool>,
+}

@@ -183,7 +183,7 @@ pub async fn create_anki(
         .map(|body_string| {
             let body = axum::body::Body::from(body_string);
             axum::response::Response::builder()
-                .status(200)
+                .status(201)
                 .header(CONTENT_TYPE, "application/json")
                 .body(body)
                 .map_err(|e| {

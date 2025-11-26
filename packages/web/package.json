@@ -13,7 +13,7 @@
     "generate:openapi": "openapi-typescript http://localhost:9000/api/v1/openapi.json -o openapi/schema.ts"
   },
   "dependencies": {
-    "@aws-sdk/client-ssm": "^3.936.0",
+    "@aws-sdk/client-ssm": "^3.939.0",
     "@com.46ki75/graphql": "^0.2.2",
     "@elmethis/core": "0.8.0",
     "@pinia/nuxt": "0.11.3",

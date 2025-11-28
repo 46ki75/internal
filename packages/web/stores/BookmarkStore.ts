@@ -3,44 +3,10 @@ import { uniqBy } from "lodash-es";
 import { z } from "zod";
 import Fuse from "fuse.js";
 import { useLocalStorage } from "@vueuse/core";
+import type { components } from "~/openapi/schema";
+import { openApiClient } from "~/openapi/client";
 
-const query = /* GraphQL */ `
-  query BookmarkList {
-    bookmarkList {
-      id
-      name
-      url
-      favicon
-      tag {
-        id
-        name
-        color
-      }
-      notionUrl
-      nsfw
-      favorite
-    }
-  }
-`;
-
-export const bookmarkSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  url: z.string(),
-  favicon: z.string().nullable(),
-  tag: z
-    .object({
-      id: z.string(),
-      name: z.string(),
-      color: z.string(),
-    })
-    .optional(),
-  notionUrl: z.string(),
-  nsfw: z.boolean(),
-  favorite: z.boolean(),
-});
-
-export type Bookmark = z.infer<typeof bookmarkSchema>;
+export type Bookmark = components["schemas"]["BookmarkResponse"];
 
 interface BookmarkState {
   loading: boolean;
@@ -145,17 +111,13 @@ export const useBookmarkStore = defineStore("bookmark", {
       await authStore.refreshIfNeed();
 
       try {
-        const result: {
-          data: { bookmarkList: Bookmark[] };
-        } = await $fetch("/api/graphql", {
-          method: "POST",
-          headers: {
-            Authorization: authStore.session.accessToken as string,
+        const result = await openApiClient.GET("/api/v1/bookmark", {
+          params: {
+            header: { Authorization: authStore.session.accessToken! },
           },
-          body: { query },
         });
 
-        this.bookmarkListOriginal = result.data.bookmarkList;
+        this.bookmarkListOriginal = result.data!;
 
         this.fuseInstance = new Fuse(this.bookmarkListOriginal, {
           keys: ["name"],
@@ -175,42 +137,18 @@ export const useBookmarkStore = defineStore("bookmark", {
       await authStore.refreshIfNeed();
 
       try {
-        const response: {
-          data: {
-            createBookmark: Bookmark;
-          };
-        } = await $fetch("/api/graphql", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${authStore.session.accessToken}`,
+        const response = await openApiClient.POST("/api/v1/bookmark", {
+          params: {
+            header: { Authorization: authStore.session.accessToken! },
           },
-          body: {
-            query: /* GraphQL */ `
-              mutation CreateBookmark($name: String!, $url: String!) {
-                createBookmark(input: { name: $name, url: $url }) {
-                  id
-                  name
-                  url
-                  favicon
-                  tag {
-                    id
-                    name
-                    color
-                  }
-                  notionUrl
-                }
-              }
-            `,
-            variables: { name, url },
-          },
+          body: { name, url },
         });
 
-        this.bookmarkListOriginal.push(response.data.createBookmark);
+        this.bookmarkListOriginal.push(response.data!);
 
-        const { notionUrl } = response.data.createBookmark;
+        const { notion_url } = response.data!;
 
-        window.open(notionUrl.replace("https://", "notion://"), "_blank");
+        window.open(notion_url.replace("https://", "notion://"), "_blank");
       } catch {
         this.createError = "Couldn't create bookmark";
       } finally {

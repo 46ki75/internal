@@ -13,11 +13,11 @@
     "generate:openapi": "openapi-typescript http://localhost:9000/api/v1/openapi.json -o openapi/schema.ts"
   },
   "dependencies": {
-    "@aws-sdk/client-ssm": "^3.933.0",
+    "@aws-sdk/client-ssm": "^3.940.0",
     "@com.46ki75/graphql": "^0.2.2",
     "@elmethis/core": "0.8.0",
     "@pinia/nuxt": "0.11.3",
-    "@vueuse/core": "^14.0.0",
+    "@vueuse/core": "^14.1.0",
     "aws-amplify": "^6.15.8",
     "fuse.js": "^7.1.0",
     "lodash-es": "^4.17.21",
@@ -25,10 +25,10 @@
     "openapi-fetch": "^0.15.0",
     "pinia": "^3.0.4",
     "polished": "^4.3.1",
-    "sass": "^1.94.1",
+    "sass": "^1.94.2",
     "vue": "latest",
     "vue-router": "latest",
-    "zod": "^4.1.12"
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@iconify/vue": "^5.0.0",

@@ -2,6 +2,7 @@
 
 use std::sync::Arc;
 
+use axum::Router;
 use utoipa::OpenApi;
 use utoipa_axum::{router::OpenApiRouter, routes};
 
@@ -62,10 +63,11 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
 
             let customized_api = ApiDoc::openapi().merge_from(auto_generated_api);
 
-            let app = router
+            let app = Router::new()
+                .nest("/api-gateway", router)
                 .merge(
-                    utoipa_swagger_ui::SwaggerUi::new("/api/v1/swagger-ui")
-                        .url("/api/v1/openapi.json", customized_api),
+                    utoipa_swagger_ui::SwaggerUi::new("/api-gateway/api/v1/swagger-ui")
+                        .url("/api-gateway/api/v1/openapi.json", customized_api),
                 )
                 .route(
                     "/api-gateway/api/health",

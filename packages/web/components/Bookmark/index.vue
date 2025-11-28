@@ -18,11 +18,11 @@
           :bookmarks="
             bookmarkStore.bookmarkListOriginal
               .filter(({ favorite }) => favorite)
-              .map(({ name, url, favicon, notionUrl, nsfw }) => ({
-                name,
-                href: url,
+              .map(({ name, url, favicon, notion_url, nsfw }) => ({
+                name: name ?? 'Untitled',
+                href: url ?? '',
                 favicon,
-                notionUrl,
+                notionUrl: notion_url,
                 nsfw,
               }))
           "
@@ -42,11 +42,11 @@
         <BookmarkList
           :bookmarks="
             bookmark.bookmarkList.map(
-              ({ name, url, favicon, notionUrl, nsfw }) => ({
-                name,
-                href: url,
+              ({ name, url, favicon, notion_url, nsfw }) => ({
+                name: name ?? 'Untitled',
+                href: url ?? '',
                 favicon,
-                notionUrl,
+                notionUrl: notion_url,
                 nsfw,
               })
             )
@@ -87,7 +87,7 @@ const handleEnter = () => {
       const firstBookmark = first.bookmarkList[0];
       if (firstBookmark != null) {
         const link = document.createElement("a");
-        link.href = firstBookmark.url;
+        link.href = firstBookmark.url!;
         link.rel = "noopener noreferrer";
         link.target = "_self";
         link.style.display = "none";

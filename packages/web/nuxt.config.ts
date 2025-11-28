@@ -4,15 +4,16 @@ import { fetchSSMParameter } from "./utils/fetchSsmParameter";
 const STAGE_NAME = process.env.STAGE_NAME ?? "dev";
 
 const USER_POOL_ID = await fetchSSMParameter(
-  `/${STAGE_NAME}/46ki75/internal/cognito/userpool/id`
+  `/${STAGE_NAME}/46ki75/internal/cognito/userpool/id`,
 );
 
 const USER_POOL_CLIENT_ID = await fetchSSMParameter(
-  `/${STAGE_NAME}/46ki75/internal/cognito/userpool/client/id`
+  `/${STAGE_NAME}/46ki75/internal/cognito/userpool/client/id`,
 );
 
-const ENDPOINT = `https://${STAGE_NAME === "prod" ? "internal" : STAGE_NAME + "-internal"
-  }.46ki75.com`;
+const ENDPOINT = `https://${
+  STAGE_NAME === "prod" ? "internal" : STAGE_NAME + "-internal"
+}.46ki75.com`;
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -25,14 +26,13 @@ export default defineNuxtConfig({
   vite: {
     server: {
       proxy: {
-        "/api/graphql": {
+        "/api": {
           target: `${ENDPOINT}`,
           changeOrigin: true,
         },
       },
     },
-    css: {
-    },
+    css: {},
   },
   modules: ["@pinia/nuxt"],
   runtimeConfig: {

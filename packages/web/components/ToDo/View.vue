@@ -51,7 +51,7 @@
 
         <td>
           <Icon
-            v-if="todo.isRecurring"
+            v-if="todo.is_recurring"
             class="recurring"
             icon="mdi:sync"
             color="#59b57c"
@@ -123,11 +123,10 @@ const colorMap: Record<
   (typeof todoStore)["toDoList"][number]["severity"],
   string
 > = {
-  UNKNOWN: "#868e9c",
-  INFO: "#59b57c",
-  WARN: "#cdb57b",
-  ERROR: "#c56565",
-  FATAL: "red",
+  Unknown: "#868e9c",
+  Info: "#59b57c",
+  Warn: "#cdb57b",
+  Error: "#c56565",
 };
 
 const handleCheck = async (id: string) => {

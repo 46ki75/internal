@@ -185,7 +185,9 @@ export interface operations {
                 page_size?: number;
                 next_cursor?: string;
             };
-            header?: never;
+            header: {
+                Authorization: string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -214,7 +216,9 @@ export interface operations {
     create_anki: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                Authorization: string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -247,7 +251,9 @@ export interface operations {
     block_list: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                Authorization: string;
+            };
             path: {
                 /** @description UUIDv4 */
                 page_id: string;
@@ -279,7 +285,9 @@ export interface operations {
     anki: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                Authorization: string;
+            };
             path: {
                 /** @description UUIDv4 */
                 page_id: string;
@@ -311,7 +319,9 @@ export interface operations {
     update_anki: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                Authorization: string;
+            };
             path: {
                 /** @description UUIDv4 */
                 page_id: string;
@@ -347,7 +357,9 @@ export interface operations {
     bookmark_list: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                Authorization: string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -376,7 +388,9 @@ export interface operations {
     create_bookmark: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                Authorization: string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -409,7 +423,9 @@ export interface operations {
     to_do_list: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                Authorization: string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -421,7 +437,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ToDoResponse"];
+                    "application/json": components["schemas"]["ToDoResponse"][];
                 };
             };
             /** @description Internal Server Error */
@@ -438,7 +454,9 @@ export interface operations {
     update_to_do: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                Authorization: string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -471,7 +489,9 @@ export interface operations {
     create_to_do: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                Authorization: string;
+            };
             path?: never;
             cookie?: never;
         };

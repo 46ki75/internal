@@ -8,6 +8,9 @@ use super::response::*;
 #[utoipa::path(
     get,
     path = "/api/v1/bookmark",
+    params(
+        ("Authorization" = String, Header),
+    ),
     responses(
         (status = 200, description = "Bookmarks", body = Vec<BookmarkResponse>),
         (status = 500, description = "Internal Server Error", body = String)
@@ -53,6 +56,9 @@ pub async fn bookmark_list(
 #[utoipa::path(
     post,
     path = "/api/v1/bookmark",
+    params(
+        ("Authorization" = String, Header),
+    ),
     request_body = CreateBookmarkRequestBody,
     responses(
         (status = 200, description = "Bookmark", body = BookmarkResponse),

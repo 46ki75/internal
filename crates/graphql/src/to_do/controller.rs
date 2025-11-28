@@ -6,8 +6,11 @@ use crate::to_do::response::ToDoResponse;
 #[utoipa::path(
     get,
     path = "/api/v1/to-do",
+    params(
+        ("Authorization" = String, Header),
+    ),
     responses(
-        (status = 200, description = "Bookmark", body = ToDoResponse),
+        (status = 200, description = "Bookmark", body = Vec<ToDoResponse>),
         (status = 500, description = "Internal Server Error", body = String)
     )
 )]
@@ -51,6 +54,9 @@ pub async fn to_do_list(
 #[utoipa::path(
     post, 
     path = "/api/v1/to-do",request_body = super::request::CreateToDoRequest,
+    params(
+        ("Authorization" = String, Header),
+    ),
     responses(
         (status = 200, description = "Bookmark", body = ToDoResponse),
         (status = 500, description = "Internal Server Error", body = String)
@@ -97,6 +103,9 @@ pub async fn create_to_do(
 #[utoipa::path(
     put, 
     path = "/api/v1/to-do",request_body = super::request::UpdateToDoInput,
+    params(
+        ("Authorization" = String, Header),
+    ),
     responses(
         (status = 200, description = "Bookmark", body = ToDoResponse),
         (status = 500, description = "Internal Server Error", body = String)

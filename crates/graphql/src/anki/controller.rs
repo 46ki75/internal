@@ -8,7 +8,8 @@ use http::header::CONTENT_TYPE;
     get,
     path = "/api/v1/anki/{page_id}",
     params(
-            ("page_id" = String, Path, description = "UUIDv4"),
+        ("Authorization" = String, Header),
+        ("page_id" = String, Path, description = "UUIDv4"),
     ),
     responses(
         (status = 200, description = "Anki", body = Vec<AnkiResponse>),
@@ -54,7 +55,10 @@ pub async fn anki(
 #[utoipa::path(
     get,
     path = "/api/v1/anki",
-    params(ListAnkiQueryParams),
+    params(
+        ("Authorization" = String, Header),
+        ListAnkiQueryParams
+    ),
     responses(
         (status = 200, description = "Anki", body = Vec<AnkiResponse>),
         (status = 500, description = "Internal Server Error", body = String)
@@ -106,7 +110,8 @@ pub async fn anki_list(
     get,
     path = "/api/v1/anki/block/{page_id}",
     params(
-            ("page_id" = String, Path, description = "UUIDv4"),
+        ("Authorization" = String, Header),
+        ("page_id" = String, Path, description = "UUIDv4"),
     ),
     responses(
         (status = 200, description = "Anki", body = AnkiBlockResponse),
@@ -152,6 +157,9 @@ pub async fn block_list(
 #[utoipa::path(
     post,
     path = "/api/v1/anki",
+    params(
+        ("Authorization" = String, Header),
+    ),
     request_body = CreateAnkiRequest,
     responses(
         (status = 200, description = "Anki", body = AnkiResponse),
@@ -199,7 +207,8 @@ pub async fn create_anki(
     path = "/api/v1/anki/{page_id}",
     request_body = UpdateAnkiRequest,
     params(
-            ("page_id" = String, Path, description = "UUIDv4"),
+        ("Authorization" = String, Header),
+        ("page_id" = String, Path, description = "UUIDv4"),
     ),
     responses(
         (status = 200, description = "Anki", body = AnkiResponse),

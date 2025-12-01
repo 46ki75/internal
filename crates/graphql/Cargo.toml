@@ -37,7 +37,7 @@ thiserror = "2.0.17"
 log = "0.4.28"
 env_logger = { version = "0.11.8" }
 aws-sdk-ssm = "1.100.0"
-tracing-subscriber = { version = "0.3.20", features = ["ansi"] }
+tracing-subscriber = { version = "0.3.22", features = ["ansi"] }
 tracing = "0.1.43"
 jarkup-rs = "0.5.1"
 time = { version = "0.3.44", features = ["parsing"] }

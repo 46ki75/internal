@@ -36,7 +36,7 @@ async-trait = "0.1.89"
 thiserror = "2.0.17"
 log = "0.4.29"
 env_logger = { version = "0.11.8" }
-aws-sdk-ssm = "1.100.0"
+aws-sdk-ssm = "1.101.0"
 tracing-subscriber = { version = "0.3.22", features = ["ansi"] }
 tracing = "0.1.43"
 jarkup-rs = "0.5.1"

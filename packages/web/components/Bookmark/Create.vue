@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmHeading, ElmButton, ElmTextField } from "@elmethis/core";
+import { ElmHeading, ElmButton, ElmTextField } from "@elmethis/vue";
 
 const bookmarkStore = useBookmarkStore();
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElmInlineText } from "@elmethis/core";
+import { ElmInlineText } from "@elmethis/vue";
 </script>
 
 <template>

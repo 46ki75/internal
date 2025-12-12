@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmButton, ElmInlineText, ElmTextField } from "@elmethis/core";
+import { ElmButton, ElmInlineText, ElmTextField } from "@elmethis/vue";
 import { Icon } from "@iconify/vue";
 
 const authStore = useAuthStore();

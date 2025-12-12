@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmLoginIcon, ElmToggleTheme, ElmSimpleTooltip } from "@elmethis/core";
+import { ElmLoginIcon, ElmToggleTheme, ElmSimpleTooltip } from "@elmethis/vue";
 import { Icon } from "@iconify/vue";
 
 const router = useRouter();

@@ -69,7 +69,7 @@ import {
   ElmHeading,
   ElmParagraph,
   ElmTextField,
-} from "@elmethis/core";
+} from "@elmethis/vue";
 import { useWindowFocus } from "@vueuse/core";
 
 import { BookmarkTag, BookmarkList } from "../../../components/src";

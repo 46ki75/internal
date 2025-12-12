@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmInlineText, ElmMdiIcon } from "@elmethis/core";
+import { ElmInlineText, ElmMdiIcon } from "@elmethis/vue";
 import { mdiKey } from "@mdi/js";
 
 interface ProfileWebAuthnProps {

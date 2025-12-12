@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmButton, ElmTextField } from "@elmethis/core";
+import { ElmButton, ElmTextField } from "@elmethis/vue";
 import TypingTable from "../../../components/src/components/typing/TypingTable.vue";
 
 const typingStore = useTypingStore();

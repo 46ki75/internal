@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmDotLoadingIcon, ElmInlineText } from "@elmethis/core";
+import { ElmDotLoadingIcon, ElmInlineText } from "@elmethis/vue";
 import { useWindowFocus } from "@vueuse/core";
 
 const router = useRouter();

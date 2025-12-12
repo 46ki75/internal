@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmBlockFallback, ElmInlineText, useTyping } from "@elmethis/core";
+import { ElmBlockFallback, ElmInlineText, useTyping } from "@elmethis/vue";
 import { onKeyStroke } from "@vueuse/core";
 import { shuffle } from "lodash-es";
 

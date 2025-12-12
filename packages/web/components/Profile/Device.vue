@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmInlineText, ElmMdiIcon } from "@elmethis/core";
+import { ElmInlineText, ElmMdiIcon } from "@elmethis/vue";
 import { mdiMonitor, mdiDevices, mdiAccountClock, mdiMapMarker } from "@mdi/js";
 
 const props = defineProps<{

@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmButton, ElmInlineText } from "@elmethis/core";
+import { ElmButton, ElmInlineText } from "@elmethis/vue";
 import { Icon } from "@iconify/vue";
 
 const ankiStore = useAnkiStore();

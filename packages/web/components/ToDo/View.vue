@@ -108,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmBlockFallback, ElmHeading, ElmInlineText } from "@elmethis/core";
+import { ElmBlockFallback, ElmHeading, ElmInlineText } from "@elmethis/vue";
 import { Icon } from "@iconify/vue";
 import { useWindowFocus } from "@vueuse/core";
 import { ToDoSeverity } from "../../../components/src";

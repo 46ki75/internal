@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmTextField, ElmButton } from "@elmethis/core";
+import { ElmTextField, ElmButton } from "@elmethis/vue";
 import { Icon } from "@iconify/vue";
 
 const title = ref<string | undefined>();

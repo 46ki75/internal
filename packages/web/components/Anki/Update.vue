@@ -59,7 +59,7 @@
 
 <script setup lang="ts">
 import { onKeyStroke } from "@vueuse/core";
-import { ElmButton, ElmBlockFallback } from "@elmethis/core";
+import { ElmButton, ElmBlockFallback } from "@elmethis/vue";
 
 const ankiStore = useAnkiStore();
 

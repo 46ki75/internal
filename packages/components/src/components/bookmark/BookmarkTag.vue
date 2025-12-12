@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmMdiIcon } from "@elmethis/core";
+import { ElmMdiIcon } from "@elmethis/vue";
 import { mdiBookmark } from "@mdi/js";
 
 export interface BookmarkTagProps {

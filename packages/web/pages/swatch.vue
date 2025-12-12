@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmColorSample, ElmColorTable, ElmInlineText } from "@elmethis/core";
+import { ElmColorSample, ElmColorTable, ElmInlineText } from "@elmethis/vue";
 import { hsl } from "polished";
 
 const mono = new Array(21).fill(null).map((_, i) => hsl(0, 0, 1 * 0.05 * i));

@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElmBlockFallback, ElmButton, ElmInlineText } from "@elmethis/core";
+import { ElmBlockFallback, ElmButton, ElmInlineText } from "@elmethis/vue";
 import { onKeyStroke } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
 

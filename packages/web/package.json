@@ -17,6 +17,7 @@
     "@com.46ki75/graphql": "^0.2.2",
     "@elmethis/vue": "0.2.0",
     "@pinia/nuxt": "0.11.3",
+    "@types/node": "^25.0.1",
     "@vueuse/core": "^14.1.0",
     "aws-amplify": "^6.15.9",
     "fuse.js": "^7.1.0",

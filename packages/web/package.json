@@ -29,7 +29,7 @@
     "sass": "^1.96.0",
     "vue": "latest",
     "vue-router": "latest",
-    "zod": "^4.2.0"
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@iconify/vue": "^5.0.0",

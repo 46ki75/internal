@@ -38,7 +38,7 @@ log = "0.4.29"
 env_logger = { version = "0.11.8" }
 aws-sdk-ssm = "1.101.0"
 tracing-subscriber = { version = "0.3.22", features = ["ansi"] }
-tracing = "0.1.43"
+tracing = "0.1.44"
 jarkup-rs = "0.6.0"
 time = { version = "0.3.44", features = ["parsing"] }
 bytes = "1.11.0"

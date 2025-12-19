@@ -14,7 +14,7 @@
     "@elmethis/vue": "0.2.0",
     "@mdi/js": "^7.4.47",
     "polished": "^4.3.1",
-    "vue": "^3.5.25"
+    "vue": "^3.5.26"
   },
   "devDependencies": {
     "@storybook/vue3-vite": "^10.1.10",

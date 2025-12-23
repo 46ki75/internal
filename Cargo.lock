@@ -1888,7 +1888,7 @@ dependencies = [
  "log",
  "notion-to-jarkup",
  "notionrs 0.7.0",
- "notionrs_types 0.4.1",
+ "notionrs_types 0.6.0",
  "regex",
  "reqwest",
  "serde",

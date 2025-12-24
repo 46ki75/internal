@@ -22,7 +22,7 @@ async-graphql = "7.0.17"
 chrono = "0.4.42"
 lambda_http = "1.0.2"
 notionrs = { version = "0.7.0", features = ["rustls-tls"] }
-notionrs_types = "0.4.1"
+notionrs_types = "0.6.0"
 notion-to-jarkup = "0.10.0"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.146"

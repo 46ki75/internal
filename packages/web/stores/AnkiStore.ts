@@ -227,6 +227,8 @@ export const useAnkiStore = defineStore("anki", {
 
         this.isShowAnswer = false;
         this.currentIndex += 1;
+
+        this.idempotentFetch();
       }
     },
 

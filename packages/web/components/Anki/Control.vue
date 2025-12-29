@@ -3,7 +3,6 @@
     <ElmButton
       @click="editAnki(ankiStore.getCurrentAnki?.url)"
       block
-      :loading="ankiStore.fetchAnkiListState.loading"
       :disabled="ankiStore.getCurrentAnki == null"
     >
       <Icon icon="mdi:file-document-edit-outline" class="icon" />
@@ -22,7 +21,6 @@
 
   <div class="button-container">
     <ElmButton
-      v-if="ankiStore.getCurrentAnki != null"
       @click="ankiStore.toggleCurrentAnkiReviewRequired()"
       block
       :loading="ankiStore.updateAnkiState.loading"
@@ -30,7 +28,7 @@
     >
       <Icon
         :icon="
-          ankiStore.getCurrentAnki.is_review_required
+          ankiStore.getCurrentAnki?.is_review_required
             ? 'mdi:check-circle-outline'
             : 'mdi:alert-octagram-outline'
         "
@@ -38,7 +36,7 @@
       />
       <ElmInlineText
         :text="
-          ankiStore.getCurrentAnki.is_review_required
+          ankiStore.getCurrentAnki?.is_review_required
             ? 'Mark this Anki card as Reviewed'
             : 'Mark this Anki card as Review Required'
         "

@@ -1,0 +1,16 @@
+{
+    "name": "Internal",
+    "short_name": "Internal",
+    "description": "A minimal PWA example",
+    "start_url": "/",
+    "display": "standalone",
+    "theme_color": "#000000",
+    "background_color": "#ffffff",
+    "icons": [
+        {
+            "src": "/favicon.svg",
+            "sizes": "512x512",
+            "type": "image/svg+xml"
+        }
+    ]
+}

@@ -136,7 +136,26 @@ export const useAnkiStore = defineStore("anki", {
     },
 
     async createAnki() {
-      // TODO: implement createAnki
+      this.createAnkiState.loading = true;
+      this.createAnkiState.error = null;
+
+      const authStore = useAuthStore();
+      await authStore.refreshIfNeed();
+
+      try {
+        await openApiClient.POST("/api/v1/anki", {
+          params: {
+            header: { Authorization: authStore.session.accessToken! },
+          },
+          body: {
+            title: undefined,
+          },
+        });
+      } catch (e: unknown) {
+        this.createAnkiState.error = String(e);
+      } finally {
+        this.createAnkiState.loading = false;
+      }
     },
 
     async updateAnki({
@@ -251,6 +270,8 @@ export const useAnkiStore = defineStore("anki", {
               is_review_required: currentAnki.is_review_required,
             },
           });
+
+          currentAnki.is_review_required = !currentAnki.is_review_required;
         } catch (e: unknown) {
           this.updateAnkiState.error = String(e);
         } finally {

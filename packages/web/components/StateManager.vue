@@ -13,6 +13,7 @@ import { useWindowFocus } from "@vueuse/core";
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
+const ankiStore = useAnkiStore();
 
 const timerId = ref<number | null>(null);
 
@@ -42,6 +43,7 @@ watch(focused, async () => {
 onMounted(async () => {
   await callback();
   timerId.value = window.setInterval(callback, 1000 * 60 * 5); // 5 minutes
+  ankiStore.idempotentFetch();
 });
 
 onUnmounted(() => {

@@ -251,6 +251,8 @@ export const useAnkiStore = defineStore("anki", {
               is_review_required: currentAnki.is_review_required,
             },
           });
+
+          currentAnki.is_review_required = !currentAnki.is_review_required;
         } catch (e: unknown) {
           this.updateAnkiState.error = String(e);
         } finally {

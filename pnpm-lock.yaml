@@ -54,8 +54,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       '@elmethis/vue':
-        specifier: 0.2.0
-        version: 0.2.0(vue@3.5.26(typescript@5.9.3))
+        specifier: 0.2.1
+        version: 0.2.1(vue@3.5.26(typescript@5.9.3))
       '@pinia/nuxt':
         specifier: 0.11.3
         version: 0.11.3(magicast@0.5.1)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.26(typescript@5.9.3)))
@@ -874,6 +874,11 @@ packages:
 
   '@elmethis/vue@0.2.0':
     resolution: {integrity: sha512-gHitKMX0VQBT0YImXjkCSAYgH337XiTJR0bYSMxTCFyV6lsLB4V57hCzGJfy/apr/DR1HAil9xoGEJBZmJossw==}
+    peerDependencies:
+      vue: ^3.4.0
+
+  '@elmethis/vue@0.2.1':
+    resolution: {integrity: sha512-spBIW5LGOqJiB7qBmolyCqgUsOBH2ITwBvzbX7zi6myNqtckGldLc7DKivQG7IPPXG+KUIswZaPsfwvwAC6mUg==}
     peerDependencies:
       vue: ^3.4.0
 
@@ -7354,6 +7359,21 @@ snapshots:
       '@vueuse/core': 14.1.0(vue@3.5.26(typescript@5.9.3))
       katex: 0.16.27
       lodash-es: 4.17.21
+      marked: 17.0.1
+      mermaid: 11.12.2
+      nanoid: 5.1.6
+      polished: 4.3.1
+      shiki: 3.20.0
+      vue: 3.5.26(typescript@5.9.3)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@elmethis/vue@0.2.1(vue@3.5.26(typescript@5.9.3))':
+    dependencies:
+      '@mdi/js': 7.4.47
+      '@vueuse/core': 14.1.0(vue@3.5.26(typescript@5.9.3))
+      katex: 0.16.27
+      lodash-es: 4.17.22
       marked: 17.0.1
       mermaid: 11.12.2
       nanoid: 5.1.6

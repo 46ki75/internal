@@ -143,7 +143,7 @@ export const useAnkiStore = defineStore("anki", {
       await authStore.refreshIfNeed();
 
       try {
-        await openApiClient.POST("/api/v1/anki", {
+        const { data } = await openApiClient.POST("/api/v1/anki", {
           params: {
             header: { Authorization: authStore.session.accessToken! },
           },
@@ -151,6 +151,10 @@ export const useAnkiStore = defineStore("anki", {
             title: undefined,
           },
         });
+
+        if (data?.url) {
+          window.location.assign(data.url.replace("https://", "notion://"));
+        }
       } catch (e: unknown) {
         this.createAnkiState.error = String(e);
       } finally {

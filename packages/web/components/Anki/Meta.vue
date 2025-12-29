@@ -4,9 +4,14 @@
     <ElmInlineText :text="`Should Learn: ${ankiStore.getShouldLearnCount}`" />
 
     <Icon icon="mdi:chart-bar-stacked" class="icon" height="1rem" />
-    <ElmInlineText :text="`Queue: ${ankiStore.ankiList.length}`" />
+    <ElmInlineText
+      :text="`Queue: ${ankiStore.fetchAnkiListState.results.length}`"
+    />
 
-    <span v-if="ankiStore.getCurrentAnki.isReviewRequired" class="review-label">
+    <span
+      v-if="ankiStore.getCurrentAnki?.is_review_required"
+      class="review-label"
+    >
       Review Required
     </span>
   </div>

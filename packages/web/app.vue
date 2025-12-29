@@ -13,18 +13,6 @@
   <StateManager />
 </template>
 
-<script setup lang="ts">
-useHead({
-  title: "Home",
-  link: [
-    {
-      rel: "icon",
-      href: "/favicon.svg",
-    },
-  ],
-});
-</script>
-
 <style lang="scss">
 @keyframes global-fade-in {
   from {

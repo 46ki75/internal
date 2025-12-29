@@ -2,12 +2,17 @@
   <div class="wrapper">
     <AnkiControl />
 
-    <ElmBlockFallback v-if="ankiStore.ankiList.length === 0" />
+    <ElmBlockFallback
+      v-if="ankiStore.fetchAnkiListState.results.length === 0"
+    />
     <template v-else>
       <AnkiMeta />
 
       <div>
-        <AnkiView />
+        <AnkiView v-if="ankiStore.getCurrnetAnkiBlocks != null" />
+        <div v-else class="justify-center">
+          <ElmSquareLoadingIcon />
+        </div>
       </div>
     </template>
 
@@ -27,25 +32,21 @@
 </template>
 
 <script setup lang="ts">
-import { ElmBlockFallback, ElmButton, ElmInlineText } from "@elmethis/vue";
+import {
+  ElmBlockFallback,
+  ElmButton,
+  ElmDotLoadingIcon,
+  ElmInlineText,
+  ElmSquareLoadingIcon,
+} from "@elmethis/vue";
 import { onKeyStroke } from "@vueuse/core";
 import { Icon } from "@iconify/vue";
 
-const router = useRouter();
 const ankiStore = useAnkiStore();
 
 onMounted(async () => {
-  if (ankiStore.ankiList.length === 0) {
-    await ankiStore.init();
-  }
+  await ankiStore.idempotentFetch();
 });
-
-watch(
-  () => ankiStore.getCurrentAnki?.pageId,
-  () => {
-    router.push({ hash: "#button-container" });
-  }
-);
 
 onKeyStroke(["Enter", " "], (e) => {
   e.preventDefault();
@@ -73,5 +74,12 @@ onKeyStroke(["Enter", " "], (e) => {
   [data-theme="dark"] & {
     background-color: rgba(#262626, 0.9);
   }
+}
+
+.justify-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 8rem;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <template v-if="ankiStore.getCurrentAnki?.blockList != null">
+  <template v-if="ankiStore.getCurrnetAnkiBlocks != null">
     <div class="card">
       <div class="card-header">
         <Icon class="icon" icon="mdi:tooltip-question-outline" />
@@ -7,8 +7,8 @@
       </div>
       <div class="card-body">
         <ElmJsonComponentRenderer
-          :key="`${ankiStore.getCurrentAnki.pageId}:front`"
-          :json-components="ankiStore.getCurrentAnki.blockList.front"
+          :key="`${ankiStore.getCurrentAnki?.page_id}:front`"
+          :json-components="ankiStore.getCurrnetAnkiBlocks.front"
         />
       </div>
     </div>
@@ -21,8 +21,8 @@
         </div>
         <div class="card-body">
           <ElmJsonComponentRenderer
-            :key="`${ankiStore.getCurrentAnki.pageId}:back`"
-            :json-components="ankiStore.getCurrentAnki.blockList.back"
+            :key="`${ankiStore.getCurrentAnki?.page_id}:back`"
+            :json-components="ankiStore.getCurrnetAnkiBlocks.back"
           />
         </div>
       </div>
@@ -34,8 +34,8 @@
         </div>
         <div class="card-body">
           <ElmJsonComponentRenderer
-            :key="`${ankiStore.getCurrentAnki.pageId}:explanation`"
-            :json-components="ankiStore.getCurrentAnki.blockList.explanation"
+            :key="`${ankiStore.getCurrentAnki?.page_id}:explanation`"
+            :json-components="ankiStore.getCurrnetAnkiBlocks.explanation"
           />
         </div>
       </div>

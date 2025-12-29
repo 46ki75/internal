@@ -4,11 +4,11 @@ import { fetchSSMParameter } from "./utils/fetchSsmParameter";
 const STAGE_NAME = process.env.STAGE_NAME ?? "dev";
 
 const USER_POOL_ID = await fetchSSMParameter(
-  `/${STAGE_NAME}/46ki75/internal/cognito/userpool/id`,
+  `/${STAGE_NAME}/46ki75/internal/cognito/userpool/id`
 );
 
 const USER_POOL_CLIENT_ID = await fetchSSMParameter(
-  `/${STAGE_NAME}/46ki75/internal/cognito/userpool/client/id`,
+  `/${STAGE_NAME}/46ki75/internal/cognito/userpool/client/id`
 );
 
 const ENDPOINT = `https://${
@@ -48,6 +48,21 @@ export default defineNuxtConfig({
       "postcss-preset-env": {
         stage: 3,
       },
+    },
+  },
+  app: {
+    head: {
+      title: "Home",
+      link: [
+        {
+          rel: "icon",
+          href: "/favicon.svg",
+        },
+        {
+          rel: "manifest",
+          href: "/manifest.json",
+        },
+      ],
     },
   },
 });

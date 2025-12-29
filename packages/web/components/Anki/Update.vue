@@ -1,11 +1,11 @@
 <template>
   <div>
-    <ElmBlockFallback v-if="ankiStore.updateLoading" />
+    <ElmBlockFallback v-if="ankiStore.updateAnkiState.loading" />
 
     <div v-else class="update-button">
       <ElmButton
         @click="ankiStore.updateAnkiByPerformanceRating(0)"
-        :loading="ankiStore.updateLoading"
+        :loading="ankiStore.updateAnkiState.loading"
         block
       >
         <span>× FORGETFUL [Q]</span>
@@ -13,7 +13,7 @@
 
       <ElmButton
         @click="ankiStore.updateAnkiByPerformanceRating(1)"
-        :loading="ankiStore.updateLoading"
+        :loading="ankiStore.updateAnkiState.loading"
         block
       >
         <span>× INCORRECT [W]</span>
@@ -21,7 +21,7 @@
 
       <ElmButton
         @click="ankiStore.updateAnkiByPerformanceRating(2)"
-        :loading="ankiStore.updateLoading"
+        :loading="ankiStore.updateAnkiState.loading"
         block
       >
         <span>× ALMOST [E]</span>
@@ -29,7 +29,7 @@
 
       <ElmButton
         @click="ankiStore.updateAnkiByPerformanceRating(3)"
-        :loading="ankiStore.updateLoading"
+        :loading="ankiStore.updateAnkiState.loading"
         block
         primary
       >
@@ -38,7 +38,7 @@
 
       <ElmButton
         @click="ankiStore.updateAnkiByPerformanceRating(4)"
-        :loading="ankiStore.updateLoading"
+        :loading="ankiStore.updateAnkiState.loading"
         block
         primary
       >
@@ -47,7 +47,7 @@
 
       <ElmButton
         @click="ankiStore.updateAnkiByPerformanceRating(5)"
-        :loading="ankiStore.updateLoading"
+        :loading="ankiStore.updateAnkiState.loading"
         block
         primary
       >

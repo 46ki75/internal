@@ -1,18 +1,19 @@
 <template>
   <div class="button-container" id="button-container">
     <ElmButton
-      @click="ankiStore.editCurrentAnki()"
+      @click="editAnki(ankiStore.getCurrentAnki?.url)"
       block
-      :loading="ankiStore.ankiList.length === 0"
+      :loading="ankiStore.fetchAnkiListState.loading"
+      :disabled="ankiStore.getCurrentAnki == null"
     >
       <Icon icon="mdi:file-document-edit-outline" class="icon" />
       <ElmInlineText text="Edit" />
     </ElmButton>
 
     <ElmButton
-      @click="ankiStore.create()"
+      @click="ankiStore.createAnki()"
       block
-      :loading="ankiStore.createState.loading"
+      :loading="ankiStore.createAnkiState.loading"
     >
       <Icon icon="mdi:sparkles-outline" class="icon" />
       <ElmInlineText text="NEW" />
@@ -24,11 +25,12 @@
       v-if="ankiStore.getCurrentAnki != null"
       @click="ankiStore.toggleCurrentAnkiReviewRequired()"
       block
-      :loading="ankiStore.markAnkiAsReviewRequiredState.loading"
+      :loading="ankiStore.updateAnkiState.loading"
+      :disabled="ankiStore.getCurrentAnki == null"
     >
       <Icon
         :icon="
-          ankiStore.getCurrentAnki.isReviewRequired
+          ankiStore.getCurrentAnki.is_review_required
             ? 'mdi:check-circle-outline'
             : 'mdi:alert-octagram-outline'
         "
@@ -36,7 +38,7 @@
       />
       <ElmInlineText
         :text="
-          ankiStore.getCurrentAnki.isReviewRequired
+          ankiStore.getCurrentAnki.is_review_required
             ? 'Mark this Anki card as Reviewed'
             : 'Mark this Anki card as Review Required'
         "
@@ -50,6 +52,10 @@ import { ElmButton, ElmInlineText } from "@elmethis/vue";
 import { Icon } from "@iconify/vue";
 
 const ankiStore = useAnkiStore();
+
+const editAnki = (url?: string) => {
+  if (url) window.location.assign(url.replace("https://", "notion://"));
+};
 </script>
 
 <style scoped lang="scss">

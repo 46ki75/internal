@@ -13,7 +13,7 @@
       </div>
     </div>
 
-    <template v-if="ankiStore.isShowAnswer">
+    <template v-show="ankiStore.isShowAnswer">
       <div class="card">
         <div class="card-header">
           <Icon class="icon" icon="mdi:question-answer" />

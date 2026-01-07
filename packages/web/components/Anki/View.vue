@@ -13,33 +13,31 @@
       </div>
     </div>
 
-    <template v-show="ankiStore.isShowAnswer">
-      <div class="card">
-        <div class="card-header">
-          <Icon class="icon" icon="mdi:question-answer" />
-          <ElmInlineText bold text="BACK" id="back" />
-        </div>
-        <div class="card-body">
-          <ElmJsonComponentRenderer
-            :key="`${ankiStore.getCurrentAnki?.page_id}:back`"
-            :json-components="ankiStore.getCurrnetAnkiBlocks.back"
-          />
-        </div>
+    <div v-show="ankiStore.isShowAnswer" class="card">
+      <div class="card-header">
+        <Icon class="icon" icon="mdi:question-answer" />
+        <ElmInlineText bold text="BACK" id="back" />
       </div>
+      <div class="card-body">
+        <ElmJsonComponentRenderer
+          :key="`${ankiStore.getCurrentAnki?.page_id}:back`"
+          :json-components="ankiStore.getCurrnetAnkiBlocks.back"
+        />
+      </div>
+    </div>
 
-      <div class="card">
-        <div class="card-header">
-          <Icon class="icon" icon="mdi:bookshelf" />
-          <ElmInlineText bold text="EXPLANATION" id="explanation" />
-        </div>
-        <div class="card-body">
-          <ElmJsonComponentRenderer
-            :key="`${ankiStore.getCurrentAnki?.page_id}:explanation`"
-            :json-components="ankiStore.getCurrnetAnkiBlocks.explanation"
-          />
-        </div>
+    <div v-show="ankiStore.isShowAnswer" class="card">
+      <div class="card-header">
+        <Icon class="icon" icon="mdi:bookshelf" />
+        <ElmInlineText bold text="EXPLANATION" id="explanation" />
       </div>
-    </template>
+      <div class="card-body">
+        <ElmJsonComponentRenderer
+          :key="`${ankiStore.getCurrentAnki?.page_id}:explanation`"
+          :json-components="ankiStore.getCurrnetAnkiBlocks.explanation"
+        />
+      </div>
+    </div>
   </template>
 </template>
 

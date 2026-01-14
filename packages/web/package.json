@@ -35,6 +35,6 @@
     "@iconify/vue": "^5.0.0",
     "@types/lodash-es": "^4.17.12",
     "openapi-typescript": "^7.10.1",
-    "postcss-preset-env": "^10.6.1"
+    "postcss-preset-env": "^11.0.1"
   }
 }

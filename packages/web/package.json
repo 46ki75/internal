@@ -22,7 +22,7 @@
     "aws-amplify": "^6.16.0",
     "fuse.js": "^7.1.0",
     "lodash-es": "^4.17.23",
-    "nuxt": "^4.2.2",
+    "nuxt": "^4.3.0",
     "openapi-fetch": "^0.15.0",
     "pinia": "^3.0.4",
     "polished": "^4.3.1",

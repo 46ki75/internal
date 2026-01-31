@@ -11,8 +11,8 @@ importers:
   packages/components:
     dependencies:
       '@elmethis/vue':
-        specifier: 0.2.9
-        version: 0.2.9(vue@3.5.27(typescript@5.9.3))
+        specifier: 0.2.10
+        version: 0.2.10(vue@3.5.27(typescript@5.9.3))
       '@mdi/js':
         specifier: ^7.4.47
         version: 7.4.47
@@ -54,8 +54,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       '@elmethis/vue':
-        specifier: 0.2.9
-        version: 0.2.9(vue@3.5.27(typescript@5.9.3))
+        specifier: 0.2.10
+        version: 0.2.10(vue@3.5.27(typescript@5.9.3))
       '@pinia/nuxt':
         specifier: 0.11.3
         version: 0.11.3(magicast@0.5.1)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.27(typescript@5.9.3)))
@@ -891,8 +891,8 @@ packages:
   '@dxup/unimport@0.1.2':
     resolution: {integrity: sha512-/B8YJGPzaYq1NbsQmwgP8EZqg40NpTw4ZB3suuI0TplbxKHeK94jeaawLmVhCv+YwUnOpiWEz9U6SeThku/8JQ==}
 
-  '@elmethis/vue@0.2.9':
-    resolution: {integrity: sha512-sH/3WCIsxzSLkopuRFoVa0iwvJ9s/mYeuaJ1IqF+7STXEsOK/YJnamp4Cb9rRufFH0Rto+Gb6QAkwQw8TJycUA==}
+  '@elmethis/vue@0.2.10':
+    resolution: {integrity: sha512-9bJbzU7K3olZo/6T/SKRk5Ft67DzsTGNB2Hvgg2KmUP/hktXIoCLT9UZYUafHJ2R9MsL45ADVPB/aFAxlF9qUQ==}
     peerDependencies:
       vue: ^3.4.0
 
@@ -3994,8 +3994,8 @@ packages:
   jstransformer@1.0.0:
     resolution: {integrity: sha512-C9YK3Rf8q6VAPDCCU9fnqo3mAfOH6vUGnMcP4AQAYIEpWtfGLpwOTmZ+igtdK5y+VvI2n3CyYSzy4Qh34eq24A==}
 
-  katex@0.16.27:
-    resolution: {integrity: sha512-aeQoDkuRWSqQN6nSvVCEFvfXdqo1OQiCmmW1kc9xSdjutPv7BGO7pqY9sQRJpMOGrEdfDgF2TfRXe5eUAD2Waw==}
+  katex@0.16.28:
+    resolution: {integrity: sha512-YHzO7721WbmAL6Ov1uzN/l5mY5WWWhJBSW+jq4tkfZfsxmo1hu6frS0EOswvjBUnWE6NtjEs48SFn5CQESRLZg==}
     hasBin: true
 
   khroma@2.1.0:
@@ -4047,9 +4047,6 @@ packages:
 
   lodash-es@4.17.21:
     resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
-
-  lodash-es@4.17.22:
-    resolution: {integrity: sha512-XEawp1t0gxSi9x01glktRZ5HDy0HXqrM0x5pXQM98EaI0NxO6jVM7omDOxsuEo5UIASAnm2bRp1Jt/e0a2XU8Q==}
 
   lodash-es@4.17.23:
     resolution: {integrity: sha512-kVI48u3PZr38HdYz98UmfPnXl2DXrpdctLrFLCd3kOx1xUkOmpFPx7gCWWM5MPkL/fD8zb+Ph0QzjGFs4+hHWg==}
@@ -7265,13 +7262,13 @@ snapshots:
 
   '@dxup/unimport@0.1.2': {}
 
-  '@elmethis/vue@0.2.9(vue@3.5.27(typescript@5.9.3))':
+  '@elmethis/vue@0.2.10(vue@3.5.27(typescript@5.9.3))':
     dependencies:
       '@mdi/js': 7.4.47
       '@vueuse/core': 14.1.0(vue@3.5.27(typescript@5.9.3))
       fuse.js: 7.1.0
-      katex: 0.16.27
-      lodash-es: 4.17.22
+      katex: 0.16.28
+      lodash-es: 4.17.23
       marked: 17.0.1
       mermaid: 11.12.2
       nanoid: 5.1.6
@@ -10524,7 +10521,7 @@ snapshots:
       is-promise: 2.2.2
       promise: 7.3.1
 
-  katex@0.16.27:
+  katex@0.16.28:
     dependencies:
       commander: 8.3.0
 
@@ -10589,8 +10586,6 @@ snapshots:
       quansync: 0.2.11
 
   lodash-es@4.17.21: {}
-
-  lodash-es@4.17.22: {}
 
   lodash-es@4.17.23: {}
 
@@ -10682,7 +10677,7 @@ snapshots:
       dagre-d3-es: 7.0.13
       dayjs: 1.11.19
       dompurify: 3.3.1
-      katex: 0.16.27
+      katex: 0.16.28
       khroma: 2.1.0
       lodash-es: 4.17.23
       marked: 16.4.2

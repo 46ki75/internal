@@ -24,8 +24,8 @@ importers:
         version: 3.5.27(typescript@5.9.3)
     devDependencies:
       '@storybook/vue3-vite':
-        specifier: ^10.2.3
-        version: 10.2.3(esbuild@0.27.2)(rollup@4.56.0)(storybook@10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vite@7.3.1(@types/node@25.1.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))(vue@3.5.27(typescript@5.9.3))
+        specifier: ^10.2.4
+        version: 10.2.4(esbuild@0.27.2)(rollup@4.56.0)(storybook@10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vite@7.3.1(@types/node@25.1.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))(vue@3.5.27(typescript@5.9.3))
       '@vitejs/plugin-vue':
         specifier: ^6.0.3
         version: 6.0.3(vite@7.3.1(@types/node@25.1.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))(vue@3.5.27(typescript@5.9.3))
@@ -499,6 +499,11 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
 
+  '@babel/parser@7.29.0':
+    resolution: {integrity: sha512-IyDgFV5GeDUVX4YdF/3CPULtVGSXXMLh1xVIgdCgxApktqnQV0r7/8Nqthg+8YLGaAtdyIlo2qIdZrbCv4+7ww==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+
   '@babel/plugin-syntax-jsx@7.28.6':
     resolution: {integrity: sha512-wgEmr06G6sIpqr8YDwA2dSRTE3bJ+V0IfpzfSY3Lfgd7YWOaAdlykvJi13ZKBt8cZHfgH1IXN+CL656W3uUa4w==}
     engines: {node: '>=6.9.0'}
@@ -535,6 +540,10 @@ packages:
 
   '@babel/types@7.28.6':
     resolution: {integrity: sha512-0ZrskXVEHSWIqZM/sQZ4EV3jZJXRkio/WCxaqKZP1g//CEWEPSfeZFcms4XeKBCHU0ZKnIkdJeU/kF+eRp5lBg==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/types@7.29.0':
+    resolution: {integrity: sha512-LwdZHpScM4Qz8Xw2iKSzS+cfglZzJGvofQICy7W7v4caru4EaAmyUuO6BGrbyQ2mYV11W0U8j5mBhd14dd3B0A==}
     engines: {node: '>=6.9.0'}
 
   '@bomb.sh/tab@0.0.11':
@@ -2363,18 +2372,18 @@ packages:
   '@speed-highlight/core@1.2.14':
     resolution: {integrity: sha512-G4ewlBNhUtlLvrJTb88d2mdy2KRijzs4UhnlrOSRT4bmjh/IqNElZa3zkrZ+TC47TwtlDWzVLFADljF1Ijp5hA==}
 
-  '@storybook/builder-vite@10.2.3':
-    resolution: {integrity: sha512-sKSccERL23gqC+nkTD+4io3ZF8vvNXkNiSi16X6BC29sGsbgWohw3Nv6tIGwVkIlQh0b1z24EQgXYWbdqivHGw==}
+  '@storybook/builder-vite@10.2.4':
+    resolution: {integrity: sha512-/hcT1xj3CL5GkJ5v5/EguZdttDwNE6weNXK7vKzp034tnGcLycOossDsTiUQkBowSL+Ylc8aKj+ZgvddPNfOig==}
     peerDependencies:
-      storybook: ^10.2.3
+      storybook: ^10.2.4
       vite: ^5.0.0 || ^6.0.0 || ^7.0.0
 
-  '@storybook/csf-plugin@10.2.3':
-    resolution: {integrity: sha512-/b/C8C40ukzXs3Xauud2+yOJqwBdOkADfRtJ9O4TzrhftzkEdqsNI03xXZySeh7eXW8eI3Vq4t75Ljuj27Xytw==}
+  '@storybook/csf-plugin@10.2.4':
+    resolution: {integrity: sha512-kupPQEV+4N9mzsZHYaokvhO/KHBjYdWda9PNmPQwy0TR7r2mzthgaNH72TjmgN1L6DIbsuyOG1wtczcPJn4+Jg==}
     peerDependencies:
       esbuild: '*'
       rollup: '*'
-      storybook: ^10.2.3
+      storybook: ^10.2.4
       vite: '*'
       webpack: '*'
     peerDependenciesMeta:
@@ -2396,16 +2405,16 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  '@storybook/vue3-vite@10.2.3':
-    resolution: {integrity: sha512-4yBAWjQVrZ4SeJRVebFiJ70UMZHIKxTChUy64MX8Z3mM7H56j0JZbwdFaQg79do3SiyYNJTPQypWGTK3xvHEsQ==}
+  '@storybook/vue3-vite@10.2.4':
+    resolution: {integrity: sha512-RvmD+fGOdnH60xaPNIeQdFTtlVyEP/IMOBolwnm6i/roOKpcAVeCrO8+Tufl5a+9d3zvDc0zJWzsqd06ecuvhQ==}
     peerDependencies:
-      storybook: ^10.2.3
+      storybook: ^10.2.4
       vite: ^5.0.0 || ^6.0.0 || ^7.0.0
 
-  '@storybook/vue3@10.2.3':
-    resolution: {integrity: sha512-u1bw7/3oEKxE4gcNHCN1JpqEHFXJQrwYm1XgSVKbGV862ZCNfscRKgZZxPRqL/IQg2iTY60Kpz9rPfZnr8M+dA==}
+  '@storybook/vue3@10.2.4':
+    resolution: {integrity: sha512-eP9ay27+8ZGn8S9TH2FIgPR62gWsJXHnIquvhyaaXHrcQgs5LJz7jno9jyLIvlwkzc6vRR9nuDHVBw1gvmOzLQ==}
     peerDependencies:
-      storybook: ^10.2.3
+      storybook: ^10.2.4
       vue: ^3.0.0
 
   '@testing-library/dom@10.4.1':
@@ -5309,8 +5318,8 @@ packages:
     resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
     engines: {node: '>=16'}
 
-  type-fest@5.4.2:
-    resolution: {integrity: sha512-FLEenlVYf7Zcd34ISMLo3ZzRE1gRjY1nMDTp+bQRBiPsaKyIW8K3Zr99ioHDUgA9OGuGGJPyYpNcffGmBhJfGg==}
+  type-fest@5.4.3:
+    resolution: {integrity: sha512-AXSAQJu79WGc79/3e9/CR77I/KQgeY1AhNvcShIH4PTcGYyC4xv6H4R4AUOwkPS5799KlVDAu8zExeCrkGquiA==}
     engines: {node: '>=20'}
 
   type-level-regexp@0.1.17:
@@ -6755,10 +6764,10 @@ snapshots:
       '@babel/helper-compilation-targets': 7.28.6
       '@babel/helper-module-transforms': 7.28.6(@babel/core@7.28.6)
       '@babel/helpers': 7.28.6
-      '@babel/parser': 7.28.6
+      '@babel/parser': 7.29.0
       '@babel/template': 7.28.6
       '@babel/traverse': 7.28.6
-      '@babel/types': 7.28.6
+      '@babel/types': 7.29.0
       '@jridgewell/remapping': 2.3.5
       convert-source-map: 2.0.0
       debug: 4.4.3(supports-color@10.2.2)
@@ -6778,7 +6787,7 @@ snapshots:
 
   '@babel/helper-annotate-as-pure@7.27.3':
     dependencies:
-      '@babel/types': 7.28.6
+      '@babel/types': 7.29.0
 
   '@babel/helper-compilation-targets@7.28.6':
     dependencies:
@@ -6806,14 +6815,14 @@ snapshots:
   '@babel/helper-member-expression-to-functions@7.28.5':
     dependencies:
       '@babel/traverse': 7.28.6
-      '@babel/types': 7.28.6
+      '@babel/types': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
   '@babel/helper-module-imports@7.28.6':
     dependencies:
       '@babel/traverse': 7.28.6
-      '@babel/types': 7.28.6
+      '@babel/types': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
@@ -6828,7 +6837,7 @@ snapshots:
 
   '@babel/helper-optimise-call-expression@7.27.1':
     dependencies:
-      '@babel/types': 7.28.6
+      '@babel/types': 7.29.0
 
   '@babel/helper-plugin-utils@7.28.6': {}
 
@@ -6844,7 +6853,7 @@ snapshots:
   '@babel/helper-skip-transparent-expression-wrappers@7.27.1':
     dependencies:
       '@babel/traverse': 7.28.6
-      '@babel/types': 7.28.6
+      '@babel/types': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
@@ -6857,11 +6866,15 @@ snapshots:
   '@babel/helpers@7.28.6':
     dependencies:
       '@babel/template': 7.28.6
-      '@babel/types': 7.28.6
+      '@babel/types': 7.29.0
 
   '@babel/parser@7.28.6':
     dependencies:
-      '@babel/types': 7.28.6
+      '@babel/types': 7.29.0
+
+  '@babel/parser@7.29.0':
+    dependencies:
+      '@babel/types': 7.29.0
 
   '@babel/plugin-syntax-jsx@7.28.6(@babel/core@7.28.6)':
     dependencies:
@@ -6891,22 +6904,27 @@ snapshots:
   '@babel/template@7.28.6':
     dependencies:
       '@babel/code-frame': 7.28.6
-      '@babel/parser': 7.28.6
-      '@babel/types': 7.28.6
+      '@babel/parser': 7.29.0
+      '@babel/types': 7.29.0
 
   '@babel/traverse@7.28.6':
     dependencies:
       '@babel/code-frame': 7.28.6
       '@babel/generator': 7.28.6
       '@babel/helper-globals': 7.28.0
-      '@babel/parser': 7.28.6
+      '@babel/parser': 7.29.0
       '@babel/template': 7.28.6
-      '@babel/types': 7.28.6
+      '@babel/types': 7.29.0
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
   '@babel/types@7.28.6':
+    dependencies:
+      '@babel/helper-string-parser': 7.27.1
+      '@babel/helper-validator-identifier': 7.28.5
+
+  '@babel/types@7.29.0':
     dependencies:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
@@ -8782,9 +8800,9 @@ snapshots:
 
   '@speed-highlight/core@1.2.14': {}
 
-  '@storybook/builder-vite@10.2.3(esbuild@0.27.2)(rollup@4.56.0)(storybook@10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vite@7.3.1(@types/node@25.1.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))':
+  '@storybook/builder-vite@10.2.4(esbuild@0.27.2)(rollup@4.56.0)(storybook@10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vite@7.3.1(@types/node@25.1.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))':
     dependencies:
-      '@storybook/csf-plugin': 10.2.3(esbuild@0.27.2)(rollup@4.56.0)(storybook@10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vite@7.3.1(@types/node@25.1.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))
+      '@storybook/csf-plugin': 10.2.4(esbuild@0.27.2)(rollup@4.56.0)(storybook@10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vite@7.3.1(@types/node@25.1.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))
       storybook: 10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       ts-dedent: 2.2.0
       vite: 7.3.1(@types/node@25.1.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2)
@@ -8793,7 +8811,7 @@ snapshots:
       - rollup
       - webpack
 
-  '@storybook/csf-plugin@10.2.3(esbuild@0.27.2)(rollup@4.56.0)(storybook@10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vite@7.3.1(@types/node@25.1.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))':
+  '@storybook/csf-plugin@10.2.4(esbuild@0.27.2)(rollup@4.56.0)(storybook@10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vite@7.3.1(@types/node@25.1.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))':
     dependencies:
       storybook: 10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       unplugin: 2.3.11
@@ -8809,10 +8827,10 @@ snapshots:
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
 
-  '@storybook/vue3-vite@10.2.3(esbuild@0.27.2)(rollup@4.56.0)(storybook@10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vite@7.3.1(@types/node@25.1.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))(vue@3.5.27(typescript@5.9.3))':
+  '@storybook/vue3-vite@10.2.4(esbuild@0.27.2)(rollup@4.56.0)(storybook@10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vite@7.3.1(@types/node@25.1.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))(vue@3.5.27(typescript@5.9.3))':
     dependencies:
-      '@storybook/builder-vite': 10.2.3(esbuild@0.27.2)(rollup@4.56.0)(storybook@10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vite@7.3.1(@types/node@25.1.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))
-      '@storybook/vue3': 10.2.3(storybook@10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vue@3.5.27(typescript@5.9.3))
+      '@storybook/builder-vite': 10.2.4(esbuild@0.27.2)(rollup@4.56.0)(storybook@10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vite@7.3.1(@types/node@25.1.0)(jiti@2.6.1)(sass@1.97.3)(terser@5.46.0)(yaml@2.8.2))
+      '@storybook/vue3': 10.2.4(storybook@10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vue@3.5.27(typescript@5.9.3))
       magic-string: 0.30.21
       storybook: 10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       typescript: 5.9.3
@@ -8825,7 +8843,7 @@ snapshots:
       - vue
       - webpack
 
-  '@storybook/vue3@10.2.3(storybook@10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vue@3.5.27(typescript@5.9.3))':
+  '@storybook/vue3@10.2.4(storybook@10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vue@3.5.27(typescript@5.9.3))':
     dependencies:
       '@storybook/global': 5.0.0
       storybook: 10.2.3(@testing-library/dom@10.4.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -9139,7 +9157,7 @@ snapshots:
       '@babel/plugin-syntax-jsx': 7.28.6(@babel/core@7.28.6)
       '@babel/template': 7.28.6
       '@babel/traverse': 7.28.6
-      '@babel/types': 7.28.6
+      '@babel/types': 7.29.0
       '@vue/babel-helper-vue-transform-on': 2.0.1
       '@vue/babel-plugin-resolve-type': 2.0.1(@babel/core@7.28.6)
       '@vue/shared': 3.5.27
@@ -9154,14 +9172,14 @@ snapshots:
       '@babel/core': 7.28.6
       '@babel/helper-module-imports': 7.28.6
       '@babel/helper-plugin-utils': 7.28.6
-      '@babel/parser': 7.28.6
+      '@babel/parser': 7.29.0
       '@vue/compiler-sfc': 3.5.27
     transitivePeerDependencies:
       - supports-color
 
   '@vue/compiler-core@3.5.27':
     dependencies:
-      '@babel/parser': 7.28.6
+      '@babel/parser': 7.29.0
       '@vue/shared': 3.5.27
       entities: 7.0.0
       estree-walker: 2.0.2
@@ -9389,7 +9407,7 @@ snapshots:
 
   ast-kit@2.2.0:
     dependencies:
-      '@babel/parser': 7.28.6
+      '@babel/parser': 7.29.0
       pathe: 2.0.3
 
   ast-types@0.16.1:
@@ -9432,7 +9450,7 @@ snapshots:
 
   babel-walk@3.0.0-canary-5:
     dependencies:
-      '@babel/types': 7.28.6
+      '@babel/types': 7.29.0
 
   balanced-match@1.0.2: {}
 
@@ -9631,8 +9649,8 @@ snapshots:
 
   constantinople@4.0.1:
     dependencies:
-      '@babel/parser': 7.28.6
-      '@babel/types': 7.28.6
+      '@babel/parser': 7.29.0
+      '@babel/types': 7.29.0
 
   convert-source-map@2.0.0: {}
 
@@ -10038,7 +10056,7 @@ snapshots:
 
   dot-prop@10.1.0:
     dependencies:
-      type-fest: 5.4.2
+      type-fest: 5.4.3
 
   dotenv@16.6.1: {}
 
@@ -10650,8 +10668,8 @@ snapshots:
 
   magicast@0.5.1:
     dependencies:
-      '@babel/parser': 7.28.6
-      '@babel/types': 7.28.6
+      '@babel/parser': 7.29.0
+      '@babel/types': 7.29.0
       source-map-js: 1.2.1
 
   marked@16.4.2: {}
@@ -12241,7 +12259,7 @@ snapshots:
 
   type-fest@4.41.0: {}
 
-  type-fest@5.4.2:
+  type-fest@5.4.3:
     dependencies:
       tagged-tag: 1.0.0
 
@@ -12559,8 +12577,8 @@ snapshots:
 
   vue-docgen-api@4.79.2(vue@3.5.27(typescript@5.9.3)):
     dependencies:
-      '@babel/parser': 7.28.6
-      '@babel/types': 7.28.6
+      '@babel/parser': 7.29.0
+      '@babel/types': 7.29.0
       '@vue/compiler-dom': 3.5.27
       '@vue/compiler-sfc': 3.5.27
       ast-types: 0.16.1
@@ -12641,8 +12659,8 @@ snapshots:
 
   with@7.0.2:
     dependencies:
-      '@babel/parser': 7.28.6
-      '@babel/types': 7.28.6
+      '@babel/parser': 7.29.0
+      '@babel/types': 7.29.0
       assert-never: 1.4.0
       babel-walk: 3.0.0-canary-5
 

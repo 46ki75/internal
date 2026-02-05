@@ -40,7 +40,7 @@ aws-sdk-ssm = "1.103.0"
 tracing-subscriber = { version = "0.3.22", features = ["ansi"] }
 tracing = "0.1.44"
 jarkup-rs = "0.6.0"
-time = { version = "0.3.46", features = ["parsing"] }
+time = { version = "0.3.47", features = ["parsing"] }
 bytes = "1.11.0"
 html-meta-scraper = "0.2.0"
 axum = "0.8.8"

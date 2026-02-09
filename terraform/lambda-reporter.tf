@@ -63,6 +63,10 @@ resource "aws_lambda_function" "reporter" {
       STAGE_NAME      = terraform.workspace
       RUST_LOG        = "logs_reporter=debug"
       RUST_LOG_FORMAT = "JSON"
+
+      SNS_INFO_TOPIC_ARN  = aws_sns_topic.info.arn
+      SNS_WARN_TOPIC_ARN  = aws_sns_topic.warn.arn
+      SNS_ERROR_TOPIC_ARN = aws_sns_topic.error.arn
     }
   }
 }
@@ -71,4 +75,13 @@ resource "aws_lambda_alias" "reporter" {
   name             = "stable"
   function_name    = aws_lambda_function.reporter.function_name
   function_version = "$LATEST"
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_logs" {
+  statement_id   = "AllowExecutionFromCloudWatchLogs"
+  action         = "lambda:InvokeFunction"
+  function_name  = aws_lambda_function.reporter.function_name
+  principal      = "logs.amazonaws.com"
+  source_arn     = "${aws_cloudwatch_log_group.lambda_graphql.arn}:*"
+  source_account = data.aws_caller_identity.current.account_id
 }

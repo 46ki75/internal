@@ -1,6 +1,6 @@
 use aws_config::BehaviorVersion;
 use aws_lambda_events::event::cloudwatch_logs::LogsEvent;
-use lambda_runtime::{tracing, Error, LambdaEvent};
+use lambda_runtime::{Error, LambdaEvent};
 
 #[derive(Debug)]
 enum Level {
@@ -47,19 +47,23 @@ pub(crate) async fn function_handler(event: LambdaEvent<LogsEvent>) -> Result<()
         .log_events
         .into_iter()
         .map(|log_event| {
+            let message_body = serde_json::from_str::<serde_json::Value>(&log_event.message)
+                .and_then(|v| serde_json::to_string_pretty(&v))
+                .unwrap_or(log_event.message);
+
             format!(
                 "| Timestamp: {} | -------------------------------------------------- |\n{}",
-                log_event.timestamp, log_event.message,
+                log_event.timestamp, message_body,
             )
         })
         .collect::<Vec<String>>();
 
-    let full_message = format!("{}\nLogs:\n{}", message, logs.join("\n"));
+    let full_message = format!("{}\nLogs:\n{}", message, logs.join("\n\n"));
 
     let sdk_config = aws_config::load_defaults(BehaviorVersion::latest()).await;
     let client = aws_sdk_sns::Client::new(&sdk_config);
 
-    let response: aws_sdk_sns::operation::publish::PublishOutput = client
+    let _response: aws_sdk_sns::operation::publish::PublishOutput = client
         .publish()
         .topic_arn(topic_arn)
         .message(full_message)

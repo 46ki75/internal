@@ -1,4 +1,5 @@
 use notionrs::r#trait::Paginate;
+use notionrs_types::prelude::*;
 
 pub trait IconRepository {
     fn list_icons(
@@ -49,7 +50,25 @@ impl IconRepository for IconRepositoryImpl {
                 if let Some(url) = maybe_url {
                     let id = page.id;
 
-                    let icon_dto = super::dto::IconDto { id, url };
+                    let name = page
+                        .properties
+                        .get("Name")
+                        .and_then(|prop| match prop {
+                            PageProperty::Title(title_property) => {
+                                let text = title_property
+                                    .title
+                                    .iter()
+                                    .map(|t| t.to_string())
+                                    .collect::<String>()
+                                    .into();
+
+                                Some(text)
+                            }
+                            _ => None,
+                        })
+                        .unwrap_or_else(|| "Unnamed Icon".to_string());
+
+                    let icon_dto = super::dto::IconDto { id, url, name };
 
                     idon_dtos.push(icon_dto);
                 } else {

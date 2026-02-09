@@ -6,6 +6,7 @@ use utoipa::ToSchema;
 pub struct IconResponse {
     pub id: String,
     pub url: String,
+    pub name: String,
 }
 
 impl From<IconEntiry> for IconResponse {
@@ -13,6 +14,7 @@ impl From<IconEntiry> for IconResponse {
         Self {
             id: value.id,
             url: value.url,
+            name: value.name,
         }
     }
 }

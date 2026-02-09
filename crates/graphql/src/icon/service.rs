@@ -13,6 +13,7 @@ impl IconService {
             .map(|icon| IconEntiry {
                 id: icon.id,
                 url: icon.url,
+                name: icon.name,
             })
             .collect::<Vec<IconEntiry>>();
 

@@ -158,6 +158,7 @@ export interface components {
         };
         IconResponse: {
             id: string;
+            name: string;
             url: string;
         };
         ToDoResponse: {

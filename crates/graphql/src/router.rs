@@ -11,6 +11,7 @@ pub struct AxumAppState {
     pub bookmark_service: Arc<crate::bookmark::service::BookmarkService>,
     pub to_do_service: Arc<crate::to_do::service::ToDoService>,
     pub anki_service: Arc<crate::anki::service::AnkiService>,
+    pub icon_service: Arc<crate::icon::service::IconService>,
 }
 
 #[derive(OpenApi)]
@@ -41,10 +42,14 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
             let anki_repository = Arc::new(crate::anki::repository::AnkiRepositoryImpl {});
             let anki_service = Arc::new(crate::anki::service::AnkiService { anki_repository });
 
+            let icon_repository = Arc::new(crate::icon::repository::IconRepositoryImpl::default());
+            let icon_service = Arc::new(crate::icon::service::IconService { icon_repository });
+
             let app_state = Arc::new(AxumAppState {
                 bookmark_service,
                 to_do_service,
                 anki_service,
+                icon_service,
             });
 
             let (router, auto_generated_api) = OpenApiRouter::new()
@@ -58,6 +63,7 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                 .routes(routes!(crate::anki::controller::block_list))
                 .routes(routes!(crate::anki::controller::create_anki))
                 .routes(routes!(crate::anki::controller::update_anki))
+                .routes(routes!(crate::icon::controller::list_icons))
                 .with_state(app_state)
                 .split_for_parts();
 

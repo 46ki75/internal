@@ -1,39 +1,17 @@
 <template>
   <header class="header">
     <div>
-      <ElmSimpleTooltip text="Home">
-        <NuxtLink to="/">
-          <Icon icon="material-symbols:cottage" class="icon" />
-        </NuxtLink>
-      </ElmSimpleTooltip>
-
-      <ElmSimpleTooltip text="Anki">
-        <NuxtLink to="/anki">
-          <Icon icon="mdi:tag" class="icon" />
-        </NuxtLink>
-      </ElmSimpleTooltip>
-
-      <ElmSimpleTooltip text="Swatch">
-        <NuxtLink to="/swatch">
-          <Icon icon="mdi:color" class="icon" />
-        </NuxtLink>
-      </ElmSimpleTooltip>
-
-      <ElmSimpleTooltip text="Typing">
-        <NuxtLink to="/typing">
-          <Icon icon="material-symbols:keyboard" class="icon" />
-        </NuxtLink>
-      </ElmSimpleTooltip>
-
-      <ElmSimpleTooltip text="Profile">
-        <NuxtLink to="/profile">
-          <Icon icon="mdi:user" class="icon" />
-        </NuxtLink>
-      </ElmSimpleTooltip>
-
-      <ElmSimpleTooltip text="Icon">
-        <NuxtLink to="/icon">
-          <Icon icon="mdi:face" class="icon" />
+      <ElmSimpleTooltip
+        v-for="link in LINKS"
+        :key="link.to"
+        :text="link.tooltip"
+      >
+        <NuxtLink :to="link.to">
+          <Icon
+            :icon="link.icon"
+            class="icon"
+            :color="$route.path === link.to ? '#c6ab69' : undefined"
+          />
         </NuxtLink>
       </ElmSimpleTooltip>
     </div>
@@ -76,6 +54,39 @@
 <script setup lang="ts">
 import { ElmLoginIcon, ElmToggleTheme, ElmSimpleTooltip } from "@elmethis/vue";
 import { Icon } from "@iconify/vue";
+
+const LINKS = [
+  {
+    to: "/",
+    icon: "material-symbols:cottage",
+    tooltip: "Home",
+  },
+  {
+    to: "/anki",
+    icon: "mdi:tag",
+    tooltip: "Anki",
+  },
+  {
+    to: "/swatch",
+    icon: "mdi:color",
+    tooltip: "Swatch",
+  },
+  {
+    to: "/typing",
+    icon: "material-symbols:keyboard",
+    tooltip: "Typing",
+  },
+  {
+    to: "/profile",
+    icon: "mdi:user",
+    tooltip: "Profile",
+  },
+  {
+    to: "/icon",
+    icon: "mdi:face",
+    tooltip: "Icon",
+  },
+];
 
 const router = useRouter();
 

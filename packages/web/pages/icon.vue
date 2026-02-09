@@ -1,11 +1,10 @@
 <template>
-  <div>
+  <div :class="$style.wrapper">
     <div>
-      <h1>Icon Page</h1>
+      <ElmSquareLoadingIcon v-if="!data" />
 
-      <div v-for="icon of data">
-        <p>Icon Data:</p>
-        <pre>{{ icon.id }}</pre>
+      <div v-for="icon of data" :key="icon.id" :class="$style['icon-box']">
+        <ElmInlineText>{{ icon.id }}</ElmInlineText>
         <img :src="icon.url" :alt="icon.id" />
       </div>
     </div>
@@ -13,6 +12,7 @@
 </template>
 
 <script setup lang="ts">
+import { ElmInlineText, ElmSquareLoadingIcon } from "@elmethis/vue";
 import { openApiClient } from "~/openapi/client";
 
 export interface IconProps {}
@@ -40,4 +40,17 @@ const { data } = useAsyncData("", async () => {
 });
 </script>
 
-<style module lang="scss"></style>
+<style module lang="scss">
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+</style>

@@ -4,7 +4,7 @@
       <ElmSquareLoadingIcon v-if="!data" />
 
       <div v-for="icon of data" :key="icon.id" :class="$style['icon-box']">
-        <ElmInlineText>{{ icon.id }}</ElmInlineText>
+        <ElmInlineText>{{ icon.name }}</ElmInlineText>
         <img :src="icon.url" :alt="icon.id" />
       </div>
     </div>

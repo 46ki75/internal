@@ -10,7 +10,7 @@
     "predeploy": "nuxt generate",
     "deploy": "./deploy-s3.sh",
     "postdeploy": "./invalidate.sh",
-    "generate:openapi": "openapi-typescript http://localhost:9000/api/v1/openapi.json -o openapi/schema.ts"
+    "generate:openapi": "openapi-typescript http://localhost:9000/lambda-url/internal-graphql/api-gateway/api/v1/openapi.json -o openapi/schema.ts"
   },
   "dependencies": {
     "@aws-sdk/client-ssm": "^3.981.0",

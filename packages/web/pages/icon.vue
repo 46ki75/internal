@@ -1,11 +1,17 @@
 <template>
-  <div :class="$style.wrapper">
-    <div>
+  <div>
+    <div :class="$style.wrapper">
       <ElmSquareLoadingIcon v-if="!data" />
 
       <div v-for="icon of data" :key="icon.id" :class="$style['icon-box']">
-        <ElmInlineText>{{ icon.name }}</ElmInlineText>
-        <img :src="icon.url" :alt="icon.id" />
+        <img
+          :class="$style.icon"
+          width="48"
+          height="48"
+          :src="icon.url"
+          :alt="icon.id"
+        />
+        <ElmInlineText size="0.8rem">{{ icon.name }}</ElmInlineText>
       </div>
     </div>
   </div>
@@ -42,15 +48,31 @@ const { data } = useAsyncData("", async () => {
 
 <style module lang="scss">
 .wrapper {
+  margin-block: 2rem;
+  width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  text-align: center;
+  font-family: monospace;
+}
+
+.icon {
+  width: 4rem;
+  height: 4rem;
 }
 
 .icon-box {
+  padding: 0.25rem;
+  height: 8rem;
+  width: 8rem;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
+  border: solid 1px rgba(gray, 0.25);
+  border-radius: 0.5rem;
 }
 </style>

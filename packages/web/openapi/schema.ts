@@ -68,6 +68,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/icon": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_icons"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/to-do": {
         parameters: {
             query?: never;
@@ -139,6 +155,10 @@ export interface components {
             description?: string | null;
             severity?: null | components["schemas"]["ToDoSeverityRequest"];
             title: string;
+        };
+        IconResponse: {
+            id: string;
+            url: string;
         };
         ToDoResponse: {
             created_at?: string | null;
@@ -407,6 +427,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BookmarkResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/plain": string;
+                };
+            };
+        };
+    };
+    list_icons: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Icon */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IconResponse"][];
                 };
             };
             /** @description Internal Server Error */

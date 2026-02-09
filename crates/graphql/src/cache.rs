@@ -162,6 +162,25 @@ pub async fn get_or_init_notion_bookmark_data_source_id()
         .await
 }
 
+static NOTION_ICON_DATA_SOURCE_ID: tokio::sync::OnceCell<String> =
+    tokio::sync::OnceCell::const_new();
+
+pub async fn get_or_init_notion_icon_data_source_id() -> Result<&'static String, crate::error::Error>
+{
+    NOTION_ICON_DATA_SOURCE_ID
+        .get_or_try_init(|| async {
+            let stage_name = get_or_init_stage_name().await?;
+            let id = try_get_ssm_parameter_async(
+                get_or_init_ssm_client().await.clone(),
+                format!("/{stage_name}/46ki75/internal/notion/icon/data_source/id").as_str(),
+            )
+            .await?;
+
+            Ok(id)
+        })
+        .await
+}
+
 static NOTIONRS_CLIENT: tokio::sync::OnceCell<notionrs::Client> =
     tokio::sync::OnceCell::const_new();
 

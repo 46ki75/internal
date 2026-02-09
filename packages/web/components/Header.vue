@@ -30,6 +30,12 @@
           <Icon icon="mdi:user" class="icon" />
         </NuxtLink>
       </ElmSimpleTooltip>
+
+      <ElmSimpleTooltip text="Icon">
+        <NuxtLink to="/icon">
+          <Icon icon="mdi:face" class="icon" />
+        </NuxtLink>
+      </ElmSimpleTooltip>
     </div>
 
     <div class="right">

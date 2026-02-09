@@ -1,7 +1,7 @@
 use super::{entity::IconEntiry, repository::IconRepository};
 
 pub struct IconService {
-    pub icon_repository: Box<dyn IconRepository + Send>,
+    pub icon_repository: std::sync::Arc<dyn IconRepository + Send + Sync>,
 }
 
 impl IconService {

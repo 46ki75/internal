@@ -729,6 +729,7 @@ checksum = "b9908398e9f1118e50b97734c75bb7e4d13b0a09036a3716e811bc0c765e4eaf"
 dependencies = [
  "base64",
  "bytes",
+ "flate2",
  "http 1.4.0",
  "http-body 1.0.1",
  "http-serde",
@@ -2189,9 +2190,9 @@ dependencies = [
 
 [[package]]
 name = "lambda_runtime"
-version = "1.0.0"
+version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0d7ba7f5bbf8a369882f3f9c366d1f81dd6d0606c13bac2a88dab63f96c9400a"
+checksum = "dc0b4409eea054e4c06f0101fed547b2cf208e8eca9dc6d41dead4114577852b"
 dependencies = [
  "async-stream",
  "base64",
@@ -2301,6 +2302,15 @@ name = "log"
 version = "0.4.29"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5e5032e24019045c762d3c0f28f5b6b8bbf38563a65908389bf7978758920897"
+
+[[package]]
+name = "logs-reporter"
+version = "0.1.0"
+dependencies = [
+ "aws_lambda_events",
+ "lambda_runtime",
+ "tokio",
+]
 
 [[package]]
 name = "mac"

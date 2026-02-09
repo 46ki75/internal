@@ -15,15 +15,18 @@ edition = "2024"
 # and it will keep the alphabetic ordering for you.
 
 [dependencies]
-reqwest = { version = "0.12.28", features = [
-    "rustls-tls",
+reqwest = { version = "0.13", features = [
+    "rustls",
+    "http2",
+    "gzip",
+    "brotli",
 ], default-features = false }
 async-graphql = "7.2.1"
 chrono = "0.4.43"
 lambda_http = "1.0.2"
-notionrs = { version = "0.8.0", features = ["rustls-tls"] }
-notionrs_types = "0.6.0"
-notion-to-jarkup = "0.11.0"
+notionrs = { version = "0.9.0", features = ["rustls"] }
+notionrs_types = "0.7.0"
+notion-to-jarkup = "0.12.0"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
 tokio = { version = "1.49.0", features = ["macros"] }

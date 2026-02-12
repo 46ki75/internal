@@ -13,7 +13,7 @@
     "generate:openapi": "openapi-typescript http://localhost:9000/lambda-url/internal-graphql/api-gateway/api/v1/openapi.json -o openapi/schema.ts"
   },
   "dependencies": {
-    "@aws-sdk/client-ssm": "^3.987.0",
+    "@aws-sdk/client-ssm": "^3.988.0",
     "@com.46ki75/graphql": "^0.2.2",
     "@elmethis/vue": "0.2.11",
     "@pinia/nuxt": "0.11.3",

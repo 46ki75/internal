@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-aws-config = "1.8.13"
-aws-sdk-sns = "1.94.0"
+aws-config = "1.8.14"
+aws-sdk-sns = "1.95.0"
 aws_lambda_events = { version = "1.0.3", default-features = false, features = ["cloudwatch_logs"] }
 
 lambda_runtime = "1.0.1"

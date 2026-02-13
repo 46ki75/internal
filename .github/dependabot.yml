@@ -21,6 +21,15 @@ updates:
     schedule:
       interval: "daily"
     target-branch: "main"
+    groups:
+      aws-sdk:
+        patterns:
+          - "aws-config"
+          - "aws-sdk*"
+      notionrs-updates:
+        patterns:
+          - "notionrs"
+          - "notionrs*"
     assignees:
       - "46ki75"
 

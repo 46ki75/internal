@@ -7,6 +7,10 @@ updates:
     target-branch: "main"
     assignees:
       - "46ki75"
+    groups:
+      aws-sdk:
+        patterns:
+          - "@aws-sdk/*"
 
   - package-ecosystem: "terraform"
     directory: "/terraform"

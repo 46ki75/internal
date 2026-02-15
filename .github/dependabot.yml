@@ -34,6 +34,10 @@ updates:
         patterns:
           - "notionrs"
           - "notionrs*"
+      utoipa-updates:
+        patterns:
+          - "utoipa"
+          - "utoipa*"
     assignees:
       - "46ki75"
 

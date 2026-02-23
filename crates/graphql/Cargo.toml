@@ -26,7 +26,8 @@ chrono = "0.4.43"
 lambda_http = "1.0.2"
 notionrs = { version = "0.9.0", features = ["rustls"] }
 notionrs_types = "0.7.0"
-notion-to-jarkup = "0.12.0"
+notion-to-jarkup = "0.13.1"
+jarkup-rs = "0.7.0"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
 tokio = { version = "1.49.0", features = ["macros"] }
@@ -42,7 +43,6 @@ env_logger = { version = "0.11.9" }
 aws-sdk-ssm = "1.104.0"
 tracing-subscriber = { version = "0.3.22", features = ["ansi"] }
 tracing = "0.1.44"
-jarkup-rs = "0.6.0"
 time = { version = "0.3.47", features = ["parsing"] }
 bytes = "1.11.1"
 html-meta-scraper = "0.2.0"

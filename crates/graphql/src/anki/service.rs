@@ -53,7 +53,7 @@ impl AnkiService {
         for block in blocks {
             if let jarkup_rs::Component::BlockComponent(block_component) = &block {
                 if let jarkup_rs::BlockComponent::Heading(heading) = &block_component {
-                    if heading.props.level == jarkup_rs::HeadingLevel::H1 {
+                    if let jarkup_rs::HeadingLevel::H1 = heading.props.level {
                         let text = heading
                             .slots
                             .default

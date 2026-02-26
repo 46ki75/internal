@@ -17,30 +17,48 @@
       <Icon icon="mdi:sparkles-outline" class="icon" />
       <ElmInlineText text="NEW" />
     </ElmButton>
-  </div>
 
-  <div class="button-container">
     <ElmButton
       @click="ankiStore.toggleCurrentAnkiReviewRequired()"
       block
-      :loading="ankiStore.updateAnkiState.loading"
+      :loading="
+        ankiStore.getCurrentAnki?.page_id != null
+          ? ankiStore.fetchAnkiBlocksState[ankiStore.getCurrentAnki?.page_id]
+              ?.loading || ankiStore.updateAnkiState.loading
+          : true
+      "
       :disabled="ankiStore.getCurrentAnki == null"
     >
       <Icon
+        class="icon"
         :icon="
           ankiStore.getCurrentAnki?.is_review_required
-            ? 'mdi:check-circle-outline'
-            : 'mdi:alert-octagram-outline'
+            ? 'mdi:alert-octagram-outline'
+            : 'mdi:dot'
         "
-        class="icon"
-      />
-      <ElmInlineText
-        :text="
-          ankiStore.getCurrentAnki?.is_review_required
-            ? 'Mark this Anki card as Reviewed'
-            : 'Mark this Anki card as Review Required'
+        :color="
+          ankiStore.getCurrentAnki?.is_review_required ? '#c56565' : undefined
         "
       />
+    </ElmButton>
+
+    <ElmButton
+      block
+      @click="
+        ankiStore.getCurrentAnki?.page_id != null &&
+        ankiStore.fetchAnkiBlocks({
+          ankiId: ankiStore.getCurrentAnki?.page_id,
+          forceUpdate: true,
+        })
+      "
+      :loading="
+        ankiStore.getCurrentAnki?.page_id != null
+          ? ankiStore.fetchAnkiBlocksState[ankiStore.getCurrentAnki?.page_id]
+              ?.loading
+          : true
+      "
+    >
+      <Icon class="icon" icon="mdi:reload" />
     </ElmButton>
   </div>
 </template>
@@ -61,9 +79,10 @@ const editAnki = (url?: string) => {
 
 .button-container {
   box-sizing: border-box;
-  display: flex;
   gap: 0.5rem;
   margin-block: 0.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 64px 64px;
 }
 
 .icon {

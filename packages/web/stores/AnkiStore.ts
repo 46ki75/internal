@@ -119,7 +119,7 @@ export const useAnkiStore = defineStore("anki", {
                 header: { Authorization: authStore.session.accessToken! },
                 path: { page_id: ankiId },
               },
-            }
+            },
           );
 
           if (data == null) {
@@ -202,7 +202,7 @@ export const useAnkiStore = defineStore("anki", {
         if (performanceRating < 3) {
           currentAnki.ease_factor = Math.max(
             1.3,
-            currentAnki.ease_factor * 0.85
+            currentAnki.ease_factor * 0.85,
           );
           currentAnki.repetition_count = 0;
         } else {
@@ -231,12 +231,12 @@ export const useAnkiStore = defineStore("anki", {
           newInterval = Math.min(
             maxInterval,
             Math.pow(currentAnki.ease_factor, currentAnki.repetition_count) *
-              multiplier
+              multiplier,
           );
         }
 
         currentAnki.next_review_at = new Date(
-          Date.now() + newInterval * 24 * 60 * 60 * 1000
+          Date.now() + newInterval * 24 * 60 * 60 * 1000,
         ).toISOString();
 
         this.updateAnki({
@@ -271,7 +271,7 @@ export const useAnkiStore = defineStore("anki", {
           await this.updateAnki({
             pageId: currentAnki.page_id,
             body: {
-              is_review_required: currentAnki.is_review_required,
+              is_review_required: !currentAnki.is_review_required,
             },
           });
 
@@ -333,7 +333,7 @@ export const useAnkiStore = defineStore("anki", {
 
     getShouldLearnCount(): number {
       const nextReviewAtList = this.fetchAnkiListState.results.map((anki) =>
-        new Date(anki.next_review_at).getTime()
+        new Date(anki.next_review_at).getTime(),
       );
       const now = new Date().getTime();
 

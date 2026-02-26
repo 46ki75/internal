@@ -7,13 +7,6 @@
     <ElmInlineText
       :text="`Queue: ${ankiStore.fetchAnkiListState.results.length}`"
     />
-
-    <span
-      v-if="ankiStore.getCurrentAnki?.is_review_required"
-      class="review-label"
-    >
-      Review Required
-    </span>
   </div>
 </template>
 

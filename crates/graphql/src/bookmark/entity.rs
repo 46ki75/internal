@@ -99,9 +99,10 @@ impl TryFrom<PageResponse> for BookmarkEntity {
             name: Some(name.to_string()),
             url: Some(url.to_string()),
             favicon: value.icon.map(|f| match f {
-                Icon::File(file) => file.get_url(),
-                Icon::Emoji(emoji) => emoji.emoji.to_string(),
-                Icon::CustomEmoji(custom_emoji) => custom_emoji.custom_emoji.url,
+                EmojiAndIcon::File(file) => file.get_url(),
+                EmojiAndIcon::Emoji(emoji) => emoji.emoji.to_string(),
+                EmojiAndIcon::CustomEmoji(custom_emoji) => custom_emoji.custom_emoji.url,
+                EmojiAndIcon::Icon(icon) => icon.icon.name,
             }),
             tag: select,
             nsfw: match nsfw {

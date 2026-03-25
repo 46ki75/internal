@@ -66,7 +66,7 @@ impl BookmarkRepository for BookmarkRepositoryImpl {
             .properties(properties);
 
         if let Some(url) = favicon {
-            request = request.icon(notionrs_types::object::icon::Icon::File(
+            request = request.icon(notionrs_types::object::emoji_and_icon::EmojiAndIcon::File(
                 notionrs_types::object::file::File::External(
                     notionrs_types::object::file::ExternalFile::from(url),
                 ),

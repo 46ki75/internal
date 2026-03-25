@@ -40,11 +40,12 @@ impl IconRepository for IconRepositoryImpl {
 
             for page in pages.results {
                 let maybe_url = page.icon.and_then(|icon| match icon {
-                    notionrs_types::prelude::Icon::File(file) => Some(file.get_url()),
-                    notionrs_types::prelude::Icon::Emoji(..) => None,
-                    notionrs_types::prelude::Icon::CustomEmoji(custom_emoji) => {
+                    notionrs_types::prelude::EmojiAndIcon::File(file) => Some(file.get_url()),
+                    notionrs_types::prelude::EmojiAndIcon::Emoji(..) => None,
+                    notionrs_types::prelude::EmojiAndIcon::CustomEmoji(custom_emoji) => {
                         Some(custom_emoji.custom_emoji.url)
                     }
+                    notionrs_types::prelude::EmojiAndIcon::Icon(..) => None,
                 });
 
                 if let Some(url) = maybe_url {

@@ -24,10 +24,10 @@ reqwest = { version = "0.13", features = [
 async-graphql = "7.2.1"
 chrono = "0.4.43"
 lambda_http = "1.0.2"
-notionrs = { version = "0.12.0", features = ["rustls"] }
-notionrs_types = "0.10.0"
-notion-to-jarkup = "0.16.0"
-jarkup-rs = "0.9.2"
+notionrs = { version = "0.14.0", features = ["rustls"] }
+notionrs_types = "0.11.0"
+notion-to-jarkup = "0.21.0"
+jarkup-rs = "0.14.0"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
 tokio = { version = "1.49.0", features = ["macros"] }

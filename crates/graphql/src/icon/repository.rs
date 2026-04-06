@@ -1,5 +1,5 @@
-use notionrs::r#trait::Paginate;
-use notionrs_types::prelude::*;
+use futures::TryStreamExt;
+use notionrs::PaginateExt;
 
 pub trait IconRepository {
     fn list_icons(
@@ -22,62 +22,25 @@ impl IconRepository for IconRepositoryImpl {
         Box::pin(async move {
             let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
-            let icon_data_source_id =
-                crate::cache::get_or_init_notion_icon_data_source_id().await?;
-
-            let pages = notionrs_client
-                .query_data_source()
-                .data_source_id(icon_data_source_id)
-                .paginate_send()
+            let icons = notionrs_client
+                .list_custom_emojis()
+                .into_stream()
+                .try_collect::<Vec<_>>()
                 .await
                 .map_err(|e| {
                     let error_message = format!("Notion API error: {}", e);
                     log::error!("{}", error_message);
                     crate::error::Error::NotionRs(error_message)
-                })?;
+                })?
+                .into_iter()
+                .map(|icon| super::dto::IconDto {
+                    id: icon.id,
+                    url: icon.url,
+                    name: icon.name,
+                })
+                .collect::<Vec<_>>();
 
-            let mut idon_dtos: Vec<super::dto::IconDto> = Vec::new();
-
-            for page in pages.results {
-                let maybe_url = page.icon.and_then(|icon| match icon {
-                    notionrs_types::prelude::EmojiAndIcon::File(file) => Some(file.get_url()),
-                    notionrs_types::prelude::EmojiAndIcon::Emoji(..) => None,
-                    notionrs_types::prelude::EmojiAndIcon::CustomEmoji(custom_emoji) => {
-                        Some(custom_emoji.custom_emoji.url)
-                    }
-                    notionrs_types::prelude::EmojiAndIcon::Icon(..) => None,
-                });
-
-                if let Some(url) = maybe_url {
-                    let id = page.id;
-
-                    let name = page
-                        .properties
-                        .get("Name")
-                        .and_then(|prop| match prop {
-                            PageProperty::Title(title_property) => {
-                                let text = title_property
-                                    .title
-                                    .iter()
-                                    .map(|t| t.to_string())
-                                    .collect::<String>()
-                                    .into();
-
-                                Some(text)
-                            }
-                            _ => None,
-                        })
-                        .unwrap_or_else(|| "Unnamed Icon".to_string());
-
-                    let icon_dto = super::dto::IconDto { id, url, name };
-
-                    idon_dtos.push(icon_dto);
-                } else {
-                    continue;
-                };
-            }
-
-            Ok(idon_dtos)
+            Ok(icons)
         })
     }
 }

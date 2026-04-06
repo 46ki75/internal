@@ -214,6 +214,7 @@ pub async fn get_or_init_notion_to_jarkup_client()
                 notionrs_client,
                 reqwest_client: reqwest::Client::new(),
                 enable_unsupported_block: true,
+                enable_fetch_image_meta: false,
             };
 
             Ok(client)

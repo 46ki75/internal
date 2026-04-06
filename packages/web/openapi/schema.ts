@@ -157,6 +157,7 @@ export interface components {
             title: string;
         };
         IconResponse: {
+            content_type?: string | null;
             id: string;
             name: string;
             url: string;

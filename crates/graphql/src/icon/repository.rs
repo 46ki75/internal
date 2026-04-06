@@ -1,6 +1,6 @@
 use futures::TryStreamExt;
+use futures::stream::StreamExt;
 use notionrs::PaginateExt;
-
 pub trait IconRepository {
     fn list_icons(
         &self,
@@ -25,20 +25,19 @@ impl IconRepository for IconRepositoryImpl {
             let icons = notionrs_client
                 .list_custom_emojis()
                 .into_stream()
-                .try_collect::<Vec<_>>()
-                .await
-                .map_err(|e| {
-                    let error_message = format!("Notion API error: {}", e);
-                    log::error!("{}", error_message);
-                    crate::error::Error::NotionRs(error_message)
-                })?
-                .into_iter()
-                .map(|icon| super::dto::IconDto {
-                    id: icon.id,
-                    url: icon.url,
-                    name: icon.name,
+                .map(|icon| match icon {
+                    Ok(icon) => Ok(super::dto::IconDto {
+                        id: icon.id,
+                        url: icon.url,
+                        name: icon.name,
+                    }),
+                    Err(e) => Err(crate::error::Error::NotionRs(format!(
+                        "Notion API error: {}",
+                        e
+                    ))),
                 })
-                .collect::<Vec<_>>();
+                .try_collect::<Vec<_>>()
+                .await?;
 
             Ok(icons)
         })

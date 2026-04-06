@@ -12,6 +12,9 @@
           :alt="icon.id"
         />
         <ElmInlineText size="0.8rem">{{ icon.name }}</ElmInlineText>
+        <ElmInlineText size="0.8rem" code>
+          {{ icon.content_type }}
+        </ElmInlineText>
       </div>
     </div>
   </div>
@@ -65,7 +68,7 @@ const { data } = useAsyncData("", async () => {
 
 .icon-box {
   padding: 0.25rem;
-  height: 8rem;
+  height: 9rem;
   width: 8rem;
   display: flex;
   flex-direction: column;

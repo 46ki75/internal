@@ -1,4 +1,4 @@
 packages:
-  - "packages/web"
   - "packages/components"
-  - "packages/extension"
+  - "packages/web"
+  - "packages/web-react"

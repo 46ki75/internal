@@ -1,4 +1,5 @@
 packages:
   - "packages/web"
+  - "packages/web-qwik"
   - "packages/components"
   - "packages/extension"

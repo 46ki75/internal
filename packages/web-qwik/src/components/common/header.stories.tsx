@@ -8,6 +8,12 @@ const meta: Meta<HeaderProps> = {
   component: Header,
   tags: ["autodocs"],
   args: {},
+  argTypes: {
+    state: {
+      control: "radio",
+      options: ["pending", "login", "logout"],
+    },
+  },
 };
 
 export default meta;
@@ -19,5 +25,6 @@ export const Primary: Story = {
       { d: mdiHome, onClick$: $(() => console.log("Home clicked")) },
       { d: mdiTag, onClick$: $(() => console.log("Tag clicked")) },
     ],
+    state: "pending",
   },
 };

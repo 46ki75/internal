@@ -30,6 +30,7 @@
     "@builder.io/qwik-city": "^1.19.2",
     "@elmethis/qwik": "^0.0.48",
     "@eslint/js": "^9",
+    "@mdi/js": "^7.4.47",
     "@storybook/addon-docs": "^10.3.5",
     "@types/node": "20.19.0",
     "eslint": "9.32.0",

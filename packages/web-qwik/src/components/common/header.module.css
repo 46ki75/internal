@@ -18,4 +18,25 @@
   [data-theme="dark"] & {
     background-color: oklch(from #eff0f2 l c h / 0.1);
   }
+
+  .link-container {
+    display: flex;
+    gap: 0.25rem;
+
+    .link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      padding: 0.25rem;
+      border-radius: 0.25rem;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 100ms;
+
+      &:hover {
+        background-color: oklch(from #25282e l c h / 0.1);
+      }
+    }
+  }
 }

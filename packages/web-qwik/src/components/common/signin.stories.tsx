@@ -6,9 +6,22 @@ const meta: Meta<SigninProps> = {
   component: Signin,
   tags: ["autodocs"],
   args: {},
+  argTypes: {
+    isLoading: {
+      control: "boolean",
+    },
+    isDisabled: {
+      control: "boolean",
+    },
+  },
 };
 
 export default meta;
 type Story = StoryObj<SigninProps>;
 
-export const Primary: Story = {};
+export const Primary: Story = {
+  args: {
+    isLoading: false,
+    isDisabled: false,
+  },
+};

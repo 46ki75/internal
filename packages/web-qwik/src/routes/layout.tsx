@@ -12,6 +12,7 @@ export default component$(() => {
         links={[]}
         state={authStore.sessionState}
         handleSignOutClick$={authStore.signOut}
+        handleSignInClick$={authStore.showSignInModal}
       />
       <Slot />
       <SigninContainer />

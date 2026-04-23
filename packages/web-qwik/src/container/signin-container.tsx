@@ -4,22 +4,6 @@ import { Signin } from "~/components/common/signin";
 
 import { AuthContext } from "~/context/auth-context";
 
-// AWS Amplify
-import { Amplify } from "aws-amplify";
-import { getCurrentUser, signIn } from "aws-amplify/auth/cognito";
-import { fetchAuthSession } from "aws-amplify/auth";
-
-const configure = () => {
-  Amplify.configure({
-    Auth: {
-      Cognito: {
-        userPoolId: "ap-northeast-1_BmZKeZeKX",
-        userPoolClientId: "4n5l6d5oekst6hrmvt1chndghd",
-      },
-    },
-  });
-};
-
 export const SigninContainer = component$(() => {
   const authStore = useContext(AuthContext);
 
@@ -36,45 +20,8 @@ export const SigninContainer = component$(() => {
     }
   });
 
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(async () => {
-    configure();
-
-    try {
-      const { username, userId } = await getCurrentUser();
-      if (username && userId) {
-        authStore.sessionState = "login";
-      } else {
-        authStore.sessionState = "logout";
-      }
-    } catch {
-      authStore.sessionState = "logout";
-    }
-  });
-
   const onSubmit$ = $(async (username: string, password: string) => {
-    authStore.signingInProgress = true;
-
-    try {
-      configure();
-
-      const result = await signIn({
-        username: username,
-        password: password,
-      });
-
-      if (result.isSignedIn) {
-        authStore.sessionState = "login";
-
-        const session = await fetchAuthSession({ forceRefresh: true });
-        const accessToken = session.tokens?.accessToken.toString();
-        authStore.accessToken = accessToken ?? null;
-      }
-    } catch {
-      authStore.sessionState = "logout";
-    } finally {
-      authStore.signingInProgress = false;
-    }
+    await authStore.signIn(authStore, username, password);
   });
 
   return (

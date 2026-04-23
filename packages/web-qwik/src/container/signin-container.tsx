@@ -25,8 +25,6 @@ export const SigninContainer = component$(() => {
 
   return (
     <>
-      {authStore.sessionState}
-
       <Modal>
         <Signin
           isLoading={

@@ -28,7 +28,7 @@ const configure = () => {
 
 export interface AuthStore {
   sessionState: "pending" | "login" | "logout";
-  accessToken: string | null;
+  errors: string[];
   signingInProgress: boolean;
 
   isSignInModalOpen: boolean;
@@ -38,6 +38,11 @@ export interface AuthStore {
   signIn: QRL<
     (store: AuthStore, username: string, password: string) => Promise<void>
   >;
+
+  tokens: {
+    refresh: QRL<(store: AuthStore) => Promise<void>>;
+    accessToken: string | null;
+  };
 }
 
 export const AuthContext = createContextId<AuthStore>("auth");
@@ -45,7 +50,7 @@ export const AuthContext = createContextId<AuthStore>("auth");
 export const AuthContextProvider = component$(() => {
   const authStore = useStore<AuthStore>({
     sessionState: "pending",
-    accessToken: null,
+    errors: [],
     signingInProgress: false,
 
     isSignInModalOpen: false,
@@ -72,11 +77,7 @@ export const AuthContextProvider = component$(() => {
         });
 
         if (result.isSignedIn) {
-          store.sessionState = "login";
-
-          const session = await fetchAuthSession({ forceRefresh: true });
-          const accessToken = session.tokens?.accessToken.toString();
-          store.accessToken = accessToken ?? null;
+          store.tokens.refresh(store);
         }
       } catch {
         store.sessionState = "logout";
@@ -84,6 +85,25 @@ export const AuthContextProvider = component$(() => {
         store.signingInProgress = false;
       }
     }),
+
+    tokens: {
+      accessToken: null,
+      refresh: $(async (store: AuthStore) => {
+        store.errors = [];
+        configure();
+
+        try {
+          const session = await fetchAuthSession({ forceRefresh: false });
+          const accessToken = session.tokens?.accessToken.toString();
+          store.tokens.accessToken = accessToken ?? null;
+          store.sessionState = "login";
+        } catch (e: unknown) {
+          store.tokens.accessToken = null;
+          store.sessionState = "logout";
+          store.errors.push(e instanceof Error ? e.message : String(e));
+        }
+      }),
+    },
   });
 
   useContextProvider(AuthContext, authStore);
@@ -93,7 +113,7 @@ export const AuthContextProvider = component$(() => {
     const sessionState = track(() => authStore.sessionState);
 
     if (sessionState === "logout") {
-      authStore.accessToken = null;
+      authStore.tokens.accessToken = null;
       authStore.isSignInModalOpen = false;
       authStore.isSignInModalOpen = true;
     } else if (sessionState === "login") {

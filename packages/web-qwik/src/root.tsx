@@ -5,6 +5,8 @@ import { RouterHead } from "./components/router-head/router-head";
 import "./global.css";
 import "@elmethis/qwik/style.css";
 
+import { AuthContextProvider } from "./context/auth-context";
+
 export default component$(() => {
   /**
    * The root of a QwikCity site always start with the <QwikCityProvider> component,
@@ -15,19 +17,21 @@ export default component$(() => {
 
   return (
     <QwikCityProvider>
-      <head>
-        <meta charset="utf-8" />
-        {!isDev && (
-          <link
-            rel="manifest"
-            href={`${import.meta.env.BASE_URL}manifest.json`}
-          />
-        )}
-        <RouterHead />
-      </head>
-      <body lang="en">
-        <RouterOutlet />
-      </body>
+      <AuthContextProvider>
+        <head>
+          <meta charset="utf-8" />
+          {!isDev && (
+            <link
+              rel="manifest"
+              href={`${import.meta.env.BASE_URL}manifest.json`}
+            />
+          )}
+          <RouterHead />
+        </head>
+        <body lang="en">
+          <RouterOutlet />
+        </body>
+      </AuthContextProvider>
     </QwikCityProvider>
   );
 });

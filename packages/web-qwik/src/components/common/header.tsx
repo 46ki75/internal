@@ -1,5 +1,6 @@
 import {
   component$,
+  QRL,
   QRLEventHandlerMulti,
   type CSSProperties,
 } from "@builder.io/qwik";
@@ -23,10 +24,20 @@ export interface HeaderProps {
   }>;
 
   state: "pending" | "login" | "logout";
+
+  handleSignInClick$: QRL<(...args: any[]) => Promise<void>>;
+  handleSignOutClick$: QRL<(...args: any[]) => Promise<void>>;
 }
 
 export const Header = component$<HeaderProps>(
-  ({ class: className, style, links, state }) => {
+  ({
+    class: className,
+    style,
+    links,
+    state,
+    handleSignInClick$,
+    handleSignOutClick$,
+  }) => {
     return (
       <header class={[styles["header"], className]} style={style}>
         <div class={styles["link-container"]}>
@@ -38,7 +49,12 @@ export const Header = component$<HeaderProps>(
         </div>
 
         <div class={styles["link-container"]}>
-          <div class={styles["link"]}>
+          <div
+            class={styles["link"]}
+            onClick$={
+              state === "login" ? handleSignOutClick$ : handleSignInClick$
+            }
+          >
             {state === "pending" ? (
               <ElmSquareLoadingIcon size="1.75rem" />
             ) : state === "login" ? (

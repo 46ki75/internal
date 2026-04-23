@@ -12,7 +12,7 @@ import { useLocalStorage } from "@elmethis/qwik";
 export const BookmarkContainer = component$(() => {
   const authStore = useContext(AuthContext);
 
-  const { state: bookmarkStore, set } = useLocalStorage<{
+  const { state: bookmarkStore } = useLocalStorage<{
     bookmarks: BookmarkListProps["bookmarks"];
   }>({
     key: "bookmarks",
@@ -53,7 +53,7 @@ export const BookmarkContainer = component$(() => {
           },
         );
 
-        set({ bookmarks });
+        bookmarkStore.value = { bookmarks };
       }
     }
   });

@@ -7,7 +7,7 @@ import {
 } from "@builder.io/qwik";
 import { ElmModal } from "@elmethis/qwik";
 
-import { AuthContext, AuthStore } from "~/context/auth-context";
+import { AuthContext, type AuthStore } from "~/context/auth-context";
 
 export const SigninContainer = component$(() => {
   const authStore = useStore<AuthStore>({ state: "pending" });

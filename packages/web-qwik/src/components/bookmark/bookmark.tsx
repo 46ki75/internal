@@ -2,11 +2,11 @@ import { $, component$ } from "@builder.io/qwik";
 
 import styles from "./bookmark.module.css";
 import { ElmInlineText, ElmMdiIcon } from "@elmethis/qwik";
-import { mdiStar, mdiTagEdit } from "@mdi/js";
+import { mdiEarth, mdiStar, mdiTagEdit } from "@mdi/js";
 
 export interface BookmarkProps {
   id: string;
-  icon: string;
+  icon?: string;
   label: string;
   favorite: boolean;
   url: string;
@@ -45,7 +45,11 @@ export const Bookmark = component$<BookmarkProps>(
             color={favorite ? "#d4bf8d" : "transparent"}
           />
         </span>
-        <img src={icon} class={styles["favicon"]} width={32} height={32} />
+        {icon ? (
+          <img src={icon} class={styles["favicon"]} width={32} height={32} />
+        ) : (
+          <ElmMdiIcon class={styles["favicon"]} size={"32px"} d={mdiEarth} />
+        )}
         <ElmInlineText class={styles["bookmark-name"]} size="0.5rem">
           {label}
         </ElmInlineText>

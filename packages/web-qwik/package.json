@@ -24,7 +24,7 @@
     "qwik": "qwik",
     "storybook": "storybook dev -p 11071",
     "build-storybook": "storybook build",
-    "generate:openapi": "openapi-typescript http://localhost:9000/lambda-url/internal-graphql/api-gateway/api/v1/openapi.json -o openapi/schema.ts"
+    "generate:openapi": "openapi-typescript http://localhost:9000/lambda-url/internal-graphql/api-gateway/api/v1/openapi.json -o src/openapi/schema.ts"
   },
   "devDependencies": {
     "@builder.io/qwik": "^1.19.2",

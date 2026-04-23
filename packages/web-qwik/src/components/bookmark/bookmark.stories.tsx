@@ -7,16 +7,6 @@ const meta: Meta<BookmarkProps> = {
   title: "Components/Bookmark/bookmark",
   component: Bookmark,
   tags: ["autodocs"],
-  args: {},
-  argTypes: {
-    favorite: { control: "boolean" },
-  },
-};
-
-export default meta;
-type Story = StoryObj<BookmarkProps>;
-
-export const Primary: Story = {
   args: {
     id: "338f8817-9da1-47c8-b459-5a41ee853090",
     icon: icon,
@@ -29,5 +19,19 @@ export const Primary: Story = {
       name: "Example Tag",
       color: "#ff0000",
     },
+  },
+  argTypes: {
+    favorite: { control: "boolean" },
+  },
+};
+
+export default meta;
+type Story = StoryObj<BookmarkProps>;
+
+export const Primary: Story = {};
+
+export const WithoutIcon: Story = {
+  args: {
+    icon: undefined,
   },
 };

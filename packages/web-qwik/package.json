@@ -23,7 +23,8 @@
     "start": "vite --open --mode ssr",
     "qwik": "qwik",
     "storybook": "storybook dev -p 11071",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "generate:openapi": "openapi-typescript http://localhost:9000/lambda-url/internal-graphql/api-gateway/api/v1/openapi.json -o openapi/schema.ts"
   },
   "devDependencies": {
     "@builder.io/qwik": "^1.19.2",
@@ -37,6 +38,8 @@
     "eslint": "9.32.0",
     "eslint-plugin-qwik": "^1.19.2",
     "globals": "16.4.0",
+    "openapi-fetch": "^0.17.0",
+    "openapi-typescript": "^7.13.0",
     "prettier": "3.6.2",
     "storybook": "^10.3.5",
     "storybook-framework-qwik": "0.6.1",

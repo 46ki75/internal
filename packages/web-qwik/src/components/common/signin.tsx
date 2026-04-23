@@ -11,8 +11,10 @@ import {
   ElmButton,
   ElmHeading,
   ElmInlineText,
+  ElmMdiIcon,
   ElmTextField,
 } from "@elmethis/qwik";
+import { mdiSend } from "@mdi/js";
 
 export interface SigninProps {
   class?: string;
@@ -78,10 +80,13 @@ export const Signin = component$<SigninProps>(
           disabled={isDisabled}
           onClick$={handleClick}
         >
+          <ElmMdiIcon d={mdiSend} />
           Sign In
         </ElmButton>
 
-        <ElmInlineText color="#c56565">{error.value}</ElmInlineText>
+        <ElmInlineText class={styles["error"]} color="#c56565">
+          {error.value}
+        </ElmInlineText>
       </div>
     );
   },

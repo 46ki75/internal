@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-framework-qwik";
 import { Signin, type SigninProps } from "./signin";
-import { $ } from "@builder.io/qwik";
+import { $, component$, useSignal } from "@builder.io/qwik";
 
 const meta: Meta<SigninProps> = {
   title: "Components/Common/signin",
@@ -27,5 +27,26 @@ export const Primary: Story = {
     onSubmit$: $(async (username: string, password: string) => {
       alert(`username: ${username}, password: ${password}`);
     }),
+  },
+
+  render: (args) => {
+    const Render = component$((args: SigninProps) => {
+      const isLoading = useSignal(args.isLoading);
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const onSubmit$ = $((_username: string, _password: string) => {
+        isLoading.value = true;
+
+        setTimeout(() => {
+          isLoading.value = false;
+        }, 1500);
+      });
+
+      return (
+        <Signin {...args} isLoading={isLoading.value} onSubmit$={onSubmit$} />
+      );
+    });
+
+    return <Render {...args} />;
   },
 };

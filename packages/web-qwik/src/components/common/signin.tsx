@@ -1,7 +1,18 @@
-import { $, component$, useSignal, type CSSProperties, type QRL } from "@builder.io/qwik";
+import {
+  $,
+  component$,
+  useSignal,
+  type CSSProperties,
+  type QRL,
+} from "@builder.io/qwik";
 
 import styles from "./signin.module.css";
-import { ElmButton, ElmHeading, ElmTextField } from "@elmethis/qwik";
+import {
+  ElmButton,
+  ElmHeading,
+  ElmInlineText,
+  ElmTextField,
+} from "@elmethis/qwik";
 
 export interface SigninProps {
   class?: string;
@@ -18,6 +29,7 @@ export const Signin = component$<SigninProps>(
   ({ class: className, style, isLoading, isDisabled, onSubmit$ }) => {
     const username = useSignal("");
     const password = useSignal("");
+    const error = useSignal<string | null>(null);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onInputUsername = $((event: InputEvent, _: HTMLInputElement) => {
@@ -32,6 +44,13 @@ export const Signin = component$<SigninProps>(
     });
 
     const handleClick = $(() => {
+      if (!username.value || !password.value) {
+        error.value = "Username and password are required.";
+        return;
+      } else {
+        error.value = null;
+      }
+
       onSubmit$(username.value, password.value);
     });
 
@@ -61,6 +80,8 @@ export const Signin = component$<SigninProps>(
         >
           Sign In
         </ElmButton>
+
+        <ElmInlineText color="#c56565">{error.value}</ElmInlineText>
       </div>
     );
   },

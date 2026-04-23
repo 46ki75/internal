@@ -8,6 +8,11 @@ import { qwikCity } from "@builder.io/qwik-city/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import pkg from "./package.json";
 
+const ENDPOINT = `https://${
+  process.env.STAGE_NAME === "prod" ? "internal" : process.env.STAGE_NAME + "-internal"
+}.46ki75.com`;
+
+
 type PkgDep = Record<string, string>;
 const { dependencies = {}, devDependencies = {} } = pkg as any as {
   dependencies: PkgDep;
@@ -52,6 +57,12 @@ export default defineConfig(({ command, mode }): UserConfig => {
         "Cache-Control": "public, max-age=0",
       },
       port: 11070,
+      proxy: {
+        "/api": {
+          target: `${ENDPOINT}`,
+          changeOrigin: true,
+        },
+      },
     },
     preview: {
       headers: {

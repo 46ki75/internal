@@ -1,4 +1,4 @@
-import { component$, Slot, useContext } from "@builder.io/qwik";
+import { $, component$, Slot, useContext } from "@builder.io/qwik";
 import { Header } from "~/components/common/header";
 import { SigninContainer } from "~/container/signin-container";
 import { AuthContext } from "~/context/auth-context";
@@ -11,8 +11,8 @@ export default component$(() => {
       <Header
         links={[]}
         state={authStore.sessionState}
-        handleSignOutClick$={authStore.signOut}
-        handleSignInClick$={authStore.showSignInModal}
+        handleSignOutClick$={$(async () => authStore.signOut(authStore))}
+        handleSignInClick$={$(async () => authStore.showSignInModal(authStore))}
       />
       <Slot />
       <SigninContainer />

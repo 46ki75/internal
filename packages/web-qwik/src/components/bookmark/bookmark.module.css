@@ -16,6 +16,7 @@
   justify-items: center;
   cursor: pointer;
   transition: background-color 100ms;
+  overflow: hidden;
 
   &:hover {
     background-color: oklch(from #6987b8 l c h / 0.125);
@@ -46,5 +47,8 @@
     grid-area: bookmark-name;
     text-align: center;
     user-select: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }

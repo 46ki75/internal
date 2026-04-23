@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "storybook-framework-qwik";
 import { Signin, type SigninProps } from "./signin";
+import { $ } from "@builder.io/qwik";
 
 const meta: Meta<SigninProps> = {
   title: "Components/Common/signin",
@@ -23,5 +24,8 @@ export const Primary: Story = {
   args: {
     isLoading: false,
     isDisabled: false,
+    onSubmit$: $(async (username: string, password: string) => {
+      alert(`username: ${username}, password: ${password}`);
+    }),
   },
 };

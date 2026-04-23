@@ -50,10 +50,12 @@ export const AuthContextProvider = component$(() => {
 
     isSignInModalOpen: false,
     showSignInModal: $(async (store: AuthStore) => {
+      store.isSignInModalOpen = false;
       store.isSignInModalOpen = true;
     }),
 
     signOut: $(async (store: AuthStore) => {
+      store.sessionState = "pending";
       await signOut();
       store.sessionState = "logout";
     }),
@@ -92,8 +94,10 @@ export const AuthContextProvider = component$(() => {
 
     if (sessionState === "logout") {
       authStore.accessToken = null;
+      authStore.isSignInModalOpen = false;
       authStore.isSignInModalOpen = true;
     } else if (sessionState === "login") {
+      authStore.isSignInModalOpen = true;
       authStore.isSignInModalOpen = false;
     }
   });

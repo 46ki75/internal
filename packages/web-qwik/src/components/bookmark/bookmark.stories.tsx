@@ -24,5 +24,8 @@ export const Primary: Story = {
     onEdit$: $(() => {
       alert("Edit bookmark");
     }),
+    onClick$: $(() => {
+      alert("Click bookmark");
+    }),
   },
 };

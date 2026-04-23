@@ -9,10 +9,11 @@ export interface BookmarkProps {
   label: string;
   favorite?: boolean;
   onEdit$: QRL<(event: MouseEvent) => void>;
+  onClick$?: QRL<(event: MouseEvent) => void>;
 }
 
 export const Bookmark = component$<BookmarkProps>(
-  ({ icon, label, favorite, onEdit$ }) => {
+  ({ icon, label, favorite, onEdit$, onClick$ }) => {
     const handleEdit$ = $((event: MouseEvent) => {
       event.stopPropagation();
       if (onEdit$) {
@@ -21,7 +22,7 @@ export const Bookmark = component$<BookmarkProps>(
     });
 
     return (
-      <div class={[styles["bookmark"]]}>
+      <div class={[styles["bookmark"]]} onClick$={onClick$}>
         <span class={styles["edit-icon"]} onClick$={handleEdit$}>
           <ElmMdiIcon d={mdiTagEdit} />
         </span>

@@ -71,6 +71,7 @@ export const BookmarkContainer = component$(() => {
 
   const name = useSignal<string | null>(null);
   const url = useSignal<string | null>(null);
+  const createBookmarkLoading = useSignal(false);
   const createBookmarkError = useSignal<string | null>(null);
 
   const handleCreateBookmark = $(async () => {
@@ -91,6 +92,8 @@ export const BookmarkContainer = component$(() => {
     }
 
     let retryCount = 0;
+
+    createBookmarkLoading.value = true;
 
     while (retryCount < 3) {
       const accessToken = authStore.tokens.accessToken;
@@ -136,6 +139,8 @@ export const BookmarkContainer = component$(() => {
         retryCount++;
         createBookmarkError.value =
           error instanceof Error ? error.message : String(error);
+      } finally {
+        createBookmarkLoading.value = false;
       }
     }
   });
@@ -159,8 +164,12 @@ export const BookmarkContainer = component$(() => {
         }}
       />
 
-      <ElmButton block onClick$={handleCreateBookmark}>
-        Create Bookmark
+      <ElmButton
+        block
+        onClick$={handleCreateBookmark}
+        loading={createBookmarkLoading.value}
+      >
+        <span>Create Bookmark</span>
       </ElmButton>
 
       {createBookmarkError.value && (

@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from "storybook-framework-qwik";
 import { Bookmark, type BookmarkProps } from "./bookmark";
 
 import icon from "../../../public/favicon.svg?url";
-import { $ } from "@builder.io/qwik";
 
 const meta: Meta<BookmarkProps> = {
   title: "Components/Bookmark/bookmark",
@@ -21,11 +20,8 @@ export const Primary: Story = {
   args: {
     icon: icon,
     label: "Example Bookmark",
-    onEdit$: $(() => {
-      alert("Edit bookmark");
-    }),
-    onClick$: $(() => {
-      alert("Click bookmark");
-    }),
+    favorite: false,
+    url: "https://qwik.dev/",
+    editUrl: "https://github.com/QwikDev/qwik",
   },
 };

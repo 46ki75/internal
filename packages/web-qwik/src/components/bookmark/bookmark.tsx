@@ -1,4 +1,4 @@
-import { $, component$, QRL } from "@builder.io/qwik";
+import { $, component$ } from "@builder.io/qwik";
 
 import styles from "./bookmark.module.css";
 import { ElmInlineText, ElmMdiIcon } from "@elmethis/qwik";
@@ -7,22 +7,33 @@ import { mdiStar, mdiTagEdit } from "@mdi/js";
 export interface BookmarkProps {
   icon: string;
   label: string;
-  favorite?: boolean;
-  onEdit$: QRL<(event: MouseEvent) => void>;
-  onClick$: QRL<(event: MouseEvent) => void>;
+  favorite: boolean;
+  url: string;
+  editUrl: string;
 }
 
 export const Bookmark = component$<BookmarkProps>(
-  ({ icon, label, favorite, onEdit$, onClick$ }) => {
+  ({ icon, label, favorite, url, editUrl }) => {
+    const handleClick = $((event: MouseEvent) => {
+      event.stopPropagation();
+      const a = document.createElement("a");
+      a.href = url;
+      a.target = "_blank";
+      a.rel = "noreferrer";
+      a.click();
+    });
+
     const handleEdit$ = $((event: MouseEvent) => {
       event.stopPropagation();
-      if (onEdit$) {
-        onEdit$(event);
-      }
+      const a = document.createElement("a");
+      a.href = editUrl;
+      a.target = "_blank";
+      a.rel = "noreferrer";
+      a.click();
     });
 
     return (
-      <div class={[styles["bookmark"]]} onClick$={onClick$}>
+      <div class={[styles["bookmark"]]} onClick$={handleClick}>
         <span class={styles["edit-icon"]} onClick$={handleEdit$}>
           <ElmMdiIcon d={mdiTagEdit} />
         </span>

@@ -2,6 +2,7 @@ import {
   $,
   component$,
   useSignal,
+  useTask$,
   type CSSProperties,
   type QRL,
 } from "@builder.io/qwik";
@@ -24,14 +25,21 @@ export interface SigninProps {
   isLoading: boolean;
   isDisabled: boolean;
 
+  error?: string | null;
+
   onSubmit$: QRL<(username: string, password: string) => void>;
 }
 
 export const Signin = component$<SigninProps>(
-  ({ class: className, style, isLoading, isDisabled, onSubmit$ }) => {
+  ({ class: className, style, isLoading, isDisabled, error, onSubmit$ }) => {
     const username = useSignal("");
     const password = useSignal("");
-    const error = useSignal<string | null>(null);
+    const innerError = useSignal<string | null>(null);
+
+    useTask$(({ track }) => {
+      const e = track(() => error);
+      innerError.value = e ? e : null;
+    });
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onInputUsername = $((event: InputEvent, _: HTMLInputElement) => {
@@ -47,10 +55,10 @@ export const Signin = component$<SigninProps>(
 
     const handleClick = $(() => {
       if (!username.value || !password.value) {
-        error.value = "Username and password are required.";
+        innerError.value = "Username and password are required.";
         return;
       } else {
-        error.value = null;
+        innerError.value = null;
       }
 
       onSubmit$(username.value, password.value);
@@ -85,7 +93,7 @@ export const Signin = component$<SigninProps>(
         </ElmButton>
 
         <ElmInlineText class={styles["error"]} color="#c56565">
-          {error.value}
+          {innerError.value}
         </ElmInlineText>
       </div>
     );

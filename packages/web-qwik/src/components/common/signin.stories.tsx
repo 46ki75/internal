@@ -24,6 +24,7 @@ export const Primary: Story = {
   args: {
     isLoading: false,
     isDisabled: false,
+    error: null,
     onSubmit$: $(async (username: string, password: string) => {
       alert(`username: ${username}, password: ${password}`);
     }),

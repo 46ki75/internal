@@ -45,7 +45,7 @@ export const BookmarkContainer = component$(() => {
                 : {
                     id: "__untagged__",
                     name: "Untagged",
-                    color: "#cccccc",
+                    color: "gray",
                   },
             } satisfies BookmarkListProps["bookmarks"][number];
           },

@@ -121,8 +121,8 @@ importers:
         specifier: ^1.19.2
         version: 1.19.2(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(rollup@4.60.2)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(typescript@5.4.5)(yaml@2.8.2)
       '@elmethis/qwik':
-        specifier: ^0.0.50
-        version: 0.0.50
+        specifier: ^0.0.51
+        version: 0.0.51
       '@eslint/js':
         specifier: ^9
         version: 9.39.4
@@ -901,8 +901,8 @@ packages:
   '@dxup/unimport@0.1.2':
     resolution: {integrity: sha512-/B8YJGPzaYq1NbsQmwgP8EZqg40NpTw4ZB3suuI0TplbxKHeK94jeaawLmVhCv+YwUnOpiWEz9U6SeThku/8JQ==}
 
-  '@elmethis/qwik@0.0.50':
-    resolution: {integrity: sha512-WBiWZeUdrtIzUCf2Uy2RVqzWF1m0sr7jiTr2jP7FUfIvL3nv24yNkTGwkuvp4JYY13OA13343Qj8CI18aGi0Wg==}
+  '@elmethis/qwik@0.0.51':
+    resolution: {integrity: sha512-S+aR3oLqeTI1qq/w7C1UCnR+wJP/dGvV5FjOf4t0j7lA9tLZ3DdxfqMqMhaxR7R4rQgfBUhzIVwZwBO79emZJA==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
 
   '@elmethis/vue@0.3.1':
@@ -8808,7 +8808,7 @@ snapshots:
 
   '@dxup/unimport@0.1.2': {}
 
-  '@elmethis/qwik@0.0.50':
+  '@elmethis/qwik@0.0.51':
     dependencies:
       '@ag-ui/client': 0.0.52
       '@ag-ui/core': 0.0.52

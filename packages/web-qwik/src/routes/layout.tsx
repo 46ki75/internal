@@ -5,6 +5,7 @@ import {
   useStore,
 } from "@builder.io/qwik";
 import { Header } from "~/components/common/header";
+import { SigninContainer } from "~/container/signin-container";
 import { AuthContext, AuthStore } from "~/context/auth-context";
 
 export default component$(() => {
@@ -16,6 +17,7 @@ export default component$(() => {
     <div>
       <Header links={[]} state={authStore.state} />
       <Slot />
+      <SigninContainer />
     </div>
   );
 });

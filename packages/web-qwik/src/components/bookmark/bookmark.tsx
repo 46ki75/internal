@@ -5,11 +5,13 @@ import { ElmInlineText, ElmMdiIcon } from "@elmethis/qwik";
 import { mdiStar, mdiTagEdit } from "@mdi/js";
 
 export interface BookmarkProps {
+  id: string;
   icon: string;
   label: string;
   favorite: boolean;
   url: string;
   editUrl: string;
+  tag: { id: string; name: string; color: string };
 }
 
 export const Bookmark = component$<BookmarkProps>(

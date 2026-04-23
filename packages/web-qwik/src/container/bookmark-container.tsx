@@ -1,9 +1,4 @@
-import {
-  component$,
-  useContext,
-  useStore,
-  useVisibleTask$,
-} from "@builder.io/qwik";
+import { component$, useContext, useVisibleTask$ } from "@builder.io/qwik";
 
 import styles from "./bookmark-container.module.css";
 import {
@@ -12,10 +7,17 @@ import {
 } from "~/components/bookmark/bookmark-list";
 import { AuthContext } from "~/context/auth-context";
 import { openApiClient } from "~/openapi/client";
+import { useLocalStorage } from "@elmethis/qwik";
 
 export const BookmarkContainer = component$(() => {
   const authStore = useContext(AuthContext);
-  const bookmarkStore = useStore<BookmarkListProps>({ bookmarks: [] });
+
+  const { state: bookmarkStore, set } = useLocalStorage<{
+    bookmarks: BookmarkListProps["bookmarks"];
+  }>({
+    key: "bookmarks",
+    initialValue: { bookmarks: [] },
+  });
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async ({ track }) => {
@@ -51,14 +53,14 @@ export const BookmarkContainer = component$(() => {
           },
         );
 
-        bookmarkStore.bookmarks = bookmarks;
+        set({ bookmarks });
       }
     }
   });
 
   return (
     <div class={styles["bookmark-container"]}>
-      <BookmarkList {...bookmarkStore} />
+      <BookmarkList {...bookmarkStore.value} />
     </div>
   );
 });

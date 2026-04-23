@@ -1,0 +1,50 @@
+.bookmark {
+  box-sizing: border-box;
+  padding: 0.25rem;
+  width: 4rem;
+  height: 5.5rem;
+  border: solid 1px oklch(from gray l c h / 0.25);
+
+  display: grid;
+  grid-template-areas:
+    "edit-icon spacer favorite-icon"
+    "favicon favicon favicon"
+    "bookmark-name bookmark-name bookmark-name";
+  grid-template-rows: 1rem 1fr 1rem;
+  grid-template-columns: 1rem 1fr 1rem;
+  align-items: center;
+  justify-items: center;
+  cursor: pointer;
+  transition: background-color 100ms;
+
+  &:hover {
+    background-color: oklch(from #6987b8 l c h / 0.125);
+  }
+
+  .edit-icon {
+    box-sizing: border-box;
+    padding: 0.25rem;
+    grid-area: edit-icon;
+    transition: background-color 100ms;
+
+    &:hover {
+      background-color: oklch(from #6987b8 l c h / 0.125);
+    }
+  }
+
+  .favorite-icon {
+    box-sizing: border-box;
+    padding: 0.25rem;
+    grid-area: favorite-icon;
+  }
+
+  .favicon {
+    grid-area: favicon;
+  }
+
+  .bookmark-name {
+    grid-area: bookmark-name;
+    text-align: center;
+    user-select: none;
+  }
+}

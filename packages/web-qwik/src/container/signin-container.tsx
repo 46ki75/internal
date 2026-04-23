@@ -1,4 +1,4 @@
-import { component$, useVisibleTask$, $, useContext } from "@builder.io/qwik";
+import { component$, $, useContext, useTask$ } from "@builder.io/qwik";
 import { useModal } from "@elmethis/qwik";
 import { Signin } from "~/components/common/signin";
 
@@ -9,8 +9,7 @@ export const SigninContainer = component$(() => {
 
   const { Modal, show, hide } = useModal({});
 
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(({ track }) => {
+  useTask$(async ({ track }) => {
     const isSignInModalOpen = track(() => authStore.isSignInModalOpen);
 
     if (isSignInModalOpen) {

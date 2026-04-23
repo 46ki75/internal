@@ -9,7 +9,7 @@ export interface BookmarkProps {
   label: string;
   favorite?: boolean;
   onEdit$: QRL<(event: MouseEvent) => void>;
-  onClick$?: QRL<(event: MouseEvent) => void>;
+  onClick$: QRL<(event: MouseEvent) => void>;
 }
 
 export const Bookmark = component$<BookmarkProps>(

@@ -127,6 +127,7 @@ export const AuthContextProvider = component$(() => {
     configure();
 
     try {
+      await authStore.tokens.refresh(authStore);
       const { username, userId } = await getCurrentUser();
       if (username && userId) {
         authStore.sessionState = "login";

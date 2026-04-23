@@ -6,7 +6,10 @@ import {
 } from "@builder.io/qwik";
 
 import styles from "./bookmark-container.module.css";
-import { BookmarkListProps } from "~/components/bookmark/bookmark-list";
+import {
+  BookmarkList,
+  BookmarkListProps,
+} from "~/components/bookmark/bookmark-list";
 import { AuthContext } from "~/context/auth-context";
 import { openApiClient } from "~/openapi/client";
 
@@ -53,5 +56,9 @@ export const BookmarkContainer = component$(() => {
     }
   });
 
-  return <div class={styles["bookmark-container"]}></div>;
+  return (
+    <div class={styles["bookmark-container"]}>
+      <BookmarkList {...bookmarkStore} />
+    </div>
+  );
 });

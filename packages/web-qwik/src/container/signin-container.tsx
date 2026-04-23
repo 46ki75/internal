@@ -7,15 +7,15 @@ import { AuthContext } from "~/context/auth-context";
 export const SigninContainer = component$(() => {
   const authStore = useContext(AuthContext);
 
-  const { Modal, toggle, show, hide } = useModal({});
+  const { Modal, show, hide } = useModal({});
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ track }) => {
-    const sessionState = track(() => authStore.sessionState);
+    const isSignInModalOpen = track(() => authStore.isSignInModalOpen);
 
-    if (sessionState === "logout") {
+    if (isSignInModalOpen) {
       show();
-    } else if (sessionState === "login") {
+    } else {
       hide();
     }
   });
@@ -27,8 +27,6 @@ export const SigninContainer = component$(() => {
   return (
     <>
       {authStore.sessionState}
-
-      <button onClick$={toggle}>toggle</button>
 
       <Modal>
         <Signin

@@ -45,7 +45,7 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
 
       <div class={styles["tags-container"]}>
         {Object.keys(tags).map((tagId) => (
-          <div key={tagId}>
+          <div key={tagId} class={styles["tag-section"]}>
             <div
               class={styles["tag"]}
               style={{ "--color": tags[tagId].tag.color }}

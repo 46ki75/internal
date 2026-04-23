@@ -1,11 +1,20 @@
 .bookmark-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.25rem;
 
   .tags-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    .tag-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
     .tag {
-      margin-block-end: 0.5rem;
       display: flex;
       align-items: center;
       gap: 0.25rem;
@@ -16,11 +25,12 @@
       color: oklch(from white l c h / 0.75);
       user-select: none;
     }
+  }
 
-    .bookmark-container {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
+  .bookmark-container {
+    display: flex;
+    flex-direction: row;
+    gap: 0.25rem;
+    flex-wrap: wrap;
   }
 }

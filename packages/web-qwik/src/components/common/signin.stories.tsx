@@ -3,25 +3,8 @@ import { Signin, type SigninProps } from "./signin";
 import { $, component$, useSignal } from "@builder.io/qwik";
 
 import { Amplify } from "aws-amplify";
-import { signIn } from "aws-amplify/auth";
+import { fetchAuthSession, signIn } from "aws-amplify/auth";
 import { cognitoUserPoolsTokenProvider } from "aws-amplify/auth/cognito";
-import { KeyValueStorageInterface } from "aws-amplify/utils";
-
-class InMemoryStorage implements KeyValueStorageInterface {
-  private store: Record<string, string> = {};
-  async setItem(key: string, value: string) {
-    this.store[key] = value;
-  }
-  async getItem(key: string) {
-    return this.store[key] ?? null;
-  }
-  async removeItem(key: string) {
-    delete this.store[key];
-  }
-  async clear() {
-    this.store = {};
-  }
-}
 
 const meta: Meta<SigninProps> = {
   title: "Components/Common/signin",
@@ -68,16 +51,19 @@ export const Primary: Story = {
             },
           });
 
-          const inMemoryStorage = new InMemoryStorage();
-
-          cognitoUserPoolsTokenProvider.setKeyValueStorage(inMemoryStorage);
-
           const result = await signIn({
             username: username,
             password: password,
           });
 
           console.log(result);
+
+          const session = await fetchAuthSession({ forceRefresh: true });
+
+          const accessToken = session.tokens?.accessToken.toString();
+          const idToken = session.tokens?.idToken?.toString();
+
+          console.log({ accessToken, idToken });
 
           const tokens = await cognitoUserPoolsTokenProvider.getTokens();
 

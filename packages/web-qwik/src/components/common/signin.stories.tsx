@@ -2,6 +2,27 @@ import type { Meta, StoryObj } from "storybook-framework-qwik";
 import { Signin, type SigninProps } from "./signin";
 import { $, component$, useSignal } from "@builder.io/qwik";
 
+import { Amplify } from "aws-amplify";
+import { signIn } from "aws-amplify/auth";
+import { cognitoUserPoolsTokenProvider } from "aws-amplify/auth/cognito";
+import { KeyValueStorageInterface } from "aws-amplify/utils";
+
+class InMemoryStorage implements KeyValueStorageInterface {
+  private store: Record<string, string> = {};
+  async setItem(key: string, value: string) {
+    this.store[key] = value;
+  }
+  async getItem(key: string) {
+    return this.store[key] ?? null;
+  }
+  async removeItem(key: string) {
+    delete this.store[key];
+  }
+  async clear() {
+    this.store = {};
+  }
+}
+
 const meta: Meta<SigninProps> = {
   title: "Components/Common/signin",
   component: Signin,
@@ -34,13 +55,36 @@ export const Primary: Story = {
     const Render = component$((args: SigninProps) => {
       const isLoading = useSignal(args.isLoading);
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const onSubmit$ = $((_username: string, _password: string) => {
+      const onSubmit$ = $(async (username: string, password: string) => {
         isLoading.value = true;
 
-        setTimeout(() => {
+        try {
+          Amplify.configure({
+            Auth: {
+              Cognito: {
+                userPoolId: "ap-northeast-1_BmZKeZeKX",
+                userPoolClientId: "4n5l6d5oekst6hrmvt1chndghd",
+              },
+            },
+          });
+
+          const inMemoryStorage = new InMemoryStorage();
+
+          cognitoUserPoolsTokenProvider.setKeyValueStorage(inMemoryStorage);
+
+          const result = await signIn({
+            username: username,
+            password: password,
+          });
+
+          console.log(result);
+
+          const tokens = await cognitoUserPoolsTokenProvider.getTokens();
+
+          console.log(tokens);
+        } finally {
           isLoading.value = false;
-        }, 1500);
+        }
       });
 
       return (

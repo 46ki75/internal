@@ -47,8 +47,14 @@
     grid-area: bookmark-name;
     text-align: center;
     user-select: none;
-    white-space: nowrap;
+
+    /* WebKit & Firefox */
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
+
+    /* Chromium */
+    line-clamp: 2;
   }
 }

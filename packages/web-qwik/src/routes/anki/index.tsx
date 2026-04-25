@@ -48,7 +48,11 @@ export default component$<IndexProps>(({ class: className, style }) => {
     if (!ankiStore.updateAnkiByPerformanceRating) return;
     if (!pageId || !performanceRating) return;
 
-    ankiStore.updateAnkiByPerformanceRating(pageId, performanceRating);
+    ankiStore.updateAnkiByPerformanceRating(
+      ankiStore,
+      pageId,
+      performanceRating,
+    );
 
     if (currentAnki.value?.metadata.page_id === pageId) {
       isShowingAnswer.value = false;

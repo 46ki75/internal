@@ -1,18 +1,39 @@
-.anki-jarkup-container {
-  border: 1px solid oklch(from gray l c h / 0.25);
-  border-radius: 0.25rem;
-  background-color: #f5f6f7;
+.anki {
+  width: clamp(400px, 100%, 800px);
+  margin: auto;
 
-  .jarkup-header {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 0.5rem;
-    background-color: gray;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .anki-jarkup-container {
+    border: 1px solid oklch(from gray l c h / 0.25);
+    border-radius: 0.25rem;
+    background-color: #f5f6f7;
+    box-shadow: 0 0 2px oklch(from black l c h / 0.05);
+
+    .jarkup-header {
+      border-bottom: 1px solid oklch(from gray l c h / 0.25);
+      box-sizing: border-box;
+      padding: 0.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0.5rem;
+      background-color: oklch(from gray l c h / 0.05);
+    }
+
+    .jarkup-renderer {
+      box-sizing: border-box;
+      padding: 0.25rem;
+    }
   }
 
-  .jarkup-renderer {
-    box-sizing: border-box;
-    padding: 0.25rem;
+  .button {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    margin: 0.5rem auto;
+    width: 100%;
   }
 }

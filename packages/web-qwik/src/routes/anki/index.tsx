@@ -8,7 +8,18 @@ import {
 
 import styles from "./anki.module.css";
 import { AnkiContext } from "~/context/anki-context";
-import { ElmBlockFallback, ElmButton, ElmJarkup } from "@elmethis/qwik";
+import {
+  ElmBlockFallback,
+  ElmButton,
+  ElmInlineText,
+  ElmJarkup,
+  ElmMdiIcon,
+} from "@elmethis/qwik";
+import {
+  mdiMessageAlertOutline,
+  mdiMessageCheckOutline,
+  mdiMessageQuestionOutline,
+} from "@mdi/js";
 
 export interface IndexProps {
   class?: string;
@@ -28,7 +39,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
   const isShowingAnswer = useSignal(false);
 
   return (
-    <div class={[styles["index"], className]} style={style}>
+    <div class={[styles["anki"], className]} style={style}>
       {JSON.stringify(ankiStore.ankiList.data[0], null, 2)}
 
       {!currentAnki.value?.block ? (
@@ -36,7 +47,10 @@ export default component$<IndexProps>(({ class: className, style }) => {
       ) : (
         <>
           <div class={styles["anki-jarkup-container"]}>
-            <div class={styles["jarkup-header"]}></div>
+            <div class={styles["jarkup-header"]}>
+              <ElmMdiIcon d={mdiMessageQuestionOutline} />
+              <ElmInlineText>Front</ElmInlineText>
+            </div>
             <div class={styles["jarkup-renderer"]}>
               <ElmJarkup jsonComponents={currentAnki.value.block.front} />
             </div>
@@ -45,14 +59,20 @@ export default component$<IndexProps>(({ class: className, style }) => {
           {isShowingAnswer.value && (
             <>
               <div class={styles["anki-jarkup-container"]}>
-                <div class={styles["jarkup-header"]}></div>
+                <div class={styles["jarkup-header"]}>
+                  <ElmMdiIcon d={mdiMessageAlertOutline} />
+                  <ElmInlineText>Back</ElmInlineText>
+                </div>
                 <div class={styles["jarkup-renderer"]}>
                   <ElmJarkup jsonComponents={currentAnki.value.block.back} />
                 </div>
               </div>
 
               <div class={styles["anki-jarkup-container"]}>
-                <div class={styles["jarkup-header"]}></div>
+                <div class={styles["jarkup-header"]}>
+                  <ElmMdiIcon d={mdiMessageCheckOutline} />
+                  <ElmInlineText>Explanation</ElmInlineText>
+                </div>
                 <div class={styles["jarkup-renderer"]}>
                   <ElmJarkup
                     jsonComponents={currentAnki.value.block.explanation}
@@ -64,12 +84,14 @@ export default component$<IndexProps>(({ class: className, style }) => {
         </>
       )}
 
-      <ElmButton
-        block
-        onClick$={() => (isShowingAnswer.value = !isShowingAnswer.value)}
-      >
-        {isShowingAnswer.value ? "Hide Answer" : "Show Answer"}
-      </ElmButton>
+      <div class={styles["button"]}>
+        <ElmButton
+          block
+          onClick$={() => (isShowingAnswer.value = !isShowingAnswer.value)}
+        >
+          {isShowingAnswer.value ? "Hide Answer" : "Show Answer"}
+        </ElmButton>
+      </div>
     </div>
   );
 });

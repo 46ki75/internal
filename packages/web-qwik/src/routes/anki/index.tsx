@@ -69,7 +69,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
 
   return (
     <div class={[styles["anki"], className]} style={style}>
-      {ankiStore.ankiList.error}
+      {ankiStore.error}
 
       <div class={styles["button-control"]}>
         <ElmButton block onClick$={open} loading={currentAnki.value == null}>

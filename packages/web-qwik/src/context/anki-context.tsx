@@ -22,16 +22,16 @@ type AnkiBlock = {
 };
 
 export interface AnkiStore {
+  error: string | null;
+
   ankiList: {
     data: Array<{
       metadata: AnkiMeta;
       block: AnkiBlock | null;
       loading: boolean;
-      error: string | null;
     }>;
     currentIndex: number | null;
     loading: boolean;
-    error: string | null;
   };
 
   updateAnkiByPerformanceRating?: QRL<
@@ -50,11 +50,12 @@ export const useAnkiContextProvider = () => {
   const authStore = useContext(AuthContext);
 
   const ankiStore = useStore<AnkiStore>({
+    error: null,
+
     ankiList: {
       data: [],
       currentIndex: null,
       loading: false,
-      error: null,
     },
 
     updateAnkiByPerformanceRating: undefined,
@@ -85,7 +86,7 @@ export const useAnkiContextProvider = () => {
             a.click();
           }
         } catch (error) {
-          store.ankiList.error =
+          store.error =
             "Failed to create new Anki. " +
             (error instanceof Error ? error.message : String(error));
         } finally {
@@ -123,7 +124,7 @@ export const useAnkiContextProvider = () => {
       if (ankiListData && ankiListData.length > 0)
         ankiStore.ankiList.currentIndex = 0;
     } catch (error) {
-      ankiStore.ankiList.error =
+      ankiStore.error =
         "Failed to fetch Anki list. " +
         (error instanceof Error ? error.message : String(error));
     } finally {
@@ -163,7 +164,7 @@ export const useAnkiContextProvider = () => {
       if (ankiBlockData) ankiRef.block = ankiBlockData as AnkiBlock;
     } catch (error) {
       if (ankiRef)
-        ankiRef.error =
+        ankiStore.error =
           "Failed to fetch Anki block. " +
           (error instanceof Error ? error.message : String(error));
     } finally {
@@ -259,7 +260,7 @@ export const useAnkiContextProvider = () => {
         }
       } catch (error) {
         if (ankiRef)
-          ankiRef.error =
+          ankiStore.error =
             "Failed to fetch Anki block. " +
             (error instanceof Error ? error.message : String(error));
       }

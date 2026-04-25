@@ -46,6 +46,11 @@ export interface AnkiStore {
     execute: QRL<(store: AnkiStore) => Promise<void>>;
     loading: boolean;
   };
+
+  review: {
+    execute: QRL<(store: AnkiStore) => Promise<void>>;
+    loading: boolean;
+  };
 }
 
 export const AnkiContext = createContextId<AnkiStore>("anki");
@@ -186,6 +191,48 @@ export const useAnkiContextProvider = () => {
             (error instanceof Error ? error.message : String(error));
         } finally {
           store.create.loading = false;
+        }
+      }),
+      loading: false,
+    },
+
+    review: {
+      execute: $(async (store: AnkiStore) => {
+        store.review.loading = true;
+        try {
+          if (store.ankiList.currentIndex == null) {
+            throw new Error("No current Anki to review");
+          }
+
+          const currentAnki = store.ankiList.data[store.ankiList.currentIndex];
+
+          await authStore.tokens.refresh(authStore);
+
+          const res = await openApiClient.PUT(`/api/v1/anki/{page_id}`, {
+            params: {
+              header: {
+                Authorization: `Bearer ${authStore.tokens.accessToken}`,
+              },
+              path: {
+                page_id: currentAnki.metadata.page_id,
+              },
+            },
+            body: {
+              is_review_required: !currentAnki.metadata.is_review_required,
+            },
+          });
+
+          if (!res.data) {
+            throw new Error("No data returned from API");
+          }
+
+          currentAnki.metadata.is_review_required = res.data.is_review_required;
+        } catch (error) {
+          store.error =
+            "Failed to review Anki. " +
+            (error instanceof Error ? error.message : String(error));
+        } finally {
+          store.review.loading = false;
         }
       }),
       loading: false,

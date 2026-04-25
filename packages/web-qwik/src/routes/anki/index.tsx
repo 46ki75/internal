@@ -88,7 +88,11 @@ export default component$<IndexProps>(({ class: className, style }) => {
           <ElmMdiIcon d={mdiCreation} />
           <span>New</span>
         </ElmButton>
-        <ElmButton block loading={currentAnki.value == null}>
+        <ElmButton
+          block
+          loading={currentAnki.value == null || ankiStore.review.loading}
+          onClick$={() => ankiStore.review.execute(ankiStore)}
+        >
           <ElmMdiIcon
             d={
               currentAnki.value?.metadata.is_review_required

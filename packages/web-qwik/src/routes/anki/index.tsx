@@ -76,7 +76,11 @@ export default component$<IndexProps>(({ class: className, style }) => {
           <ElmMdiIcon d={mdiBookEdit} />
           <span>Edit</span>
         </ElmButton>
-        <ElmButton block onClick$={() => ankiStore.createNewAnki(ankiStore)}>
+        <ElmButton
+          block
+          loading={ankiStore.create.loading}
+          onClick$={() => ankiStore.create.execute(ankiStore)}
+        >
           <ElmMdiIcon d={mdiCreation} />
           <span>New</span>
         </ElmButton>

@@ -101,7 +101,11 @@ export default component$<IndexProps>(({ class: className, style }) => {
             }
           />
         </ElmButton>
-        <ElmButton block loading={currentAnki.value == null}>
+
+        <ElmButton
+          block
+          loading={currentAnki.value == null || ankiStore.review.loading}
+        >
           <ElmMdiIcon d={mdiRefresh} />
         </ElmButton>
       </div>

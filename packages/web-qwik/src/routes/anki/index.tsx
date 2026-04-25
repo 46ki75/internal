@@ -14,7 +14,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
 
   return (
     <div class={[styles["index"], className]} style={style}>
-      {JSON.stringify(ankiStore.ankiList.data[ankiStore.ankiList.currentIndex])}
+      {JSON.stringify(ankiStore.ankiList.data[0], null, 2)}
     </div>
   );
 });

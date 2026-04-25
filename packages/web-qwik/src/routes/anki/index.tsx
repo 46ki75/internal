@@ -2,12 +2,13 @@ import {
   component$,
   useComputed$,
   useContext,
+  useSignal,
   type CSSProperties,
 } from "@builder.io/qwik";
 
 import styles from "./anki.module.css";
 import { AnkiContext } from "~/context/anki-context";
-import { ElmBlockFallback, ElmJarkup } from "@elmethis/qwik";
+import { ElmBlockFallback, ElmButton, ElmJarkup } from "@elmethis/qwik";
 
 export interface IndexProps {
   class?: string;
@@ -24,6 +25,8 @@ export default component$<IndexProps>(({ class: className, style }) => {
       : null,
   );
 
+  const isShowingAnswer = useSignal(false);
+
   return (
     <div class={[styles["index"], className]} style={style}>
       {JSON.stringify(ankiStore.ankiList.data[0], null, 2)}
@@ -39,14 +42,34 @@ export default component$<IndexProps>(({ class: className, style }) => {
             </div>
           </div>
 
-          <div class={styles["anki-jarkup-container"]}>
-            <div class={styles["jarkup-header"]}></div>
-            <div class={styles["jarkup-renderer"]}>
-              <ElmJarkup jsonComponents={currentAnki.value.block.back} />
-            </div>
-          </div>
+          {isShowingAnswer.value && (
+            <>
+              <div class={styles["anki-jarkup-container"]}>
+                <div class={styles["jarkup-header"]}></div>
+                <div class={styles["jarkup-renderer"]}>
+                  <ElmJarkup jsonComponents={currentAnki.value.block.back} />
+                </div>
+              </div>
+
+              <div class={styles["anki-jarkup-container"]}>
+                <div class={styles["jarkup-header"]}></div>
+                <div class={styles["jarkup-renderer"]}>
+                  <ElmJarkup
+                    jsonComponents={currentAnki.value.block.explanation}
+                  />
+                </div>
+              </div>
+            </>
+          )}
         </>
       )}
+
+      <ElmButton
+        block
+        onClick$={() => (isShowingAnswer.value = !isShowingAnswer.value)}
+      >
+        {isShowingAnswer.value ? "Hide Answer" : "Show Answer"}
+      </ElmButton>
     </div>
   );
 });

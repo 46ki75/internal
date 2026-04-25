@@ -29,17 +29,18 @@
     .jarkup-header {
       border-bottom: 1px solid oklch(from gray l c h / 0.25);
       box-sizing: border-box;
-      padding: 0.25rem;
+      padding: 0.5rem;
       display: flex;
       align-items: center;
       justify-content: flex-start;
       gap: 0.5rem;
       background-color: oklch(from gray l c h / 0.05);
+      user-select: none;
     }
 
     .jarkup-renderer {
       box-sizing: border-box;
-      padding: 0.25rem;
+      padding: 0.5rem;
     }
   }
 

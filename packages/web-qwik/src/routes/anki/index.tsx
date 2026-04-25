@@ -1,4 +1,5 @@
 import {
+  $,
   component$,
   useComputed$,
   useContext,
@@ -38,8 +39,21 @@ export default component$<IndexProps>(({ class: className, style }) => {
 
   const isShowingAnswer = useSignal(false);
 
+  const handleUpdate = $((pageId?: string, performanceRating?: number) => {
+    if (!ankiStore.updateAnkiByPerformanceRating) return;
+    if (!pageId || !performanceRating) return;
+
+    ankiStore.updateAnkiByPerformanceRating(pageId, performanceRating);
+
+    if (currentAnki.value?.metadata.page_id === pageId) {
+      isShowingAnswer.value = false;
+    }
+  });
+
   return (
     <div class={[styles["anki"], className]} style={style}>
+      {ankiStore.ankiList.error}
+
       {!currentAnki.value?.block ? (
         <ElmBlockFallback />
       ) : (
@@ -82,13 +96,37 @@ export default component$<IndexProps>(({ class: className, style }) => {
         </>
       )}
 
-      <div class={styles["button"]}>
-        <ElmButton
-          block
-          onClick$={() => (isShowingAnswer.value = !isShowingAnswer.value)}
-        >
-          {isShowingAnswer.value ? "Hide Answer" : "Show Answer"}
-        </ElmButton>
+      <div class={styles["button-container"]}>
+        {!isShowingAnswer.value ? (
+          <ElmButton
+            block
+            onClick$={() => (isShowingAnswer.value = !isShowingAnswer.value)}
+          >
+            {isShowingAnswer.value ? "Hide Answer" : "Show Answer"}
+          </ElmButton>
+        ) : (
+          <div class={styles["update-button-container"]}>
+            {[
+              "FORGETFUL",
+              "INCORRECT",
+              "ALMOST",
+              "LUCKY",
+              "CORRECT",
+              "CONFIDENT",
+            ].map((rating, index) => (
+              <ElmButton
+                key={index}
+                block
+                onClick$={() =>
+                  handleUpdate(currentAnki.value?.metadata.page_id, index)
+                }
+                primary={index >= 3}
+              >
+                {rating}
+              </ElmButton>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

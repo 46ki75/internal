@@ -13,6 +13,13 @@
     gap: 0.25rem;
   }
 
+  .anki-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+
   .anki-jarkup-container {
     border: 1px solid oklch(from gray l c h / 0.25);
     border-radius: 0.25rem;

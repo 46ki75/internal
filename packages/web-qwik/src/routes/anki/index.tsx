@@ -25,6 +25,8 @@ import {
   mdiMessageCheckOutline,
   mdiMessageQuestionOutline,
   mdiRefresh,
+  mdiSchool,
+  mdiTrayFull,
 } from "@mdi/js";
 
 export interface IndexProps {
@@ -57,6 +59,22 @@ export default component$<IndexProps>(({ class: className, style }) => {
     if (currentAnki.value?.metadata.page_id === pageId) {
       isShowingAnswer.value = false;
     }
+  });
+
+  const count = useComputed$(() => ankiStore.ankiList.data.length);
+
+  const shouldLearnCount = useComputed$(() => {
+    const now = new Date();
+    const count = ankiStore.ankiList.data.reduce((acc, { metadata }) => {
+      if (
+        metadata.is_review_required ||
+        (metadata.next_review_at && new Date(metadata.next_review_at) <= now)
+      ) {
+        return acc + 1;
+      }
+      return acc;
+    }, 0);
+    return count;
   });
 
   const open = $(() => {
@@ -116,6 +134,13 @@ export default component$<IndexProps>(({ class: className, style }) => {
         >
           <ElmMdiIcon d={mdiRefresh} />
         </ElmButton>
+      </div>
+
+      <div class={styles["anki-header"]}>
+        <ElmMdiIcon d={mdiSchool} color="#6987b8" />
+        <ElmInlineText>Should Learn: {shouldLearnCount.value}</ElmInlineText>
+        <ElmMdiIcon d={mdiTrayFull} color="#6987b8" />
+        <ElmInlineText>Queue: {count.value}</ElmInlineText>
       </div>
 
       {!currentAnki.value?.block ? (

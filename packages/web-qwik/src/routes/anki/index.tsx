@@ -72,9 +72,11 @@ export default component$<IndexProps>(({ class: className, style }) => {
   });
 
   return (
-    <div class={[styles["anki"], className]} style={style}>
-      {ankiStore.error}
-
+    <div
+      class={[styles["anki"], className]}
+      style={style}
+      key={String(currentAnki?.value?.loading)}
+    >
       <div class={styles["button-control"]}>
         <ElmButton block onClick$={open} loading={currentAnki.value == null}>
           <ElmMdiIcon d={mdiBookEdit} />

@@ -1,0 +1,18 @@
+.anki-jarkup-container {
+  border: 1px solid oklch(from gray l c h / 0.25);
+  border-radius: 0.25rem;
+  background-color: #f5f6f7;
+
+  .jarkup-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    background-color: gray;
+  }
+
+  .jarkup-renderer {
+    box-sizing: border-box;
+    padding: 0.25rem;
+  }
+}

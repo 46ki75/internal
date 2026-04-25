@@ -9,12 +9,16 @@ import {
 import { openApiClient } from "~/openapi/client";
 import { paths } from "~/openapi/schema";
 import { AuthContext } from "./auth-context";
+import { ElmJarkupProps } from "@elmethis/qwik";
 
 type AnkiMeta =
   paths["/api/v1/anki/{page_id}"]["get"]["responses"]["200"]["content"]["application/json"][number];
 
-type AnkiBlock =
-  paths["/api/v1/anki/block/{page_id}"]["get"]["responses"]["200"]["content"]["application/json"];
+type AnkiBlock = {
+  back: ElmJarkupProps["jsonComponents"];
+  explanation: ElmJarkupProps["jsonComponents"];
+  front: ElmJarkupProps["jsonComponents"];
+};
 
 export interface AnkiStore {
   ankiList: {
@@ -108,7 +112,7 @@ export const useAnkiContextProvider = () => {
         },
       );
 
-      if (ankiBlockData) ankiRef.block = ankiBlockData;
+      if (ankiBlockData) ankiRef.block = ankiBlockData as AnkiBlock;
     } catch (error) {
       if (ankiRef)
         ankiRef.error =

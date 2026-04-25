@@ -42,7 +42,7 @@ export interface AnkiStore {
     ) => Promise<void>
   >;
 
-  fetchAnkiBlock: QRL<(store: AnkiStore, pageId: string) => Promise<void>>;
+  fetchAnkiBlock: QRL<(store: AnkiStore, pageId?: string) => Promise<void>>;
 
   create: {
     execute: QRL<(store: AnkiStore) => Promise<void>>;
@@ -162,17 +162,16 @@ export const useAnkiContextProvider = () => {
       },
     ),
 
-    fetchAnkiBlock: $(async (store: AnkiStore, pageId: string) => {
+    fetchAnkiBlock: $(async (store: AnkiStore, pageId?: string) => {
       const ankiRef = store.ankiList.data.find(
         (anki) => anki.metadata.page_id === pageId,
       );
 
       try {
+        if (!pageId)
+          throw new Error("Page ID is required to fetch Anki block.");
         if (!ankiRef)
           throw new Error(`Anki with page_id ${pageId} not found in the list.`);
-
-        // If the block is already fetched, do not fetch again
-        if (ankiRef.block) return;
 
         // Prevent multiple fetches for the same block
         if (ankiRef.loading) return;
@@ -195,10 +194,9 @@ export const useAnkiContextProvider = () => {
 
         if (ankiBlockData) ankiRef.block = ankiBlockData as AnkiBlock;
       } catch (error) {
-        if (ankiRef)
-          store.error =
-            "Failed to fetch Anki block. " +
-            (error instanceof Error ? error.message : String(error));
+        store.error =
+          "Failed to fetch Anki block. " +
+          (error instanceof Error ? error.message : String(error));
       } finally {
         if (ankiRef) ankiRef.loading = false;
       }

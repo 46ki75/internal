@@ -104,12 +104,11 @@ export default component$<IndexProps>(({ class: className, style }) => {
 
         <ElmButton
           block
-          loading={currentAnki.value == null || ankiStore.review.loading}
+          loading={currentAnki.value == null || currentAnki.value.loading}
           onClick$={() =>
-            currentAnki.value?.metadata.page_id &&
             ankiStore.fetchAnkiBlock(
               ankiStore,
-              currentAnki.value.metadata.page_id,
+              currentAnki.value?.metadata.page_id,
             )
           }
         >

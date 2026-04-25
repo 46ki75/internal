@@ -19,6 +19,7 @@ import {
 import {
   mdiAlertDecagram,
   mdiBookEdit,
+  mdiCircleSmall,
   mdiCreation,
   mdiMessageAlertOutline,
   mdiMessageCheckOutline,
@@ -71,7 +72,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
       {ankiStore.ankiList.error}
 
       <div class={styles["button-control"]}>
-        <ElmButton block onClick$={open}>
+        <ElmButton block onClick$={open} loading={currentAnki.value == null}>
           <ElmMdiIcon d={mdiBookEdit} />
           <span>Edit</span>
         </ElmButton>
@@ -79,10 +80,16 @@ export default component$<IndexProps>(({ class: className, style }) => {
           <ElmMdiIcon d={mdiCreation} />
           <span>New</span>
         </ElmButton>
-        <ElmButton block>
-          <ElmMdiIcon d={mdiAlertDecagram} />
+        <ElmButton block loading={currentAnki.value == null}>
+          <ElmMdiIcon
+            d={
+              currentAnki.value?.metadata.is_review_required
+                ? mdiAlertDecagram
+                : mdiCircleSmall
+            }
+          />
         </ElmButton>
-        <ElmButton block>
+        <ElmButton block loading={currentAnki.value == null}>
           <ElmMdiIcon d={mdiRefresh} />
         </ElmButton>
       </div>

@@ -79,17 +79,18 @@ export const useAnkiContextProvider = () => {
           const maxInterval = 365 / 4;
           const minInterval = 0.5;
 
+          let newEaseFactor: number;
+          let newRepetitionCount: number;
+
           if (performanceRating < 3) {
-            ankiRef.metadata.ease_factor = Math.max(
-              1.3,
-              ankiRef.metadata.ease_factor * 0.85,
-            );
-            ankiRef.metadata.repetition_count = 0;
+            newEaseFactor = Math.max(1.3, ankiRef.metadata.ease_factor * 0.85);
+            newRepetitionCount = 0;
           } else {
-            ankiRef.metadata.ease_factor +=
+            newEaseFactor =
+              ankiRef.metadata.ease_factor +
               0.1 -
               (5 - performanceRating) * (0.08 + (5 - performanceRating) * 0.02);
-            ankiRef.metadata.repetition_count += 1;
+            newRepetitionCount = ankiRef.metadata.repetition_count + 1;
           }
 
           let newInterval;
@@ -98,10 +99,7 @@ export const useAnkiContextProvider = () => {
           } else if (performanceRating === 1) {
             newInterval = minInterval;
           } else if (performanceRating === 2) {
-            newInterval = Math.max(
-              minInterval,
-              ankiRef.metadata.repetition_count,
-            );
+            newInterval = Math.max(minInterval, newRepetitionCount);
           } else {
             let multiplier = 1;
             if (performanceRating === 3) {
@@ -113,24 +111,22 @@ export const useAnkiContextProvider = () => {
             }
             newInterval = Math.min(
               maxInterval,
-              Math.pow(
-                ankiRef.metadata.ease_factor,
-                ankiRef.metadata.repetition_count,
-              ) * multiplier,
+              Math.pow(newEaseFactor, newRepetitionCount) * multiplier,
             );
           }
 
-          ankiRef.metadata.next_review_at = new Date(
+          const newNextReviewAt = new Date(
             Date.now() + newInterval * 24 * 60 * 60 * 1000,
           ).toISOString();
 
+          ankiRef.metadata.ease_factor = newEaseFactor;
+          ankiRef.metadata.repetition_count = newRepetitionCount;
+          ankiRef.metadata.next_review_at = newNextReviewAt;
+
           const payload = {
-            pageId: ankiRef.metadata.page_id,
-            body: {
-              ease_factor: ankiRef.metadata.ease_factor,
-              repetition_count: ankiRef.metadata.repetition_count,
-              next_review_at: ankiRef.metadata.next_review_at,
-            },
+            ease_factor: newEaseFactor,
+            repetition_count: newRepetitionCount,
+            next_review_at: newNextReviewAt,
           };
 
           (async () => {
@@ -139,14 +135,14 @@ export const useAnkiContextProvider = () => {
                 header: {
                   Authorization: `Bearer ${authStore.tokens.accessToken}`,
                 },
-                path: { page_id: ankiRef.metadata.page_id },
+                path: { page_id: ankiRef!.metadata.page_id },
               },
               body: payload,
             });
           })();
 
-          if (store.ankiList.currentIndex) {
-            store.ankiList.currentIndex += 1;
+          if (store.ankiList.currentIndex != null) {
+            store.ankiList.currentIndex = store.ankiList.currentIndex + 1;
           } else {
             store.ankiList.currentIndex = 0;
           }

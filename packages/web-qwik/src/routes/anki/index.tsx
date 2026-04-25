@@ -40,8 +40,6 @@ export default component$<IndexProps>(({ class: className, style }) => {
 
   return (
     <div class={[styles["anki"], className]} style={style}>
-      {JSON.stringify(ankiStore.ankiList.data[0], null, 2)}
-
       {!currentAnki.value?.block ? (
         <ElmBlockFallback />
       ) : (

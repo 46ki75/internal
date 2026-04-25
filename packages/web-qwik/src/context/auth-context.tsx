@@ -1,9 +1,7 @@
 import {
   $,
-  component$,
   createContextId,
   QRL,
-  Slot,
   useContextProvider,
   useStore,
   useVisibleTask$,
@@ -47,7 +45,7 @@ export interface AuthStore {
 
 export const AuthContext = createContextId<AuthStore>("auth");
 
-export const AuthContextProvider = component$(() => {
+export const useAuthContextProvider = () => {
   const authStore = useStore<AuthStore>({
     sessionState: "pending",
     errors: [],
@@ -138,10 +136,4 @@ export const AuthContextProvider = component$(() => {
       authStore.sessionState = "logout";
     }
   });
-
-  return (
-    <>
-      <Slot />
-    </>
-  );
-});
+};

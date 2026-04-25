@@ -5,7 +5,7 @@ import { RouterHead } from "./components/router-head/router-head";
 import "./global.css";
 import "@elmethis/qwik/style.css";
 
-import { AuthContextProvider } from "./context/auth-context";
+import { useAuthContextProvider } from "./context/auth-context";
 
 export default component$(() => {
   /**
@@ -14,6 +14,8 @@ export default component$(() => {
    *
    * Don't remove the `<head>` and `<body>` elements.
    */
+
+  useAuthContextProvider();
 
   return (
     <QwikCityProvider>
@@ -28,9 +30,7 @@ export default component$(() => {
         <RouterHead />
       </head>
       <body lang="en">
-        <AuthContextProvider>
-          <RouterOutlet />
-        </AuthContextProvider>
+        <RouterOutlet />
       </body>
     </QwikCityProvider>
   );

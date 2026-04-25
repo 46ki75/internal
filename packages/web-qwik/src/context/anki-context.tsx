@@ -13,6 +13,7 @@ import { AuthContext } from "./auth-context";
 export interface AnkiStore {
   ankiList: {
     data: paths["/api/v1/anki"]["get"]["responses"]["200"]["content"]["application/json"];
+    currentIndex: number;
     loading: boolean;
     error: string | null;
   };
@@ -34,12 +35,13 @@ export interface AnkiStore {
   };
 }
 
-const AnkiContext = createContextId<AnkiStore>("anki");
+export const AnkiContext = createContextId<AnkiStore>("anki");
 
 export const useAnkiContextProvider = () => {
   const ankiStore = useStore<AnkiStore>({
     ankiList: {
       data: [],
+      currentIndex: 0,
       loading: false,
       error: null,
     },

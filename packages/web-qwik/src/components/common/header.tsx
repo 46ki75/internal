@@ -1,9 +1,4 @@
-import {
-  component$,
-  QRL,
-  QRLEventHandlerMulti,
-  type CSSProperties,
-} from "@builder.io/qwik";
+import { component$, QRL, type CSSProperties } from "@builder.io/qwik";
 
 import styles from "./header.module.css";
 import {
@@ -20,7 +15,7 @@ export interface HeaderProps {
 
   links: Array<{
     d: string;
-    onClick$: QRLEventHandlerMulti<PointerEvent, Element>;
+    onClick$: QRL<() => void>;
   }>;
 
   state: "pending" | "login" | "logout";

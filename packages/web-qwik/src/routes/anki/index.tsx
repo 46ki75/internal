@@ -1,6 +1,7 @@
-import { component$, type CSSProperties } from "@builder.io/qwik";
+import { component$, useContext, type CSSProperties } from "@builder.io/qwik";
 
 import styles from "./anki.module.css";
+import { AnkiContext } from "~/context/anki-context";
 
 export interface IndexProps {
   class?: string;
@@ -8,6 +9,12 @@ export interface IndexProps {
   style?: CSSProperties;
 }
 
-export const Index = component$<IndexProps>(({ class: className, style }) => {
-  return <div class={[styles["index"], className]} style={style}></div>;
+export default component$<IndexProps>(({ class: className, style }) => {
+  const ankiStore = useContext(AnkiContext);
+
+  return (
+    <div class={[styles["index"], className]} style={style}>
+      {JSON.stringify(ankiStore.ankiList.data[ankiStore.ankiList.currentIndex])}
+    </div>
+  );
 });

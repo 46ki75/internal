@@ -37,11 +37,15 @@ export interface AnkiStore {
   updateAnkiByPerformanceRating?: QRL<
     (pageId: string, performanceRating: number) => Promise<void>
   >;
+
+  createNewAnki: QRL<(store: AnkiStore) => Promise<void>>;
 }
 
 export const AnkiContext = createContextId<AnkiStore>("anki");
 
 export const useAnkiContextProvider = () => {
+  const authStore = useContext(AuthContext);
+
   const ankiStore = useStore<AnkiStore>({
     ankiList: {
       data: [],
@@ -51,11 +55,38 @@ export const useAnkiContextProvider = () => {
     },
 
     updateAnkiByPerformanceRating: undefined,
+
+    createNewAnki: $(async (store: AnkiStore) => {
+      try {
+        await authStore.tokens.refresh(authStore);
+
+        const { data } = await openApiClient.POST("/api/v1/anki", {
+          params: {
+            header: {
+              Authorization: `Bearer ${authStore.tokens.accessToken}`,
+            },
+          },
+          body: {},
+        });
+
+        if (data == null) {
+          throw new Error("No data returned from API");
+        } else {
+          const a = document.createElement("a");
+          a.href = data.url.replace(/https?\/\//, "notionrs://");
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+          a.click();
+        }
+      } catch (error) {
+        store.ankiList.error =
+          "Failed to create new Anki. " +
+          (error instanceof Error ? error.message : String(error));
+      }
+    }),
   });
 
   useContextProvider(AnkiContext, ankiStore);
-
-  const authStore = useContext(AuthContext);
 
   const fetchAnkiList = $(async () => {
     ankiStore.ankiList.loading = true;

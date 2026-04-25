@@ -42,6 +42,8 @@ export interface AnkiStore {
     ) => Promise<void>
   >;
 
+  fetchAnkiBlock: QRL<(store: AnkiStore, pageId: string) => Promise<void>>;
+
   create: {
     execute: QRL<(store: AnkiStore) => Promise<void>>;
     loading: boolean;
@@ -160,6 +162,48 @@ export const useAnkiContextProvider = () => {
       },
     ),
 
+    fetchAnkiBlock: $(async (store: AnkiStore, pageId: string) => {
+      const ankiRef = store.ankiList.data.find(
+        (anki) => anki.metadata.page_id === pageId,
+      );
+
+      try {
+        if (!ankiRef)
+          throw new Error(`Anki with page_id ${pageId} not found in the list.`);
+
+        // If the block is already fetched, do not fetch again
+        if (ankiRef.block) return;
+
+        // Prevent multiple fetches for the same block
+        if (ankiRef.loading) return;
+
+        ankiRef.loading = true;
+
+        await authStore.tokens.refresh(authStore);
+
+        const { data: ankiBlockData } = await openApiClient.GET(
+          `/api/v1/anki/block/{page_id}`,
+          {
+            params: {
+              header: {
+                Authorization: `Bearer ${authStore.tokens.accessToken}`,
+              },
+              path: { page_id: pageId },
+            },
+          },
+        );
+
+        if (ankiBlockData) ankiRef.block = ankiBlockData as AnkiBlock;
+      } catch (error) {
+        if (ankiRef)
+          store.error =
+            "Failed to fetch Anki block. " +
+            (error instanceof Error ? error.message : String(error));
+      } finally {
+        if (ankiRef) ankiRef.loading = false;
+      }
+    }),
+
     create: {
       execute: $(async (store: AnkiStore) => {
         store.create.loading = true;
@@ -274,46 +318,6 @@ export const useAnkiContextProvider = () => {
     }
   });
 
-  const fetchAnkiBlock = $(async (pageId: string) => {
-    const ankiRef = ankiStore.ankiList.data.find(
-      (anki) => anki.metadata.page_id === pageId,
-    );
-
-    try {
-      if (!ankiRef)
-        throw new Error(`Anki with page_id ${pageId} not found in the list.`);
-
-      // If the block is already fetched, do not fetch again
-      if (ankiRef.block) return;
-
-      // Prevent multiple fetches for the same block
-      if (ankiRef.loading) return;
-
-      ankiRef.loading = true;
-
-      await authStore.tokens.refresh(authStore);
-
-      const { data: ankiBlockData } = await openApiClient.GET(
-        `/api/v1/anki/block/{page_id}`,
-        {
-          params: {
-            header: { Authorization: `Bearer ${authStore.tokens.accessToken}` },
-            path: { page_id: pageId },
-          },
-        },
-      );
-
-      if (ankiBlockData) ankiRef.block = ankiBlockData as AnkiBlock;
-    } catch (error) {
-      if (ankiRef)
-        ankiStore.error =
-          "Failed to fetch Anki block. " +
-          (error instanceof Error ? error.message : String(error));
-    } finally {
-      if (ankiRef) ankiRef.loading = false;
-    }
-  });
-
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
     fetchAnkiList();
@@ -326,12 +330,15 @@ export const useAnkiContextProvider = () => {
     if (currentIndex === null) return;
 
     const currentAnkiRef = ankiStore.ankiList.data[currentIndex];
-    if (currentAnkiRef) fetchAnkiBlock(currentAnkiRef.metadata.page_id);
+    if (currentAnkiRef)
+      ankiStore.fetchAnkiBlock(ankiStore, currentAnkiRef.metadata.page_id);
 
     const nextAnkiRef = ankiStore.ankiList.data[currentIndex + 1];
-    if (nextAnkiRef) fetchAnkiBlock(nextAnkiRef.metadata.page_id);
+    if (nextAnkiRef)
+      ankiStore.fetchAnkiBlock(ankiStore, nextAnkiRef.metadata.page_id);
 
     const nextNextAnkiRef = ankiStore.ankiList.data[currentIndex + 2];
-    if (nextNextAnkiRef) fetchAnkiBlock(nextNextAnkiRef.metadata.page_id);
+    if (nextNextAnkiRef)
+      ankiStore.fetchAnkiBlock(ankiStore, nextNextAnkiRef.metadata.page_id);
   });
 };

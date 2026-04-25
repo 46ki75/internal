@@ -17,9 +17,13 @@ import {
   ElmMdiIcon,
 } from "@elmethis/qwik";
 import {
+  mdiAlertDecagram,
+  mdiBookEdit,
+  mdiCreation,
   mdiMessageAlertOutline,
   mdiMessageCheckOutline,
   mdiMessageQuestionOutline,
+  mdiRefresh,
 } from "@mdi/js";
 
 export interface IndexProps {
@@ -53,6 +57,23 @@ export default component$<IndexProps>(({ class: className, style }) => {
   return (
     <div class={[styles["anki"], className]} style={style}>
       {ankiStore.ankiList.error}
+
+      <div class={styles["button-control"]}>
+        <ElmButton block>
+          <ElmMdiIcon d={mdiBookEdit} />
+          <span>Edit</span>
+        </ElmButton>
+        <ElmButton block>
+          <ElmMdiIcon d={mdiCreation} />
+          <span>New</span>
+        </ElmButton>
+        <ElmButton block>
+          <ElmMdiIcon d={mdiAlertDecagram} />
+        </ElmButton>
+        <ElmButton block>
+          <ElmMdiIcon d={mdiRefresh} />
+        </ElmButton>
+      </div>
 
       {!currentAnki.value?.block ? (
         <ElmBlockFallback />

@@ -1,0 +1,25 @@
+.todo-container {
+  .todo-item-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .todo-item {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0.5rem;
+    }
+
+    .todo-item-severity {
+      padding: 0.125rem;
+      user-select: none;
+      opacity: 0.8;
+      color: white;
+      background-color: var(--color);
+      border: 1px solid var(--color);
+      border-radius: 0.25rem;
+      text-transform: uppercase;
+    }
+  }
+}

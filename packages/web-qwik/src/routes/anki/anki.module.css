@@ -1,6 +1,9 @@
 .anki {
   width: clamp(400px, 100%, 800px);
+  min-height: 100vh;
   margin: 0.5rem auto;
+  box-sizing: border-box;
+  padding: 0.25rem;
 
   display: flex;
   flex-direction: column;

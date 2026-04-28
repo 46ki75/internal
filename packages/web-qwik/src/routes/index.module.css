@@ -4,4 +4,8 @@
   flex-direction: row;
   gap: 1rem;
   justify-content: stretch;
+
+  @media (width < 800px) {
+    flex-direction: column;
+  }
 }

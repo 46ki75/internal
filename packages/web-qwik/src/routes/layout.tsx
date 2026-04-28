@@ -1,5 +1,5 @@
 import { $, component$, Slot, useContext } from "@builder.io/qwik";
-import { useNavigate } from "@builder.io/qwik-city";
+import { DocumentHead, useNavigate } from "@builder.io/qwik-city";
 import { mdiHome, mdiPaletteSwatch, mdiTag } from "@mdi/js";
 import { Header } from "~/components/common/header";
 import { SigninContainer } from "~/container/signin-container";
@@ -44,3 +44,8 @@ export default component$(() => {
     </>
   );
 });
+
+export const head: DocumentHead = {
+  title: "Internal",
+  meta: [],
+};

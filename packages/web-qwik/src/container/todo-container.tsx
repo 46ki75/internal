@@ -7,7 +7,12 @@ import {
 } from "@builder.io/qwik";
 
 import styles from "./todo-container.module.css";
-import { ElmInlineIcon, ElmInlineText, useAsyncState } from "@elmethis/qwik";
+import {
+  ElmHeading,
+  ElmInlineIcon,
+  ElmInlineText,
+  useAsyncState,
+} from "@elmethis/qwik";
 import { openApiClient } from "~/openapi/client";
 import { AuthContext } from "~/context/auth-context";
 
@@ -53,6 +58,8 @@ export const TodoContainer = component$<TodoContainerProps>(
 
     return (
       <div class={[styles["todo-container"], className]} style={style}>
+        <ElmHeading level={3}>To Do</ElmHeading>
+
         <div class={styles["todo-item-container"]}>
           {state.value?.map((item) => (
             <Fragment key={item.id}>

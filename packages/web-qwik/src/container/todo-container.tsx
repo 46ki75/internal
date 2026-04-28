@@ -8,6 +8,7 @@ import {
 
 import styles from "./todo-container.module.css";
 import {
+  ElmBlockFallback,
   ElmHeading,
   ElmInlineIcon,
   ElmInlineText,
@@ -28,7 +29,7 @@ export const TodoContainer = component$<TodoContainerProps>(
   ({ class: className, style }) => {
     const authStore = useContext(AuthContext);
 
-    const { state } = useAsyncState(
+    const { state, isLoading } = useAsyncState(
       $(async () => {
         await authStore.tokens.refresh(authStore);
         const accessToken = authStore.tokens.accessToken;
@@ -60,20 +61,24 @@ export const TodoContainer = component$<TodoContainerProps>(
       <div class={[styles["todo-container"], className]} style={style}>
         <ElmHeading level={3}>To Do</ElmHeading>
 
-        <div class={styles["todo-item-container"]}>
-          {state.value?.map((item) => (
-            <Fragment key={item.id}>
-              <ElmInlineIcon src={NotionIcon} />
-              <span
-                class={styles["todo-item-severity"]}
-                style={{ "--color": colorMap[item.severity] }}
-              >
-                {item.severity}
-              </span>
-              <ElmInlineText href={item.url}>{item.title}</ElmInlineText>
-            </Fragment>
-          ))}
-        </div>
+        {isLoading.value ? (
+          <ElmBlockFallback></ElmBlockFallback>
+        ) : (
+          <div class={styles["todo-item-container"]}>
+            {state.value?.map((item) => (
+              <Fragment key={item.id}>
+                <ElmInlineIcon src={NotionIcon} />
+                <span
+                  class={styles["todo-item-severity"]}
+                  style={{ "--color": colorMap[item.severity] }}
+                >
+                  {item.severity}
+                </span>
+                <ElmInlineText href={item.url}>{item.title}</ElmInlineText>
+              </Fragment>
+            ))}
+          </div>
+        )}
       </div>
     );
   },

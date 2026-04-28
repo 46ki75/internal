@@ -17,7 +17,7 @@
 
   .todo-item-container {
     display: grid;
-    grid-template-columns: 1rem min-content 1fr;
+    grid-template-columns: 1rem 1rem min-content 1fr;
     align-items: center;
     gap: 0.5rem;
     animation: fade-in 0.25s ease-in-out;

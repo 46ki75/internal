@@ -12,12 +12,14 @@ import {
   ElmHeading,
   ElmInlineIcon,
   ElmInlineText,
+  ElmMdiIcon,
   useAsyncState,
 } from "@elmethis/qwik";
 import { openApiClient } from "~/openapi/client";
 import { AuthContext } from "~/context/auth-context";
 
 import NotionIcon from "~/assets/notion.svg?url";
+import { mdiRefresh } from "@mdi/js";
 
 export interface TodoContainerProps {
   class?: string;
@@ -68,6 +70,11 @@ export const TodoContainer = component$<TodoContainerProps>(
             {state.value?.map((item) => (
               <Fragment key={item.id}>
                 <ElmInlineIcon src={NotionIcon} />
+                <span>
+                  {item.is_recurring && (
+                    <ElmMdiIcon d={mdiRefresh} color="#59b57c" />
+                  )}
+                </span>
                 <span
                   class={styles["todo-item-severity"]}
                   style={{ "--color": colorMap[item.severity] }}

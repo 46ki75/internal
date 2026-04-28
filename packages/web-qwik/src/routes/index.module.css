@@ -1,0 +1,11 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  justify-content: stretch;
+
+  @media (width < 800px) {
+    flex-direction: column;
+  }
+}

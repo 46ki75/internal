@@ -1,0 +1,14 @@
+.signin {
+  margin: auto;
+  width: clamp(300px, 100%, 480px);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  background-color: white;
+}
+
+.error {
+  margin: auto;
+}

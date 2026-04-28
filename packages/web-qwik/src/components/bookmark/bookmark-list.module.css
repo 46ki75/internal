@@ -1,0 +1,36 @@
+.bookmark-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .tags-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    .tag-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .tag {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      width: fit-content;
+      padding: 0.25rem;
+      border-radius: 0.25rem;
+      background-color: var(--color);
+      color: oklch(from white l c h / 0.75);
+      user-select: none;
+    }
+  }
+
+  .bookmark-container {
+    display: flex;
+    flex-direction: row;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+  }
+}

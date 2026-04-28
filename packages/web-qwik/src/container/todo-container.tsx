@@ -46,9 +46,9 @@ export const TodoContainer = component$<TodoContainerProps>(
 
     const colorMap: Record<"Unknown" | "Info" | "Warn" | "Error", string> = {
       Unknown: "#868e9c",
-      Info: "#6987b8",
-      Warn: "#cdb57b",
-      Error: "#be5252",
+      Info: "#4c6da2",
+      Warn: "#bfa056",
+      Error: "#b34444",
     };
 
     return (

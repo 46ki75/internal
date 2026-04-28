@@ -9,4 +9,4 @@ fi
 
 S3_BUCKET="${STAGE_NAME}-46ki75-internal-s3-bucket-web"
 
-aws s3 sync .output/public/ s3://${S3_BUCKET} --delete
+aws s3 sync ./dist/ s3://${S3_BUCKET} --delete

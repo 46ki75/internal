@@ -1,15 +1,13 @@
 .todo-container {
-  .todo-item-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.5rem;
 
-    .todo-item {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 0.5rem;
-    }
+  .todo-item-container {
+    display: grid;
+    grid-template-columns: 1rem 1fr 4rem;
+    align-items: center;
+    gap: 0.5rem;
 
     .todo-item-severity {
       padding: 0.125rem;

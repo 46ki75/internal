@@ -3,9 +3,11 @@ import type { DocumentHead } from "@builder.io/qwik-city";
 import { BookmarkContainer } from "~/container/bookmark-container";
 import { TodoContainer } from "~/container/todo-container";
 
+import styles from "./index.module.css";
+
 export default component$(() => {
   return (
-    <div>
+    <div class={styles.container}>
       <BookmarkContainer />
       <TodoContainer />
     </div>

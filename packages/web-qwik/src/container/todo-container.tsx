@@ -1,6 +1,7 @@
 import {
   $,
   component$,
+  Fragment,
   useContext,
   type CSSProperties,
 } from "@builder.io/qwik";
@@ -54,7 +55,7 @@ export const TodoContainer = component$<TodoContainerProps>(
       <div class={[styles["todo-container"], className]} style={style}>
         <div class={styles["todo-item-container"]}>
           {state.value?.map((item) => (
-            <div key={item.id} class={styles["todo-item"]}>
+            <Fragment key={item.id}>
               <ElmInlineIcon src={NotionIcon} />
               <ElmInlineText href={item.url}>{item.title}</ElmInlineText>
               <span
@@ -63,7 +64,7 @@ export const TodoContainer = component$<TodoContainerProps>(
               >
                 {item.severity}
               </span>
-            </div>
+            </Fragment>
           ))}
         </div>
       </div>

@@ -22,12 +22,12 @@ const AuthConfigMap: Record<
     userPoolClientId: "4n5l6d5oekst6hrmvt1chndghd",
   },
   stg: {
-    userPoolId: "ap-northeast-1_BmZKeZeKX",
-    userPoolClientId: "4n5l6d5oekst6hrmvt1chndghd",
+    userPoolId: "ap-northeast-1_pRexgIEB0",
+    userPoolClientId: "14i0sqq5f8qq45o64srm2ntmq1",
   },
   prod: {
-    userPoolId: "ap-northeast-1_BmZKeZeKX",
-    userPoolClientId: "4n5l6d5oekst6hrmvt1chndghd",
+    userPoolId: "ap-northeast-1_Ym1wYWXw7",
+    userPoolClientId: "t9ccj3ic4tapjdsrqjo8ledk",
   },
 };
 

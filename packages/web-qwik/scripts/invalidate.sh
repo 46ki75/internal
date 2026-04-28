@@ -2,15 +2,15 @@
 
 set -eu -o pipefail
 
-if [ -z "$STAGE_NAME" ]; then
-    echo "STAGE_NAME is not set"
+if [ -z "$VITE_STAGE_NAME" ]; then
+    echo "VITE_STAGE_NAME is not set"
     exit 1
 fi
 
-if [ "$STAGE_NAME" = "prod" ]; then
+if [ "$VITE_STAGE_NAME" = "prod" ]; then
     DISTRIBUTION_ALIAS_DOMAIN="internal.46ki75.com"
 else
-    DISTRIBUTION_ALIAS_DOMAIN="${STAGE_NAME}-internal.46ki75.com"
+    DISTRIBUTION_ALIAS_DOMAIN="${VITE_STAGE_NAME}-internal.46ki75.com"
 fi
 
 echo "Invalidating cache for $DISTRIBUTION_ALIAS_DOMAIN"

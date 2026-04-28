@@ -9,7 +9,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import pkg from "./package.json";
 
 const ENDPOINT = `https://${
-  process.env.STAGE_NAME === "prod" ? "internal" : process.env.STAGE_NAME + "-internal"
+  process.env.VITE_STAGE_NAME === "prod" ? "internal" : process.env.VITE_STAGE_NAME + "-internal"
 }.46ki75.com`;
 
 

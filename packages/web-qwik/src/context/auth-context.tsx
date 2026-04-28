@@ -13,13 +13,28 @@ import { Amplify } from "aws-amplify";
 import { getCurrentUser, signIn } from "aws-amplify/auth/cognito";
 import { fetchAuthSession } from "aws-amplify/auth";
 
+const AuthConfigMap: Record<
+  string,
+  { userPoolId: string; userPoolClientId: string }
+> = {
+  dev: {
+    userPoolId: "ap-northeast-1_BmZKeZeKX",
+    userPoolClientId: "4n5l6d5oekst6hrmvt1chndghd",
+  },
+  stg: {
+    userPoolId: "ap-northeast-1_BmZKeZeKX",
+    userPoolClientId: "4n5l6d5oekst6hrmvt1chndghd",
+  },
+  prod: {
+    userPoolId: "ap-northeast-1_BmZKeZeKX",
+    userPoolClientId: "4n5l6d5oekst6hrmvt1chndghd",
+  },
+};
+
 const configure = () => {
   Amplify.configure({
     Auth: {
-      Cognito: {
-        userPoolId: "ap-northeast-1_BmZKeZeKX",
-        userPoolClientId: "4n5l6d5oekst6hrmvt1chndghd",
-      },
+      Cognito: AuthConfigMap[import.meta.env.VITE_STAGE_NAME ?? "dev"],
     },
   });
 };

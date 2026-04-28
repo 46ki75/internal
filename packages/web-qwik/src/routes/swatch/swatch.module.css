@@ -1,9 +1,6 @@
 .swatch {
+  box-sizing: border-box;
+  padding: 1rem;
   width: 100%;
   overflow-x: auto;
-
-  .swatch-inner {
-    box-sizing: border-box;
-    padding: 1rem;
-  }
 }

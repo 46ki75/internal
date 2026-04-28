@@ -48,7 +48,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
 
   const handleUpdate = $((pageId?: string, performanceRating?: number) => {
     if (!ankiStore.updateAnkiByPerformanceRating) return;
-    if (!pageId || !performanceRating) return;
+    if (!pageId || performanceRating == null) return;
 
     ankiStore.updateAnkiByPerformanceRating(
       ankiStore,
@@ -66,10 +66,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
   const shouldLearnCount = useComputed$(() => {
     const now = new Date();
     const count = ankiStore.ankiList.data.reduce((acc, { metadata }) => {
-      if (
-        metadata.is_review_required ||
-        (metadata.next_review_at && new Date(metadata.next_review_at) <= now)
-      ) {
+      if (new Date(metadata.next_review_at) <= now) {
         return acc + 1;
       }
       return acc;

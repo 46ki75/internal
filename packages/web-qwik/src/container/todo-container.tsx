@@ -57,13 +57,13 @@ export const TodoContainer = component$<TodoContainerProps>(
           {state.value?.map((item) => (
             <Fragment key={item.id}>
               <ElmInlineIcon src={NotionIcon} />
-              <ElmInlineText href={item.url}>{item.title}</ElmInlineText>
               <span
                 class={styles["todo-item-severity"]}
                 style={{ "--color": colorMap[item.severity] }}
               >
                 {item.severity}
               </span>
+              <ElmInlineText href={item.url}>{item.title}</ElmInlineText>
             </Fragment>
           ))}
         </div>

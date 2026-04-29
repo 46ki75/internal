@@ -9,6 +9,7 @@
   grid-template-columns: 1fr;
   width: 6.5rem;
   place-items: center;
+  text-align: center;
 
   .icon {
     width: auto;

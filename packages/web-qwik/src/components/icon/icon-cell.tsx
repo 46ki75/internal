@@ -10,7 +10,7 @@ export interface IconCellProps {
 
   src: string;
   name: string;
-  mimeType: string;
+  mimeType?: string;
 }
 
 export const IconCell = component$<IconCellProps>(

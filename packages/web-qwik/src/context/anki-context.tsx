@@ -42,7 +42,9 @@ export interface AnkiStore {
     ) => Promise<void>
   >;
 
-  fetchAnkiBlock: QRL<(store: AnkiStore, pageId?: string) => Promise<void>>;
+  fetchAnkiBlock: QRL<
+    (store: AnkiStore, pageId?: string, signal?: AbortSignal) => Promise<void>
+  >;
 
   create: {
     execute: QRL<(store: AnkiStore) => Promise<void>>;
@@ -162,7 +164,7 @@ export const useAnkiContextProvider = () => {
       },
     ),
 
-    fetchAnkiBlock: $(async (store: AnkiStore, pageId?: string) => {
+    fetchAnkiBlock: $(async (store: AnkiStore, pageId?: string, signal?: AbortSignal) => {
       const ankiRef = store.ankiList.data.find(
         (anki) => anki.metadata.page_id === pageId,
       );
@@ -189,16 +191,19 @@ export const useAnkiContextProvider = () => {
               },
               path: { page_id: pageId },
             },
+            signal,
           },
         );
 
         if (ankiBlockData) ankiRef.block = ankiBlockData as AnkiBlock;
       } catch (error) {
-        store.error =
-          "Failed to fetch Anki block. " +
-          (error instanceof Error ? error.message : String(error));
+        if (!(error instanceof Error && error.name === "AbortError")) {
+          store.error =
+            "Failed to fetch Anki block. " +
+            (error instanceof Error ? error.message : String(error));
+        }
       } finally {
-        if (ankiRef) ankiRef.loading = false;
+        if (ankiRef && !signal?.aborted) ankiRef.loading = false;
       }
     }),
 
@@ -309,11 +314,15 @@ export const useAnkiContextProvider = () => {
       if (ankiListData && ankiListData.length > 0)
         ankiStore.ankiList.currentIndex = 0;
     } catch (error) {
-      ankiStore.error =
-        "Failed to fetch Anki list. " +
-        (error instanceof Error ? error.message : String(error));
+      if (!(error instanceof Error && error.name === "AbortError")) {
+        ankiStore.error =
+          "Failed to fetch Anki list. " +
+          (error instanceof Error ? error.message : String(error));
+      }
     } finally {
-      ankiStore.ankiList.loading = false;
+      if (!controller?.signal.aborted) {
+        ankiStore.ankiList.loading = false;
+      }
     }
   });
 
@@ -326,21 +335,24 @@ export const useAnkiContextProvider = () => {
   });
 
   // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(({ track }) => {
+  useVisibleTask$(({ cleanup, track }) => {
+    const controller = new AbortController();
+    cleanup(() => controller.abort());
+
     const currentIndex = track(() => ankiStore.ankiList.currentIndex);
 
     if (currentIndex === null) return;
 
     const currentAnkiRef = ankiStore.ankiList.data[currentIndex];
     if (currentAnkiRef)
-      ankiStore.fetchAnkiBlock(ankiStore, currentAnkiRef.metadata.page_id);
+      ankiStore.fetchAnkiBlock(ankiStore, currentAnkiRef.metadata.page_id, controller.signal);
 
     const nextAnkiRef = ankiStore.ankiList.data[currentIndex + 1];
     if (nextAnkiRef)
-      ankiStore.fetchAnkiBlock(ankiStore, nextAnkiRef.metadata.page_id);
+      ankiStore.fetchAnkiBlock(ankiStore, nextAnkiRef.metadata.page_id, controller.signal);
 
     const nextNextAnkiRef = ankiStore.ankiList.data[currentIndex + 2];
     if (nextNextAnkiRef)
-      ankiStore.fetchAnkiBlock(ankiStore, nextNextAnkiRef.metadata.page_id);
+      ankiStore.fetchAnkiBlock(ankiStore, nextNextAnkiRef.metadata.page_id, controller.signal);
   });
 };

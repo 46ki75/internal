@@ -23,7 +23,7 @@
   ],
   "settings": {
     "terminal.integrated.env.linux": {
-      "AWS_PROFILE": "internal"
+      "AWS_PROFILE": "46ki75-internal"
     },
     "editor.formatOnSave": true,
     "[jsonc]": {

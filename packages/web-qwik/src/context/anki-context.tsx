@@ -283,7 +283,7 @@ export const useAnkiContextProvider = () => {
 
   useContextProvider(AnkiContext, ankiStore);
 
-  const fetchAnkiList = $(async () => {
+  const fetchAnkiList = $(async (controller?: AbortController) => {
     ankiStore.ankiList.loading = true;
 
     try {
@@ -295,6 +295,7 @@ export const useAnkiContextProvider = () => {
             Authorization: `Bearer ${authStore.tokens.accessToken}`,
           },
         },
+        signal: controller?.signal,
       });
 
       if (ankiListData)
@@ -317,8 +318,11 @@ export const useAnkiContextProvider = () => {
   });
 
   // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(() => {
-    fetchAnkiList();
+  useVisibleTask$(({ cleanup }) => {
+    const controller = new AbortController();
+    cleanup(() => controller.abort());
+
+    fetchAnkiList(controller);
   });
 
   // eslint-disable-next-line qwik/no-use-visible-task

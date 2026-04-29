@@ -6,6 +6,8 @@ import { SigninContainer } from "~/container/signin-container";
 import { useAnkiContextProvider } from "~/context/anki-context";
 import { AuthContext } from "~/context/auth-context";
 
+import styles from "./root-layout.module.css";
+
 export default component$(() => {
   const authStore = useContext(AuthContext);
   useAnkiContextProvider();
@@ -39,7 +41,10 @@ export default component$(() => {
         handleSignOutClick$={$(async () => authStore.signOut(authStore))}
         handleSignInClick$={$(async () => authStore.showSignInModal(authStore))}
       />
-      <Slot />
+
+      <div class={styles.slot}>
+        <Slot />
+      </div>
       <SigninContainer />
     </>
   );

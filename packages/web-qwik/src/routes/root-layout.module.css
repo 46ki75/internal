@@ -22,9 +22,9 @@
 }
 
 ::view-transition-old(basic) {
-  animation: slide-out 200ms ease-in-out;
+  animation: slide-out 200ms ease-in-out forwards;
 }
 
 ::view-transition-new(basic) {
-  animation: slide-in 200ms ease-in-out;
+  animation: slide-in 200ms ease-in-out forwards;
 }

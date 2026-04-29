@@ -13,6 +13,11 @@ pub trait UseCase {
                 + Sync,
         >,
     >;
+
+    fn parse_feed(&self, text: &str) -> Result<feed_rs::model::Feed, Box<dyn std::error::Error>> {
+        let feed = feed_rs::parser::parse(text.as_bytes())?;
+        Ok(feed)
+    }
 }
 
 pub struct UseCaseImpl {
@@ -35,5 +40,10 @@ impl UseCase for UseCaseImpl {
         >,
     > {
         self.repository.fetch_html(url)
+    }
+
+    fn parse_feed(&self, rss: &str) -> Result<feed_rs::model::Feed, Box<dyn std::error::Error>> {
+        let feed = feed_rs::parser::parse(rss.as_bytes())?;
+        Ok(feed)
     }
 }

@@ -3,7 +3,9 @@ import {
   component$,
   useComputed$,
   useContext,
+  useOnDocument,
   useSignal,
+  useVisibleTask$,
   type CSSProperties,
 } from "@builder.io/qwik";
 
@@ -34,6 +36,8 @@ export interface IndexProps {
 
   style?: CSSProperties;
 }
+
+const KEYMAP = { q: 0, w: 1, e: 2, a: 3, s: 4, d: 5 };
 
 export default component$<IndexProps>(({ class: className, style }) => {
   const ankiStore = useContext(AnkiContext);
@@ -85,6 +89,28 @@ export default component$<IndexProps>(({ class: className, style }) => {
     a.rel = "noopener noreferrer";
     a.click();
   });
+
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(({ cleanup }) => {
+    const handler = (event: KeyboardEvent) => {
+      if (["Enter", " "].includes(event.key) && !isShowingAnswer.value) {
+        event.preventDefault();
+        isShowingAnswer.value = true;
+      }
+    };
+    document.addEventListener("keydown", handler);
+    cleanup(() => document.removeEventListener("keydown", handler));
+  });
+
+  useOnDocument(
+    "keydown",
+    $((event) => {
+      if (isShowingAnswer.value && Object.keys(KEYMAP).includes(event.key)) {
+        const rating = KEYMAP[event.key as keyof typeof KEYMAP];
+        handleUpdate(currentAnki.value?.metadata.page_id, rating);
+      }
+    }),
+  );
 
   return (
     <div
@@ -188,7 +214,10 @@ export default component$<IndexProps>(({ class: className, style }) => {
             block
             onClick$={() => (isShowingAnswer.value = !isShowingAnswer.value)}
           >
-            {isShowingAnswer.value ? "Hide Answer" : "Show Answer"}
+            <ElmInlineText kbd>Enter</ElmInlineText>
+            <ElmInlineText>
+              {isShowingAnswer.value ? "Hide Answer" : "Show Answer"}
+            </ElmInlineText>
           </ElmButton>
         ) : (
           <div class={styles["update-button-container"]}>
@@ -208,7 +237,12 @@ export default component$<IndexProps>(({ class: className, style }) => {
                 }
                 primary={index >= 3}
               >
-                {rating}
+                <ElmInlineText kbd>
+                  {Object.keys(KEYMAP)
+                    .find((key) => KEYMAP[key as keyof typeof KEYMAP] === index)
+                    ?.toUpperCase()}
+                </ElmInlineText>
+                <ElmInlineText>{rating}</ElmInlineText>
               </ElmButton>
             ))}
           </div>

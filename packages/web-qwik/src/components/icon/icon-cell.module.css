@@ -1,0 +1,18 @@
+.icon-cell {
+  box-sizing: border-box;
+  padding: 0.25rem;
+  border: 1px solid oklch(from gray l c h / 0.25);
+  border-radius: 0.25rem;
+  display: grid;
+  gap: 0.25rem;
+  grid-template-rows: 3rem 1fr 1fr;
+  grid-template-columns: 1fr;
+  width: 6.5rem;
+  place-items: center;
+  text-align: center;
+
+  .icon {
+    width: auto;
+    height: 48px;
+  }
+}

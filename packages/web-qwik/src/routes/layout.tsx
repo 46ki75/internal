@@ -1,6 +1,6 @@
 import { $, component$, Slot, useContext } from "@builder.io/qwik";
 import { DocumentHead, useNavigate } from "@builder.io/qwik-city";
-import { mdiHome, mdiPaletteSwatch, mdiTag } from "@mdi/js";
+import { mdiFaceMan, mdiHome, mdiPaletteSwatch, mdiTag } from "@mdi/js";
 import { Header } from "~/components/common/header";
 import { SigninContainer } from "~/container/signin-container";
 import { useAnkiContextProvider } from "~/context/anki-context";
@@ -34,6 +34,12 @@ export default component$(() => {
             d: mdiPaletteSwatch,
             onClick$: $(() => {
               navigate("/swatch");
+            }),
+          },
+          {
+            d: mdiFaceMan,
+            onClick$: $(() => {
+              navigate("/icon");
             }),
           },
         ]}

@@ -31,13 +31,14 @@ export interface SigninProps {
 }
 
 export const Signin = component$<SigninProps>(
-  ({ class: className, style, isLoading, isDisabled, error, onSubmit$ }) => {
+  (props) => {
+    const { class: className, style, isLoading, isDisabled, onSubmit$ } = props;
     const username = useSignal("");
     const password = useSignal("");
     const innerError = useSignal<string | null>(null);
 
     useTask$(({ track }) => {
-      const e = track(() => error);
+      const e = track(() => props.error);
       innerError.value = e ? e : null;
     });
 

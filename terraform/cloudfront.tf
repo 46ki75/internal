@@ -201,8 +201,7 @@ resource "aws_cloudfront_distribution" "default" {
 
   # >>> [AgentCore Runtime] origin
   ordered_cache_behavior {
-    path_pattern     = "/agentcore-runtime/*"
-    smooth_streaming = true
+    path_pattern = "/runtimes*"
     allowed_methods = [
       "DELETE",
       "GET",
@@ -226,7 +225,7 @@ resource "aws_cloudfront_distribution" "default" {
   origin {
     domain_name = aws_apigatewayv2_domain_name.backend.domain_name
     origin_id   = "agentcore-runtime"
-    origin_path = "/runtimes/${urlencode(aws_bedrockagentcore_agent_runtime.ag-ui-server.agent_runtime_arn)}/invocations"
+    origin_path = "/${urlencode(aws_bedrockagentcore_agent_runtime.ag-ui-server.agent_runtime_arn)}/invocations"
 
     custom_origin_config {
       http_port              = 80

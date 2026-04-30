@@ -1,6 +1,7 @@
 import {
   component$,
   useContext,
+  useStore,
   useTask$,
   type CSSProperties,
 } from "@builder.io/qwik";
@@ -19,14 +20,19 @@ export interface IndexProps {
 export default component$<IndexProps>(({ class: className, style }) => {
   const authStore = useContext(AuthContext);
 
-  const { AgentUI, setPromptTemplates } = useAgent({
-    url: "http://localhost:8080/copilotkit/builtin/agent/minimax-m2.5/run",
-    headers: {
-      Authorization: `Bearer ${authStore.tokens.accessToken}`,
-    },
+  const headers = useStore<{ Authorization: string }>({
+    Authorization: "",
   });
 
-  useTask$(() => {
+  const { AgentUI, setPromptTemplates } = useAgent({
+    url: "https://bedrock-agentcore.ap-northeast-1.amazonaws.com/runtimes/arn%3Aaws%3Abedrock-agentcore%3Aap-northeast-1%3A891377368344%3Aruntime%2Fdev_46ki75_internal_ag_ui_server-dYvf81E6Y3/invocations?qualifier=DEFAULT",
+    headers: headers,
+  });
+
+  useTask$(async ({ track }) => {
+    const accessToken = track(() => authStore.tokens.accessToken);
+    headers.Authorization = `Bearer ${accessToken}`;
+
     setPromptTemplates([
       {
         description: "Ask about AWS",

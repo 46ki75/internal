@@ -40,9 +40,9 @@ const copilotkitBuiltinRuntime = new CopilotRuntime({
     [agentName]: generateAgent(modelId),
   },
   runner: new InMemoryAgentRunner(),
-  a2ui: {
-    injectA2UITool: true,
-  },
+  // a2ui: {
+  //   injectA2UITool: true,
+  // },
 });
 
 const app = new Hono();

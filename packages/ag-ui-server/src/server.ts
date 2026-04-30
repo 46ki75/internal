@@ -25,7 +25,7 @@ app.route(
 
 // Bedrock AgentCore proxies all requests to /invocations.
 // Rewrite the URL to include the target agent so CopilotKit can route it.
-const defaultAgent = process.env.DEFAULT_AGENT ?? "minimax-m2.5";
+const defaultAgent = process.env.DEFAULT_AGENT ?? "minimax/minimax-m2.5";
 const runtimeHandler = createCopilotRuntimeHandler({
   runtime: copilotkitBuiltinRuntime,
   basePath: "/copilotkit/builtin",

@@ -26,6 +26,6 @@ const hostname = process.env.ADDRESS || "0.0.0.0";
 
 serve({ fetch: app.fetch, port, hostname }, (info) => {
   console.log(
-    `CopilotKit (Mastra) backend running on http://${info.address}:${info.port}`,
+    `CopilotKit (BuiltIn) backend running on http://${info.address}:${info.port}`,
   );
 });

@@ -7,11 +7,13 @@ import { qwikVite } from "@builder.io/qwik/optimizer";
 import { qwikCity } from "@builder.io/qwik-city/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import pkg from "./package.json";
+import Stream from "node:stream";
 
 const ENDPOINT = `https://${
-  process.env.VITE_STAGE_NAME === "prod" ? "internal" : process.env.VITE_STAGE_NAME + "-internal"
+  process.env.VITE_STAGE_NAME === "prod"
+    ? "internal"
+    : process.env.VITE_STAGE_NAME + "-internal"
 }.46ki75.com`;
-
 
 type PkgDep = Record<string, string>;
 const { dependencies = {}, devDependencies = {} } = pkg as any as {
@@ -65,6 +67,25 @@ export default defineConfig(({ command, mode }): UserConfig => {
         "/invocations": {
           target: `${ENDPOINT}`,
           changeOrigin: true,
+          configure: (proxy, _options) => {
+            proxy.on("error", (err, _req, _res) => {
+              console.log("proxy error", err);
+            });
+
+            proxy.on("proxyReq", (proxyReq, req, _res) => {
+              console.log(
+                "Sending Request:",
+                req.method,
+                req.url,
+                "→",
+                proxyReq.protocol + "//" + proxyReq.host + proxyReq.path,
+              );
+            });
+
+            proxy.on("proxyRes", (proxyRes, req, _res) => {
+              console.log("Received Response:", proxyRes.statusCode, req.url);
+            });
+          },
         },
       },
     },

@@ -151,6 +151,10 @@ resource "aws_bedrockagentcore_agent_runtime" "ag-ui-server" {
     }
   }
 
+  protocol_configuration {
+    server_protocol = "AGUI"
+  }
+
   network_configuration {
     network_mode = "PUBLIC"
   }

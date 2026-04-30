@@ -199,6 +199,44 @@ resource "aws_cloudfront_distribution" "default" {
   }
   # <<< [API GW] origin
 
+  # >>> [AgentCore Runtime] origin
+  ordered_cache_behavior {
+    path_pattern     = "/agentcore-runtime/*"
+    smooth_streaming = true
+    allowed_methods = [
+      "DELETE",
+      "GET",
+      "HEAD",
+      "OPTIONS",
+      "PATCH",
+      "POST",
+      "PUT"
+    ]
+    cached_methods         = ["GET", "HEAD"]
+    viewer_protocol_policy = "redirect-to-https"
+    target_origin_id       = "agentcore-runtime"
+
+    cache_policy_id            = aws_cloudfront_cache_policy.disabled.id
+    origin_request_policy_id   = aws_cloudfront_origin_request_policy.all_viewer.id
+    response_headers_policy_id = aws_cloudfront_response_headers_policy.default.id
+
+    compress = true
+  }
+
+  origin {
+    domain_name = aws_apigatewayv2_domain_name.backend.domain_name
+    origin_id   = "agentcore-runtime"
+    origin_path = "/runtimes/${urlencode(aws_bedrockagentcore_agent_runtime.ag-ui-server.agent_runtime_arn)}/invocations"
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
+  # <<< [AgentCore Runtime] origin
+
 
   custom_error_response {
     error_code            = 403

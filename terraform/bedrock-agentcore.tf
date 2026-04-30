@@ -158,6 +158,15 @@ resource "aws_bedrockagentcore_agent_runtime" "ag-ui-server" {
   network_configuration {
     network_mode = "PUBLIC"
   }
+
+  environment_variables = {
+    "OPENROUTER_API_KEY" = data.aws_ssm_parameter.openrouter_api_key.value
+  }
+}
+
+data "aws_ssm_parameter" "openrouter_api_key" {
+  name            = "/${terraform.workspace}/46ki75/internal/openrouter/secret"
+  with_decryption = true
 }
 
 output "ag_ui_server_endpoint" {

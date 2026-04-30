@@ -68,22 +68,11 @@ export default defineConfig(({ command, mode }): UserConfig => {
           target: `${ENDPOINT}`,
           changeOrigin: true,
           configure: (proxy, _options) => {
-            proxy.on("error", (err, _req, _res) => {
-              console.log("proxy error", err);
-            });
-
             proxy.on("proxyReq", (proxyReq, req, _res) => {
-              console.log(
-                "Sending Request:",
-                req.method,
-                req.url,
-                "→",
-                proxyReq.protocol + "//" + proxyReq.host + proxyReq.path,
-              );
-            });
-
-            proxy.on("proxyRes", (proxyRes, req, _res) => {
-              console.log("Received Response:", proxyRes.statusCode, req.url);
+              proxyReq.removeHeader("cookie");
+              proxyReq.removeHeader("sec-fetch-site");
+              proxyReq.removeHeader("sec-fetch-mode");
+              proxyReq.removeHeader("sec-fetch-dest");
             });
           },
         },

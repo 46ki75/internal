@@ -7,11 +7,13 @@ import { qwikVite } from "@builder.io/qwik/optimizer";
 import { qwikCity } from "@builder.io/qwik-city/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import pkg from "./package.json";
+import Stream from "node:stream";
 
 const ENDPOINT = `https://${
-  process.env.VITE_STAGE_NAME === "prod" ? "internal" : process.env.VITE_STAGE_NAME + "-internal"
+  process.env.VITE_STAGE_NAME === "prod"
+    ? "internal"
+    : process.env.VITE_STAGE_NAME + "-internal"
 }.46ki75.com`;
-
 
 type PkgDep = Record<string, string>;
 const { dependencies = {}, devDependencies = {} } = pkg as any as {
@@ -61,6 +63,18 @@ export default defineConfig(({ command, mode }): UserConfig => {
         "/api": {
           target: `${ENDPOINT}`,
           changeOrigin: true,
+        },
+        "/invocations": {
+          target: `${ENDPOINT}`,
+          changeOrigin: true,
+          configure: (proxy, _options) => {
+            proxy.on("proxyReq", (proxyReq, req, _res) => {
+              proxyReq.removeHeader("cookie");
+              proxyReq.removeHeader("sec-fetch-site");
+              proxyReq.removeHeader("sec-fetch-mode");
+              proxyReq.removeHeader("sec-fetch-dest");
+            });
+          },
         },
       },
     },

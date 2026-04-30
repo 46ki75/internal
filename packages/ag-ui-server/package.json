@@ -1,0 +1,31 @@
+{
+  "name": "ag-ui-server",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "node --env-file=.env --watch ./src/server.ts",
+    "prestart": "pnpm run build",
+    "start": "node ./dist/server.mjs",
+    "build": "node build.ts",
+    "prebuild.container": "pnpm run build && docker run --rm --privileged multiarch/qemu-user-static --reset -p yes",
+    "build.container": "docker buildx build -t ${STAGE_NAME}/ag-ui-server --platform linux/arm64 .",
+    "build.container.dev": "STAGE_NAME=dev pnpm run build.container",
+    "build.container.stg": "STAGE_NAME=stg pnpm run build.container",
+    "build.container.prod": "STAGE_NAME=prod pnpm run build.container"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "esbuild": "^0.28.0",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "@copilotkit/runtime": "^1.56.4",
+    "@hono/node-server": "^2.0.1",
+    "@openrouter/ai-sdk-provider": "^2.9.0",
+    "hono": "^4.12.16"
+  }
+}

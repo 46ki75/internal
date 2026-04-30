@@ -1,9 +1,11 @@
 .env
 .env.*
+!.env.example
 
 # NodeJS
 node_modules/
 .pnpm-store/
+dist/
 
 # Rust
 target/

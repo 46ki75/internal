@@ -1,4 +1,5 @@
 packages:
+  - "packages/ag-ui-server"
   - "packages/web"
   - "packages/web-qwik"
   - "packages/components"

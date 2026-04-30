@@ -170,6 +170,12 @@ data "aws_ssm_parameter" "openrouter_api_key" {
   with_decryption = true
 }
 
+locals {
+  ag_ui_server_domain   = "bedrock-agentcore.ap-northeast-1.amazonaws.com"
+  ag_ui_server_path     = "/runtimes/${urlencode(aws_bedrockagentcore_agent_runtime.ag-ui-server.agent_runtime_arn)}/invocations"
+  ag_ui_server_endpoint = "https://${local.ag_ui_server_domain}${local.ag_ui_server_path}?qualifier=DEFAULT"
+}
+
 output "ag_ui_server_endpoint" {
-  value = "https://bedrock-agentcore.ap-northeast-1.amazonaws.com/runtimes/${urlencode(aws_bedrockagentcore_agent_runtime.ag-ui-server.agent_runtime_arn)}/invocations?qualifier=DEFAULT"
+  value = local.ag_ui_server_endpoint
 }

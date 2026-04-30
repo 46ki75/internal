@@ -106,6 +106,7 @@ resource "aws_cloudfront_response_headers_policy" "default" {
 }
 
 resource "aws_cloudfront_distribution" "default" {
+  comment    = terraform.workspace
   depends_on = [aws_acm_certificate.cloudfront_cert]
 
   http_version = "http2and3"
@@ -201,7 +202,7 @@ resource "aws_cloudfront_distribution" "default" {
 
   # >>> [AgentCore Runtime] origin
   ordered_cache_behavior {
-    path_pattern = "/runtimes*"
+    path_pattern = "/invocations*"
     allowed_methods = [
       "DELETE",
       "GET",
@@ -223,9 +224,9 @@ resource "aws_cloudfront_distribution" "default" {
   }
 
   origin {
-    domain_name = aws_apigatewayv2_domain_name.backend.domain_name
+    domain_name = local.ag_ui_server_domain
     origin_id   = "agentcore-runtime"
-    origin_path = "/${urlencode(aws_bedrockagentcore_agent_runtime.ag-ui-server.agent_runtime_arn)}/invocations"
+    origin_path = "/runtimes/${urlencode(aws_bedrockagentcore_agent_runtime.ag-ui-server.agent_runtime_arn)}"
 
     custom_origin_config {
       http_port              = 80

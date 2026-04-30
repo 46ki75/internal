@@ -62,7 +62,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
           target: `${ENDPOINT}`,
           changeOrigin: true,
         },
-        "/runtimes": {
+        "/invocations": {
           target: `${ENDPOINT}`,
           changeOrigin: true,
         },

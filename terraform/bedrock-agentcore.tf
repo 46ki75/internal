@@ -155,3 +155,7 @@ resource "aws_bedrockagentcore_agent_runtime" "ag-ui-server" {
     network_mode = "PUBLIC"
   }
 }
+
+output "ag_ui_server_endpoint" {
+  value = "https://bedrock-agentcore.ap-northeast-1.amazonaws.com/runtimes/${urlencode(aws_bedrockagentcore_agent_runtime.ag-ui-server.arn)}/invocations?qualifier=DEFAULT"
+}

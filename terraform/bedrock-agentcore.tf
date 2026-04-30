@@ -161,7 +161,7 @@ resource "aws_bedrockagentcore_agent_runtime" "ag-ui-server" {
 
   environment_variables = {
     "OPENROUTER_API_KEY" = data.aws_ssm_parameter.openrouter_api_key.value
-    "DEFAULT_AGENT"      = "minimax/minimax-m2.5:free"
+    "MODEL_ID"           = "minimax/minimax-m2.5:free"
   }
 }
 

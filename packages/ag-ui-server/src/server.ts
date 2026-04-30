@@ -6,7 +6,44 @@ import {
   createCopilotRuntimeHandler,
 } from "@copilotkit/runtime/v2";
 
-import { copilotkitBuiltinRuntime } from "./copilotkit-builtin.ts";
+import { CopilotRuntime, InMemoryAgentRunner } from "@copilotkit/runtime/v2";
+import { BuiltInAgent } from "@copilotkit/runtime/v2";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
+
+const openrouter = createOpenRouter({
+  apiKey: process.env.OPENROUTER_API_KEY,
+});
+
+const generateAgent = (modelId: string): BuiltInAgent =>
+  new BuiltInAgent({
+    model: openrouter(modelId),
+    maxSteps: 200,
+    mcpServers: [
+      {
+        url: "https://knowledge-mcp.global.api.aws",
+        type: "http",
+        options: {},
+      },
+    ],
+    providerOptions: {
+      openrouter: {
+        reasoning: { effort: "high" },
+      },
+    },
+    tools: [],
+  });
+
+const modelId = process.env.MODEL_ID ?? "minimax/minimax-m2.5:free";
+const agentName = "default";
+const copilotkitBuiltinRuntime = new CopilotRuntime({
+  agents: {
+    [agentName]: generateAgent(modelId),
+  },
+  runner: new InMemoryAgentRunner(),
+  a2ui: {
+    injectA2UITool: true,
+  },
+});
 
 const app = new Hono();
 
@@ -25,7 +62,6 @@ app.route(
 
 // Bedrock AgentCore proxies all requests to /invocations.
 // Rewrite the URL to include the target agent so CopilotKit can route it.
-const defaultAgent = process.env.DEFAULT_AGENT ?? "minimax/minimax-m2.5";
 const runtimeHandler = createCopilotRuntimeHandler({
   runtime: copilotkitBuiltinRuntime,
   basePath: "/copilotkit/builtin",
@@ -33,10 +69,11 @@ const runtimeHandler = createCopilotRuntimeHandler({
 app.post("/invocations", async (c) => {
   const body = await c.req.arrayBuffer();
   return runtimeHandler(
-    new Request(
-      `http://localhost/copilotkit/builtin/agent/${defaultAgent}/run`,
-      { method: "POST", headers: c.req.raw.headers, body },
-    ),
+    new Request(`http://localhost/copilotkit/builtin/agent/${agentName}/run`, {
+      method: "POST",
+      headers: c.req.raw.headers,
+      body,
+    }),
   );
 });
 

@@ -8,6 +8,7 @@ pub struct ImageBooruResponseDto {
     pub tag_string_character: String,
     pub tag_string_general: String,
     pub tag_string_meta: String,
+    pub updated_at: String,
     pub media_asset: ImageBooruMediaAssetDto,
 }
 
@@ -64,4 +65,7 @@ pub struct ImageDto {
 
     #[serde(rename = "Notable Tags")]
     pub notable_tags: PageRelationProperty,
+
+    #[serde(rename = "Updated At")]
+    pub updated_at: String,
 }

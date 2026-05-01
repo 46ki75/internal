@@ -1,3 +1,4 @@
+use notionrs::types::prelude::*;
 use serde::Deserialize;
 
 #[derive(Debug, Clone, Deserialize)]
@@ -42,4 +43,25 @@ mod test {
 
         assert_eq!(response.tag_string_artist, "ikuma_yamashita");
     }
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct ImageDto {
+    #[serde(rename = "Title")]
+    pub title: PageTitleProperty,
+
+    #[serde(rename = "Name")]
+    pub name: PageRichTextProperty,
+
+    #[serde(rename = "Sources")]
+    pub sources: PageMultiSelectProperty,
+
+    #[serde(rename = "URL")]
+    pub url: PageUrlProperty,
+
+    #[serde(rename = "Tags")]
+    pub tags: PageRelationProperty,
+
+    #[serde(rename = "Notable Tags")]
+    pub notable_tags: PageRelationProperty,
 }

@@ -146,8 +146,8 @@ importers:
         specifier: ^1.19.2
         version: 1.19.2(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(rollup@4.60.2)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(typescript@5.4.5)(yaml@2.8.2)
       '@elmethis/qwik':
-        specifier: ^0.0.71
-        version: 0.0.71
+        specifier: ^0.0.73
+        version: 0.0.73
       '@eslint/js':
         specifier: ^9
         version: 9.39.4
@@ -1073,8 +1073,8 @@ packages:
   '@dxup/unimport@0.1.2':
     resolution: {integrity: sha512-/B8YJGPzaYq1NbsQmwgP8EZqg40NpTw4ZB3suuI0TplbxKHeK94jeaawLmVhCv+YwUnOpiWEz9U6SeThku/8JQ==}
 
-  '@elmethis/qwik@0.0.71':
-    resolution: {integrity: sha512-W2zIFQ1FTDC7xgOo3BpGu/g3Lb3wU+XeqDisEnoF0S2JZUmQvTe210lO3KjpSHsWCXKTxRULrVsXzfeoXmPnOQ==}
+  '@elmethis/qwik@0.0.73':
+    resolution: {integrity: sha512-wT7+oZGU0mGtpasyv28lOnbYN2L5hVkShKuo96LIWTP+COTZuHeKmpkT2PJ7qKDWVxladDOZhTOs8e3kZJ/Y2Q==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
 
   '@elmethis/vue@0.3.1':
@@ -4929,8 +4929,8 @@ packages:
     resolution: {integrity: sha512-w+5mJ3GuFL+NjVtJlvydShqE1eN3h3PbI7/5LAsYJP/2qtuMXjfL2LpHSRqo4b4eSF5K/DH1JXKUAHSB2UW50g==}
     engines: {node: '>= 0.4'}
 
-  es-toolkit@1.46.0:
-    resolution: {integrity: sha512-IToJ6ct9OLl5zz6WsC/1vZEwfSZ7Myil+ygl5Tf30Xjn9AEkzNB4kqp2G7VUJKF1DtTx/ra5M5KLlXvzOg51BA==}
+  es-toolkit@1.46.1:
+    resolution: {integrity: sha512-5eNtXOs3tbfxXOj04tjjseeWkRWaoCjdEI+96DgwzZoe6c9juL49pXlzAFTI72aWC9Y8p7168g6XIKjh7k6pyQ==}
 
   esast-util-from-estree@2.0.0:
     resolution: {integrity: sha512-4CyanoAudUSBAn5K13H4JhsMH6L9ZP7XbLVe/dKybkxMO7eDyLsT8UHl9TRNrU2Gr9nz+FovfSIjuXWJ81uVwQ==}
@@ -9964,13 +9964,13 @@ snapshots:
 
   '@dxup/unimport@0.1.2': {}
 
-  '@elmethis/qwik@0.0.71':
+  '@elmethis/qwik@0.0.73':
     dependencies:
       '@a2ui/web_core': 0.9.2
       '@ag-ui/client': 0.0.52
       '@ag-ui/core': 0.0.52
       '@mdi/js': 7.4.47
-      es-toolkit: 1.46.0
+      es-toolkit: 1.46.1
       katex: 0.16.45
       marked: 18.0.2
       polished: 4.3.1
@@ -14060,7 +14060,7 @@ snapshots:
       is-date-object: 1.1.0
       is-symbol: 1.1.1
 
-  es-toolkit@1.46.0: {}
+  es-toolkit@1.46.1: {}
 
   esast-util-from-estree@2.0.0:
     dependencies:

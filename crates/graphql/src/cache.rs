@@ -1,38 +1,5 @@
 use aws_config::BehaviorVersion;
 
-async fn try_get_ssm_parameter_async(
-    ssm_client: aws_sdk_ssm::Client,
-    parameter_name: &str,
-) -> Result<String, crate::error::Error> {
-    let parameter = ssm_client
-        .get_parameter()
-        .name(parameter_name)
-        .with_decryption(true)
-        .send()
-        .await
-        .map_err(|e| {
-            tracing::error!("Failed to get parameter: {}", e);
-            crate::error::Error::SsmParameter(e.to_string())
-        })?
-        .parameter
-        .ok_or_else(|| {
-            tracing::error!("Parameter not found: {}", parameter_name);
-            crate::error::Error::SsmParameter(format!("Parameter not found: {}", parameter_name))
-        })?
-        .value
-        .ok_or_else(|| {
-            tracing::error!("Parameter value not found: {}", parameter_name);
-            crate::error::Error::SsmParameter(format!(
-                "Parameter value not found: {}",
-                parameter_name
-            ))
-        })?;
-
-    tracing::debug!("Fetching SSM Parameter: {}", parameter_name);
-
-    Ok(parameter)
-}
-
 static STAGE_NAME: tokio::sync::OnceCell<String> = tokio::sync::OnceCell::const_new();
 
 /// Fetches the STAGE_NAME from cache or initializes it from environment variables if not already loaded.
@@ -60,15 +27,6 @@ pub async fn get_or_init_aws_sdk_config() -> &'static aws_config::SdkConfig {
         .await
 }
 
-static SSM_CLIENT: tokio::sync::OnceCell<aws_sdk_ssm::Client> = tokio::sync::OnceCell::const_new();
-
-/// Initialises or gets AWS Systems Manager SDK Client.
-pub async fn get_or_init_ssm_client() -> &'static aws_sdk_ssm::Client {
-    SSM_CLIENT
-        .get_or_init(|| async { aws_sdk_ssm::Client::new(get_or_init_aws_sdk_config().await) })
-        .await
-}
-
 static DYNAMODB_CLIENT: tokio::sync::OnceCell<aws_sdk_dynamodb::Client> =
     tokio::sync::OnceCell::const_new();
 
@@ -89,98 +47,42 @@ pub async fn get_or_init_cognito_idp() -> &'static aws_sdk_cognitoidentityprovid
         .await
 }
 
-static NOTION_API_KEY: tokio::sync::OnceCell<String> = tokio::sync::OnceCell::const_new();
-
-/// Fetches the Notion API key from cache or initializes it if not already loaded.
-pub async fn get_or_init_notion_api_key() -> Result<&'static String, crate::error::Error> {
-    NOTION_API_KEY
-        .get_or_try_init(|| async {
-            let stage_name = get_or_init_stage_name().await?;
-            let notion_api_key = try_get_ssm_parameter_async(
-                get_or_init_ssm_client().await.clone(),
-                format!("/{stage_name}/46ki75/internal/notion/secret").as_str(),
-            )
-            .await?;
-
-            Ok(notion_api_key)
-        })
-        .await
+/// Fetches the Notion API key from SSM Parameter Store.
+pub async fn get_or_init_notion_api_key() -> Result<String, crate::error::Error> {
+    let stage_name = get_or_init_stage_name().await?;
+    get_parameter(format!("/{stage_name}/46ki75/internal/notion/secret")).await
 }
 
-static NOTION_ANKI_DATA_SOURCE_ID: tokio::sync::OnceCell<String> =
-    tokio::sync::OnceCell::const_new();
-
-pub async fn get_or_init_notion_anki_data_source_id() -> Result<&'static String, crate::error::Error>
-{
-    NOTION_ANKI_DATA_SOURCE_ID
-        .get_or_try_init(|| async {
-            let stage_name = get_or_init_stage_name().await?;
-            let id = try_get_ssm_parameter_async(
-                get_or_init_ssm_client().await.clone(),
-                format!("/{stage_name}/46ki75/internal/notion/anki/data_source/id").as_str(),
-            )
-            .await?;
-
-            Ok(id)
-        })
-        .await
+pub async fn get_or_init_notion_anki_data_source_id() -> Result<String, crate::error::Error> {
+    let stage_name = get_or_init_stage_name().await?;
+    get_parameter(format!(
+        "/{stage_name}/46ki75/internal/notion/anki/data_source/id"
+    ))
+    .await
 }
 
-static NOTION_TO_DO_DATA_SOURCE_ID: tokio::sync::OnceCell<String> =
-    tokio::sync::OnceCell::const_new();
-
-pub async fn get_or_init_notion_to_do_data_source_id()
--> Result<&'static String, crate::error::Error> {
-    NOTION_TO_DO_DATA_SOURCE_ID
-        .get_or_try_init(|| async {
-            let stage_name = get_or_init_stage_name().await?;
-            let id = try_get_ssm_parameter_async(
-                get_or_init_ssm_client().await.clone(),
-                format!("/{stage_name}/46ki75/internal/notion/todo/data_source/id").as_str(),
-            )
-            .await?;
-
-            Ok(id)
-        })
-        .await
+pub async fn get_or_init_notion_to_do_data_source_id() -> Result<String, crate::error::Error> {
+    let stage_name = get_or_init_stage_name().await?;
+    get_parameter(format!(
+        "/{stage_name}/46ki75/internal/notion/todo/data_source/id"
+    ))
+    .await
 }
 
-static NOTION_BOOKMARK_DATA_SOURCE_ID: tokio::sync::OnceCell<String> =
-    tokio::sync::OnceCell::const_new();
-
-pub async fn get_or_init_notion_bookmark_data_source_id()
--> Result<&'static String, crate::error::Error> {
-    NOTION_BOOKMARK_DATA_SOURCE_ID
-        .get_or_try_init(|| async {
-            let stage_name = get_or_init_stage_name().await?;
-            let id = try_get_ssm_parameter_async(
-                get_or_init_ssm_client().await.clone(),
-                format!("/{stage_name}/46ki75/internal/notion/bookmark/data_source/id").as_str(),
-            )
-            .await?;
-
-            Ok(id)
-        })
-        .await
+pub async fn get_or_init_notion_bookmark_data_source_id() -> Result<String, crate::error::Error> {
+    let stage_name = get_or_init_stage_name().await?;
+    get_parameter(format!(
+        "/{stage_name}/46ki75/internal/notion/bookmark/data_source/id"
+    ))
+    .await
 }
 
-static NOTION_ICON_DATA_SOURCE_ID: tokio::sync::OnceCell<String> =
-    tokio::sync::OnceCell::const_new();
-
-pub async fn get_or_init_notion_icon_data_source_id() -> Result<&'static String, crate::error::Error>
-{
-    NOTION_ICON_DATA_SOURCE_ID
-        .get_or_try_init(|| async {
-            let stage_name = get_or_init_stage_name().await?;
-            let id = try_get_ssm_parameter_async(
-                get_or_init_ssm_client().await.clone(),
-                format!("/{stage_name}/46ki75/internal/notion/icon/data_source/id").as_str(),
-            )
-            .await?;
-
-            Ok(id)
-        })
-        .await
+pub async fn get_or_init_notion_icon_data_source_id() -> Result<String, crate::error::Error> {
+    let stage_name = get_or_init_stage_name().await?;
+    get_parameter(format!(
+        "/{stage_name}/46ki75/internal/notion/icon/data_source/id"
+    ))
+    .await
 }
 
 static NOTIONRS_CLIENT: tokio::sync::OnceCell<notionrs::Client> =
@@ -236,20 +138,8 @@ pub async fn get_or_init_reqwest_client() -> Result<&'static reqwest::Client, cr
         .await
 }
 
-static FINEVOICE_API_KEY: tokio::sync::OnceCell<String> = tokio::sync::OnceCell::const_new();
-
-pub async fn get_or_init_finevoice_api_key() -> Result<&'static String, crate::error::Error> {
-    FINEVOICE_API_KEY
-        .get_or_try_init(|| async {
-            let notion_api_key = try_get_ssm_parameter_async(
-                get_or_init_ssm_client().await.clone(),
-                "/shared/46ki75/internal/finevoice/secret",
-            )
-            .await?;
-
-            Ok(notion_api_key)
-        })
-        .await
+pub async fn get_or_init_finevoice_api_key() -> Result<String, crate::error::Error> {
+    get_parameter("/shared/46ki75/internal/finevoice/secret".to_string()).await
 }
 
 #[cached::proc_macro::cached(result = true)]

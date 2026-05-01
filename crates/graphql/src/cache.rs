@@ -1,3 +1,5 @@
+use aws_config::BehaviorVersion;
+
 async fn try_get_ssm_parameter_async(
     ssm_client: aws_sdk_ssm::Client,
     parameter_name: &str,
@@ -248,4 +250,29 @@ pub async fn get_or_init_finevoice_api_key() -> Result<&'static String, crate::e
             Ok(notion_api_key)
         })
         .await
+}
+
+#[cached::proc_macro::cached(result = true)]
+pub async fn get_parameter(parameter_name: String) -> Result<String, crate::error::Error> {
+    let sdk_config = aws_config::load_defaults(BehaviorVersion::latest()).await;
+    let ssm_client = aws_sdk_ssm::Client::new(&sdk_config);
+
+    let parameter = ssm_client
+        .get_parameter()
+        .name(&parameter_name)
+        .send()
+        .await?
+        .parameter
+        .ok_or_else(|| {
+            crate::error::Error::SsmParameter(format!("Parameter not found: {}", &parameter_name))
+        })?
+        .value
+        .ok_or_else(|| {
+            crate::error::Error::SsmParameter(format!(
+                "Parameter value not found: {}",
+                &parameter_name
+            ))
+        })?;
+
+    Ok(parameter)
 }

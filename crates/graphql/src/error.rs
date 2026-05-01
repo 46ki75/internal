@@ -47,4 +47,10 @@ pub enum Error {
 
     #[error("Parameter not found: {0}")]
     ParameterNotFound(String),
+
+    #[error("SSM SDK error: {0}")]
+    SsmSdkError(
+        #[from]
+        aws_sdk_ssm::error::SdkError<aws_sdk_ssm::operation::get_parameter::GetParameterError>,
+    ),
 }

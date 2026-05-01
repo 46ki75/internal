@@ -1,22 +1,22 @@
 use serde::Deserialize;
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct ImageBooruResponse {
+pub struct ImageBooruResponseDto {
     pub tag_string_artist: String,
     pub tag_string_copyright: String,
     pub tag_string_character: String,
     pub tag_string_general: String,
     pub tag_string_meta: String,
-    pub media_asset: ImageBooruMediaAsset,
+    pub media_asset: ImageBooruMediaAssetDto,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct ImageBooruMediaAsset {
-    pub variants: Vec<ImageBooruVariant>,
+pub struct ImageBooruMediaAssetDto {
+    pub variants: Vec<ImageBooruVariantDto>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct ImageBooruVariant {
+pub struct ImageBooruVariantDto {
     pub r#type: String,
     pub url: String,
     pub width: u32,
@@ -38,7 +38,7 @@ mod test {
             .await
             .unwrap();
 
-        let response: ImageBooruResponse = serde_json::from_slice(&json).unwrap();
+        let response: ImageBooruResponseDto = serde_json::from_slice(&json).unwrap();
 
         assert_eq!(response.tag_string_artist, "ikuma_yamashita");
     }

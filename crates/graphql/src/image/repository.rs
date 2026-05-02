@@ -26,7 +26,7 @@ pub trait ImageRepository {
 pub struct ImageRepositoryImpl {}
 
 impl ImageRepository for ImageRepositoryImpl {
-    #[tracing::instrument(err, skip(self))]
+    #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self), err))]
     fn fetch_images(
         &self,
     ) -> Pin<Box<dyn Future<Output = Result<super::dto::ImagePageDto, crate::error::Error>> + Send>>
@@ -61,7 +61,7 @@ impl ImageRepository for ImageRepositoryImpl {
         })
     }
 
-    #[tracing::instrument(err, skip(self))]
+    #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self), err))]
     fn fetch_image_tags(
         &self,
     ) -> Pin<
@@ -90,7 +90,7 @@ impl ImageRepository for ImageRepositoryImpl {
         })
     }
 
-    #[tracing::instrument(err, skip(self))]
+    #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self), err))]
     fn create_image_tag(
         &self,
         tag_name: impl Into<String>,

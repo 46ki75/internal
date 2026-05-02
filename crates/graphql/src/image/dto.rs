@@ -75,3 +75,15 @@ pub struct ImagePageDto {
     pub images: Vec<ImageDto>,
     pub next_cursor: Option<String>,
 }
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct ImageTagDto {
+    #[serde(rename = "Tag Name")]
+    pub tag_name: PageTitleProperty,
+
+    #[serde(rename = "URL")]
+    pub url: PageUrlProperty,
+
+    #[serde(rename = "Tag Type")]
+    pub tag_type: PageSelectProperty,
+}

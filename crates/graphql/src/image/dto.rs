@@ -68,6 +68,9 @@ pub struct ImageDto {
 
     #[serde(rename = "Uploaded At")]
     pub uploaded_at: PageDateProperty,
+
+    #[serde(rename = "Images")]
+    pub images: PageFilesProperty,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]

@@ -32,6 +32,7 @@ mod response {
         pub tags: Vec<String>,
         pub notable_tags: Vec<String>,
         pub uploaded_at: Option<String>,
+        pub images: Vec<String>,
     }
 
     impl From<ImageOutput> for ImageResponse {
@@ -48,6 +49,7 @@ mod response {
                 tags: value.tags,
                 notable_tags: value.notable_tags,
                 uploaded_at: value.uploaded_at,
+                images: value.images,
             }
         }
     }

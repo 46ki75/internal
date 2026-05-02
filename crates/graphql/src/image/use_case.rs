@@ -35,6 +35,7 @@ pub mod output {
         pub tags: Vec<String>,
         pub notable_tags: Vec<String>,
         pub uploaded_at: Option<String>,
+        pub images: Vec<String>,
     }
 
     impl From<ImageDto> for ImageOutput {
@@ -71,6 +72,12 @@ pub mod output {
                     .date
                     .and_then(|d| d.start)
                     .map(|dt| dt.to_string()),
+                images: value
+                    .images
+                    .files
+                    .into_iter()
+                    .map(|f| f.get_url())
+                    .collect(),
             }
         }
     }

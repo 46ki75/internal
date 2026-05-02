@@ -150,6 +150,7 @@ pub async fn get_parameter(parameter_name: String) -> Result<String, crate::erro
     let parameter = ssm_client
         .get_parameter()
         .name(&parameter_name)
+        .with_decryption(true)
         .send()
         .await?
         .parameter

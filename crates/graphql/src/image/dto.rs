@@ -1,5 +1,5 @@
 use notionrs::types::prelude::*;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct ImageBooruResponseDto {
@@ -46,7 +46,7 @@ mod test {
     }
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ImageDto {
     #[serde(rename = "Title")]
     pub title: PageTitleProperty,
@@ -68,4 +68,10 @@ pub struct ImageDto {
 
     #[serde(rename = "Updated At")]
     pub updated_at: String,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct ImagePageDto {
+    pub images: Vec<ImageDto>,
+    pub next_cursor: Option<String>,
 }

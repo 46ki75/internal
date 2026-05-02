@@ -53,4 +53,7 @@ pub enum Error {
         #[from]
         aws_sdk_ssm::error::SdkError<aws_sdk_ssm::operation::get_parameter::GetParameterError>,
     ),
+
+    #[error("Notion API error: {0}")]
+    NotionrsClient(#[from] notionrs::Error),
 }

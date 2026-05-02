@@ -1,4 +1,4 @@
-use std::pin::Pin;
+use std::{collections::HashMap, pin::Pin};
 
 use futures::TryStreamExt;
 use notionrs::PaginateExt;
@@ -109,27 +109,41 @@ impl ImageRepository for ImageRepositoryImpl {
             ))
             .await?;
 
-            let properties = super::dto::ImageTagDto {
-                tag_name: PageTitleProperty {
+            let mut properties: HashMap<String, PageProperty> = HashMap::new();
+
+            properties.insert(
+                "Tag Name".to_owned(),
+                PageProperty::Title(PageTitleProperty {
                     title: vec![RichText::from(tag_name)],
                     ..Default::default()
-                },
-                url: PageUrlProperty {
+                }),
+            );
+            properties.insert(
+                "URL".to_owned(),
+                PageProperty::Url(PageUrlProperty {
                     url: Some(url),
                     ..Default::default()
-                },
-                tag_type: PageSelectProperty {
+                }),
+            );
+            properties.insert(
+                "Tag Type".to_owned(),
+                PageProperty::Select(PageSelectProperty {
                     select: Some(Select {
                         name: serde_plain::to_string(&tag_type)?,
                         ..Default::default()
                     }),
                     ..Default::default()
-                },
-            };
+                }),
+            );
 
-            // let response = notionrs_client.create_page().properties(properties);
+            let response = notionrs_client
+                .create_page::<super::dto::ImageTagDto>()
+                .data_source_id(data_source_id)
+                .properties(properties)
+                .send()
+                .await?;
 
-            todo!();
+            Ok(response.properties)
         })
     }
 }

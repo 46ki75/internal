@@ -215,6 +215,7 @@ impl AnkiRepository for AnkiRepositoryStub {
                     page_id: "7e39472a-dfeb-41c9-a97c-f66c85e9dafe".to_string(),
                 },
             ),
+            #[allow(deprecated)]
             archived: false,
             properties,
             url: "https://www.notion.com/".to_string(),
@@ -223,6 +224,7 @@ impl AnkiRepository for AnkiRepositoryStub {
             request_id: None,
             in_trash: false,
             is_locked: false,
+            is_archived: false,
         })
     }
 
@@ -294,6 +296,7 @@ impl AnkiRepository for AnkiRepositoryStub {
                     page_id: "7e39472a-dfeb-41c9-a97c-f66c85e9dafe".to_string(),
                 },
             ),
+            #[allow(deprecated)]
             archived: false,
             properties,
             url: "https://www.notion.com/".to_string(),
@@ -302,6 +305,7 @@ impl AnkiRepository for AnkiRepositoryStub {
             request_id: None,
             in_trash: false,
             is_locked: false,
+            is_archived: false,
         };
 
         Ok(notionrs_types::object::response::ListResponse {
@@ -310,6 +314,7 @@ impl AnkiRepository for AnkiRepositoryStub {
             next_cursor: None,
             has_more: Some(false),
             r#type: Some("page".to_string()),
+            request_status: None,
         })
     }
 
@@ -380,6 +385,7 @@ impl AnkiRepository for AnkiRepositoryStub {
                     page_id: "7e39472a-dfeb-41c9-a97c-f66c85e9dafe".to_string(),
                 },
             ),
+            #[allow(deprecated)]
             archived: false,
             properties,
             url: "https://www.notion.com/".to_string(),
@@ -388,6 +394,7 @@ impl AnkiRepository for AnkiRepositoryStub {
             request_id: None,
             in_trash: false,
             is_locked: false,
+            is_archived: false,
         })
     }
 
@@ -459,6 +466,7 @@ impl AnkiRepository for AnkiRepositoryStub {
                     page_id: page_id.to_string(),
                 },
             ),
+            #[allow(deprecated)]
             archived: false,
             properties,
             url: "https://www.notion.com/".to_string(),
@@ -467,6 +475,7 @@ impl AnkiRepository for AnkiRepositoryStub {
             request_id: None,
             in_trash: in_trash.unwrap_or_default(),
             is_locked: false,
+            is_archived: false,
         })
     }
 

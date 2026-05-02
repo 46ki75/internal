@@ -24,6 +24,7 @@
   },
   "archived": false,
   "in_trash": false,
+  "is_locked": false,
   "properties": {
     "Tag": {
       "id": "KS%5Er",
@@ -40,6 +41,16 @@
       "id": "S~xm",
       "type": "url",
       "url": "https://direct.bk.mufg.jp/index.html"
+    },
+    "NSFW": {
+      "id": "nsfw",
+      "type": "checkbox",
+      "checkbox": false
+    },
+    "Favorite": {
+      "id": "fav",
+      "type": "checkbox",
+      "checkbox": false
     },
     "Name": {
       "id": "title",

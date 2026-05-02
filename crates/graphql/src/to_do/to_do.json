@@ -19,6 +19,7 @@
   },
   "archived": false,
   "in_trash": false,
+  "is_locked": false,
   "properties": {
     "DaysRemaining": {
       "id": "FpgC",
@@ -35,6 +36,11 @@
     },
     "IsDone": {
       "id": "XBPF",
+      "type": "checkbox",
+      "checkbox": false
+    },
+    "IsRecurring": {
+      "id": "recur",
       "type": "checkbox",
       "checkbox": false
     },

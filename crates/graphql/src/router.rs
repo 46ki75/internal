@@ -6,6 +6,8 @@ use axum::Router;
 use utoipa::OpenApi;
 use utoipa_axum::{router::OpenApiRouter, routes};
 
+use crate::image::{repository::ImageRepositoryImpl, use_case::ImageUseCase};
+
 #[derive(Clone)]
 pub struct AxumAppState {
     pub bookmark_service: Arc<crate::bookmark::service::BookmarkService>,
@@ -65,6 +67,11 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                 .routes(routes!(crate::anki::controller::update_anki))
                 .routes(routes!(crate::icon::controller::list_icons))
                 .with_state(app_state)
+                .routes(routes!(crate::image::controller::fetch_images))
+                .routes(routes!(crate::image::controller::fetch_image_tags))
+                .with_state(Arc::new(ImageUseCase {
+                    repository: Arc::new(ImageRepositoryImpl {}),
+                }))
                 .split_for_parts();
 
             let customized_api = ApiDoc::openapi().merge_from(auto_generated_api);

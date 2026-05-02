@@ -14,6 +14,9 @@ edition = "2024"
 # add the latest version of a dependency to the list,
 # and it will keep the alphabetic ordering for you.
 
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(rust_analyzer)'] }
+
 [dependencies]
 reqwest = { version = "0.13", features = [
     "rustls",
@@ -24,9 +27,9 @@ reqwest = { version = "0.13", features = [
 async-graphql = "7.2.1"
 chrono = "0.4.43"
 lambda_http = "1.0.2"
-notionrs = { version = "0.14.0", features = ["rustls"] }
-notionrs_types = "0.11.0"
-notion-to-jarkup = "0.21.0"
+notionrs = { version = "0.25.0", features = ["rustls"] }
+notionrs_types = "0.18.0"
+notion-to-jarkup = "0.28.0"
 jarkup-rs = "0.14.0"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
@@ -60,3 +63,5 @@ infer = "0.19.0"
 utoipa = "5.4.0"
 utoipa-axum = "0.2.0"
 utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
+cached = { version = "0.59.0", features = ["async"] }
+serde_plain = "1.0.2"

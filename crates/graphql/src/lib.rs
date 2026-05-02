@@ -7,6 +7,7 @@ pub mod error;
 pub mod execute;
 pub mod graphql_handler;
 pub mod icon;
+pub mod image;
 pub mod layer;
 pub mod mutation;
 pub mod query;

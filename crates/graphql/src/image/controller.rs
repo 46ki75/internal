@@ -96,5 +96,5 @@ pub async fn fetch_images(
             "Internal Server Error".to_string(),
         )
             .into_response(),
-    };
+    }
 }

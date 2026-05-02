@@ -70,6 +70,23 @@ mod response {
             }
         }
     }
+
+    #[derive(Debug, Clone, Deserialize, Serialize, ToSchema)]
+    pub struct ImageTagResponse {
+        pub tag_name: String,
+        pub url: String,
+        pub tag_type: String,
+    }
+
+    impl From<ImageTagOutput> for ImageTagResponse {
+        fn from(value: ImageTagOutput) -> Self {
+            Self {
+                tag_name: value.tag_name,
+                url: value.url,
+                tag_type: value.tag_type,
+            }
+        }
+    }
 }
 
 #[utoipa::path(
@@ -91,6 +108,38 @@ pub async fn fetch_images(
     match image_page {
         Ok(image_page) => {
             let response = response::FetchImagesResponse::from(image_page);
+            axum::Json(response).into_response()
+        }
+        Err(_) => (
+            axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+            "Internal Server Error".to_string(),
+        )
+            .into_response(),
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/api/v1/image/tag",
+    params(
+        ("Authorization" = String, Header),
+    ),
+    responses(
+        (status = 200, description = "Image Tags", body = Vec<response::ImageTagResponse>),
+        (status = 500, description = "Internal Server Error", body = String)
+    )
+)]
+pub async fn fetch_image_tags(
+    State(use_case): State<Arc<super::use_case::ImageUseCase>>,
+) -> impl IntoResponse {
+    let image_tags = use_case.fetch_image_tags().await;
+
+    match image_tags {
+        Ok(image_tags) => {
+            let response: Vec<response::ImageTagResponse> = image_tags
+                .into_iter()
+                .map(response::ImageTagResponse::from)
+                .collect();
             axum::Json(response).into_response()
         }
         Err(_) => (

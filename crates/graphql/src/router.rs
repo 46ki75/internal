@@ -68,6 +68,7 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                 .routes(routes!(crate::icon::controller::list_icons))
                 .with_state(app_state)
                 .routes(routes!(crate::image::controller::fetch_images))
+                .routes(routes!(crate::image::controller::fetch_image_tags))
                 .with_state(Arc::new(ImageUseCase {
                     repository: Arc::new(ImageRepositoryImpl {}),
                 }))

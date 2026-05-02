@@ -55,5 +55,8 @@ pub enum Error {
     ),
 
     #[error("Notion API error: {0}")]
-    NotionrsClient(#[from] notionrs::Error),
+    NotionrsClientError(#[from] notionrs::Error),
+
+    #[error("invalid JSON configuration")]
+    SerdePlainError(#[from] serde_plain::Error),
 }

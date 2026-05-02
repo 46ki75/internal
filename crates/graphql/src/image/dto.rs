@@ -87,3 +87,12 @@ pub struct ImageTagDto {
     #[serde(rename = "Tag Type")]
     pub tag_type: PageSelectProperty,
 }
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub enum ImageTagTypeDtoInput {
+    Artist,
+    Copyright,
+    Character,
+    General,
+    Meta,
+}

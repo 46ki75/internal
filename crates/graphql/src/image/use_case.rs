@@ -1,13 +1,12 @@
-pub struct ImageUseCase<T>
-where
-    T: super::repository::ImageRepository + Send,
-{
-    pub repository: T,
+use std::sync::Arc;
+
+pub struct ImageUseCase {
+    pub repository: Arc<dyn super::repository::ImageRepository + Send + Sync>,
 }
 
-mod input {}
+pub mod input {}
 
-mod output {
+pub mod output {
     use super::super::dto::*;
     use notionrs::types::prelude::*;
     use serde::{Deserialize, Serialize};
@@ -35,7 +34,7 @@ mod output {
         pub url: Option<String>,
         pub tags: Vec<String>,
         pub notable_tags: Vec<String>,
-        pub updated_at: String,
+        pub uploaded_at: Option<String>,
     }
 
     impl From<ImageDto> for ImageOutput {
@@ -67,7 +66,11 @@ mod output {
                     .into_iter()
                     .map(|r| r.id)
                     .collect(),
-                updated_at: value.updated_at,
+                uploaded_at: value
+                    .uploaded_at
+                    .date
+                    .and_then(|d| d.start)
+                    .map(|dt| dt.to_string()),
             }
         }
     }
@@ -90,10 +93,7 @@ mod output {
     }
 }
 
-impl<T> ImageUseCase<T>
-where
-    T: super::repository::ImageRepository + Send,
-{
+impl ImageUseCase {
     #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self), err))]
     pub async fn fetch_images(&self) -> Result<output::ImagePageOutput, crate::error::Error> {
         let dto = self.repository.fetch_images().await?;

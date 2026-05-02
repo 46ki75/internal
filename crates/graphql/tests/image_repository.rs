@@ -10,3 +10,14 @@ async fn test_fetch_image_tags() {
 
     assert!(result.is_ok());
 }
+
+#[tokio::test]
+async fn test_fetch_images() {
+    let repository = ImageRepositoryImpl {};
+
+    let result = repository.fetch_images().await;
+
+    print!("{:#?}", result);
+
+    assert!(result.is_ok());
+}

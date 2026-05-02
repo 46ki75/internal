@@ -66,8 +66,8 @@ pub struct ImageDto {
     #[serde(rename = "Notable Tags")]
     pub notable_tags: PageRelationProperty,
 
-    #[serde(rename = "Updated At")]
-    pub updated_at: String,
+    #[serde(rename = "Uploaded At")]
+    pub uploaded_at: PageDateProperty,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]

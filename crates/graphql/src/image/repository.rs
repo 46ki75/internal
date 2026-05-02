@@ -17,8 +17,8 @@ pub trait ImageRepository {
 
     fn create_image_tag(
         &self,
-        tag_name: impl Into<String>,
-        url: impl Into<String>,
+        tag_name: String,
+        url: String,
         tag_type: super::dto::ImageTagTypeDtoInput,
     ) -> Pin<Box<dyn Future<Output = Result<super::dto::ImageTagDto, crate::error::Error>> + Send>>;
 }
@@ -93,14 +93,11 @@ impl ImageRepository for ImageRepositoryImpl {
     #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self), err))]
     fn create_image_tag(
         &self,
-        tag_name: impl Into<String>,
-        url: impl Into<String>,
+        tag_name: String,
+        url: String,
         tag_type: super::dto::ImageTagTypeDtoInput,
     ) -> Pin<Box<dyn Future<Output = Result<super::dto::ImageTagDto, crate::error::Error>> + Send>>
     {
-        let tag_name = tag_name.into();
-        let url = url.into();
-
         Box::pin(async move {
             let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
             let stage_name = crate::cache::get_or_init_stage_name().await?;

@@ -1,7 +1,34 @@
 .icon {
+  box-sizing: border-box;
   padding: 0.5rem;
+}
+
+.icon-group {
+  padding: 2rem 0.5rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
   justify-content: center;
+}
+
+.icon-content-type-group {
+  width: 100%;
+  display: flex;
+  gap: 0.25rem;
+  flex-direction: column;
+  align-items: stretch;
+
+  .icon-content-type-group-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .spacer {
+    height: 1px;
+    width: 100%;
+    flex: 1;
+    background-color: oklch(from gray l c h / 0.25);
+  }
 }

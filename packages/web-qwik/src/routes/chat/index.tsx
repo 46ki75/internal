@@ -36,7 +36,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
     setPromptTemplates([
       {
         description: "Ask about AWS",
-        value: "What is a new feature called Amazon S3 Files?",
+        content: "What is a new feature called Amazon S3 Files?",
       },
     ]);
   });

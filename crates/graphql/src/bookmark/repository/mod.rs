@@ -4,19 +4,31 @@ pub mod output;
 use futures::TryStreamExt;
 use notionrs::PaginateExt;
 
+#[derive(Debug, thiserror::Error)]
+pub enum BookmarkRepositoryError {
+    #[error("Notion API error: {0}")]
+    NotionApi(String),
+    #[error("HTTP request failed: {0}")]
+    Http(String),
+    #[error("HTTP body stream error: {0}")]
+    HttpBodyStream(String),
+    #[error("internal error: {0}")]
+    Internal(#[from] crate::error::Error),
+}
+
 #[async_trait::async_trait]
 pub trait BookmarkRepository: Send + Sync {
     async fn list_bookmark(
         &self,
-    ) -> Result<Vec<notionrs_types::object::page::PageResponse>, crate::error::Error>;
+    ) -> Result<Vec<notionrs_types::object::page::PageResponse>, BookmarkRepositoryError>;
 
     async fn create_bookmark(
         &self,
         properties: std::collections::HashMap<String, notionrs_types::object::page::PageProperty>,
         favicon: Option<String>,
-    ) -> Result<notionrs_types::object::page::PageResponse, crate::error::Error>;
+    ) -> Result<notionrs_types::object::page::PageResponse, BookmarkRepositoryError>;
 
-    async fn fetch_html(&self, url: &str) -> Result<String, crate::error::Error>;
+    async fn fetch_html(&self, url: &str) -> Result<String, BookmarkRepositoryError>;
 }
 
 pub struct BookmarkRepositoryImpl {}
@@ -25,7 +37,7 @@ pub struct BookmarkRepositoryImpl {}
 impl BookmarkRepository for BookmarkRepositoryImpl {
     async fn list_bookmark(
         &self,
-    ) -> Result<Vec<notionrs_types::object::page::PageResponse>, crate::error::Error> {
+    ) -> Result<Vec<notionrs_types::object::page::PageResponse>, BookmarkRepositoryError> {
         let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
         let data_source_id = crate::cache::get_or_init_notion_bookmark_data_source_id().await?;
@@ -41,11 +53,9 @@ impl BookmarkRepository for BookmarkRepositoryImpl {
         let span = tracing::info_span!("my_span");
         let response = span
             .in_scope(async || {
-                request.await.map_err(|e| {
-                    let error_message = format!("Notion API error: {}", e);
-                    log::error!("{}", error_message);
-                    crate::error::Error::NotionRs(error_message)
-                })
+                request
+                    .await
+                    .map_err(|e| BookmarkRepositoryError::NotionApi(e.to_string()))
             })
             .await?;
         drop(span);
@@ -57,7 +67,7 @@ impl BookmarkRepository for BookmarkRepositoryImpl {
         &self,
         properties: std::collections::HashMap<String, notionrs_types::object::page::PageProperty>,
         favicon: Option<String>,
-    ) -> Result<notionrs_types::object::page::PageResponse, crate::error::Error> {
+    ) -> Result<notionrs_types::object::page::PageResponse, BookmarkRepositoryError> {
         let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
         let data_source_id = crate::cache::get_or_init_notion_bookmark_data_source_id().await?;
@@ -77,16 +87,15 @@ impl BookmarkRepository for BookmarkRepositoryImpl {
         };
 
         tracing::debug!("Sending request to Notion API");
-        let response = request.send().await.map_err(|e| {
-            let error_message = format!("Notion API error: {}", e);
-            log::error!("{}", error_message);
-            crate::error::Error::NotionRs(error_message)
-        })?;
+        let response = request
+            .send()
+            .await
+            .map_err(|e| BookmarkRepositoryError::NotionApi(e.to_string()))?;
 
         Ok(response)
     }
 
-    async fn fetch_html(&self, url: &str) -> Result<String, crate::error::Error> {
+    async fn fetch_html(&self, url: &str) -> Result<String, BookmarkRepositoryError> {
         let client = reqwest::Client::new();
         let html = client
             .get(url)
@@ -94,14 +103,14 @@ impl BookmarkRepository for BookmarkRepositoryImpl {
             .send()
             .await
             .map_err(|e| {
-                let error = crate::error::Error::Http(e.to_string());
+                let error = BookmarkRepositoryError::Http(e.to_string());
                 tracing::error!("{}", error);
                 error
             })?
             .text()
             .await
             .map_err(|e| {
-                let error = crate::error::Error::HttpBodyStream(e.to_string());
+                let error = BookmarkRepositoryError::HttpBodyStream(e.to_string());
                 tracing::error!("{}", error);
                 error
             })?;
@@ -116,7 +125,7 @@ pub struct BookmarkRepositoryStub;
 impl BookmarkRepository for BookmarkRepositoryStub {
     async fn list_bookmark(
         &self,
-    ) -> Result<Vec<notionrs_types::object::page::PageResponse>, crate::error::Error> {
+    ) -> Result<Vec<notionrs_types::object::page::PageResponse>, BookmarkRepositoryError> {
         let json = include_bytes!("../bookmark.json");
 
         let response =
@@ -129,7 +138,7 @@ impl BookmarkRepository for BookmarkRepositoryStub {
         &self,
         _properties: std::collections::HashMap<String, notionrs_types::object::page::PageProperty>,
         _favicon: Option<String>,
-    ) -> Result<notionrs_types::object::page::PageResponse, crate::error::Error> {
+    ) -> Result<notionrs_types::object::page::PageResponse, BookmarkRepositoryError> {
         let json = include_bytes!("../bookmark.json");
 
         let response =
@@ -138,7 +147,7 @@ impl BookmarkRepository for BookmarkRepositoryStub {
         Ok(response)
     }
 
-    async fn fetch_html(&self, _url: &str) -> Result<String, crate::error::Error> {
+    async fn fetch_html(&self, _url: &str) -> Result<String, BookmarkRepositoryError> {
         Ok(String::from(r#"<link rel="icon" href="/favicon.ico" />"#))
     }
 }

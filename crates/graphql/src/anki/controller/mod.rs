@@ -4,9 +4,27 @@ pub mod router;
 
 use self::request::*;
 use self::response::*;
-use axum::response::IntoResponse;
+use axum::{Json, response::IntoResponse};
 use http::StatusCode;
-use http::header::CONTENT_TYPE;
+
+use crate::anki::use_case::AnkiUseCaseError;
+
+#[derive(Debug, thiserror::Error)]
+pub enum AnkiControllerError {
+    #[error(transparent)]
+    UseCase(#[from] AnkiUseCaseError),
+}
+
+impl IntoResponse for AnkiControllerError {
+    fn into_response(self) -> axum::response::Response {
+        tracing::error!(error = ?self, "request failed");
+        let status = match &self {
+            Self::UseCase(_) => StatusCode::INTERNAL_SERVER_ERROR,
+        };
+        let body = serde_json::json!({ "error": self.to_string() });
+        (status, Json(body)).into_response()
+    }
+}
 
 #[utoipa::path(
     get,
@@ -16,44 +34,19 @@ use http::header::CONTENT_TYPE;
         ("page_id" = String, Path, description = "UUIDv4"),
     ),
     responses(
-        (status = 200, description = "Anki", body = Vec<AnkiResponse>),
+        (status = 200, description = "Anki", body = AnkiResponse),
         (status = 500, description = "Internal Server Error", body = String)
     )
 )]
 pub async fn anki(
     axum::extract::State(state): axum::extract::State<std::sync::Arc<crate::anki::controller::router::AnkiState>>,
     axum::extract::Path(page_id): axum::extract::Path<String>,
-) -> impl IntoResponse {
+) -> Result<Json<AnkiResponse>, AnkiControllerError> {
     let anki_use_case = state.anki_use_case.clone();
 
-    let anki_entity: AnkiResponse = anki_use_case
-        .get_anki_by_id(&page_id)
-        .await
-        .map_err(|e| {
-            let status = StatusCode::INTERNAL_SERVER_ERROR;
-            let message = e.to_string();
-            (status, message)
-        })?
-        .into();
+    let anki_entity: AnkiResponse = anki_use_case.get_anki_by_id(&page_id).await?.into();
 
-    serde_json::to_string(&anki_entity)
-        .map_err(|e| {
-            let status = StatusCode::INTERNAL_SERVER_ERROR;
-            let message = e.to_string();
-            (status, message)
-        })
-        .and_then(|body_string| {
-            let body = axum::body::Body::from(body_string);
-            axum::response::Response::builder()
-                .status(200)
-                .header(CONTENT_TYPE, "application/json")
-                .body(body)
-                .map_err(|e| {
-                    let status = StatusCode::INTERNAL_SERVER_ERROR;
-                    let message = e.to_string();
-                    (status, message)
-                })
-        })
+    Ok(Json(anki_entity))
 }
 
 #[utoipa::path(
@@ -71,7 +64,7 @@ pub async fn anki(
 pub async fn anki_list(
     axum::extract::State(state): axum::extract::State<std::sync::Arc<crate::anki::controller::router::AnkiState>>,
     axum::extract::Query(query_params): axum::extract::Query<ListAnkiQueryParams>,
-) -> impl IntoResponse {
+) -> Result<Json<Vec<AnkiResponse>>, AnkiControllerError> {
     let anki_use_case = state.anki_use_case.clone();
 
     let anki_entities = anki_use_case
@@ -79,35 +72,13 @@ pub async fn anki_list(
             query_params.page_size.unwrap_or(100).into(),
             query_params.next_cursor,
         )
-        .await
-        .map_err(|e| {
-            let status = StatusCode::INTERNAL_SERVER_ERROR;
-            let message = e.to_string();
-            (status, message)
-        })?
+        .await?
         .0
         .into_iter()
         .map(|anki| anki.into())
         .collect::<Vec<AnkiResponse>>();
 
-    serde_json::to_string(&anki_entities)
-        .map_err(|e| {
-            let status = StatusCode::INTERNAL_SERVER_ERROR;
-            let message = e.to_string();
-            (status, message)
-        })
-        .and_then(|body_string| {
-            let body = axum::body::Body::from(body_string);
-            axum::response::Response::builder()
-                .status(200)
-                .header(CONTENT_TYPE, "application/json")
-                .body(body)
-                .map_err(|e| {
-                    let status = StatusCode::INTERNAL_SERVER_ERROR;
-                    let message = e.to_string();
-                    (status, message)
-                })
-        })
+    Ok(Json(anki_entities))
 }
 
 #[utoipa::path(
@@ -125,37 +96,12 @@ pub async fn anki_list(
 pub async fn block_list(
     axum::extract::State(state): axum::extract::State<std::sync::Arc<crate::anki::controller::router::AnkiState>>,
     axum::extract::Path(page_id): axum::extract::Path<String>,
-) -> impl IntoResponse {
+) -> Result<Json<AnkiBlockResponse>, AnkiControllerError> {
     let anki_use_case = state.anki_use_case.clone();
 
-    let result: AnkiBlockResponse = anki_use_case
-        .list_blocks(&page_id)
-        .await
-        .map_err(|e| {
-            let status = StatusCode::INTERNAL_SERVER_ERROR;
-            let message = e.to_string();
-            (status, message)
-        })?
-        .into();
+    let result: AnkiBlockResponse = anki_use_case.list_blocks(&page_id).await?.into();
 
-    serde_json::to_string(&result)
-        .map_err(|e| {
-            let status = StatusCode::INTERNAL_SERVER_ERROR;
-            let message = e.to_string();
-            (status, message)
-        })
-        .and_then(|body_string| {
-            let body = axum::body::Body::from(body_string);
-            axum::response::Response::builder()
-                .status(200)
-                .header(CONTENT_TYPE, "application/json")
-                .body(body)
-                .map_err(|e| {
-                    let status = StatusCode::INTERNAL_SERVER_ERROR;
-                    let message = e.to_string();
-                    (status, message)
-                })
-        })
+    Ok(Json(result))
 }
 
 #[utoipa::path(
@@ -166,44 +112,19 @@ pub async fn block_list(
     ),
     request_body = CreateAnkiRequest,
     responses(
-        (status = 200, description = "Anki", body = AnkiResponse),
+        (status = 201, description = "Anki", body = AnkiResponse),
         (status = 500, description = "Internal Server Error", body = String)
     )
 )]
 pub async fn create_anki(
     axum::extract::State(state): axum::extract::State<std::sync::Arc<crate::anki::controller::router::AnkiState>>,
     axum::extract::Json(request): axum::extract::Json<CreateAnkiRequest>,
-) -> impl IntoResponse {
+) -> Result<(StatusCode, Json<AnkiResponse>), AnkiControllerError> {
     let anki_use_case = state.anki_use_case.clone();
 
-    let anki_entity: AnkiResponse = anki_use_case
-        .create_anki(request.title)
-        .await
-        .map_err(|e| {
-            let status = StatusCode::INTERNAL_SERVER_ERROR;
-            let message = e.to_string();
-            (status, message)
-        })?
-        .into();
+    let anki_entity: AnkiResponse = anki_use_case.create_anki(request.title).await?.into();
 
-    serde_json::to_string(&anki_entity)
-        .map_err(|e| {
-            let status = StatusCode::INTERNAL_SERVER_ERROR;
-            let message = e.to_string();
-            (status, message)
-        })
-        .map(|body_string| {
-            let body = axum::body::Body::from(body_string);
-            axum::response::Response::builder()
-                .status(201)
-                .header(CONTENT_TYPE, "application/json")
-                .body(body)
-                .map_err(|e| {
-                    let status = StatusCode::INTERNAL_SERVER_ERROR;
-                    let message = e.to_string();
-                    (status, message)
-                })
-        })
+    Ok((StatusCode::CREATED, Json(anki_entity)))
 }
 
 #[utoipa::path(
@@ -229,7 +150,7 @@ pub async fn update_anki(
         is_review_required,
         in_trash,
     }): axum::extract::Json<UpdateAnkiRequest>,
-) -> impl IntoResponse {
+) -> Result<Json<AnkiResponse>, AnkiControllerError> {
     let anki_use_case = state.anki_use_case.clone();
 
     let anki_response: AnkiResponse = anki_use_case
@@ -241,30 +162,8 @@ pub async fn update_anki(
             is_review_required,
             in_trash,
         )
-        .await
-        .map_err(|e| {
-            let status = StatusCode::INTERNAL_SERVER_ERROR;
-            let message = e.to_string();
-            (status, message)
-        })?
+        .await?
         .into();
 
-    serde_json::to_string(&anki_response)
-        .map_err(|e| {
-            let status = StatusCode::INTERNAL_SERVER_ERROR;
-            let message = e.to_string();
-            (status, message)
-        })
-        .and_then(|body_string| {
-            let body = axum::body::Body::from(body_string);
-            axum::response::Response::builder()
-                .status(200)
-                .header(CONTENT_TYPE, "application/json")
-                .body(body)
-                .map_err(|e| {
-                    let status = StatusCode::INTERNAL_SERVER_ERROR;
-                    let message = e.to_string();
-                    (status, message)
-                })
-        })
+    Ok(Json(anki_response))
 }

@@ -2,12 +2,29 @@ pub mod request;
 pub mod response;
 pub mod router;
 
-use axum::response::IntoResponse;
-use http::{StatusCode, header::CONTENT_TYPE};
+use axum::{Json, response::IntoResponse};
+use http::StatusCode;
 
 use self::request::CreateBookmarkRequestBody;
-
 use self::response::*;
+use crate::bookmark::use_case::BookmarkUseCaseError;
+
+#[derive(Debug, thiserror::Error)]
+pub enum BookmarkControllerError {
+    #[error(transparent)]
+    UseCase(#[from] BookmarkUseCaseError),
+}
+
+impl IntoResponse for BookmarkControllerError {
+    fn into_response(self) -> axum::response::Response {
+        tracing::error!(error = ?self, "request failed");
+        let status = match &self {
+            Self::UseCase(_) => StatusCode::INTERNAL_SERVER_ERROR,
+        };
+        let body = serde_json::json!({ "error": self.to_string() });
+        (status, Json(body)).into_response()
+    }
+}
 
 #[utoipa::path(
     get,
@@ -22,39 +39,17 @@ use self::response::*;
 )]
 pub async fn bookmark_list(
     axum::extract::State(state): axum::extract::State<std::sync::Arc<crate::bookmark::controller::router::BookmarkState>>,
-) -> impl IntoResponse {
+) -> Result<Json<Vec<BookmarkResponse>>, BookmarkControllerError> {
     let bookmark_use_case = state.bookmark_use_case.clone();
 
     let bookmarks = bookmark_use_case
         .list_bookmark()
-        .await
-        .map_err(|e| {
-            let status = StatusCode::INTERNAL_SERVER_ERROR;
-            let message = e.to_string();
-            (status, message)
-        })?
+        .await?
         .into_iter()
         .map(BookmarkResponse::from)
         .collect::<Vec<BookmarkResponse>>();
 
-    serde_json::to_string(&bookmarks)
-        .map_err(|e| {
-            let status = http::StatusCode::INTERNAL_SERVER_ERROR;
-            let message = e.to_string();
-            (status, message)
-        })
-        .and_then(|body_string| {
-            let body = axum::body::Body::from(body_string);
-            axum::response::Response::builder()
-                .status(StatusCode::OK)
-                .header(CONTENT_TYPE, "application/json")
-                .body(body)
-                .map_err(|e| {
-                    let status = StatusCode::INTERNAL_SERVER_ERROR;
-                    let message = e.to_string();
-                    (status, message)
-                })
-        })
+    Ok(Json(bookmarks))
 }
 
 #[utoipa::path(
@@ -72,35 +67,13 @@ pub async fn bookmark_list(
 pub async fn create_bookmark(
     axum::extract::State(state): axum::extract::State<std::sync::Arc<crate::bookmark::controller::router::BookmarkState>>,
     axum::extract::Json(payload): axum::extract::Json<CreateBookmarkRequestBody>,
-) -> impl IntoResponse {
+) -> Result<Json<BookmarkResponse>, BookmarkControllerError> {
     let bookmark_use_case = state.bookmark_use_case.clone();
 
     let bookmark = bookmark_use_case
         .create_bookmark(&payload.name, &payload.url)
         .await
-        .map_err(|e| {
-            let status = StatusCode::INTERNAL_SERVER_ERROR;
-            let message = e.to_string();
-            (status, message)
-        })
         .map(BookmarkResponse::from)?;
 
-    serde_json::to_string(&bookmark)
-        .map_err(|e| {
-            let status = StatusCode::INTERNAL_SERVER_ERROR;
-            let message = e.to_string();
-            (status, message)
-        })
-        .and_then(|body_string| {
-            let body = axum::body::Body::from(body_string);
-            axum::response::Response::builder()
-                .status(StatusCode::OK)
-                .header(CONTENT_TYPE, "application/json")
-                .body(body)
-                .map_err(|e| {
-                    let status = StatusCode::INTERNAL_SERVER_ERROR;
-                    let message = e.to_string();
-                    (status, message)
-                })
-        })
+    Ok(Json(bookmark))
 }

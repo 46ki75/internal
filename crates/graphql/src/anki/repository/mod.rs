@@ -3,50 +3,59 @@ pub mod output;
 
 use notionrs_types::prelude::*;
 
+#[derive(Debug, thiserror::Error)]
+pub enum AnkiRepositoryError {
+    #[error("Notion API error: {0}")]
+    NotionApi(String),
+    #[error("block conversion error: {0}")]
+    BlockConversion(#[from] notion_to_jarkup::error::Error),
+    #[error("internal error: {0}")]
+    Internal(#[from] crate::error::Error),
+}
+
 #[async_trait::async_trait]
 pub trait AnkiRepository: Send + Sync {
-    async fn get_anki_by_id(&self, id: &str) -> Result<PageResponse, crate::error::Error>;
+    async fn get_anki_by_id(&self, id: &str) -> Result<PageResponse, AnkiRepositoryError>;
 
     async fn list_anki(
         &self,
         page_size: u32,
         next_cursor: Option<String>,
-    ) -> Result<notionrs_types::object::response::ListResponse<PageResponse>, crate::error::Error>;
+    ) -> Result<notionrs_types::object::response::ListResponse<PageResponse>, AnkiRepositoryError>;
 
     async fn create_anki(
         &self,
         properties: std::collections::HashMap<String, PageProperty>,
         children: Vec<notionrs_types::object::block::Block>,
-    ) -> Result<PageResponse, crate::error::Error>;
+    ) -> Result<PageResponse, AnkiRepositoryError>;
 
     async fn update_anki(
         &self,
         page_id: &str,
         properties: std::collections::HashMap<String, PageProperty>,
         in_trash: Option<bool>,
-    ) -> Result<PageResponse, crate::error::Error>;
+    ) -> Result<PageResponse, AnkiRepositoryError>;
 
     async fn list_blocks_by_id(
         &self,
         page_id: &str,
-    ) -> Result<Vec<jarkup_rs::Component>, crate::error::Error>;
+    ) -> Result<Vec<jarkup_rs::Component>, AnkiRepositoryError>;
 }
 
 pub struct AnkiRepositoryImpl {}
 
 #[async_trait::async_trait]
 impl AnkiRepository for AnkiRepositoryImpl {
-    async fn get_anki_by_id(&self, id: &str) -> Result<PageResponse, crate::error::Error> {
+    async fn get_anki_by_id(&self, id: &str) -> Result<PageResponse, AnkiRepositoryError> {
         let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
         let request = notionrs_client.get_page().page_id(id);
 
         tracing::debug!("Sending request to Notion API");
-        let response = request.send().await.map_err(|e| {
-            let error_message = format!("Notion API error: {}", e);
-            log::error!("{}", error_message);
-            crate::error::Error::NotionRs(error_message)
-        })?;
+        let response = request
+            .send()
+            .await
+            .map_err(|e| AnkiRepositoryError::NotionApi(e.to_string()))?;
 
         Ok(response)
     }
@@ -55,7 +64,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
         &self,
         page_size: u32,
         next_cursor: Option<String>,
-    ) -> Result<notionrs_types::object::response::ListResponse<PageResponse>, crate::error::Error>
+    ) -> Result<notionrs_types::object::response::ListResponse<PageResponse>, AnkiRepositoryError>
     {
         let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
@@ -74,11 +83,10 @@ impl AnkiRepository for AnkiRepositoryImpl {
         }
 
         tracing::debug!("Sending request to Notion API");
-        let response = request.send().await.map_err(|e| {
-            let error_message = format!("Notion API error: {}", e);
-            log::error!("{}", error_message);
-            crate::error::Error::NotionRs(error_message)
-        })?;
+        let response = request
+            .send()
+            .await
+            .map_err(|e| AnkiRepositoryError::NotionApi(e.to_string()))?;
 
         Ok(response)
     }
@@ -87,7 +95,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
         &self,
         properties: std::collections::HashMap<String, PageProperty>,
         children: Vec<notionrs_types::object::block::Block>,
-    ) -> Result<PageResponse, crate::error::Error> {
+    ) -> Result<PageResponse, AnkiRepositoryError> {
         let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
         let data_source_id = crate::cache::get_or_init_notion_anki_data_source_id().await?;
@@ -99,11 +107,10 @@ impl AnkiRepository for AnkiRepositoryImpl {
             .children(children);
 
         tracing::debug!("Sending request to Notion API");
-        let response = request.send().await.map_err(|e| {
-            let error_message = format!("Notion API error: {}", e);
-            log::error!("{}", error_message);
-            crate::error::Error::NotionRs(error_message)
-        })?;
+        let response = request
+            .send()
+            .await
+            .map_err(|e| AnkiRepositoryError::NotionApi(e.to_string()))?;
 
         Ok(response)
     }
@@ -113,7 +120,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
         page_id: &str,
         properties: std::collections::HashMap<String, PageProperty>,
         in_trash: Option<bool>,
-    ) -> Result<PageResponse, crate::error::Error> {
+    ) -> Result<PageResponse, AnkiRepositoryError> {
         let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
 
         let request = match in_trash {
@@ -129,11 +136,10 @@ impl AnkiRepository for AnkiRepositoryImpl {
         };
 
         tracing::debug!("Sending request to Notion API");
-        let response = request.send().await.map_err(|e| {
-            let error_message = format!("Notion API error: {}", e);
-            log::error!("{}", error_message);
-            crate::error::Error::NotionRs(error_message)
-        })?;
+        let response = request
+            .send()
+            .await
+            .map_err(|e| AnkiRepositoryError::NotionApi(e.to_string()))?;
 
         Ok(response)
     }
@@ -141,7 +147,7 @@ impl AnkiRepository for AnkiRepositoryImpl {
     async fn list_blocks_by_id(
         &self,
         page_id: &str,
-    ) -> Result<Vec<jarkup_rs::Component>, crate::error::Error> {
+    ) -> Result<Vec<jarkup_rs::Component>, AnkiRepositoryError> {
         let client = crate::cache::get_or_init_notion_to_jarkup_client().await?;
 
         tracing::debug!("Sending request to Notion API");
@@ -155,7 +161,7 @@ pub struct AnkiRepositoryStub;
 
 #[async_trait::async_trait]
 impl AnkiRepository for AnkiRepositoryStub {
-    async fn get_anki_by_id(&self, _id: &str) -> Result<PageResponse, crate::error::Error> {
+    async fn get_anki_by_id(&self, _id: &str) -> Result<PageResponse, AnkiRepositoryError> {
         let user = notionrs_types::object::user::User {
             object: "user".to_string(),
             id: "c4afec03-71d3-4114-b992-df84ed2e594c".to_string(),
@@ -235,7 +241,7 @@ impl AnkiRepository for AnkiRepositoryStub {
         &self,
         _page_size: u32,
         _next_cursor: Option<String>,
-    ) -> Result<notionrs_types::object::response::ListResponse<PageResponse>, crate::error::Error>
+    ) -> Result<notionrs_types::object::response::ListResponse<PageResponse>, AnkiRepositoryError>
     {
         let user = notionrs_types::object::user::User {
             object: "user".to_string(),
@@ -325,7 +331,7 @@ impl AnkiRepository for AnkiRepositoryStub {
         &self,
         properties: std::collections::HashMap<String, PageProperty>,
         _children: Vec<notionrs_types::object::block::Block>,
-    ) -> Result<PageResponse, crate::error::Error> {
+    ) -> Result<PageResponse, AnkiRepositoryError> {
         let mut properties = properties.clone();
 
         let title_property = PageProperty::Title(PageTitleProperty::from("title".to_string()));
@@ -406,7 +412,7 @@ impl AnkiRepository for AnkiRepositoryStub {
         page_id: &str,
         properties: std::collections::HashMap<String, PageProperty>,
         in_trash: Option<bool>,
-    ) -> Result<PageResponse, crate::error::Error> {
+    ) -> Result<PageResponse, AnkiRepositoryError> {
         let mut properties = properties.clone();
 
         let title_property = PageProperty::Title(PageTitleProperty::from("title".to_string()));
@@ -485,7 +491,7 @@ impl AnkiRepository for AnkiRepositoryStub {
     async fn list_blocks_by_id(
         &self,
         _page_id: &str,
-    ) -> Result<Vec<jarkup_rs::Component>, crate::error::Error> {
+    ) -> Result<Vec<jarkup_rs::Component>, AnkiRepositoryError> {
         let blocks = vec![];
 
         Ok(blocks)

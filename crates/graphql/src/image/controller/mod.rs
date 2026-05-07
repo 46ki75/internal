@@ -3,8 +3,28 @@ pub mod response;
 pub mod router;
 
 use self::response::*;
-use axum::{extract::State, response::IntoResponse};
+use axum::{Json, extract::State, response::IntoResponse};
+use http::StatusCode;
 use std::sync::Arc;
+
+use crate::image::use_case::ImageUseCaseError;
+
+#[derive(Debug, thiserror::Error)]
+pub enum ImageControllerError {
+    #[error(transparent)]
+    UseCase(#[from] ImageUseCaseError),
+}
+
+impl IntoResponse for ImageControllerError {
+    fn into_response(self) -> axum::response::Response {
+        tracing::error!(error = ?self, "request failed");
+        let status = match &self {
+            Self::UseCase(_) => StatusCode::INTERNAL_SERVER_ERROR,
+        };
+        let body = serde_json::json!({ "error": self.to_string() });
+        (status, Json(body)).into_response()
+    }
+}
 
 #[utoipa::path(
     get,
@@ -19,20 +39,12 @@ use std::sync::Arc;
 )]
 pub async fn fetch_images(
     State(state): State<Arc<crate::image::controller::router::ImageState>>,
-) -> impl IntoResponse {
+) -> Result<Json<FetchImagesResponse>, ImageControllerError> {
     let image_use_case = state.image_use_case.clone();
 
-    match image_use_case.fetch_images().await {
-        Ok(output) => axum::Json(FetchImagesResponse::from(output)).into_response(),
-        Err(e) => {
-            tracing::error!("Error fetching images: {:?}", e);
-            axum::response::Response::builder()
-                .status(500)
-                .body(axum::body::Body::from("Internal Server Error".to_owned()))
-                .unwrap()
-                .into_response()
-        }
-    }
+    let output = image_use_case.fetch_images().await?;
+
+    Ok(Json(FetchImagesResponse::from(output)))
 }
 
 #[utoipa::path(
@@ -48,24 +60,15 @@ pub async fn fetch_images(
 )]
 pub async fn fetch_image_tags(
     State(state): State<Arc<crate::image::controller::router::ImageState>>,
-) -> impl IntoResponse {
+) -> Result<Json<Vec<ImageTagResponse>>, ImageControllerError> {
     let image_use_case = state.image_use_case.clone();
 
-    match image_use_case.fetch_image_tags().await {
-        Ok(output) => axum::Json(
-            output
-                .into_iter()
-                .map(ImageTagResponse::from)
-                .collect::<Vec<_>>(),
-        )
-        .into_response(),
-        Err(e) => {
-            tracing::error!("Error fetching image tags: {:?}", e);
-            axum::response::Response::builder()
-                .status(500)
-                .body(axum::body::Body::from("Internal Server Error".to_owned()))
-                .unwrap()
-                .into_response()
-        }
-    }
+    let output = image_use_case
+        .fetch_image_tags()
+        .await?
+        .into_iter()
+        .map(ImageTagResponse::from)
+        .collect::<Vec<_>>();
+
+    Ok(Json(output))
 }

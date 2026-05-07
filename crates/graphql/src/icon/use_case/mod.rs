@@ -1,17 +1,25 @@
 pub mod input;
 pub mod output;
 
-use crate::icon::repository::IconRepository;
+use crate::icon::repository::{IconRepository, IconRepositoryError};
 use futures::future::join_all;
 use http::header::CONTENT_TYPE;
 use output::IconEntiry;
+
+#[derive(Debug, thiserror::Error)]
+pub enum IconUseCaseError {
+    #[error("repository error: {0}")]
+    Repository(#[from] IconRepositoryError),
+    #[error("internal error: {0}")]
+    Internal(#[from] crate::error::Error),
+}
 
 pub struct IconUseCase {
     pub icon_repository: std::sync::Arc<dyn IconRepository + Send + Sync>,
 }
 
 impl IconUseCase {
-    pub async fn list_icons(&self) -> Result<Vec<IconEntiry>, crate::error::Error> {
+    pub async fn list_icons(&self) -> Result<Vec<IconEntiry>, IconUseCaseError> {
         let icons: Vec<crate::icon::repository::output::IconDto> =
             self.icon_repository.list_icons().await?;
 

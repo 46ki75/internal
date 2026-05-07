@@ -6,15 +6,25 @@ use futures::TryStreamExt;
 use notionrs::PaginateExt;
 use notionrs_types::prelude::*;
 
+#[derive(Debug, thiserror::Error)]
+pub enum ImageRepositoryError {
+    #[error("Notion API error: {0}")]
+    NotionrsClient(#[from] notionrs::Error),
+    #[error("serialization error: {0}")]
+    SerdePlain(#[from] serde_plain::Error),
+    #[error("internal error: {0}")]
+    Internal(#[from] crate::error::Error),
+}
+
 pub trait ImageRepository {
     fn fetch_images(
         &self,
-    ) -> Pin<Box<dyn Future<Output = Result<self::output::ImagePageDto, crate::error::Error>> + Send>>;
+    ) -> Pin<Box<dyn Future<Output = Result<self::output::ImagePageDto, ImageRepositoryError>> + Send>>;
 
     fn fetch_image_tags(
         &self,
     ) -> Pin<
-        Box<dyn Future<Output = Result<Vec<self::output::ImageTagDto>, crate::error::Error>> + Send>,
+        Box<dyn Future<Output = Result<Vec<self::output::ImageTagDto>, ImageRepositoryError>> + Send>,
     >;
 
     fn create_image_tag(
@@ -22,7 +32,7 @@ pub trait ImageRepository {
         tag_name: String,
         url: String,
         tag_type: self::output::ImageTagTypeDtoInput,
-    ) -> Pin<Box<dyn Future<Output = Result<self::output::ImageTagDto, crate::error::Error>> + Send>>;
+    ) -> Pin<Box<dyn Future<Output = Result<self::output::ImageTagDto, ImageRepositoryError>> + Send>>;
 }
 
 pub struct ImageRepositoryImpl {}
@@ -31,7 +41,7 @@ impl ImageRepository for ImageRepositoryImpl {
     #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self), err))]
     fn fetch_images(
         &self,
-    ) -> Pin<Box<dyn Future<Output = Result<self::output::ImagePageDto, crate::error::Error>> + Send>>
+    ) -> Pin<Box<dyn Future<Output = Result<self::output::ImagePageDto, ImageRepositoryError>> + Send>>
     {
         Box::pin(async move {
             let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
@@ -67,7 +77,7 @@ impl ImageRepository for ImageRepositoryImpl {
     fn fetch_image_tags(
         &self,
     ) -> Pin<
-        Box<dyn Future<Output = Result<Vec<self::output::ImageTagDto>, crate::error::Error>> + Send>,
+        Box<dyn Future<Output = Result<Vec<self::output::ImageTagDto>, ImageRepositoryError>> + Send>,
     > {
         Box::pin(async move {
             let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
@@ -98,7 +108,7 @@ impl ImageRepository for ImageRepositoryImpl {
         tag_name: String,
         url: String,
         tag_type: self::output::ImageTagTypeDtoInput,
-    ) -> Pin<Box<dyn Future<Output = Result<self::output::ImageTagDto, crate::error::Error>> + Send>>
+    ) -> Pin<Box<dyn Future<Output = Result<self::output::ImageTagDto, ImageRepositoryError>> + Send>>
     {
         Box::pin(async move {
             let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;

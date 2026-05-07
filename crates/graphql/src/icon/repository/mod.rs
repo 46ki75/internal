@@ -4,11 +4,20 @@ pub mod output;
 use futures::TryStreamExt;
 use futures::stream::StreamExt;
 use notionrs::PaginateExt;
+
+#[derive(Debug, thiserror::Error)]
+pub enum IconRepositoryError {
+    #[error("Notion API error: {0}")]
+    NotionApi(String),
+    #[error("internal error: {0}")]
+    Internal(#[from] crate::error::Error),
+}
+
 pub trait IconRepository {
     fn list_icons(
         &self,
     ) -> std::pin::Pin<
-        Box<dyn Future<Output = Result<Vec<self::output::IconDto>, crate::error::Error>> + Send>,
+        Box<dyn Future<Output = Result<Vec<self::output::IconDto>, IconRepositoryError>> + Send>,
     >;
 }
 
@@ -20,7 +29,7 @@ impl IconRepository for IconRepositoryImpl {
     fn list_icons(
         &self,
     ) -> std::pin::Pin<
-        Box<dyn Future<Output = Result<Vec<self::output::IconDto>, crate::error::Error>> + Send>,
+        Box<dyn Future<Output = Result<Vec<self::output::IconDto>, IconRepositoryError>> + Send>,
     > {
         Box::pin(async move {
             let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
@@ -34,7 +43,7 @@ impl IconRepository for IconRepositoryImpl {
                         url: icon.url,
                         name: icon.name,
                     }),
-                    Err(e) => Err(crate::error::Error::NotionRs(format!(
+                    Err(e) => Err(IconRepositoryError::NotionApi(format!(
                         "Notion API error: {}",
                         e
                     ))),

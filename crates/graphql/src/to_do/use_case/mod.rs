@@ -1,9 +1,17 @@
 pub mod input;
 pub mod output;
 
-use crate::to_do::repository::ToDoRepository;
+use crate::to_do::repository::{ToDoRepository, ToDoRepositoryError};
 use notionrs_types::prelude::*;
 use output::*;
+
+#[derive(Debug, thiserror::Error)]
+pub enum ToDoUseCaseError {
+    #[error("property not found: {0}")]
+    PropertyNotFound(String),
+    #[error("repository error: {0}")]
+    Repository(#[from] ToDoRepositoryError),
+}
 
 pub struct ToDoUseCase {
     pub to_do_repository: std::sync::Arc<dyn ToDoRepository + Send + Sync>,
@@ -15,7 +23,7 @@ impl ToDoUseCase {
         title: String,
         description: Option<String>,
         severity: Option<ToDoSeverityEntity>,
-    ) -> Result<ToDoEntity, crate::error::Error> {
+    ) -> Result<ToDoEntity, ToDoUseCaseError> {
         let properties = {
             let mut properties = std::collections::HashMap::new();
 
@@ -71,7 +79,7 @@ impl ToDoUseCase {
         &self,
         id: String,
         is_done: bool,
-    ) -> Result<ToDoEntity, crate::error::Error> {
+    ) -> Result<ToDoEntity, ToDoUseCaseError> {
         let mut properties = std::collections::HashMap::new();
 
         properties.insert(
@@ -83,27 +91,19 @@ impl ToDoUseCase {
 
         let properties = response.properties;
 
-        let title_property =
-            properties
-                .get("Title")
-                .ok_or(crate::error::Error::NotionPropertynotFound(
-                    "Title".to_string(),
-                ))?;
+        let title_property = properties
+            .get("Title")
+            .ok_or(ToDoUseCaseError::PropertyNotFound("Title".to_string()))?;
 
         let title = if let PageProperty::Title(title) = title_property {
             Ok(title.to_string())
         } else {
-            Err(crate::error::Error::NotionPropertynotFound(
-                "Title".to_string(),
-            ))
+            Err(ToDoUseCaseError::PropertyNotFound("Title".to_string()))
         }?;
 
-        let serverity_property =
-            properties
-                .get("Severity")
-                .ok_or(crate::error::Error::NotionPropertynotFound(
-                    "Severity".to_string(),
-                ))?;
+        let serverity_property = properties
+            .get("Severity")
+            .ok_or(ToDoUseCaseError::PropertyNotFound("Severity".to_string()))?;
 
         let severity = if let PageProperty::Select(severity) = serverity_property {
             let select_name_str = severity.to_string();
@@ -117,9 +117,7 @@ impl ToDoUseCase {
                 ToDoSeverityEntity::Unknown
             })
         } else {
-            Err(crate::error::Error::NotionPropertynotFound(
-                "Severity".to_string(),
-            ))
+            Err(ToDoUseCaseError::PropertyNotFound("Severity".to_string()))
         }?;
 
         Ok(ToDoEntity {
@@ -137,7 +135,7 @@ impl ToDoUseCase {
         })
     }
 
-    pub async fn list_notion_to_do(&self) -> Result<Vec<ToDoEntity>, crate::error::Error> {
+    pub async fn list_notion_to_do(&self) -> Result<Vec<ToDoEntity>, ToDoUseCaseError> {
         let filter = notionrs_types::object::request::filter::Filter::and(vec![
             notionrs_types::object::request::filter::Filter::checkbox_is_not_checked("IsDone"),
         ]);
@@ -156,9 +154,7 @@ impl ToDoUseCase {
                 let title = result
                     .properties
                     .get("Title")
-                    .ok_or(crate::error::Error::NotionPropertynotFound(
-                        "title".to_string(),
-                    ))?
+                    .ok_or(ToDoUseCaseError::PropertyNotFound("title".to_string()))?
                     .to_string();
 
                 let description = result.properties.get("Description").and_then(|d| {
@@ -171,19 +167,17 @@ impl ToDoUseCase {
                 });
 
                 let is_done = match result.properties.get("IsDone").ok_or(
-                    crate::error::Error::NotionPropertynotFound("IsDone".to_string()),
+                    ToDoUseCaseError::PropertyNotFound("IsDone".to_string()),
                 )? {
                     PageProperty::Checkbox(is_done) => Ok(is_done.checkbox),
-                    _ => Err(crate::error::Error::NotionPropertynotFound(
-                        "IsDone".to_string(),
-                    )),
+                    _ => Err(ToDoUseCaseError::PropertyNotFound("IsDone".to_string())),
                 }?;
 
                 let is_recurring = match result.properties.get("IsRecurring").ok_or(
-                    crate::error::Error::NotionPropertynotFound("IsRecurring".to_string()),
+                    ToDoUseCaseError::PropertyNotFound("IsRecurring".to_string()),
                 )? {
                     PageProperty::Checkbox(is_done) => Ok(is_done.checkbox),
-                    _ => Err(crate::error::Error::NotionPropertynotFound(
+                    _ => Err(ToDoUseCaseError::PropertyNotFound(
                         "IsRecurring".to_string(),
                     )),
                 }?;
@@ -242,7 +236,7 @@ impl ToDoUseCase {
                     updated_at,
                 })
             })
-            .collect::<Result<Vec<ToDoEntity>, crate::error::Error>>()?;
+            .collect::<Result<Vec<ToDoEntity>, ToDoUseCaseError>>()?;
 
         Ok(todos)
     }

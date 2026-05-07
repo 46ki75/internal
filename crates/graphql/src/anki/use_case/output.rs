@@ -36,7 +36,7 @@ impl TryFrom<notionrs_types::object::page::PageResponse> for AnkiEntity {
         let title_property =
             properties
                 .get("title")
-                .ok_or(crate::error::Error::NotionPropertynotFound(
+                .ok_or(crate::error::Error::NotionPropertyNotFound(
                     "title".to_string(),
                 ))?;
 
@@ -49,7 +49,7 @@ impl TryFrom<notionrs_types::object::page::PageResponse> for AnkiEntity {
                 }
             }
             _ => {
-                return Err(crate::error::Error::NotionPropertynotFound(
+                return Err(crate::error::Error::NotionPropertyNotFound(
                     "title".to_string(),
                 ));
             }
@@ -60,7 +60,7 @@ impl TryFrom<notionrs_types::object::page::PageResponse> for AnkiEntity {
         let description_property =
             properties
                 .get("description")
-                .ok_or(crate::error::Error::NotionPropertynotFound(
+                .ok_or(crate::error::Error::NotionPropertyNotFound(
                     "description".to_string(),
                 ))?;
 
@@ -73,7 +73,7 @@ impl TryFrom<notionrs_types::object::page::PageResponse> for AnkiEntity {
                 }
             }
             _ => {
-                return Err(crate::error::Error::NotionPropertynotFound(
+                return Err(crate::error::Error::NotionPropertyNotFound(
                     "description".to_string(),
                 ));
             }
@@ -84,7 +84,7 @@ impl TryFrom<notionrs_types::object::page::PageResponse> for AnkiEntity {
         let ease_factor_property =
             properties
                 .get("easeFactor")
-                .ok_or(crate::error::Error::NotionPropertynotFound(
+                .ok_or(crate::error::Error::NotionPropertyNotFound(
                     "easeFactor".to_string(),
                 ))?;
 
@@ -92,10 +92,10 @@ impl TryFrom<notionrs_types::object::page::PageResponse> for AnkiEntity {
             notionrs_types::object::page::PageProperty::Number(ease_factor) => ease_factor
                 .number
                 .ok_or(
-                crate::error::Error::NotionPropertynotFound("easeFactor".to_string()),
+                crate::error::Error::NotionPropertyNotFound("easeFactor".to_string()),
             )?,
             _ => {
-                return Err(crate::error::Error::NotionPropertynotFound(
+                return Err(crate::error::Error::NotionPropertyNotFound(
                     "easeFactor".to_string(),
                 ));
             }
@@ -104,19 +104,19 @@ impl TryFrom<notionrs_types::object::page::PageResponse> for AnkiEntity {
 
         // >>> repetition_count
         let repetition_count_property = properties.get("repetitionCount").ok_or(
-            crate::error::Error::NotionPropertynotFound("repetitionCount".to_string()),
+            crate::error::Error::NotionPropertyNotFound("repetitionCount".to_string()),
         )?;
 
         let repetition_count = match repetition_count_property {
             notionrs_types::object::page::PageProperty::Number(repetition_count) => {
                 repetition_count
                     .number
-                    .ok_or(crate::error::Error::NotionPropertynotFound(
+                    .ok_or(crate::error::Error::NotionPropertyNotFound(
                         "repetitionCount".to_string(),
                     ))? as u32
             }
             _ => {
-                return Err(crate::error::Error::NotionPropertynotFound(
+                return Err(crate::error::Error::NotionPropertyNotFound(
                     "repetitionCount".to_string(),
                 ));
             }
@@ -127,7 +127,7 @@ impl TryFrom<notionrs_types::object::page::PageResponse> for AnkiEntity {
         let next_review_at_property =
             &properties
                 .get("nextReviewAt")
-                .ok_or(crate::error::Error::NotionPropertynotFound(
+                .ok_or(crate::error::Error::NotionPropertyNotFound(
                     "nextReviewAt".to_string(),
                 ))?;
 
@@ -135,16 +135,16 @@ impl TryFrom<notionrs_types::object::page::PageResponse> for AnkiEntity {
             notionrs_types::object::page::PageProperty::Date(next_review_at) => next_review_at
                 .clone()
                 .date
-                .ok_or(crate::error::Error::NotionPropertynotFound(
+                .ok_or(crate::error::Error::NotionPropertyNotFound(
                     "nextReviewAt".to_string(),
                 ))?
                 .start
-                .ok_or(crate::error::Error::NotionPropertynotFound(
+                .ok_or(crate::error::Error::NotionPropertyNotFound(
                     "nextReviewAt".to_string(),
                 ))?
                 .to_string(),
             _ => {
-                return Err(crate::error::Error::NotionPropertynotFound(
+                return Err(crate::error::Error::NotionPropertyNotFound(
                     "nextReviewAt".to_string(),
                 ));
             }
@@ -155,7 +155,7 @@ impl TryFrom<notionrs_types::object::page::PageResponse> for AnkiEntity {
         let tags_property =
             &properties
                 .get("tags")
-                .ok_or(crate::error::Error::NotionPropertynotFound(
+                .ok_or(crate::error::Error::NotionPropertyNotFound(
                     "tags".to_string(),
                 ))?;
 
@@ -166,11 +166,11 @@ impl TryFrom<notionrs_types::object::page::PageResponse> for AnkiEntity {
                     .map(|tag| {
                         Ok(AnkiTagEntity {
                             id: tag.clone().id.ok_or(
-                                crate::error::Error::NotionPropertynotFound("tag.id".to_string()),
+                                crate::error::Error::NotionPropertyNotFound("tag.id".to_string()),
                             )?,
                             name: tag.name.to_string(),
                             color: match tag.color.ok_or(
-                                crate::error::Error::NotionPropertynotFound(
+                                crate::error::Error::NotionPropertyNotFound(
                                     "tag.color".to_string(),
                                 ),
                             )? {
@@ -191,7 +191,7 @@ impl TryFrom<notionrs_types::object::page::PageResponse> for AnkiEntity {
                     .collect::<Result<Vec<AnkiTagEntity>, crate::error::Error>>()
             }
             _ => {
-                return Err(crate::error::Error::NotionPropertynotFound(
+                return Err(crate::error::Error::NotionPropertyNotFound(
                     "tags".to_string(),
                 ));
             }
@@ -199,7 +199,7 @@ impl TryFrom<notionrs_types::object::page::PageResponse> for AnkiEntity {
         // <<< tags
 
         let review_required = &properties.get("isReviewRequired").ok_or(
-            crate::error::Error::NotionPropertynotFound("isReviewRequired".to_string()),
+            crate::error::Error::NotionPropertyNotFound("isReviewRequired".to_string()),
         )?;
 
         let is_review_required = match review_required {
@@ -207,7 +207,7 @@ impl TryFrom<notionrs_types::object::page::PageResponse> for AnkiEntity {
                 page_checkbox_property.checkbox
             }
             _ => {
-                return Err(crate::error::Error::NotionPropertynotFound(
+                return Err(crate::error::Error::NotionPropertyNotFound(
                     "tags".to_string(),
                 ));
             }

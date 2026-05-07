@@ -20,32 +20,32 @@ impl TryFrom<PageResponse> for BookmarkEntity {
 
         let name = properties
             .get("Name")
-            .ok_or(crate::error::Error::NotionPropertynotFound(String::from(
+            .ok_or(crate::error::Error::NotionPropertyNotFound(String::from(
                 "Name",
             )))?;
 
         let url = properties
             .get("URL")
-            .ok_or(crate::error::Error::NotionPropertynotFound(String::from(
+            .ok_or(crate::error::Error::NotionPropertyNotFound(String::from(
                 "URL",
             )))?;
 
         let tag = properties
             .get("Tag")
-            .ok_or(crate::error::Error::NotionPropertynotFound(String::from(
+            .ok_or(crate::error::Error::NotionPropertyNotFound(String::from(
                 "Tag",
             )))?;
 
         let nsfw = properties
             .get("NSFW")
-            .ok_or(crate::error::Error::NotionPropertynotFound(String::from(
+            .ok_or(crate::error::Error::NotionPropertyNotFound(String::from(
                 "NSFW",
             )))?;
 
         let favorite =
             properties
                 .get("Favorite")
-                .ok_or(crate::error::Error::NotionPropertynotFound(String::from(
+                .ok_or(crate::error::Error::NotionPropertyNotFound(String::from(
                     "Favorite",
                 )))?;
 
@@ -55,7 +55,7 @@ impl TryFrom<PageResponse> for BookmarkEntity {
                     id: select
                         .id
                         .ok_or_else(|| {
-                            let error = crate::error::Error::NotionPropertynotFound(String::from(
+                            let error = crate::error::Error::NotionPropertyNotFound(String::from(
                                 "select.id",
                             ));
                             tracing::error!("{}", error);
@@ -81,7 +81,7 @@ impl TryFrom<PageResponse> for BookmarkEntity {
                             .to_string()
                         })
                         .ok_or_else(|| {
-                            let error = crate::error::Error::NotionPropertynotFound(String::from(
+                            let error = crate::error::Error::NotionPropertyNotFound(String::from(
                                 "select.color",
                             ));
                             tracing::error!("{}", error);

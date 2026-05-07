@@ -4,7 +4,7 @@ pub enum Error {
     SsmParameter(String),
 
     #[error("Notion property not found: {0}")]
-    NotionPropertynotFound(String),
+    NotionPropertyNotFound(String),
 
     #[error("serde error: {0}")]
     SerdeJson(#[from] serde_json::Error),

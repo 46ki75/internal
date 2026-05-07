@@ -1,16 +1,28 @@
 pub mod input;
 pub mod output;
 
-use crate::anki::repository::AnkiRepository;
+use crate::anki::repository::{AnkiRepository, AnkiRepositoryError};
 use notionrs_types::prelude::*;
 use output::*;
+
+#[derive(Debug, thiserror::Error)]
+pub enum AnkiUseCaseError {
+    #[error("datetime parse error: {0}")]
+    DateTimeParse(#[from] time::error::Parse),
+    #[error("serialization error: {0}")]
+    Serialization(#[from] serde_json::Error),
+    #[error("repository error: {0}")]
+    Repository(#[from] AnkiRepositoryError),
+    #[error("internal error: {0}")]
+    Internal(#[from] crate::error::Error),
+}
 
 pub struct AnkiUseCase {
     pub anki_repository: std::sync::Arc<dyn AnkiRepository + Send + Sync>,
 }
 
 impl AnkiUseCase {
-    pub async fn get_anki_by_id(&self, id: &str) -> Result<AnkiEntity, crate::error::Error> {
+    pub async fn get_anki_by_id(&self, id: &str) -> Result<AnkiEntity, AnkiUseCaseError> {
         let page = self.anki_repository.get_anki_by_id(id).await?;
 
         let anki = page.try_into()?;
@@ -22,7 +34,7 @@ impl AnkiUseCase {
         &self,
         page_size: u32,
         next_cursor: Option<String>,
-    ) -> Result<(Vec<AnkiEntity>, Option<String>), crate::error::Error> {
+    ) -> Result<(Vec<AnkiEntity>, Option<String>), AnkiUseCaseError> {
         let pages = self
             .anki_repository
             .list_anki(page_size, next_cursor)
@@ -39,7 +51,7 @@ impl AnkiUseCase {
         Ok((anki_list, next_cursor))
     }
 
-    pub async fn list_blocks(&self, id: &str) -> Result<AnkiBlockEntity, crate::error::Error> {
+    pub async fn list_blocks(&self, id: &str) -> Result<AnkiBlockEntity, AnkiUseCaseError> {
         let blocks = self.anki_repository.list_blocks_by_id(id).await?;
 
         let mut front: Vec<jarkup_rs::Component> = Vec::new();
@@ -107,7 +119,7 @@ impl AnkiUseCase {
     pub async fn create_anki(
         &self,
         title: Option<String>,
-    ) -> Result<AnkiEntity, crate::error::Error> {
+    ) -> Result<AnkiEntity, AnkiUseCaseError> {
         let mut properties: std::collections::HashMap<String, PageProperty> =
             std::collections::HashMap::new();
 
@@ -193,7 +205,7 @@ impl AnkiUseCase {
         next_review_at: Option<String>,
         is_review_required: Option<bool>,
         in_trash: Option<bool>,
-    ) -> Result<AnkiEntity, crate::error::Error> {
+    ) -> Result<AnkiEntity, AnkiUseCaseError> {
         let mut properties: std::collections::HashMap<String, PageProperty> =
             std::collections::HashMap::new();
 

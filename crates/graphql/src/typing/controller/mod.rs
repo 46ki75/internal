@@ -3,8 +3,28 @@ pub mod response;
 pub mod router;
 
 use self::response::TypingResponse;
-use axum::{extract::State, response::IntoResponse};
+use axum::{Json, extract::State, response::IntoResponse};
+use http::StatusCode;
 use std::sync::Arc;
+
+use crate::typing::use_case::TypingUseCaseError;
+
+#[derive(Debug, thiserror::Error)]
+pub enum TypingControllerError {
+    #[error(transparent)]
+    UseCase(#[from] TypingUseCaseError),
+}
+
+impl IntoResponse for TypingControllerError {
+    fn into_response(self) -> axum::response::Response {
+        tracing::error!(error = ?self, "request failed");
+        let status = match &self {
+            Self::UseCase(_) => StatusCode::INTERNAL_SERVER_ERROR,
+        };
+        let body = serde_json::json!({ "error": self.to_string() });
+        (status, Json(body)).into_response()
+    }
+}
 
 #[utoipa::path(
     get,
@@ -19,26 +39,17 @@ use std::sync::Arc;
 )]
 pub async fn typing_list(
     State(state): State<Arc<crate::typing::controller::router::TypingState>>,
-) -> impl IntoResponse {
+) -> Result<Json<Vec<TypingResponse>>, TypingControllerError> {
     let typing_use_case = state.typing_use_case.clone();
 
-    match typing_use_case.typing_list().await {
-        Ok(results) => axum::Json(
-            results
-                .into_iter()
-                .map(TypingResponse::from)
-                .collect::<Vec<_>>(),
-        )
-        .into_response(),
-        Err(e) => {
-            tracing::error!("Error listing typing: {:?}", e);
-            axum::response::Response::builder()
-                .status(500)
-                .body(axum::body::Body::from("Internal Server Error".to_owned()))
-                .unwrap()
-                .into_response()
-        }
-    }
+    let results = typing_use_case
+        .typing_list()
+        .await?
+        .into_iter()
+        .map(TypingResponse::from)
+        .collect::<Vec<_>>();
+
+    Ok(Json(results))
 }
 
 #[utoipa::path(
@@ -56,23 +67,15 @@ pub async fn typing_list(
 pub async fn upsert_typing(
     State(state): State<Arc<crate::typing::controller::router::TypingState>>,
     axum::extract::Json(request): axum::extract::Json<self::request::TypingUpsertRequest>,
-) -> impl IntoResponse {
+) -> Result<Json<TypingResponse>, TypingControllerError> {
     let typing_use_case = state.typing_use_case.clone();
 
-    match typing_use_case
+    let result = typing_use_case
         .upsert_typing(request.id, request.text, request.description)
         .await
-    {
-        Ok(result) => axum::Json(TypingResponse::from(result)).into_response(),
-        Err(e) => {
-            tracing::error!("Error upserting typing: {:?}", e);
-            axum::response::Response::builder()
-                .status(500)
-                .body(axum::body::Body::from("Internal Server Error".to_owned()))
-                .unwrap()
-                .into_response()
-        }
-    }
+        .map(TypingResponse::from)?;
+
+    Ok(Json(result))
 }
 
 #[utoipa::path(
@@ -90,18 +93,13 @@ pub async fn upsert_typing(
 pub async fn delete_typing(
     State(state): State<Arc<crate::typing::controller::router::TypingState>>,
     axum::extract::Json(request): axum::extract::Json<self::request::TypingDeleteRequest>,
-) -> impl IntoResponse {
+) -> Result<Json<TypingResponse>, TypingControllerError> {
     let typing_use_case = state.typing_use_case.clone();
 
-    match typing_use_case.delete_typing(request.id).await {
-        Ok(result) => axum::Json(TypingResponse::from(result)).into_response(),
-        Err(e) => {
-            tracing::error!("Error deleting typing: {:?}", e);
-            axum::response::Response::builder()
-                .status(500)
-                .body(axum::body::Body::from("Internal Server Error".to_owned()))
-                .unwrap()
-                .into_response()
-        }
-    }
+    let result = typing_use_case
+        .delete_typing(request.id)
+        .await
+        .map(TypingResponse::from)?;
+
+    Ok(Json(result))
 }

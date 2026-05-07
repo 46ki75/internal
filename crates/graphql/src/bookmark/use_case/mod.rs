@@ -1,16 +1,24 @@
 pub mod input;
 pub mod output;
 
-use crate::bookmark::repository::BookmarkRepository;
+use crate::bookmark::repository::{BookmarkRepository, BookmarkRepositoryError};
 use notionrs_types::prelude::*;
 use output::*;
+
+#[derive(Debug, thiserror::Error)]
+pub enum BookmarkUseCaseError {
+    #[error("repository error: {0}")]
+    Repository(#[from] BookmarkRepositoryError),
+    #[error("internal error: {0}")]
+    Internal(#[from] crate::error::Error),
+}
 
 pub struct BookmarkUseCase {
     pub bookmark_repository: std::sync::Arc<dyn BookmarkRepository + Send + Sync>,
 }
 
 impl BookmarkUseCase {
-    pub async fn list_bookmark(&self) -> Result<Vec<BookmarkEntity>, crate::error::Error> {
+    pub async fn list_bookmark(&self) -> Result<Vec<BookmarkEntity>, BookmarkUseCaseError> {
         let response = self.bookmark_repository.list_bookmark().await?;
 
         let bookmarks = response
@@ -25,7 +33,7 @@ impl BookmarkUseCase {
         &self,
         name: &str,
         url: &str,
-    ) -> Result<BookmarkEntity, crate::error::Error> {
+    ) -> Result<BookmarkEntity, BookmarkUseCaseError> {
         let favicon = self.fetch_facicon_url(url).await;
 
         let mut properties: std::collections::HashMap<String, PageProperty> =

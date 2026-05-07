@@ -1,0 +1,48 @@
+pub mod input;
+pub mod output;
+
+use futures::TryStreamExt;
+use futures::stream::StreamExt;
+use notionrs::PaginateExt;
+pub trait IconRepository {
+    fn list_icons(
+        &self,
+    ) -> std::pin::Pin<
+        Box<dyn Future<Output = Result<Vec<self::output::IconDto>, crate::error::Error>> + Send>,
+    >;
+}
+
+#[derive(Debug, Default)]
+#[non_exhaustive]
+pub struct IconRepositoryImpl;
+
+impl IconRepository for IconRepositoryImpl {
+    fn list_icons(
+        &self,
+    ) -> std::pin::Pin<
+        Box<dyn Future<Output = Result<Vec<self::output::IconDto>, crate::error::Error>> + Send>,
+    > {
+        Box::pin(async move {
+            let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
+
+            let icons = notionrs_client
+                .list_custom_emojis()
+                .into_stream()
+                .map(|icon| match icon {
+                    Ok(icon) => Ok(self::output::IconDto {
+                        id: icon.id,
+                        url: icon.url,
+                        name: icon.name,
+                    }),
+                    Err(e) => Err(crate::error::Error::NotionRs(format!(
+                        "Notion API error: {}",
+                        e
+                    ))),
+                })
+                .try_collect::<Vec<_>>()
+                .await?;
+
+            Ok(icons)
+        })
+    }
+}

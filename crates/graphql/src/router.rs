@@ -1,20 +1,7 @@
 //! Initializes and returns axum router.
 
-use std::sync::Arc;
-
 use axum::Router;
 use utoipa::OpenApi;
-use utoipa_axum::{router::OpenApiRouter, routes};
-
-use crate::image::{repository::ImageRepositoryImpl, use_case::ImageUseCase};
-
-#[derive(Clone)]
-pub struct AxumAppState {
-    pub bookmark_service: Arc<crate::bookmark::service::BookmarkService>,
-    pub to_do_service: Arc<crate::to_do::service::ToDoService>,
-    pub anki_service: Arc<crate::anki::service::AnkiService>,
-    pub icon_service: Arc<crate::icon::service::IconService>,
-}
 
 #[derive(OpenApi)]
 #[openapi(info(
@@ -32,55 +19,39 @@ static ROUTER: tokio::sync::OnceCell<axum::Router> = tokio::sync::OnceCell::cons
 pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error> {
     ROUTER
         .get_or_try_init(|| async {
-            let bookmark_repository =
-                Arc::new(crate::bookmark::repository::BookmarkRepositoryImpl {});
-            let bookmark_service = Arc::new(crate::bookmark::service::BookmarkService {
-                bookmark_repository,
-            });
+            let (anki_router, anki_api) =
+                crate::anki::controller::router::init_anki_router().await?;
+            let (bookmark_router, bookmark_api) =
+                crate::bookmark::controller::router::init_bookmark_router().await?;
+            let (icon_router, icon_api) =
+                crate::icon::controller::router::init_icon_router().await?;
+            let (image_router, image_api) =
+                crate::image::controller::router::init_image_router().await?;
+            let (to_do_router, to_do_api) =
+                crate::to_do::controller::router::init_to_do_router().await?;
+            let (typing_router, typing_api) =
+                crate::typing::controller::router::init_typing_router().await?;
 
-            let to_do_repository = Arc::new(crate::to_do::repository::ToDoRepositoryImpl {});
-            let to_do_service = Arc::new(crate::to_do::service::ToDoService { to_do_repository });
+            let merged_api = ApiDoc::openapi()
+                .merge_from(anki_api)
+                .merge_from(bookmark_api)
+                .merge_from(icon_api)
+                .merge_from(image_api)
+                .merge_from(to_do_api)
+                .merge_from(typing_api);
 
-            let anki_repository = Arc::new(crate::anki::repository::AnkiRepositoryImpl {});
-            let anki_service = Arc::new(crate::anki::service::AnkiService { anki_repository });
-
-            let icon_repository = Arc::new(crate::icon::repository::IconRepositoryImpl::default());
-            let icon_service = Arc::new(crate::icon::service::IconService { icon_repository });
-
-            let app_state = Arc::new(AxumAppState {
-                bookmark_service,
-                to_do_service,
-                anki_service,
-                icon_service,
-            });
-
-            let (router, auto_generated_api) = OpenApiRouter::new()
-                .routes(routes!(crate::bookmark::controller::bookmark_list))
-                .routes(routes!(crate::bookmark::controller::create_bookmark))
-                .routes(routes!(crate::to_do::controller::to_do_list))
-                .routes(routes!(crate::to_do::controller::create_to_do))
-                .routes(routes!(crate::to_do::controller::update_to_do))
-                .routes(routes!(crate::anki::controller::anki))
-                .routes(routes!(crate::anki::controller::anki_list))
-                .routes(routes!(crate::anki::controller::block_list))
-                .routes(routes!(crate::anki::controller::create_anki))
-                .routes(routes!(crate::anki::controller::update_anki))
-                .routes(routes!(crate::icon::controller::list_icons))
-                .with_state(app_state)
-                .routes(routes!(crate::image::controller::fetch_images))
-                .routes(routes!(crate::image::controller::fetch_image_tags))
-                .with_state(Arc::new(ImageUseCase {
-                    repository: Arc::new(ImageRepositoryImpl {}),
-                }))
-                .split_for_parts();
-
-            let customized_api = ApiDoc::openapi().merge_from(auto_generated_api);
+            let combined_router = anki_router
+                .merge(bookmark_router)
+                .merge(icon_router)
+                .merge(image_router)
+                .merge(to_do_router)
+                .merge(typing_router);
 
             let app = Router::new()
-                .nest("/api-gateway", router)
+                .nest("/api-gateway", combined_router)
                 .merge(
                     utoipa_swagger_ui::SwaggerUi::new("/api-gateway/api/v1/swagger-ui")
-                        .url("/api-gateway/api/v1/openapi.json", customized_api),
+                        .url("/api-gateway/api/v1/openapi.json", merged_api),
                 )
                 .route(
                     "/api-gateway/api/health",

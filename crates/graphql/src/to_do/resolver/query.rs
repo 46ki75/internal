@@ -1,4 +1,4 @@
-use super::super::service::*;
+use crate::to_do::use_case::ToDoUseCase;
 
 #[derive(Debug, Default)]
 pub struct ToDoQueryResolver;
@@ -9,9 +9,9 @@ impl ToDoQueryResolver {
         &self,
         ctx: &async_graphql::Context<'_>,
     ) -> Result<Vec<super::ToDo>, async_graphql::Error> {
-        let to_do_service = ctx.data::<std::sync::Arc<ToDoService>>()?;
+        let to_do_use_case = ctx.data::<std::sync::Arc<ToDoUseCase>>()?;
 
-        let notion_to_do_list = to_do_service
+        let notion_to_do_list = to_do_use_case
             .list_notion_to_do()
             .await
             .map_err(|e| async_graphql::Error::new(e.to_string()))?

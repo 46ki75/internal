@@ -1,7 +1,7 @@
 pub mod mutation;
 pub mod query;
 
-use super::entity::*;
+use crate::bookmark::use_case::output::*;
 
 #[derive(async_graphql::SimpleObject, Debug, Default)]
 pub struct Bookmark {

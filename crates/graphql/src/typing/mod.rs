@@ -1,5 +1,4 @@
-pub mod dto;
-pub mod entity;
+pub mod controller;
 pub mod repository;
 pub mod resolver;
-pub mod service;
+pub mod use_case;

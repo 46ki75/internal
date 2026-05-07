@@ -1,4 +1,4 @@
-use super::super::service::*;
+use crate::bookmark::use_case::BookmarkUseCase;
 
 #[derive(Debug, Default)]
 pub struct BookmarkQueryResolver;
@@ -9,7 +9,7 @@ impl BookmarkQueryResolver {
         &self,
         ctx: &async_graphql::Context<'_>,
     ) -> Result<Vec<super::Bookmark>, async_graphql::Error> {
-        let bookmark_service = ctx.data::<std::sync::Arc<BookmarkService>>()?;
+        let bookmark_service = ctx.data::<std::sync::Arc<BookmarkUseCase>>()?;
 
         let bookmarks = bookmark_service
             .list_bookmark()

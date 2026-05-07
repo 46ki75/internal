@@ -1,4 +1,4 @@
-use super::super::service::*;
+use crate::typing::use_case::TypingUseCase;
 
 #[derive(Debug, Default)]
 pub struct TypingQueryResolver;
@@ -9,9 +9,9 @@ impl TypingQueryResolver {
         &self,
         ctx: &async_graphql::Context<'_>,
     ) -> Result<Vec<super::Typing>, async_graphql::Error> {
-        let typing_service = ctx.data::<std::sync::Arc<TypingService>>()?;
+        let typing_use_case = ctx.data::<std::sync::Arc<TypingUseCase>>()?;
 
-        let results = typing_service
+        let results = typing_use_case
             .typing_list()
             .await
             .map_err(|e| e.to_string())?

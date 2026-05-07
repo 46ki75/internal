@@ -1,7 +1,7 @@
 pub mod mutation;
 pub mod query;
 
-use super::entity::*;
+use crate::typing::use_case::output::TypingEntity;
 
 #[derive(async_graphql::SimpleObject, Default, Debug)]
 pub struct Typing {

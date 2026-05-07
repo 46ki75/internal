@@ -1,6 +1,6 @@
 pub mod mutation;
 pub mod query;
-use super::entity::*;
+use crate::anki::use_case::output::*;
 
 #[derive(async_graphql::SimpleObject)]
 pub struct AnkiConnection {

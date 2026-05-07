@@ -1,7 +1,7 @@
 pub mod mutation;
 pub mod query;
 
-use super::entity::*;
+use crate::to_do::use_case::output::*;
 
 #[derive(async_graphql::SimpleObject, Default, Debug)]
 pub struct ToDo {

@@ -78,7 +78,6 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
   });
 
   const handleKeyDown = $((event: KeyboardEvent) => {
-    console.log("Key down:", event.key);
     if (event.key === "Enter") {
       const a = document.createElement("a");
       a.href = searchResults.value[0]?.url || "#";

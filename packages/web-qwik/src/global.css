@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  width: 100dvw;
 
   transition: background-color 300ms;
   background-color: #eff0f2;

@@ -228,13 +228,6 @@ export const TodoContainer = component$<TodoContainerProps>(
                   size="1.5rem"
                   color={item.is_recurring ? "#59b57c" : "transparent"}
                 />
-                <span
-                  class={styles["todo-item-severity"]}
-                  style={{ "--color": colorMap[item.severity] }}
-                >
-                  {item.severity}
-                </span>
-                <ElmInlineText href={item.url}>{item.title}</ElmInlineText>
 
                 <ElmMdiIcon
                   d={mdiCalendar}
@@ -243,8 +236,16 @@ export const TodoContainer = component$<TodoContainerProps>(
                     opacity: item.deadline ? 1 : 0.25,
                   }}
                 />
-
                 <Deadline deadline={item.deadline} />
+
+                <span
+                  class={styles["todo-item-severity"]}
+                  style={{ "--color": colorMap[item.severity] }}
+                >
+                  {item.severity}
+                </span>
+
+                <ElmInlineText href={item.url}>{item.title}</ElmInlineText>
               </div>
             ))}
           </div>

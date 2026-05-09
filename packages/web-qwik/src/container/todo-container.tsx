@@ -29,52 +29,60 @@ import {
 
 import { Temporal } from "@js-temporal/polyfill";
 
-const Deadline = component$(({ deadline }: { deadline?: string | null }) => {
-  if (!deadline) return <div>-</div>;
+const Deadline = component$(
+  ({
+    deadline,
+    class: className,
+  }: {
+    deadline?: string | null;
+    class?: string;
+  }) => {
+    if (!deadline) return <div>-</div>;
 
-  const duration = useComputed$(() => {
-    const today = Temporal.Now.plainDateISO();
-    const durationInDays = today
-      .until(Temporal.PlainDate.from(deadline))
-      .total({ unit: "day" });
+    const duration = useComputed$(() => {
+      const today = Temporal.Now.plainDateISO();
+      const durationInDays = today
+        .until(Temporal.PlainDate.from(deadline))
+        .total({ unit: "day" });
 
-    const color =
-      durationInDays <= 0
-        ? "#c56565"
-        : durationInDays <= 3
-          ? "#d48b70"
-          : durationInDays <= 7
-            ? "#cdb57b"
-            : durationInDays <= 14
-              ? "#59b57c"
-              : "#5879b0";
+      const color =
+        durationInDays <= 0
+          ? "#c56565"
+          : durationInDays <= 3
+            ? "#d48b70"
+            : durationInDays <= 7
+              ? "#cdb57b"
+              : durationInDays <= 14
+                ? "#59b57c"
+                : "#5879b0";
 
-    const text =
-      durationInDays === 0
-        ? "Today"
-        : durationInDays < 0
-          ? `${-durationInDays} days ago`
-          : `${durationInDays} days remaining`;
+      const text =
+        durationInDays === 0
+          ? "Today"
+          : durationInDays < 0
+            ? `${-durationInDays} days ago`
+            : `${durationInDays} days remaining`;
 
-    return { text, color };
-  });
+      return { text, color };
+    });
 
-  return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <ElmInlineText size="1rem">
-        {Temporal.PlainDate.from(deadline).toString().substring(0, 10)}
-      </ElmInlineText>
+    return (
+      <div class={className}>
+        <ElmInlineText size="1rem">
+          {Temporal.PlainDate.from(deadline).toString().substring(0, 10)}
+        </ElmInlineText>
 
-      <ElmInlineText
-        size="0.75rem"
-        color={duration.value.color}
-        style={{ paddingLeft: 2 }}
-      >
-        {duration.value.text}
-      </ElmInlineText>
-    </div>
-  );
-});
+        <ElmInlineText
+          size="0.75rem"
+          color={duration.value.color}
+          style={{ paddingLeft: 2 }}
+        >
+          {duration.value.text}
+        </ElmInlineText>
+      </div>
+    );
+  },
+);
 
 export interface TodoContainerProps {
   class?: string;
@@ -221,22 +229,14 @@ export const TodoContainer = component$<TodoContainerProps>(
               >
                 <ElmInlineIcon
                   src={NotionIcon}
-                  style={{ lineHeight: "1.5rem" }}
+                  class={styles["todo-item-notion-icon"]}
                 />
                 <ElmMdiIcon
                   d={mdiRefresh}
                   size="1.5rem"
                   color={item.is_recurring ? "#59b57c" : "transparent"}
+                  class={styles["todo-item-recurring-icon"]}
                 />
-
-                <ElmMdiIcon
-                  d={mdiCalendar}
-                  size="1.25rem"
-                  style={{
-                    opacity: item.deadline ? 1 : 0.25,
-                  }}
-                />
-                <Deadline deadline={item.deadline} />
 
                 <span
                   class={styles["todo-item-severity"]}
@@ -245,7 +245,23 @@ export const TodoContainer = component$<TodoContainerProps>(
                   {item.severity}
                 </span>
 
-                <ElmInlineText href={item.url}>{item.title}</ElmInlineText>
+                <ElmMdiIcon
+                  d={mdiCalendar}
+                  size="1.25rem"
+                  style={{
+                    opacity: item.deadline ? 1 : 0.25,
+                  }}
+                  class={styles["todo-item-deadline-icon"]}
+                />
+
+                <Deadline
+                  deadline={item.deadline}
+                  class={styles["todo-item-deadline"]}
+                />
+
+                <div class={styles["todo-item-text"]}>
+                  <ElmInlineText href={item.url}>{item.title}</ElmInlineText>
+                </div>
               </div>
             ))}
           </div>

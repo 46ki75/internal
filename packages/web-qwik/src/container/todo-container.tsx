@@ -149,9 +149,13 @@ export const TodoContainer = component$<TodoContainerProps>(
       };
 
       if (sort.value === "deadline") {
-        return sorted.sort(deadlineSortFn);
+        return sorted.sort(
+          (a, b) => deadlineSortFn(a, b) || severitySortFn(a, b),
+        );
       } else {
-        return sorted.sort(severitySortFn);
+        return sorted.sort(
+          (a, b) => severitySortFn(a, b) || deadlineSortFn(a, b),
+        );
       }
     });
 

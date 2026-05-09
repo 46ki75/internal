@@ -142,6 +142,7 @@ export const TodoContainer = component$<TodoContainerProps>(
         a: (typeof state.value)[0],
         b: (typeof state.value)[0],
       ) => {
+        if (!a.deadline && !b.deadline) return 0;
         if (!a.deadline) return 1;
         if (!b.deadline) return -1;
 

@@ -51,9 +51,9 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
   const searchKeyword = useSignal("");
 
   const handleValueChange = $((value: string) => {
-    searchKeyword.value = value;
-    if (searchKeyword.value.trim() !== "") {
-      if (fuseInstance.value == null) {
+    document.startViewTransition(() => {
+      searchKeyword.value = value;
+      if (searchKeyword.value.trim() !== "" && fuseInstance.value == null) {
         fuseInstance.value = noSerialize(
           new Fuse(bookmarks, {
             keys: [
@@ -64,7 +64,7 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
           }),
         );
       }
-    }
+    });
   });
 
   const searchResults = useComputed$(() => {

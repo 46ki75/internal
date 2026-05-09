@@ -107,8 +107,12 @@ export const TodoContainer = component$<TodoContainerProps>(
       },
     );
 
-    const colorMap: Record<"Unknown" | "Info" | "Warn" | "Error", string> = {
+    const colorMap: Record<
+      "Unknown" | "Backlog" | "Info" | "Warn" | "Error",
+      string
+    > = {
       Unknown: "#868e9c",
+      Backlog: "#9a776b",
       Info: "#4c6da2",
       Warn: "#bfa056",
       Error: "#b34444",

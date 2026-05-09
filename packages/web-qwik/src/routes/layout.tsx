@@ -60,7 +60,7 @@ export default component$(() => {
         handleSignInClick$={$(async () => authStore.showSignInModal(authStore))}
       />
 
-      <div class={styles.slot}>
+      <div class={styles["layout-slot"]}>
         <Slot />
       </div>
       <SigninContainer />

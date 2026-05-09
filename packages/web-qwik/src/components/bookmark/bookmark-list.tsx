@@ -102,7 +102,12 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
 
       <div class={styles["bookmark-container"]}>
         {searchResults.value.map((result, index) => (
-          <Bookmark key={result.id} {...result} focus={index === 0} />
+          <Bookmark
+            key={result.id}
+            {...result}
+            focus={index === 0}
+            style={{ viewTransitionName: `bookmark-search-${result.id}` }}
+          />
         ))}
       </div>
 

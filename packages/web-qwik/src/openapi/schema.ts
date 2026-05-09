@@ -250,7 +250,7 @@ export interface components {
         /** @enum {string} */
         ToDoSeverityReponse: "Unknown" | "Backlog" | "Info" | "Warn" | "Error";
         /** @enum {string} */
-        ToDoSeverityRequest: "Unknown" | "Info" | "Warn" | "Error";
+        ToDoSeverityRequest: "Unknown" | "Backlog" | "Info" | "Warn" | "Error";
         TypingDeleteRequest: {
             id: string;
         };

@@ -1,4 +1,11 @@
+::view-transition-group(.bookmark-transition) {
+  animation-duration: 300ms;
+  animation-timing-function: ease-in-out;
+}
+
 .bookmark {
+  view-transition-class: bookmark-transition;
+
   box-sizing: border-box;
   padding: 0.25rem;
   width: 4rem;

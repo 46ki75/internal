@@ -213,12 +213,15 @@ export const TodoContainer = component$<TodoContainerProps>(
                   } as CSSProperties
                 }
               >
-                <ElmInlineIcon src={NotionIcon} />
-                <span>
-                  {item.is_recurring && (
-                    <ElmMdiIcon d={mdiRefresh} color="#59b57c" />
-                  )}
-                </span>
+                <ElmInlineIcon
+                  src={NotionIcon}
+                  style={{ lineHeight: "1.5rem" }}
+                />
+                <ElmMdiIcon
+                  d={mdiRefresh}
+                  size="1.5rem"
+                  color={item.is_recurring ? "#59b57c" : "transparent"}
+                />
                 <span
                   class={styles["todo-item-severity"]}
                   style={{ "--color": colorMap[item.severity] }}
@@ -229,6 +232,7 @@ export const TodoContainer = component$<TodoContainerProps>(
 
                 <ElmMdiIcon
                   d={mdiCalendar}
+                  size="1.25rem"
                   style={{
                     opacity: item.deadline ? 1 : 0.25,
                   }}

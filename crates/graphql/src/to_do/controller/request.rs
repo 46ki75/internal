@@ -12,6 +12,7 @@ pub struct CreateToDoRequest {
 pub enum ToDoSeverityRequest {
     #[default]
     Unknown,
+    Backlog,
     Info,
     Warn,
     Error,

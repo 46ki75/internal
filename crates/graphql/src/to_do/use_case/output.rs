@@ -58,6 +58,7 @@ impl From<ToDoSeverityRequest> for ToDoSeverityEntity {
     fn from(value: ToDoSeverityRequest) -> Self {
         match value {
             ToDoSeverityRequest::Unknown => Self::Unknown,
+            ToDoSeverityRequest::Backlog => Self::Backlog,
             ToDoSeverityRequest::Info => Self::Info,
             ToDoSeverityRequest::Warn => Self::Warn,
             ToDoSeverityRequest::Error => Self::Error,

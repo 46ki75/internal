@@ -68,36 +68,29 @@ export const TodoContainer = component$<TodoContainerProps>(
 
         const duration = useComputed$(() => {
           const today = Temporal.Now.plainDateISO();
-          const deadlineDate = Temporal.PlainDate.from(deadline);
           const durationInDays = today
-            .until(deadlineDate)
+            .until(Temporal.PlainDate.from(deadline))
             .total({ unit: "day" });
 
-          if (durationInDays === 0) {
-            return { text: `Today`, color: "#c56565" };
-          } else if (durationInDays < 0) {
-            return { text: `${-durationInDays} days ago`, color: "#c56565" };
-          } else if (durationInDays <= 3) {
-            return {
-              text: `${durationInDays} days remaining`,
-              color: "#d48b70",
-            };
-          } else if (durationInDays <= 7) {
-            return {
-              text: `${durationInDays} days remaining`,
-              color: "#cdb57b",
-            };
-          } else if (durationInDays <= 14) {
-            return {
-              text: `${durationInDays} days remaining`,
-              color: "#59b57c",
-            };
-          }
+          const color =
+            durationInDays <= 0
+              ? "#c56565"
+              : durationInDays <= 3
+                ? "#d48b70"
+                : durationInDays <= 7
+                  ? "#cdb57b"
+                  : durationInDays <= 14
+                    ? "#59b57c"
+                    : "#5879b0";
 
-          return {
-            text: `${durationInDays} days remaining`,
-            color: "#5879b0",
-          };
+          const text =
+            durationInDays === 0
+              ? "Today"
+              : durationInDays < 0
+                ? `${-durationInDays} days ago`
+                : `${durationInDays} days remaining`;
+
+          return { text, color };
         });
 
         return (

@@ -1,9 +1,18 @@
-import { component$, JSX } from "@builder.io/qwik";
+import {
+  $,
+  component$,
+  JSX,
+  noSerialize,
+  NoSerialize,
+  useSignal,
+  useStore,
+} from "@builder.io/qwik";
 
 import styles from "./bookmark-list.module.css";
 import { Bookmark, BookmarkProps } from "./bookmark";
-import { ElmHeading, ElmMdiIcon } from "@elmethis/qwik";
+import { ElmHeading, ElmMdiIcon, ElmTextField } from "@elmethis/qwik";
 import { mdiTag } from "@mdi/js";
+import Fuse from "fuse.js";
 
 export interface BookmarkListProps {
   bookmarks: BookmarkProps[];
@@ -38,8 +47,45 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
     }
   }
 
+  const fuseInstance = useSignal<NoSerialize<Fuse<BookmarkProps>> | null>(null);
+  const searchResults = useStore<{ results: BookmarkProps[] }>({ results: [] });
+
+  const handleValueChange = $((value: string) => {
+    if (value.trim() === "") {
+      searchResults.results = [];
+    } else {
+      if (fuseInstance.value == null) {
+        fuseInstance.value = noSerialize(
+          new Fuse(bookmarks, {
+            keys: [
+              { name: "label", weight: 0.7 },
+              { name: "url", weight: 0.3 },
+            ],
+            threshold: 0.3,
+          }),
+        );
+      }
+
+      if (fuseInstance.value) {
+        const results = fuseInstance.value.search(value);
+        searchResults.results = results.map((result) => result.item);
+      }
+    }
+  });
+
   return (
     <div class={[styles["bookmark-list"]]}>
+      <ElmHeading level={2}>Bookmark</ElmHeading>
+
+      <ElmHeading level={3}>Search</ElmHeading>
+      <ElmTextField label="Search" onValueChange$={handleValueChange} />
+
+      <div class={styles["bookmark-container"]}>
+        {searchResults.results.map((result) => (
+          <Bookmark key={result.id} {...result} />
+        ))}
+      </div>
+
       <ElmHeading level={3}>Favorites</ElmHeading>
       <div class={styles["bookmark-container"]}>{favorites}</div>
 

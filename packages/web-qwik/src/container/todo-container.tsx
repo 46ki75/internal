@@ -24,6 +24,53 @@ import { mdiCalendar, mdiRefresh } from "@mdi/js";
 
 import { Temporal } from "@js-temporal/polyfill";
 
+const Deadline = component$(({ deadline }: { deadline?: string | null }) => {
+  if (!deadline) return <div>-</div>;
+
+  const duration = useComputed$(() => {
+    const today = Temporal.Now.plainDateISO();
+    const durationInDays = today
+      .until(Temporal.PlainDate.from(deadline))
+      .total({ unit: "day" });
+
+    const color =
+      durationInDays <= 0
+        ? "#c56565"
+        : durationInDays <= 3
+          ? "#d48b70"
+          : durationInDays <= 7
+            ? "#cdb57b"
+            : durationInDays <= 14
+              ? "#59b57c"
+              : "#5879b0";
+
+    const text =
+      durationInDays === 0
+        ? "Today"
+        : durationInDays < 0
+          ? `${-durationInDays} days ago`
+          : `${durationInDays} days remaining`;
+
+    return { text, color };
+  });
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <ElmInlineText size="1rem">
+        {Temporal.PlainDate.from(deadline).toString().substring(0, 10)}
+      </ElmInlineText>
+
+      <ElmInlineText
+        size="0.75rem"
+        color={duration.value.color}
+        style={{ paddingLeft: 2 }}
+      >
+        {duration.value.text}
+      </ElmInlineText>
+    </div>
+  );
+});
+
 export interface TodoContainerProps {
   class?: string;
 
@@ -61,55 +108,6 @@ export const TodoContainer = component$<TodoContainerProps>(
       Warn: "#bfa056",
       Error: "#b34444",
     };
-
-    const Deadline = component$(
-      ({ deadline }: { deadline?: string | null }) => {
-        if (!deadline) return <div>-</div>;
-
-        const duration = useComputed$(() => {
-          const today = Temporal.Now.plainDateISO();
-          const durationInDays = today
-            .until(Temporal.PlainDate.from(deadline))
-            .total({ unit: "day" });
-
-          const color =
-            durationInDays <= 0
-              ? "#c56565"
-              : durationInDays <= 3
-                ? "#d48b70"
-                : durationInDays <= 7
-                  ? "#cdb57b"
-                  : durationInDays <= 14
-                    ? "#59b57c"
-                    : "#5879b0";
-
-          const text =
-            durationInDays === 0
-              ? "Today"
-              : durationInDays < 0
-                ? `${-durationInDays} days ago`
-                : `${durationInDays} days remaining`;
-
-          return { text, color };
-        });
-
-        return (
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <ElmInlineText size="1rem">
-              {Temporal.PlainDate.from(deadline).toString().substring(0, 10)}
-            </ElmInlineText>
-
-            <ElmInlineText
-              size="0.75rem"
-              color={duration.value.color}
-              style={{ paddingLeft: 2 }}
-            >
-              {duration.value.text}
-            </ElmInlineText>
-          </div>
-        );
-      },
-    );
 
     return (
       <div class={[styles["todo-container"], className]} style={style}>

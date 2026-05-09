@@ -19,7 +19,7 @@ import { openApiClient } from "~/openapi/client";
 import { AuthContext } from "~/context/auth-context";
 
 import NotionIcon from "~/assets/notion.svg?url";
-import { mdiRefresh } from "@mdi/js";
+import { mdiCalendar, mdiRefresh } from "@mdi/js";
 
 export interface TodoContainerProps {
   class?: string;
@@ -82,6 +82,14 @@ export const TodoContainer = component$<TodoContainerProps>(
                   {item.severity}
                 </span>
                 <ElmInlineText href={item.url}>{item.title}</ElmInlineText>
+
+                <ElmMdiIcon
+                  d={mdiCalendar}
+                  style={{
+                    opacity: item.deadline ? 1 : 0.25,
+                  }}
+                />
+                <ElmInlineText>{item.deadline?.substring(0, 10)}</ElmInlineText>
               </Fragment>
             ))}
           </div>

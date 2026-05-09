@@ -1,7 +1,6 @@
 import {
   $,
   component$,
-  Fragment,
   useComputed$,
   useContext,
   useSignal,
@@ -117,6 +116,23 @@ export const TodoContainer = component$<TodoContainerProps>(
 
     const sort = useSignal<"deadline" | "severity">("deadline");
 
+    const handleSort = $((newSort: "deadline" | "severity") => {
+      if (
+        typeof document !== "undefined" &&
+        "startViewTransition" in document
+      ) {
+        (
+          document as Document & {
+            startViewTransition: (cb: () => void) => void;
+          }
+        ).startViewTransition(() => {
+          sort.value = newSort;
+        });
+      } else {
+        sort.value = newSort;
+      }
+    });
+
     const sortedTodos = useComputed$(() => {
       if (!state.value) return [];
 
@@ -169,7 +185,7 @@ export const TodoContainer = component$<TodoContainerProps>(
               styles["sort-button"],
               { [styles["selected"]]: sort.value === "deadline" },
             ]}
-            onClick$={() => (sort.value = "deadline")}
+            onClick$={() => handleSort("deadline")}
           >
             <ElmMdiIcon d={mdiSortCalendarAscending} />
             <ElmInlineText>Deadline</ElmInlineText>
@@ -180,7 +196,7 @@ export const TodoContainer = component$<TodoContainerProps>(
               styles["sort-button"],
               { [styles["selected"]]: sort.value === "severity" },
             ]}
-            onClick$={() => (sort.value = "severity")}
+            onClick$={() => handleSort("severity")}
           >
             <ElmMdiIcon d={mdiAlert} />
             <ElmInlineText>Severity</ElmInlineText>
@@ -192,7 +208,15 @@ export const TodoContainer = component$<TodoContainerProps>(
         ) : (
           <div class={styles["todo-item-container"]}>
             {sortedTodos.value?.map((item) => (
-              <Fragment key={item.id}>
+              <div
+                key={item.id}
+                class={styles["todo-item-row"]}
+                style={
+                  {
+                    viewTransitionName: `todo-${item.id}`,
+                  } as CSSProperties
+                }
+              >
                 <ElmInlineIcon src={NotionIcon} />
                 <span>
                   {item.is_recurring && (
@@ -215,7 +239,7 @@ export const TodoContainer = component$<TodoContainerProps>(
                 />
 
                 <Deadline deadline={item.deadline} />
-              </Fragment>
+              </div>
             ))}
           </div>
         )}

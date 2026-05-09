@@ -40,9 +40,15 @@
   .todo-item-container {
     display: grid;
     grid-template-columns: 1rem 1rem min-content 1fr 1rem 8rem;
-    align-items: center;
     gap: 0.5rem;
     animation: fade-in 0.25s ease-in-out;
+
+    .todo-item-row {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: subgrid;
+      align-items: center;
+    }
 
     .todo-item-severity {
       padding: 0.125rem;

@@ -121,11 +121,7 @@ export const TodoContainer = component$<TodoContainerProps>(
         typeof document !== "undefined" &&
         "startViewTransition" in document
       ) {
-        (
-          document as Document & {
-            startViewTransition: (cb: () => void) => void;
-          }
-        ).startViewTransition({
+        document.startViewTransition({
           types: ["sort"],
           update: () => {
             sort.value = newSort;

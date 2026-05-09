@@ -32,5 +32,12 @@
     flex-direction: row;
     gap: 0.25rem;
     flex-wrap: wrap;
+
+    &.bookmark-container-favorite {
+      border: solid 1px #cdb57b;
+      border-radius: 0.25rem;
+      box-sizing: border-box;
+      padding: 0.25rem;
+    }
   }
 }

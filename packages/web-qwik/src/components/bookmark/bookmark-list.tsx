@@ -87,7 +87,14 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
       </div>
 
       <ElmHeading level={3}>Favorites</ElmHeading>
-      <div class={styles["bookmark-container"]}>{favorites}</div>
+      <div
+        class={[
+          styles["bookmark-container"],
+          styles["bookmark-container-favorite"],
+        ]}
+      >
+        {favorites}
+      </div>
 
       <div class={styles["tags-container"]}>
         {Object.keys(tags).map((tagId) => (

@@ -2,6 +2,7 @@ import {
   $,
   component$,
   Fragment,
+  useComputed$,
   useContext,
   type CSSProperties,
 } from "@builder.io/qwik";
@@ -20,6 +21,8 @@ import { AuthContext } from "~/context/auth-context";
 
 import NotionIcon from "~/assets/notion.svg?url";
 import { mdiCalendar, mdiRefresh } from "@mdi/js";
+
+import { Temporal } from "@js-temporal/polyfill";
 
 export interface TodoContainerProps {
   class?: string;
@@ -59,6 +62,62 @@ export const TodoContainer = component$<TodoContainerProps>(
       Error: "#b34444",
     };
 
+    const Deadline = component$(
+      ({ deadline }: { deadline?: string | null }) => {
+        if (!deadline) return <div>-</div>;
+
+        const duration = useComputed$(() => {
+          const today = Temporal.Now.plainDateISO();
+          const deadlineDate = Temporal.PlainDate.from(deadline);
+          const durationInDays = today
+            .until(deadlineDate)
+            .total({ unit: "day" });
+
+          if (durationInDays === 0) {
+            return { text: `Today`, color: "#c56565" };
+          } else if (durationInDays < 0) {
+            return { text: `${-durationInDays} days ago`, color: "#c56565" };
+          } else if (durationInDays <= 3) {
+            return {
+              text: `${durationInDays} days remaining`,
+              color: "#d48b70",
+            };
+          } else if (durationInDays <= 7) {
+            return {
+              text: `${durationInDays} days remaining`,
+              color: "#cdb57b",
+            };
+          } else if (durationInDays <= 14) {
+            return {
+              text: `${durationInDays} days remaining`,
+              color: "#59b57c",
+            };
+          }
+
+          return {
+            text: `${durationInDays} days remaining`,
+            color: "#5879b0",
+          };
+        });
+
+        return (
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <ElmInlineText size="1rem">
+              {Temporal.PlainDate.from(deadline).toString().substring(0, 10)}
+            </ElmInlineText>
+
+            <ElmInlineText
+              size="0.75rem"
+              color={duration.value.color}
+              style={{ paddingLeft: 2 }}
+            >
+              {duration.value.text}
+            </ElmInlineText>
+          </div>
+        );
+      },
+    );
+
     return (
       <div class={[styles["todo-container"], className]} style={style}>
         <ElmHeading level={3}>To Do</ElmHeading>
@@ -89,7 +148,8 @@ export const TodoContainer = component$<TodoContainerProps>(
                     opacity: item.deadline ? 1 : 0.25,
                   }}
                 />
-                <ElmInlineText>{item.deadline?.substring(0, 10)}</ElmInlineText>
+
+                <Deadline deadline={item.deadline} />
               </Fragment>
             ))}
           </div>

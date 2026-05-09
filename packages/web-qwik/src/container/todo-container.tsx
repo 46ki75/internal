@@ -155,9 +155,10 @@ export const TodoContainer = component$<TodoContainerProps>(
         b: (typeof state.value)[0],
       ) => {
         const severityOrder: Record<string, number> = {
-          Error: 3,
-          Warn: 2,
-          Info: 1,
+          Error: 4,
+          Warn: 3,
+          Info: 2,
+          Backlog: 1,
           Unknown: 0,
         };
 

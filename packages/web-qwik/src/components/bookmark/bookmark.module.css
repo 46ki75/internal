@@ -4,6 +4,7 @@
   width: 4rem;
   height: 5.5rem;
   border: solid 1px oklch(from gray l c h / 0.25);
+  border-radius: 0.125rem;
 
   display: grid;
   grid-template-areas:
@@ -15,8 +16,12 @@
   align-items: center;
   justify-items: center;
   cursor: pointer;
-  transition: background-color 100ms;
+  transition: background-color 200ms;
   overflow: hidden;
+
+  &.bookmark-focus {
+    background-color: oklab(from #6987b8 l a b / 0.125);
+  }
 
   &:hover {
     background-color: oklch(from #6987b8 l c h / 0.125);

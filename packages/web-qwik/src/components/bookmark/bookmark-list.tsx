@@ -4,8 +4,8 @@ import {
   JSX,
   noSerialize,
   NoSerialize,
+  useComputed$,
   useSignal,
-  useStore,
 } from "@builder.io/qwik";
 
 import styles from "./bookmark-list.module.css";
@@ -48,12 +48,11 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
   }
 
   const fuseInstance = useSignal<NoSerialize<Fuse<BookmarkProps>> | null>(null);
-  const searchResults = useStore<{ results: BookmarkProps[] }>({ results: [] });
+  const searchKeyword = useSignal("");
 
   const handleValueChange = $((value: string) => {
-    if (value.trim() === "") {
-      searchResults.results = [];
-    } else {
+    searchKeyword.value = value;
+    if (searchKeyword.value.trim() !== "") {
       if (fuseInstance.value == null) {
         fuseInstance.value = noSerialize(
           new Fuse(bookmarks, {
@@ -65,11 +64,26 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
           }),
         );
       }
+    }
+  });
 
-      if (fuseInstance.value) {
-        const results = fuseInstance.value.search(value);
-        searchResults.results = results.map((result) => result.item);
-      }
+  const searchResults = useComputed$(() => {
+    if (fuseInstance.value) {
+      const results = fuseInstance.value.search(searchKeyword.value);
+      return results.map((result) => result.item);
+    }
+
+    return [];
+  });
+
+  const handleKeyDown = $((event: KeyboardEvent) => {
+    console.log("Key down:", event.key);
+    if (event.key === "Enter") {
+      const a = document.createElement("a");
+      a.href = searchResults.value[0]?.url || "#";
+      a.rel = "noreferrer";
+      a.click();
+      searchKeyword.value = "";
     }
   });
 
@@ -78,11 +92,16 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
       <ElmHeading level={2}>Bookmark</ElmHeading>
 
       <ElmHeading level={3}>Search</ElmHeading>
-      <ElmTextField label="Search" onValueChange$={handleValueChange} />
+      <ElmTextField
+        label="Search"
+        value={searchKeyword.value}
+        onValueChange$={handleValueChange}
+        onKeyDown$={handleKeyDown}
+      />
 
       <div class={styles["bookmark-container"]}>
-        {searchResults.results.map((result) => (
-          <Bookmark key={result.id} {...result} />
+        {searchResults.value.map((result, index) => (
+          <Bookmark key={result.id} {...result} focus={index === 0} />
         ))}
       </div>
 

@@ -12,10 +12,11 @@ export interface BookmarkProps {
   url: string;
   editUrl: string;
   tag: { id: string; name: string; color: string };
+  focus?: boolean;
 }
 
 export const Bookmark = component$<BookmarkProps>(
-  ({ icon, label, favorite, url, editUrl }) => {
+  ({ icon, label, favorite, url, editUrl, focus }) => {
     const handleClick = $((event: MouseEvent) => {
       event.stopPropagation();
       const a = document.createElement("a");
@@ -35,7 +36,15 @@ export const Bookmark = component$<BookmarkProps>(
     });
 
     return (
-      <div class={[styles["bookmark"]]} onClick$={handleClick}>
+      <div
+        class={[
+          styles["bookmark"],
+          {
+            [styles["bookmark-focus"]]: focus,
+          },
+        ]}
+        onClick$={handleClick}
+      >
         <span class={styles["edit-icon"]} onClick$={handleEdit$}>
           <ElmMdiIcon d={mdiTagEdit} />
         </span>

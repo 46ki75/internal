@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "web-view-transition": {
+      "source": "46ki75/skills",
+      "sourceType": "github",
+      "skillPath": "skills/web-view-transition/SKILL.md",
+      "computedHash": "dda96b9b386b4c5c821365af07eebb3768dc4aaefb21edb223ed62f6d3fa2f20"
+    }
+  }
+}

@@ -117,6 +117,44 @@ export const TodoContainer = component$<TodoContainerProps>(
 
     const sort = useSignal<"deadline" | "severity">("deadline");
 
+    const sortedTodos = useComputed$(() => {
+      if (!state.value) return [];
+
+      const sorted = [...state.value];
+
+      const deadlineSortFn = (
+        a: (typeof state.value)[0],
+        b: (typeof state.value)[0],
+      ) => {
+        if (!a.deadline) return 1;
+        if (!b.deadline) return -1;
+
+        return Temporal.PlainDate.from(a.deadline)
+          .since(Temporal.PlainDate.from(b.deadline))
+          .total({ unit: "day" });
+      };
+
+      const severitySortFn = (
+        a: (typeof state.value)[0],
+        b: (typeof state.value)[0],
+      ) => {
+        const severityOrder: Record<string, number> = {
+          Error: 3,
+          Warn: 2,
+          Info: 1,
+          Unknown: 0,
+        };
+
+        return severityOrder[b.severity] - severityOrder[a.severity];
+      };
+
+      if (sort.value === "deadline") {
+        return sorted.sort(deadlineSortFn);
+      } else {
+        return sorted.sort(severitySortFn);
+      }
+    });
+
     return (
       <div class={[styles["todo-container"], className]} style={style}>
         <ElmHeading level={3}>To Do</ElmHeading>
@@ -149,7 +187,7 @@ export const TodoContainer = component$<TodoContainerProps>(
           <ElmBlockFallback></ElmBlockFallback>
         ) : (
           <div class={styles["todo-item-container"]}>
-            {state.value?.map((item) => (
+            {sortedTodos.value?.map((item) => (
               <Fragment key={item.id}>
                 <ElmInlineIcon src={NotionIcon} />
                 <span>

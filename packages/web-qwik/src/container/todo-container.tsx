@@ -4,6 +4,7 @@ import {
   Fragment,
   useComputed$,
   useContext,
+  useSignal,
   type CSSProperties,
 } from "@builder.io/qwik";
 
@@ -20,7 +21,12 @@ import { openApiClient } from "~/openapi/client";
 import { AuthContext } from "~/context/auth-context";
 
 import NotionIcon from "~/assets/notion.svg?url";
-import { mdiCalendar, mdiRefresh } from "@mdi/js";
+import {
+  mdiAlert,
+  mdiCalendar,
+  mdiRefresh,
+  mdiSortCalendarAscending,
+} from "@mdi/js";
 
 import { Temporal } from "@js-temporal/polyfill";
 
@@ -109,9 +115,35 @@ export const TodoContainer = component$<TodoContainerProps>(
       Error: "#b34444",
     };
 
+    const sort = useSignal<"deadline" | "severity">("deadline");
+
     return (
       <div class={[styles["todo-container"], className]} style={style}>
         <ElmHeading level={3}>To Do</ElmHeading>
+
+        <div class={styles["sort-container"]}>
+          <div
+            class={[
+              styles["sort-button"],
+              { [styles["selected"]]: sort.value === "deadline" },
+            ]}
+            onClick$={() => (sort.value = "deadline")}
+          >
+            <ElmMdiIcon d={mdiSortCalendarAscending} />
+            <ElmInlineText>Deadline</ElmInlineText>
+          </div>
+
+          <div
+            class={[
+              styles["sort-button"],
+              { [styles["selected"]]: sort.value === "severity" },
+            ]}
+            onClick$={() => (sort.value = "severity")}
+          >
+            <ElmMdiIcon d={mdiAlert} />
+            <ElmInlineText>Severity</ElmInlineText>
+          </div>
+        </div>
 
         {isLoading.value ? (
           <ElmBlockFallback></ElmBlockFallback>

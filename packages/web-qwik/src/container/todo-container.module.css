@@ -51,7 +51,7 @@
       width: 100%;
       border-left: 2px solid oklch(from gray l c h / 0.25);
       box-sizing: border-box;
-      padding-left: 0.5rem;
+      padding: 0.25rem 0 0.25rem 0.5rem;
       grid-template-columns: 1.5rem 1.5rem 4rem 1.5rem 1fr;
       grid-template-rows: auto auto;
       grid-template-areas:
@@ -89,13 +89,32 @@
         grid-area: deadline;
         display: inline-flex;
         align-items: center;
-        gap: 0.25rem;
+        gap: 0.5rem;
+        font-family: monospace;
       }
 
       .todo-item-text {
+        all: unset;
         grid-area: text;
         display: block;
         width: 100%;
+        color: #6987b8;
+        user-select: none;
+        cursor: pointer;
+        border-radius: 0.25rem;
+        box-sizing: border-box;
+        padding: 0.125rem 0.25rem;
+        transition:
+          background-color 200ms,
+          transform 100ms;
+
+        &:hover {
+          background-color: oklch(from #6987b8 l c h / 0.2);
+        }
+
+        &:active {
+          transform: translateX(1px) translateY(1px);
+        }
       }
     }
   }

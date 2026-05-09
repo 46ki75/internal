@@ -72,11 +72,7 @@ const Deadline = component$(
           {Temporal.PlainDate.from(deadline).toString().substring(0, 10)}
         </ElmInlineText>
 
-        <ElmInlineText
-          size="0.75rem"
-          color={duration.value.color}
-          style={{ paddingLeft: 2 }}
-        >
+        <ElmInlineText size="0.85rem" color={duration.value.color} bold>
           {duration.value.text}
         </ElmInlineText>
       </div>
@@ -259,9 +255,12 @@ export const TodoContainer = component$<TodoContainerProps>(
                   class={styles["todo-item-deadline"]}
                 />
 
-                <div class={styles["todo-item-text"]}>
-                  <ElmInlineText href={item.url}>{item.title}</ElmInlineText>
-                </div>
+                <a
+                  href={item.url.replace("https://", "notion://")}
+                  class={styles["todo-item-text"]}
+                >
+                  {item.title}
+                </a>
               </div>
             ))}
           </div>

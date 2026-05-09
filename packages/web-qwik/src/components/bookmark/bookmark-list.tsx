@@ -51,19 +51,20 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
   const searchKeyword = useSignal("");
 
   const handleValueChange = $((value: string) => {
+    if (fuseInstance.value == null) {
+      fuseInstance.value = noSerialize(
+        new Fuse(bookmarks, {
+          keys: [
+            { name: "label", weight: 0.7 },
+            { name: "url", weight: 0.3 },
+          ],
+          threshold: 0.3,
+        }),
+      );
+    }
+
     document.startViewTransition(() => {
       searchKeyword.value = value;
-      if (searchKeyword.value.trim() !== "" && fuseInstance.value == null) {
-        fuseInstance.value = noSerialize(
-          new Fuse(bookmarks, {
-            keys: [
-              { name: "label", weight: 0.7 },
-              { name: "url", weight: 0.3 },
-            ],
-            threshold: 0.3,
-          }),
-        );
-      }
     });
   });
 

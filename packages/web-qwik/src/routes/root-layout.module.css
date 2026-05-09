@@ -28,3 +28,7 @@
 ::view-transition-new(basic) {
   animation: slide-in 200ms ease-in-out forwards;
 }
+
+:root:active-view-transition-type(sort) .slot {
+  view-transition-name: none;
+}

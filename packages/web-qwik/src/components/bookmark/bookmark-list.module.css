@@ -33,6 +33,10 @@
     gap: 0.25rem;
     flex-wrap: wrap;
 
+    &.bookmark-container-search-results {
+      height: 5.5rem;
+    }
+
     &.bookmark-container-favorite {
       border: solid 1px #cdb57b;
       border-radius: 0.25rem;

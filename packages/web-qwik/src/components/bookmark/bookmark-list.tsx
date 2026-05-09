@@ -100,7 +100,12 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
         onKeyDown$={handleKeyDown}
       />
 
-      <div class={styles["bookmark-container"]}>
+      <div
+        class={[
+          styles["bookmark-container"],
+          styles["bookmark-container-search-results"],
+        ]}
+      >
         {searchResults.value.map((result, index) => (
           <Bookmark
             key={result.id}

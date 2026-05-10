@@ -3,8 +3,10 @@ import {
   component$,
   useComputed$,
   useContext,
+  useOnWindow,
   useSignal,
   useStore,
+  useVisibleTask$,
   type CSSProperties,
 } from "@builder.io/qwik";
 
@@ -14,7 +16,6 @@ import {
   ElmHeading,
   ElmInlineText,
   ElmMdiIcon,
-  useAsyncState,
 } from "@elmethis/qwik";
 import { openApiClient } from "~/openapi/client";
 import { AuthContext } from "~/context/auth-context";
@@ -25,6 +26,7 @@ import { Temporal } from "@js-temporal/polyfill";
 import { Todo } from "~/components/todo/todo";
 
 import { delay } from "es-toolkit";
+import { paths } from "~/openapi/schema";
 
 export interface TodoContainerProps {
   class?: string;
@@ -32,12 +34,19 @@ export interface TodoContainerProps {
   style?: CSSProperties;
 }
 
+type ToDo =
+  paths["/api/v1/to-do"]["get"]["responses"]["200"]["content"]["application/json"][number];
+
 export const TodoContainer = component$<TodoContainerProps>(
   ({ class: className, style }) => {
     const authStore = useContext(AuthContext);
 
-    const { state, isLoading } = useAsyncState(
-      $(async () => {
+    const todos = useSignal<ToDo[]>([]);
+    const isLoading = useSignal(true);
+
+    const execute = $(async () => {
+      isLoading.value = true;
+      try {
         await authStore.tokens.refresh(authStore);
         const accessToken = authStore.tokens.accessToken;
 
@@ -49,13 +58,20 @@ export const TodoContainer = component$<TodoContainerProps>(
           },
         });
 
-        return res.data;
-      }),
-      [],
-      {
-        immediate: true,
-      },
-    );
+        document.startViewTransition(async () => {
+          todos.value = res.data || [];
+          await delay(0);
+        });
+      } finally {
+        isLoading.value = false;
+      }
+    });
+
+    // eslint-disable-next-line qwik/no-use-visible-task
+    useVisibleTask$(async () => {
+      await execute();
+    });
+    useOnWindow("focus", execute);
 
     const updateStateStore = useStore<{
       updatingIds: Array<string>;
@@ -79,9 +95,9 @@ export const TodoContainer = component$<TodoContainerProps>(
           body: { id: id, is_done: true },
         });
 
-        if (state.value != null) {
+        if (todos.value != null) {
           document.startViewTransition(async () => {
-            state.value = state.value?.filter((item) => item.id !== id);
+            todos.value = todos.value?.filter((item) => item.id !== id);
             await delay(0);
           });
         }
@@ -109,13 +125,13 @@ export const TodoContainer = component$<TodoContainerProps>(
     });
 
     const sortedTodos = useComputed$(() => {
-      if (!state.value) return [];
+      if (!todos.value) return [];
 
-      const sorted = [...state.value];
+      const sorted = [...todos.value];
 
       const deadlineSortFn = (
-        a: (typeof state.value)[0],
-        b: (typeof state.value)[0],
+        a: (typeof todos.value)[0],
+        b: (typeof todos.value)[0],
       ) => {
         if (!a.deadline && !b.deadline) return 0;
         if (!a.deadline) return 1;
@@ -127,8 +143,8 @@ export const TodoContainer = component$<TodoContainerProps>(
       };
 
       const severitySortFn = (
-        a: (typeof state.value)[0],
-        b: (typeof state.value)[0],
+        a: (typeof todos.value)[0],
+        b: (typeof todos.value)[0],
       ) => {
         const severityOrder: Record<string, number> = {
           Error: 4,
@@ -180,7 +196,7 @@ export const TodoContainer = component$<TodoContainerProps>(
           </div>
         </div>
 
-        {isLoading.value ? (
+        {todos.value.length === 0 ? (
           <ElmBlockFallback></ElmBlockFallback>
         ) : (
           <div class={styles["todo-item-container"]}>

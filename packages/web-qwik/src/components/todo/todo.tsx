@@ -1,4 +1,9 @@
-import { component$, useComputed$, type CSSProperties } from "@builder.io/qwik";
+import {
+  component$,
+  QRL,
+  useComputed$,
+  type CSSProperties,
+} from "@builder.io/qwik";
 
 import styles from "./todo.module.css";
 import { ElmInlineIcon, ElmInlineText, ElmMdiIcon } from "@elmethis/qwik";
@@ -72,6 +77,8 @@ export interface TodoProps {
   deadline?: string | null;
   severity: "Unknown" | "Backlog" | "Info" | "Warn" | "Error";
   is_recurring: boolean;
+  isLoading?: boolean;
+  onClick$?: QRL<(id: string) => Promise<void>>;
 }
 
 const colorMap: Record<
@@ -95,10 +102,25 @@ export const Todo = component$<TodoProps>(
     deadline,
     severity,
     is_recurring,
+    isLoading,
+    onClick$,
   }) => {
     return (
-      <div key={id} class={[styles["todo-item-row"], className]} style={style}>
-        <span class={[styles["todo-item-checkbox"]]}></span>
+      <div
+        key={id}
+        class={[
+          styles["todo-item-row"],
+          className,
+          {
+            [styles["loading"]]: isLoading,
+          },
+        ]}
+        style={style}
+      >
+        <span
+          class={[styles["todo-item-checkbox"]]}
+          onClick$={() => onClick$?.(id)}
+        ></span>
 
         <ElmInlineIcon
           src={NotionIcon}

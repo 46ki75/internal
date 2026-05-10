@@ -12,6 +12,12 @@
     "checkbox notion-icon recurring-icon severity deadline-icon deadline"
     "checkbox text text text text text";
 
+  transition: opacity 200ms;
+
+  &.loading {
+    opacity: 0.25;
+  }
+
   .todo-item-checkbox {
     grid-area: checkbox;
     position: relative;

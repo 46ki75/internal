@@ -4,6 +4,7 @@ import {
   useComputed$,
   useContext,
   useSignal,
+  useStore,
   type CSSProperties,
 } from "@builder.io/qwik";
 
@@ -22,6 +23,8 @@ import { mdiAlert, mdiSortCalendarAscending } from "@mdi/js";
 
 import { Temporal } from "@js-temporal/polyfill";
 import { Todo } from "~/components/todo/todo";
+
+import { delay } from "es-toolkit";
 
 export interface TodoContainerProps {
   class?: string;
@@ -53,6 +56,42 @@ export const TodoContainer = component$<TodoContainerProps>(
         immediate: true,
       },
     );
+
+    const updateStateStore = useStore<{
+      updatingIds: Array<string>;
+    }>({
+      updatingIds: [],
+    });
+
+    const handleUpdate = $(async (id: string) => {
+      if (updateStateStore.updatingIds.includes(id)) return;
+
+      updateStateStore.updatingIds.push(id);
+
+      try {
+        await authStore.tokens.refresh(authStore);
+        const accessToken = authStore.tokens.accessToken;
+
+        if (accessToken == null) throw new Error("Access token is null");
+
+        await openApiClient.PUT("/api/v1/to-do", {
+          params: { header: { Authorization: `Bearer ${accessToken}` } },
+          body: { id: id, is_done: true },
+        });
+
+        if (state.value != null) {
+          document.startViewTransition(async () => {
+            state.value = state.value?.filter((item) => item.id !== id);
+            await delay(0);
+          });
+        }
+      } finally {
+        const index = updateStateStore.updatingIds.indexOf(id);
+        if (index !== -1) {
+          updateStateStore.updatingIds.splice(index, 1);
+        }
+      }
+    });
 
     const sort = useSignal<"deadline" | "severity">("deadline");
 
@@ -157,6 +196,8 @@ export const TodoContainer = component$<TodoContainerProps>(
                 style={{
                   viewTransitionName: `todo-${item.id}`,
                 }}
+                onClick$={handleUpdate}
+                isLoading={updateStateStore.updatingIds.includes(item.id)}
               />
             ))}
           </div>

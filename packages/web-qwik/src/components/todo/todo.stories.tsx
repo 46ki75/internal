@@ -6,6 +6,11 @@ const meta: Meta<TodoProps> = {
   component: Todo,
   tags: ["autodocs"],
   args: {},
+  argTypes: {
+    isLoading: {
+      control: "boolean",
+    },
+  },
 };
 
 export default meta;
@@ -19,5 +24,6 @@ export const Primary: Story = {
     deadline: "2024-12-31",
     severity: "Error",
     is_recurring: true,
+    isLoading: false,
   },
 };

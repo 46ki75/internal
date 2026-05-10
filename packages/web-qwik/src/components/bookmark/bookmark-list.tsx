@@ -63,8 +63,14 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
       );
     }
 
-    document.startViewTransition(() => {
+    const vt = document.startViewTransition(() => {
       searchKeyword.value = value;
+    });
+    vt.ready.catch((err) => {
+      if (err.name !== "AbortError") throw err;
+    });
+    vt.finished.catch((err) => {
+      if (err.name !== "AbortError") throw err;
     });
   });
 

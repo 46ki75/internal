@@ -88,13 +88,16 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
 
   const searchResults = useComputed$(() => {
     if (fuseInstance.value) {
+      if (searchKeyword.value.trim() === "") {
+        return bookmarks.slice(0, 5);
+      }
       const results = fuseInstance.value.search(searchKeyword.value, {
         limit: 5,
       });
       return results.map((result) => result.item);
     }
 
-    return [];
+    return bookmarks.slice(0, 5);
   });
 
   const handleKeyDown = $((event: KeyboardEvent) => {

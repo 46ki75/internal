@@ -169,6 +169,9 @@ importers:
       aws-amplify:
         specifier: ^6.16.2
         version: 6.16.2
+      es-toolkit:
+        specifier: ^1.46.1
+        version: 1.46.1
       eslint:
         specifier: 9.32.0
         version: 9.32.0(jiti@2.6.1)

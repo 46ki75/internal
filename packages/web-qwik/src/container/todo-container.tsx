@@ -3,7 +3,10 @@ import {
   component$,
   useComputed$,
   useContext,
+  useOnWindow,
   useSignal,
+  useStore,
+  useVisibleTask$,
   type CSSProperties,
 } from "@builder.io/qwik";
 
@@ -11,74 +14,19 @@ import styles from "./todo-container.module.css";
 import {
   ElmBlockFallback,
   ElmHeading,
-  ElmInlineIcon,
   ElmInlineText,
   ElmMdiIcon,
-  useAsyncState,
 } from "@elmethis/qwik";
 import { openApiClient } from "~/openapi/client";
 import { AuthContext } from "~/context/auth-context";
 
-import NotionIcon from "~/assets/notion.svg?url";
-import {
-  mdiAlert,
-  mdiCalendar,
-  mdiRefresh,
-  mdiSortCalendarAscending,
-} from "@mdi/js";
+import { mdiAlert, mdiSortCalendarAscending, mdiSync } from "@mdi/js";
 
 import { Temporal } from "@js-temporal/polyfill";
+import { Todo } from "~/components/todo/todo";
 
-const Deadline = component$(
-  ({
-    deadline,
-    class: className,
-  }: {
-    deadline?: string | null;
-    class?: string;
-  }) => {
-    if (!deadline) return <div>-</div>;
-
-    const duration = useComputed$(() => {
-      const today = Temporal.Now.plainDateISO();
-      const durationInDays = today
-        .until(Temporal.PlainDate.from(deadline))
-        .total({ unit: "day" });
-
-      const color =
-        durationInDays <= 0
-          ? "#c56565"
-          : durationInDays <= 3
-            ? "#d48b70"
-            : durationInDays <= 7
-              ? "#cdb57b"
-              : durationInDays <= 14
-                ? "#59b57c"
-                : "#5879b0";
-
-      const text =
-        durationInDays === 0
-          ? "Today"
-          : durationInDays < 0
-            ? `${-durationInDays} days ago`
-            : `${durationInDays} days remaining`;
-
-      return { text, color };
-    });
-
-    return (
-      <div class={className}>
-        <ElmInlineText size="1rem">
-          {Temporal.PlainDate.from(deadline).toString().substring(0, 10)}
-        </ElmInlineText>
-
-        <ElmInlineText size="0.85rem" color={duration.value.color} bold>
-          {duration.value.text}
-        </ElmInlineText>
-      </div>
-    );
-  },
-);
+import { delay } from "es-toolkit";
+import { paths } from "~/openapi/schema";
 
 export interface TodoContainerProps {
   class?: string;
@@ -86,12 +34,19 @@ export interface TodoContainerProps {
   style?: CSSProperties;
 }
 
+type ToDo =
+  paths["/api/v1/to-do"]["get"]["responses"]["200"]["content"]["application/json"][number];
+
 export const TodoContainer = component$<TodoContainerProps>(
   ({ class: className, style }) => {
     const authStore = useContext(AuthContext);
 
-    const { state, isLoading } = useAsyncState(
-      $(async () => {
+    const todos = useSignal<ToDo[]>([]);
+    const isLoading = useSignal(true);
+
+    const execute = $(async () => {
+      isLoading.value = true;
+      try {
         await authStore.tokens.refresh(authStore);
         const accessToken = authStore.tokens.accessToken;
 
@@ -103,24 +58,56 @@ export const TodoContainer = component$<TodoContainerProps>(
           },
         });
 
-        return res.data;
-      }),
-      [],
-      {
-        immediate: true,
-      },
-    );
+        document.startViewTransition(async () => {
+          todos.value = res.data || [];
+          await delay(0);
+        });
+      } finally {
+        isLoading.value = false;
+      }
+    });
 
-    const colorMap: Record<
-      "Unknown" | "Backlog" | "Info" | "Warn" | "Error",
-      string
-    > = {
-      Unknown: "#868e9c",
-      Backlog: "#9a776b",
-      Info: "#4c6da2",
-      Warn: "#bfa056",
-      Error: "#b34444",
-    };
+    // eslint-disable-next-line qwik/no-use-visible-task
+    useVisibleTask$(async () => {
+      await execute();
+    });
+    useOnWindow("focus", execute);
+
+    const updateStateStore = useStore<{
+      updatingIds: Array<string>;
+    }>({
+      updatingIds: [],
+    });
+
+    const handleUpdate = $(async (id: string) => {
+      if (updateStateStore.updatingIds.includes(id)) return;
+
+      updateStateStore.updatingIds.push(id);
+
+      try {
+        await authStore.tokens.refresh(authStore);
+        const accessToken = authStore.tokens.accessToken;
+
+        if (accessToken == null) throw new Error("Access token is null");
+
+        await openApiClient.PUT("/api/v1/to-do", {
+          params: { header: { Authorization: `Bearer ${accessToken}` } },
+          body: { id: id, is_done: true },
+        });
+
+        if (todos.value != null) {
+          document.startViewTransition(async () => {
+            todos.value = todos.value?.filter((item) => item.id !== id);
+            await delay(0);
+          });
+        }
+      } finally {
+        const index = updateStateStore.updatingIds.indexOf(id);
+        if (index !== -1) {
+          updateStateStore.updatingIds.splice(index, 1);
+        }
+      }
+    });
 
     const sort = useSignal<"deadline" | "severity">("deadline");
 
@@ -138,13 +125,13 @@ export const TodoContainer = component$<TodoContainerProps>(
     });
 
     const sortedTodos = useComputed$(() => {
-      if (!state.value) return [];
+      if (!todos.value) return [];
 
-      const sorted = [...state.value];
+      const sorted = [...todos.value];
 
       const deadlineSortFn = (
-        a: (typeof state.value)[0],
-        b: (typeof state.value)[0],
+        a: (typeof todos.value)[0],
+        b: (typeof todos.value)[0],
       ) => {
         if (!a.deadline && !b.deadline) return 0;
         if (!a.deadline) return 1;
@@ -156,8 +143,8 @@ export const TodoContainer = component$<TodoContainerProps>(
       };
 
       const severitySortFn = (
-        a: (typeof state.value)[0],
-        b: (typeof state.value)[0],
+        a: (typeof todos.value)[0],
+        b: (typeof todos.value)[0],
       ) => {
         const severityOrder: Record<string, number> = {
           Error: 4,
@@ -207,61 +194,37 @@ export const TodoContainer = component$<TodoContainerProps>(
             <ElmMdiIcon d={mdiAlert} />
             <ElmInlineText>Severity</ElmInlineText>
           </div>
+
+          <ElmMdiIcon
+            d={mdiSync}
+            size="1.5rem"
+            class={[
+              styles["sync-icon"],
+              { [styles["loading"]]: isLoading.value },
+            ]}
+            color={isLoading.value ? "#cdb57b" : undefined}
+          />
         </div>
 
-        {isLoading.value ? (
+        {todos.value.length === 0 ? (
           <ElmBlockFallback></ElmBlockFallback>
         ) : (
           <div class={styles["todo-item-container"]}>
             {sortedTodos.value?.map((item) => (
-              <div
+              <Todo
                 key={item.id}
-                class={styles["todo-item-row"]}
-                style={
-                  {
-                    viewTransitionName: `todo-${item.id}`,
-                  } as CSSProperties
-                }
-              >
-                <ElmInlineIcon
-                  src={NotionIcon}
-                  class={styles["todo-item-notion-icon"]}
-                />
-                <ElmMdiIcon
-                  d={mdiRefresh}
-                  size="1.5rem"
-                  color={item.is_recurring ? "#59b57c" : "transparent"}
-                  class={styles["todo-item-recurring-icon"]}
-                />
-
-                <span
-                  class={styles["todo-item-severity"]}
-                  style={{ "--color": colorMap[item.severity] }}
-                >
-                  {item.severity}
-                </span>
-
-                <ElmMdiIcon
-                  d={mdiCalendar}
-                  size="1.25rem"
-                  style={{
-                    opacity: item.deadline ? 1 : 0.25,
-                  }}
-                  class={styles["todo-item-deadline-icon"]}
-                />
-
-                <Deadline
-                  deadline={item.deadline}
-                  class={styles["todo-item-deadline"]}
-                />
-
-                <a
-                  href={item.url.replace("https://", "notion://")}
-                  class={styles["todo-item-text"]}
-                >
-                  {item.title}
-                </a>
-              </div>
+                id={item.id}
+                title={item.title}
+                url={item.url}
+                deadline={item.deadline}
+                severity={item.severity}
+                is_recurring={item.is_recurring}
+                style={{
+                  viewTransitionName: `todo-${item.id}`,
+                }}
+                onClick$={handleUpdate}
+                isLoading={updateStateStore.updatingIds.includes(item.id)}
+              />
             ))}
           </div>
         )}

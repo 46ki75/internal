@@ -11,7 +11,6 @@ import styles from "./todo-container.module.css";
 import {
   ElmBlockFallback,
   ElmHeading,
-  ElmInlineIcon,
   ElmInlineText,
   ElmMdiIcon,
   useAsyncState,
@@ -19,66 +18,10 @@ import {
 import { openApiClient } from "~/openapi/client";
 import { AuthContext } from "~/context/auth-context";
 
-import NotionIcon from "~/assets/notion.svg?url";
-import {
-  mdiAlert,
-  mdiCalendar,
-  mdiRefresh,
-  mdiSortCalendarAscending,
-} from "@mdi/js";
+import { mdiAlert, mdiSortCalendarAscending } from "@mdi/js";
 
 import { Temporal } from "@js-temporal/polyfill";
-
-const Deadline = component$(
-  ({
-    deadline,
-    class: className,
-  }: {
-    deadline?: string | null;
-    class?: string;
-  }) => {
-    if (!deadline) return <div>-</div>;
-
-    const duration = useComputed$(() => {
-      const today = Temporal.Now.plainDateISO();
-      const durationInDays = today
-        .until(Temporal.PlainDate.from(deadline))
-        .total({ unit: "day" });
-
-      const color =
-        durationInDays <= 0
-          ? "#c56565"
-          : durationInDays <= 3
-            ? "#d48b70"
-            : durationInDays <= 7
-              ? "#cdb57b"
-              : durationInDays <= 14
-                ? "#59b57c"
-                : "#5879b0";
-
-      const text =
-        durationInDays === 0
-          ? "Today"
-          : durationInDays < 0
-            ? `${-durationInDays} days ago`
-            : `${durationInDays} days remaining`;
-
-      return { text, color };
-    });
-
-    return (
-      <div class={className}>
-        <ElmInlineText size="1rem">
-          {Temporal.PlainDate.from(deadline).toString().substring(0, 10)}
-        </ElmInlineText>
-
-        <ElmInlineText size="0.85rem" color={duration.value.color} bold>
-          {duration.value.text}
-        </ElmInlineText>
-      </div>
-    );
-  },
-);
+import { Todo } from "~/components/todo/todo";
 
 export interface TodoContainerProps {
   class?: string;
@@ -110,17 +53,6 @@ export const TodoContainer = component$<TodoContainerProps>(
         immediate: true,
       },
     );
-
-    const colorMap: Record<
-      "Unknown" | "Backlog" | "Info" | "Warn" | "Error",
-      string
-    > = {
-      Unknown: "#868e9c",
-      Backlog: "#9a776b",
-      Info: "#4c6da2",
-      Warn: "#bfa056",
-      Error: "#b34444",
-    };
 
     const sort = useSignal<"deadline" | "severity">("deadline");
 
@@ -214,61 +146,18 @@ export const TodoContainer = component$<TodoContainerProps>(
         ) : (
           <div class={styles["todo-item-container"]}>
             {sortedTodos.value?.map((item) => (
-              <div
+              <Todo
                 key={item.id}
-                class={styles["todo-item-row"]}
-                style={
-                  {
-                    viewTransitionName: `todo-${item.id}`,
-                  } as CSSProperties
-                }
-              >
-                <span class={[styles["todo-item-checkbox"]]}></span>
-
-                <ElmInlineIcon
-                  src={NotionIcon}
-                  class={styles["todo-item-notion-icon"]}
-                />
-                <ElmMdiIcon
-                  d={mdiRefresh}
-                  size="1.5rem"
-                  color={item.is_recurring ? "#59b57c" : "gray"}
-                  class={[
-                    styles["todo-item-recurring-icon"],
-                    {
-                      [styles["disabled"]]: !item.is_recurring,
-                    },
-                  ]}
-                />
-
-                <span
-                  class={styles["todo-item-severity"]}
-                  style={{ "--color": colorMap[item.severity] }}
-                >
-                  {item.severity}
-                </span>
-
-                <ElmMdiIcon
-                  d={mdiCalendar}
-                  size="1.25rem"
-                  style={{
-                    opacity: item.deadline ? 1 : 0.25,
-                  }}
-                  class={styles["todo-item-deadline-icon"]}
-                />
-
-                <Deadline
-                  deadline={item.deadline}
-                  class={styles["todo-item-deadline"]}
-                />
-
-                <a
-                  href={item.url.replace("https://", "notion://")}
-                  class={styles["todo-item-text"]}
-                >
-                  {item.title}
-                </a>
-              </div>
+                id={item.id}
+                title={item.title}
+                url={item.url}
+                deadline={item.deadline}
+                severity={item.severity}
+                is_recurring={item.is_recurring}
+                style={{
+                  viewTransitionName: `todo-${item.id}`,
+                }}
+              />
             ))}
           </div>
         )}

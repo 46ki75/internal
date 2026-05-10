@@ -76,8 +76,10 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
 
   const searchResults = useComputed$(() => {
     if (fuseInstance.value) {
-      const results = fuseInstance.value.search(searchKeyword.value);
-      return results.map((result) => result.item).slice(0, 5);
+      const results = fuseInstance.value.search(searchKeyword.value, {
+        limit: 5,
+      });
+      return results.map((result) => result.item);
     }
 
     return [];

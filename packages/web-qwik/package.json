@@ -37,6 +37,7 @@
     "@elmethis/core": "^0.8.0",
     "@elmethis/qwik": "^0.0.79",
     "@eslint/js": "^9",
+    "@formkit/auto-animate": "^0.9.0",
     "@js-temporal/polyfill": "^0.5.1",
     "@mdi/js": "^7.4.47",
     "@storybook/addon-docs": "^10.3.5",

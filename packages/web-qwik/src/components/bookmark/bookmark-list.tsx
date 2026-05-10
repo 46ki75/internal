@@ -6,6 +6,7 @@ import {
   NoSerialize,
   useComputed$,
   useSignal,
+  useVisibleTask$,
 } from "@builder.io/qwik";
 
 import styles from "./bookmark-list.module.css";
@@ -14,11 +15,30 @@ import { ElmHeading, ElmMdiIcon, ElmTextField } from "@elmethis/qwik";
 import { mdiTag } from "@mdi/js";
 import Fuse from "fuse.js";
 
+import autoAnimate from "@formkit/auto-animate";
+
 export interface BookmarkListProps {
   bookmarks: BookmarkProps[];
 }
 
 export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
+  const bookmarkContainerRef = useSignal<HTMLElement>();
+  const bookmarkContainerAnimationController =
+    useSignal<NoSerialize<ReturnType<typeof autoAnimate>>>();
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(({ cleanup }) => {
+    if (bookmarkContainerRef.value) {
+      bookmarkContainerAnimationController.value = noSerialize(
+        autoAnimate(bookmarkContainerRef.value),
+      );
+    }
+    cleanup(() => {
+      if (bookmarkContainerAnimationController.value) {
+        bookmarkContainerAnimationController.value?.disable();
+      }
+    });
+  });
+
   const favorites: JSX.Element[] = [];
   const tags: Record<
     string,
@@ -63,24 +83,21 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
       );
     }
 
-    const vt = document.startViewTransition(() => {
-      searchKeyword.value = value;
-    });
-    vt.ready.catch((err) => {
-      if (err.name !== "AbortError") throw err;
-    });
-    vt.finished.catch((err) => {
-      if (err.name !== "AbortError") throw err;
-    });
+    searchKeyword.value = value;
   });
 
   const searchResults = useComputed$(() => {
     if (fuseInstance.value) {
-      const results = fuseInstance.value.search(searchKeyword.value);
-      return results.map((result) => result.item).slice(0, 5);
+      if (searchKeyword.value.trim() === "") {
+        return bookmarks.slice(0, 5);
+      }
+      const results = fuseInstance.value.search(searchKeyword.value, {
+        limit: 5,
+      });
+      return results.map((result) => result.item);
     }
 
-    return [];
+    return bookmarks.slice(0, 5);
   });
 
   const handleKeyDown = $((event: KeyboardEvent) => {
@@ -106,6 +123,7 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
       />
 
       <div
+        ref={bookmarkContainerRef}
         class={[
           styles["bookmark-container"],
           styles["bookmark-container-search-results"],

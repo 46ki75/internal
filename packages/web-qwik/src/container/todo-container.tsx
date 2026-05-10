@@ -223,6 +223,8 @@ export const TodoContainer = component$<TodoContainerProps>(
                   } as CSSProperties
                 }
               >
+                <span class={[styles["todo-item-checkbox"]]}></span>
+
                 <ElmInlineIcon
                   src={NotionIcon}
                   class={styles["todo-item-notion-icon"]}

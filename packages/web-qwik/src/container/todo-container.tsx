@@ -230,8 +230,13 @@ export const TodoContainer = component$<TodoContainerProps>(
                 <ElmMdiIcon
                   d={mdiRefresh}
                   size="1.5rem"
-                  color={item.is_recurring ? "#59b57c" : "transparent"}
-                  class={styles["todo-item-recurring-icon"]}
+                  color={item.is_recurring ? "#59b57c" : "gray"}
+                  class={[
+                    styles["todo-item-recurring-icon"],
+                    {
+                      [styles["disabled"]]: !item.is_recurring,
+                    },
+                  ]}
                 />
 
                 <span

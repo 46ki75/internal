@@ -65,6 +65,10 @@
 
       .todo-item-recurring-icon {
         grid-area: recurring-icon;
+
+        &.disabled {
+          opacity: 0.25;
+        }
       }
 
       .todo-item-severity {

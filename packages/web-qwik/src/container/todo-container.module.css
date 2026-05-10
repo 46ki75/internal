@@ -7,6 +7,15 @@
   }
 }
 
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .todo-container {
   box-sizing: border-box;
   width: 100%;
@@ -34,6 +43,16 @@
 
       &.selected {
         background-color: oklch(from #cdb57b l c h / 0.5);
+      }
+    }
+
+    .sync-icon {
+      opacity: 0;
+      transition: opacity 200ms;
+
+      &.loading {
+        opacity: 1;
+        animation: spin 1s linear infinite;
       }
     }
   }

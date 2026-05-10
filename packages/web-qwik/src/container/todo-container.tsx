@@ -20,7 +20,7 @@ import {
 import { openApiClient } from "~/openapi/client";
 import { AuthContext } from "~/context/auth-context";
 
-import { mdiAlert, mdiSortCalendarAscending } from "@mdi/js";
+import { mdiAlert, mdiSortCalendarAscending, mdiSync } from "@mdi/js";
 
 import { Temporal } from "@js-temporal/polyfill";
 import { Todo } from "~/components/todo/todo";
@@ -194,6 +194,16 @@ export const TodoContainer = component$<TodoContainerProps>(
             <ElmMdiIcon d={mdiAlert} />
             <ElmInlineText>Severity</ElmInlineText>
           </div>
+
+          <ElmMdiIcon
+            d={mdiSync}
+            size="1.5rem"
+            class={[
+              styles["sync-icon"],
+              { [styles["loading"]]: isLoading.value },
+            ]}
+            color={isLoading.value ? "#cdb57b" : undefined}
+          />
         </div>
 
         {todos.value.length === 0 ? (

@@ -107,7 +107,9 @@ impl ToDoUseCase {
 
         let severity = if let PageProperty::Select(severity) = serverity_property {
             let select_name_str = severity.to_string();
-            Ok(if select_name_str == "INFO" {
+            Ok(if select_name_str == "BACKLOG" {
+                ToDoSeverityEntity::Backlog
+            } else if select_name_str == "INFO" {
                 ToDoSeverityEntity::Info
             } else if select_name_str == "WARN" {
                 ToDoSeverityEntity::Warn
@@ -166,9 +168,11 @@ impl ToDoUseCase {
                     }
                 });
 
-                let is_done = match result.properties.get("IsDone").ok_or(
-                    ToDoUseCaseError::PropertyNotFound("IsDone".to_string()),
-                )? {
+                let is_done = match result
+                    .properties
+                    .get("IsDone")
+                    .ok_or(ToDoUseCaseError::PropertyNotFound("IsDone".to_string()))?
+                {
                     PageProperty::Checkbox(is_done) => Ok(is_done.checkbox),
                     _ => Err(ToDoUseCaseError::PropertyNotFound("IsDone".to_string())),
                 }?;
@@ -201,7 +205,9 @@ impl ToDoUseCase {
                             if let Some(select_name) = &select.select {
                                 let select_name_str = select_name.to_string();
 
-                                if select_name_str == "INFO" {
+                                if select_name_str == "BACKLOG" {
+                                    Some(ToDoSeverityEntity::Backlog)
+                                } else if select_name_str == "INFO" {
                                     Some(ToDoSeverityEntity::Info)
                                 } else if select_name_str == "WARN" {
                                     return Some(ToDoSeverityEntity::Warn);
@@ -249,8 +255,7 @@ mod tests {
 
     #[tokio::test]
     async fn create_to_do() {
-        let to_do_repository =
-            std::sync::Arc::new(crate::to_do::repository::ToDoRepositoryStub);
+        let to_do_repository = std::sync::Arc::new(crate::to_do::repository::ToDoRepositoryStub);
 
         let to_do_use_case = ToDoUseCase { to_do_repository };
 
@@ -266,8 +271,7 @@ mod tests {
 
     #[tokio::test]
     async fn update_to_do() {
-        let to_do_repository =
-            std::sync::Arc::new(crate::to_do::repository::ToDoRepositoryStub);
+        let to_do_repository = std::sync::Arc::new(crate::to_do::repository::ToDoRepositoryStub);
 
         let to_do_use_case = ToDoUseCase { to_do_repository };
 
@@ -279,8 +283,7 @@ mod tests {
 
     #[tokio::test]
     async fn list_notion_todo() {
-        let to_do_repository =
-            std::sync::Arc::new(crate::to_do::repository::ToDoRepositoryStub);
+        let to_do_repository = std::sync::Arc::new(crate::to_do::repository::ToDoRepositoryStub);
 
         let to_do_use_case = ToDoUseCase { to_do_repository };
 

@@ -1,7 +1,7 @@
 .bookmark-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 1rem;
 
   .tags-container {
     display: flex;
@@ -32,5 +32,16 @@
     flex-direction: row;
     gap: 0.25rem;
     flex-wrap: wrap;
+
+    &.bookmark-container-search-results {
+      height: 5.5rem;
+    }
+
+    &.bookmark-container-favorite {
+      border: solid 1px #cdb57b;
+      border-radius: 0.25rem;
+      box-sizing: border-box;
+      padding: 0.25rem;
+    }
   }
 }

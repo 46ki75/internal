@@ -22,6 +22,7 @@ pub struct ToDo {
 pub enum ToDoSeverity {
     #[default]
     Unknown,
+    Backlog,
     Info,
     Warn,
     Error,
@@ -33,7 +34,8 @@ impl std::fmt::Display for ToDoSeverity {
             f,
             "{}",
             match self {
-                ToDoSeverity::Unknown => "INFO",
+                ToDoSeverity::Unknown => "UNKNOWN",
+                ToDoSeverity::Backlog => "BACKLOG",
                 ToDoSeverity::Info => "INFO",
                 ToDoSeverity::Warn => "WARN",
                 ToDoSeverity::Error => "ERROR",
@@ -64,6 +66,7 @@ impl From<ToDoSeverityEntity> for ToDoSeverity {
     fn from(value: ToDoSeverityEntity) -> Self {
         match value {
             ToDoSeverityEntity::Unknown => Self::Unknown,
+            ToDoSeverityEntity::Backlog => Self::Backlog,
             ToDoSeverityEntity::Info => Self::Info,
             ToDoSeverityEntity::Warn => Self::Warn,
             ToDoSeverityEntity::Error => Self::Error,

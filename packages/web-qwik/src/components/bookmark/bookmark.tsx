@@ -1,4 +1,4 @@
-import { $, component$ } from "@builder.io/qwik";
+import { $, component$, type CSSProperties } from "@builder.io/qwik";
 
 import styles from "./bookmark.module.css";
 import { ElmInlineText, ElmMdiIcon } from "@elmethis/qwik";
@@ -12,10 +12,12 @@ export interface BookmarkProps {
   url: string;
   editUrl: string;
   tag: { id: string; name: string; color: string };
+  focus?: boolean;
+  style?: CSSProperties;
 }
 
 export const Bookmark = component$<BookmarkProps>(
-  ({ icon, label, favorite, url, editUrl }) => {
+  ({ icon, label, favorite, url, editUrl, focus, style }) => {
     const handleClick = $((event: MouseEvent) => {
       event.stopPropagation();
       const a = document.createElement("a");
@@ -35,7 +37,16 @@ export const Bookmark = component$<BookmarkProps>(
     });
 
     return (
-      <div class={[styles["bookmark"]]} onClick$={handleClick}>
+      <div
+        class={[
+          styles["bookmark"],
+          {
+            [styles["bookmark-focus"]]: focus,
+          },
+        ]}
+        style={style}
+        onClick$={handleClick}
+      >
         <span class={styles["edit-icon"]} onClick$={handleEdit$}>
           <ElmMdiIcon d={mdiTagEdit} />
         </span>

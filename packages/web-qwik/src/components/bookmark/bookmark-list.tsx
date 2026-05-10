@@ -30,7 +30,7 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
 
   for (const bookmark of bookmarks) {
     if (bookmark.favorite) {
-      favorites.push(<Bookmark {...bookmark} />);
+      favorites.push(<Bookmark key={bookmark.id} {...bookmark} />);
     }
 
     const tagId = bookmark.tag.id;

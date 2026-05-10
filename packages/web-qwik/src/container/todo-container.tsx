@@ -1,6 +1,8 @@
 import {
   $,
   component$,
+  noSerialize,
+  NoSerialize,
   useComputed$,
   useContext,
   useOnWindow,
@@ -25,7 +27,8 @@ import { mdiAlert, mdiSortCalendarAscending, mdiSync } from "@mdi/js";
 import { Temporal } from "@js-temporal/polyfill";
 import { Todo } from "~/components/todo/todo";
 
-import { delay } from "es-toolkit";
+import autoAnimate from "@formkit/auto-animate";
+
 import { paths } from "~/openapi/schema";
 
 export interface TodoContainerProps {
@@ -40,6 +43,25 @@ type ToDo =
 export const TodoContainer = component$<TodoContainerProps>(
   ({ class: className, style }) => {
     const authStore = useContext(AuthContext);
+
+    const todoItemContainerRef = useSignal<HTMLElement>();
+    const animationController =
+      useSignal<NoSerialize<ReturnType<typeof autoAnimate>>>();
+
+    // eslint-disable-next-line qwik/no-use-visible-task
+    useVisibleTask$(({ cleanup }) => {
+      if (todoItemContainerRef.value) {
+        animationController.value = noSerialize(
+          autoAnimate(todoItemContainerRef.value),
+        );
+      }
+
+      cleanup(() => {
+        if (animationController.value) {
+          animationController.value?.disable();
+        }
+      });
+    });
 
     const todos = useSignal<ToDo[]>([]);
     const isLoading = useSignal(true);
@@ -58,10 +80,7 @@ export const TodoContainer = component$<TodoContainerProps>(
           },
         });
 
-        document.startViewTransition(async () => {
-          todos.value = res.data || [];
-          await delay(0);
-        });
+        todos.value = res.data || [];
       } finally {
         isLoading.value = false;
       }
@@ -96,10 +115,7 @@ export const TodoContainer = component$<TodoContainerProps>(
         });
 
         if (todos.value != null) {
-          document.startViewTransition(async () => {
-            todos.value = todos.value?.filter((item) => item.id !== id);
-            await delay(0);
-          });
+          todos.value = todos.value?.filter((item) => item.id !== id);
         }
       } finally {
         const index = updateStateStore.updatingIds.indexOf(id);
@@ -112,16 +128,7 @@ export const TodoContainer = component$<TodoContainerProps>(
     const sort = useSignal<"deadline" | "severity">("deadline");
 
     const handleSort = $((newSort: "deadline" | "severity") => {
-      if (
-        typeof document !== "undefined" &&
-        "startViewTransition" in document
-      ) {
-        document.startViewTransition(() => {
-          sort.value = newSort;
-        });
-      } else {
-        sort.value = newSort;
-      }
+      sort.value = newSort;
     });
 
     const sortedTodos = useComputed$(() => {
@@ -206,11 +213,11 @@ export const TodoContainer = component$<TodoContainerProps>(
           />
         </div>
 
-        {todos.value.length === 0 ? (
-          <ElmBlockFallback></ElmBlockFallback>
-        ) : (
-          <div class={styles["todo-item-container"]}>
-            {sortedTodos.value?.map((item) => (
+        <div ref={todoItemContainerRef} class={styles["todo-item-container"]}>
+          {todos.value.length === 0 ? (
+            <ElmBlockFallback></ElmBlockFallback>
+          ) : (
+            sortedTodos.value?.map((item) => (
               <Todo
                 key={item.id}
                 id={item.id}
@@ -219,15 +226,12 @@ export const TodoContainer = component$<TodoContainerProps>(
                 deadline={item.deadline}
                 severity={item.severity}
                 is_recurring={item.is_recurring}
-                style={{
-                  viewTransitionName: `todo-${item.id}`,
-                }}
                 onClick$={handleUpdate}
                 isLoading={updateStateStore.updatingIds.includes(item.id)}
               />
-            ))}
-          </div>
-        )}
+            ))
+          )}
+        </div>
       </div>
     );
   },

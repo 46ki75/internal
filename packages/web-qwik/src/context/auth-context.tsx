@@ -44,15 +44,13 @@ export interface AuthStore {
   errors: string[];
   signingInProgress: boolean;
 
-  isSignInModalOpen: boolean;
-  showSignInModal: QRL<(store: AuthStore) => void>;
-
   signOut: QRL<(store: AuthStore) => Promise<void>>;
   signIn: QRL<
     (store: AuthStore, username: string, password: string) => Promise<void>
   >;
 
   tokens: {
+    loading: boolean;
     refresh: QRL<(store: AuthStore) => Promise<void>>;
     accessToken: string | null;
   };
@@ -65,12 +63,6 @@ export const useAuthContextProvider = () => {
     sessionState: "pending",
     errors: [],
     signingInProgress: false,
-
-    isSignInModalOpen: false,
-    showSignInModal: $(async (store: AuthStore) => {
-      store.isSignInModalOpen = false;
-      store.isSignInModalOpen = true;
-    }),
 
     signOut: $(async (store: AuthStore) => {
       store.sessionState = "pending";
@@ -100,6 +92,7 @@ export const useAuthContextProvider = () => {
     }),
 
     tokens: {
+      loading: false,
       accessToken: null,
       refresh: $(async (store: AuthStore) => {
         store.errors = [];
@@ -109,7 +102,7 @@ export const useAuthContextProvider = () => {
           const session = await fetchAuthSession({ forceRefresh: false });
           const accessToken = session.tokens?.accessToken.toString();
           store.tokens.accessToken = accessToken ?? null;
-          store.sessionState = "login";
+          store.sessionState = store.tokens.accessToken ? "login" : "logout";
         } catch (e: unknown) {
           store.tokens.accessToken = null;
           store.sessionState = "logout";
@@ -122,24 +115,23 @@ export const useAuthContextProvider = () => {
   useContextProvider(AuthContext, authStore);
 
   // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(async ({ track }) => {
-    const sessionState = track(() => authStore.sessionState);
-
-    if (sessionState === "logout") {
-      authStore.tokens.accessToken = null;
-      authStore.isSignInModalOpen = false;
-      authStore.isSignInModalOpen = true;
-    } else if (sessionState === "login") {
-      authStore.isSignInModalOpen = true;
-      authStore.isSignInModalOpen = false;
-    }
-  });
-
-  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async () => {
     configure();
 
+    let attempts = 0;
+
     try {
+      while (authStore.tokens.loading) {
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        attempts++;
+
+        if (attempts > 25)
+          throw new Error(
+            "Failed to fetch auth session after multiple attempts.",
+          );
+      }
+
+      authStore.tokens.loading = true;
       await authStore.tokens.refresh(authStore);
       const { username, userId } = await getCurrentUser();
       if (username && userId) {
@@ -148,7 +140,12 @@ export const useAuthContextProvider = () => {
         authStore.sessionState = "logout";
       }
     } catch {
+      console.error(
+        "Failed to fetch auth session. User might not be authenticated.",
+      );
       authStore.sessionState = "logout";
+    } finally {
+      authStore.tokens.loading = false;
     }
   });
 };

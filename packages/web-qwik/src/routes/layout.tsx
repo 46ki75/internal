@@ -8,17 +8,25 @@ import {
   mdiTag,
 } from "@mdi/js";
 import { Header } from "~/components/common/header";
-import { SigninContainer } from "~/container/signin-container";
+
 import { useAnkiContextProvider } from "~/context/anki-context";
 import { AuthContext } from "~/context/auth-context";
 
 import styles from "./root-layout.module.css";
+import { useModal } from "@elmethis/qwik";
+import { Signin } from "~/components/common/signin";
 
 export default component$(() => {
   const authStore = useContext(AuthContext);
   useAnkiContextProvider();
 
   const navigate = useNavigate();
+
+  const { Modal, show } = useModal({});
+
+  const onSubmit$ = $(async (username: string, password: string) => {
+    await authStore.signIn(authStore, username, password);
+  });
 
   return (
     <>
@@ -57,13 +65,27 @@ export default component$(() => {
         ]}
         state={authStore.sessionState}
         handleSignOutClick$={$(async () => authStore.signOut(authStore))}
-        handleSignInClick$={$(async () => authStore.showSignInModal(authStore))}
+        handleSignInClick$={$(async () => show())}
       />
 
       <div class={styles["layout-slot"]}>
         <Slot />
       </div>
-      <SigninContainer />
+
+      <Modal>
+        <>
+          <Signin
+            isLoading={
+              authStore.sessionState === "pending" ||
+              authStore.signingInProgress
+            }
+            isDisabled={authStore.sessionState === "login"}
+            onSubmit$={onSubmit$}
+          />
+
+          {authStore.sessionState}
+        </>
+      </Modal>
     </>
   );
 });

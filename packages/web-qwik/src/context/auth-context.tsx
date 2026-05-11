@@ -50,6 +50,7 @@ export interface AuthStore {
   >;
 
   tokens: {
+    loading: boolean;
     refresh: QRL<(store: AuthStore) => Promise<void>>;
     accessToken: string | null;
   };
@@ -91,6 +92,7 @@ export const useAuthContextProvider = () => {
     }),
 
     tokens: {
+      loading: false,
       accessToken: null,
       refresh: $(async (store: AuthStore) => {
         store.errors = [];
@@ -116,7 +118,20 @@ export const useAuthContextProvider = () => {
   useVisibleTask$(async () => {
     configure();
 
+    let attempts = 0;
+
     try {
+      while (authStore.tokens.loading) {
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        attempts++;
+
+        if (attempts > 25)
+          throw new Error(
+            "Failed to fetch auth session after multiple attempts.",
+          );
+      }
+
+      authStore.tokens.loading = true;
       await authStore.tokens.refresh(authStore);
       const { username, userId } = await getCurrentUser();
       if (username && userId) {
@@ -129,6 +144,8 @@ export const useAuthContextProvider = () => {
         "Failed to fetch auth session. User might not be authenticated.",
       );
       authStore.sessionState = "logout";
+    } finally {
+      authStore.tokens.loading = false;
     }
   });
 };

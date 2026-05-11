@@ -72,7 +72,7 @@ export const TodoContainer = component$<TodoContainerProps>(
         await authStore.tokens.refresh(authStore);
         const accessToken = authStore.tokens.accessToken;
 
-        if (accessToken == null) throw new Error("Access token is null");
+        if (accessToken == null) return;
 
         const res = await openApiClient.GET("/api/v1/to-do", {
           params: {
@@ -107,7 +107,7 @@ export const TodoContainer = component$<TodoContainerProps>(
         await authStore.tokens.refresh(authStore);
         const accessToken = authStore.tokens.accessToken;
 
-        if (accessToken == null) throw new Error("Access token is null");
+        if (accessToken == null) return;
 
         await openApiClient.PUT("/api/v1/to-do", {
           params: { header: { Authorization: `Bearer ${accessToken}` } },

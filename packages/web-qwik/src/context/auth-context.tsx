@@ -113,25 +113,22 @@ export const useAuthContextProvider = () => {
   useContextProvider(AuthContext, authStore);
 
   // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(
-    async () => {
-      configure();
+  useVisibleTask$(async () => {
+    configure();
 
-      try {
-        await authStore.tokens.refresh(authStore);
-        const { username, userId } = await getCurrentUser();
-        if (username && userId) {
-          authStore.sessionState = "login";
-        } else {
-          authStore.sessionState = "logout";
-        }
-      } catch {
-        console.error(
-          "Failed to fetch auth session. User might not be authenticated.",
-        );
+    try {
+      await authStore.tokens.refresh(authStore);
+      const { username, userId } = await getCurrentUser();
+      if (username && userId) {
+        authStore.sessionState = "login";
+      } else {
         authStore.sessionState = "logout";
       }
-    },
-    { strategy: "document-idle" },
-  );
+    } catch {
+      console.error(
+        "Failed to fetch auth session. User might not be authenticated.",
+      );
+      authStore.sessionState = "logout";
+    }
+  });
 };

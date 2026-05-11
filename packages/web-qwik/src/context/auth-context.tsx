@@ -44,9 +44,6 @@ export interface AuthStore {
   errors: string[];
   signingInProgress: boolean;
 
-  isSignInModalOpen: boolean;
-  showSignInModal: QRL<(store: AuthStore) => void>;
-
   signOut: QRL<(store: AuthStore) => Promise<void>>;
   signIn: QRL<
     (store: AuthStore, username: string, password: string) => Promise<void>
@@ -65,12 +62,6 @@ export const useAuthContextProvider = () => {
     sessionState: "pending",
     errors: [],
     signingInProgress: false,
-
-    isSignInModalOpen: false,
-    showSignInModal: $(async (store: AuthStore) => {
-      store.isSignInModalOpen = false;
-      store.isSignInModalOpen = true;
-    }),
 
     signOut: $(async (store: AuthStore) => {
       store.sessionState = "pending";
@@ -109,7 +100,7 @@ export const useAuthContextProvider = () => {
           const session = await fetchAuthSession({ forceRefresh: false });
           const accessToken = session.tokens?.accessToken.toString();
           store.tokens.accessToken = accessToken ?? null;
-          store.sessionState = "login";
+          store.sessionState = store.tokens.accessToken ? "login" : "logout";
         } catch (e: unknown) {
           store.tokens.accessToken = null;
           store.sessionState = "logout";
@@ -122,33 +113,25 @@ export const useAuthContextProvider = () => {
   useContextProvider(AuthContext, authStore);
 
   // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(async ({ track }) => {
-    const sessionState = track(() => authStore.sessionState);
+  useVisibleTask$(
+    async () => {
+      configure();
 
-    if (sessionState === "logout") {
-      authStore.tokens.accessToken = null;
-      authStore.isSignInModalOpen = false;
-      authStore.isSignInModalOpen = true;
-    } else if (sessionState === "login") {
-      authStore.isSignInModalOpen = true;
-      authStore.isSignInModalOpen = false;
-    }
-  });
-
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(async () => {
-    configure();
-
-    try {
-      await authStore.tokens.refresh(authStore);
-      const { username, userId } = await getCurrentUser();
-      if (username && userId) {
-        authStore.sessionState = "login";
-      } else {
+      try {
+        await authStore.tokens.refresh(authStore);
+        const { username, userId } = await getCurrentUser();
+        if (username && userId) {
+          authStore.sessionState = "login";
+        } else {
+          authStore.sessionState = "logout";
+        }
+      } catch {
+        console.error(
+          "Failed to fetch auth session. User might not be authenticated.",
+        );
         authStore.sessionState = "logout";
       }
-    } catch {
-      authStore.sessionState = "logout";
-    }
-  });
+    },
+    { strategy: "document-idle" },
+  );
 };

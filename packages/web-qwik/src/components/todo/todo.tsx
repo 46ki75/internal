@@ -120,7 +120,7 @@ export const Todo = component$<TodoProps>((props) => {
             [styles["is-done"]]: is_done,
           },
         ]}
-        onClick$={() => props.onClick$(props.id, props.is_done)}
+        onClick$={() => props.onClick$(props.id, !props.is_done)}
       ></span>
 
       <ElmInlineIcon

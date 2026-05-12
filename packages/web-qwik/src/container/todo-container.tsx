@@ -208,7 +208,7 @@ export const TodoContainer = component$<TodoContainerProps>(
       }: {
         title: string;
         severity: Severity;
-        deadline: string;
+        deadline?: string;
       }) => {
         await authStore.tokens.refresh(authStore);
         const accessToken = authStore.tokens.accessToken;

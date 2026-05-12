@@ -30,7 +30,7 @@ export interface TodoFormProps {
     (t: {
       title: string;
       severity: Severity;
-      deadline: string;
+      deadline?: string;
     }) => Promise<void>
   >;
 }
@@ -61,7 +61,7 @@ export const TodoForm = component$<TodoFormProps>(
         await submit$({
           title: title.value,
           severity: selectedSeverity.value,
-          deadline: deadline.value,
+          deadline: deadline.value === "" ? undefined : deadline.value,
         });
         title.value = "";
         selectedSeverity.value = "INFO";

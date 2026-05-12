@@ -248,9 +248,9 @@ export interface components {
             url: string;
         };
         /** @enum {string} */
-        ToDoSeverityReponse: "Unknown" | "Backlog" | "Info" | "Warn" | "Error";
+        ToDoSeverityReponse: "Unknown" | "Debug" | "Info" | "Warn" | "Error";
         /** @enum {string} */
-        ToDoSeverityRequest: "Unknown" | "Backlog" | "Info" | "Warn" | "Error";
+        ToDoSeverityRequest: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
         TypingDeleteRequest: {
             id: string;
         };

@@ -62,6 +62,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
 
     if (currentAnki.value?.metadata.page_id === pageId) {
       isShowingAnswer.value = false;
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   });
 

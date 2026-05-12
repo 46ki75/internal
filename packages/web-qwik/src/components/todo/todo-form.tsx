@@ -75,10 +75,13 @@ export const TodoForm = component$<TodoFormProps>(
             loading={isLoading.value}
           />
           <ElmTextField label="Title" value={title} loading={isLoading.value} />
-          <ElmButton onClick$={handleSubmit} loading={isLoading.value}>
+          <ElmButton
+            onClick$={handleSubmit}
+            loading={isLoading.value}
+            disabled={title.value.trim() === ""}
+          >
             <ElmMdiIcon d={mdiSend} />
           </ElmButton>
-          {title.value}
         </div>
 
         <div class={styles["todo-error"]}>

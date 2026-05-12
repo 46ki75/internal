@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 use crate::to_do::controller::request::ToDoSeverityRequest;
 use crate::to_do::resolver::ToDoSeverity;
 
@@ -16,37 +18,22 @@ pub struct ToDoEntity {
     pub updated_at: Option<String>,
 }
 
-#[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ToDoSeverityEntity {
     #[default]
     Unknown,
-    Backlog,
+    Debug,
     Info,
     Warn,
     Error,
-}
-
-impl std::fmt::Display for ToDoSeverityEntity {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                ToDoSeverityEntity::Unknown => "UNKNOWN",
-                ToDoSeverityEntity::Backlog => "BACKLOG",
-                ToDoSeverityEntity::Info => "INFO",
-                ToDoSeverityEntity::Warn => "WARN",
-                ToDoSeverityEntity::Error => "ERROR",
-            }
-        )
-    }
 }
 
 impl From<ToDoSeverity> for ToDoSeverityEntity {
     fn from(value: ToDoSeverity) -> Self {
         match value {
             ToDoSeverity::Unknown => Self::Unknown,
-            ToDoSeverity::Backlog => Self::Backlog,
+            ToDoSeverity::Debug => Self::Debug,
             ToDoSeverity::Info => Self::Info,
             ToDoSeverity::Warn => Self::Warn,
             ToDoSeverity::Error => Self::Error,
@@ -58,7 +45,7 @@ impl From<ToDoSeverityRequest> for ToDoSeverityEntity {
     fn from(value: ToDoSeverityRequest) -> Self {
         match value {
             ToDoSeverityRequest::Unknown => Self::Unknown,
-            ToDoSeverityRequest::Backlog => Self::Backlog,
+            ToDoSeverityRequest::Debug => Self::Debug,
             ToDoSeverityRequest::Info => Self::Info,
             ToDoSeverityRequest::Warn => Self::Warn,
             ToDoSeverityRequest::Error => Self::Error,

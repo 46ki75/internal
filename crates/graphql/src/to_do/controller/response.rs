@@ -21,7 +21,7 @@ pub struct ToDoResponse {
 pub enum ToDoSeverityReponse {
     #[default]
     Unknown,
-    Backlog,
+    Debug,
     Info,
     Warn,
     Error,
@@ -49,7 +49,7 @@ impl From<ToDoSeverityEntity> for ToDoSeverityReponse {
     fn from(value: ToDoSeverityEntity) -> Self {
         match value {
             ToDoSeverityEntity::Unknown => Self::Unknown,
-            ToDoSeverityEntity::Backlog => Self::Backlog,
+            ToDoSeverityEntity::Debug => Self::Debug,
             ToDoSeverityEntity::Info => Self::Info,
             ToDoSeverityEntity::Warn => Self::Warn,
             ToDoSeverityEntity::Error => Self::Error,

@@ -30,7 +30,8 @@ impl ToDoUseCase {
             properties.insert(
                 "Severity".to_string(),
                 PageProperty::Select(PageSelectProperty::from(
-                    severity.unwrap_or_default().to_string(),
+                    serde_plain::to_string(&severity.unwrap_or(ToDoSeverityEntity::Unknown))
+                        .unwrap_or("UNKNOWN".to_string()),
                 )),
             );
 
@@ -107,17 +108,10 @@ impl ToDoUseCase {
 
         let severity = if let PageProperty::Select(severity) = serverity_property {
             let select_name_str = severity.to_string();
-            Ok(if select_name_str == "BACKLOG" {
-                ToDoSeverityEntity::Backlog
-            } else if select_name_str == "INFO" {
-                ToDoSeverityEntity::Info
-            } else if select_name_str == "WARN" {
-                ToDoSeverityEntity::Warn
-            } else if select_name_str == "ERROR" {
-                ToDoSeverityEntity::Error
-            } else {
-                ToDoSeverityEntity::Unknown
-            })
+            let severity = serde_plain::from_str::<ToDoSeverityEntity>(&select_name_str)
+                .inspect_err(|e| tracing::warn!("Unexpected variant detected in severity: {}", e))
+                .unwrap_or(ToDoSeverityEntity::Unknown);
+            Ok(severity)
         } else {
             Err(ToDoUseCaseError::PropertyNotFound("Severity".to_string()))
         }?;
@@ -202,23 +196,19 @@ impl ToDoUseCase {
                     .get("Severity")
                     .and_then(|s| {
                         if let PageProperty::Select(select) = s {
-                            if let Some(select_name) = &select.select {
+                            select.select.as_ref().map(|select_name| {
                                 let select_name_str = select_name.to_string();
-
-                                if select_name_str == "BACKLOG" {
-                                    Some(ToDoSeverityEntity::Backlog)
-                                } else if select_name_str == "INFO" {
-                                    Some(ToDoSeverityEntity::Info)
-                                } else if select_name_str == "WARN" {
-                                    return Some(ToDoSeverityEntity::Warn);
-                                } else if select_name_str == "ERROR" {
-                                    return Some(ToDoSeverityEntity::Error);
-                                } else {
-                                    None
-                                }
-                            } else {
-                                None
-                            }
+                                let severity =
+                                    serde_plain::from_str::<ToDoSeverityEntity>(&select_name_str)
+                                        .inspect_err(|e| {
+                                            tracing::warn!(
+                                                "Unexpected variant detected in severity: {}",
+                                                e
+                                            )
+                                        })
+                                        .unwrap_or(ToDoSeverityEntity::Unknown);
+                                severity
+                            })
                         } else {
                             None
                         }

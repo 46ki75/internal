@@ -69,8 +69,8 @@ export const BookmarkContainer = component$(() => {
     }
   });
 
-  const name = useSignal<string | null>(null);
-  const url = useSignal<string | null>(null);
+  const name = useSignal("");
+  const url = useSignal("");
   const createBookmarkLoading = useSignal(false);
   const createBookmarkError = useSignal<string | null>(null);
 
@@ -152,16 +152,12 @@ export const BookmarkContainer = component$(() => {
       <ElmTextField
         label="Name"
         icon="pen"
-        onInput$={(_, input) => {
-          name.value = input.value;
-        }}
+        value={name}
       />
       <ElmTextField
         label="URL"
         icon="earth"
-        onInput$={(_, input) => {
-          url.value = input.value;
-        }}
+        value={url}
       />
 
       <ElmButton

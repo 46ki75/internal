@@ -42,18 +42,6 @@ export const Signin = component$<SigninProps>(
       innerError.value = e ? e : null;
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const onInputUsername = $((event: InputEvent, _: HTMLInputElement) => {
-      const target = event.target as HTMLInputElement;
-      username.value = target.value;
-    });
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const onInputPassword = $((event: InputEvent, _: HTMLInputElement) => {
-      const target = event.target as HTMLInputElement;
-      password.value = target.value;
-    });
-
     const handleClick = $(() => {
       if (!username.value || !password.value) {
         innerError.value = "Username and password are required.";
@@ -71,14 +59,14 @@ export const Signin = component$<SigninProps>(
         <ElmTextField
           label="username"
           icon="user"
-          onInput$={onInputUsername}
+          value={username}
           loading={isLoading}
           disabled={isDisabled}
         />
         <ElmTextField
           label="password"
           icon="lock"
-          onInput$={onInputPassword}
+          value={password}
           isPassword
           loading={isLoading}
           disabled={isDisabled}

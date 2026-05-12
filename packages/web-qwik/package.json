@@ -28,7 +28,7 @@
     "predeploy": "pnpm run build",
     "preview": "qwik build preview && vite preview --open",
     "start": "vite --open --mode ssr",
-    "storybook": "storybook dev -p 11071",
+    "storybook": "storybook dev -p 11071 --no-open",
     "qwik": "qwik"
   },
   "devDependencies": {

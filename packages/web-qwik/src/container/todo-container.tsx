@@ -90,7 +90,14 @@ export const TodoContainer = component$<TodoContainerProps>(
     useVisibleTask$(async () => {
       await execute();
     });
-    useOnWindow("focus", execute);
+    useOnWindow(
+      "focus",
+      $((event) => {
+        if (event.target === window) {
+          execute();
+        }
+      }),
+    );
 
     const updateStateStore = useStore<{
       updatingIds: Array<string>;

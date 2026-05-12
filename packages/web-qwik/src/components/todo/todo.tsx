@@ -12,6 +12,7 @@ import NotionIcon from "~/assets/notion.svg?url";
 import { mdiCalendar, mdiRefresh } from "@mdi/js";
 
 import { Temporal } from "@js-temporal/polyfill";
+import { components } from "~/openapi/schema";
 
 export interface DeadlineProps {
   class?: string;
@@ -66,6 +67,8 @@ export const Deadline = component$<DeadlineProps>(
   },
 );
 
+type Severity = components["schemas"]["ToDoSeverityResponse"];
+
 export interface TodoProps {
   class?: string;
 
@@ -75,18 +78,15 @@ export interface TodoProps {
   title: string;
   url: string;
   deadline?: string | null;
-  severity: "Unknown" | "Backlog" | "Info" | "Warn" | "Error";
+  severity: Severity;
   is_recurring: boolean;
   isLoading?: boolean;
   onClick$?: QRL<(id: string) => Promise<void>>;
 }
 
-const colorMap: Record<
-  "Unknown" | "Backlog" | "Info" | "Warn" | "Error",
-  string
-> = {
+const colorMap: Record<Severity, string> = {
   Unknown: "#868e9c",
-  Backlog: "#9a776b",
+  Debug: "#9a776b",
   Info: "#4c6da2",
   Warn: "#bfa056",
   Error: "#b34444",

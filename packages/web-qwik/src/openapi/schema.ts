@@ -241,16 +241,16 @@ export interface components {
             id: string;
             is_done: boolean;
             is_recurring: boolean;
-            severity: components["schemas"]["ToDoSeverityReponse"];
+            severity: components["schemas"]["ToDoSeverityResponse"];
             source: string;
             title: string;
             updated_at?: string | null;
             url: string;
         };
         /** @enum {string} */
-        ToDoSeverityReponse: "Unknown" | "Backlog" | "Info" | "Warn" | "Error";
+        ToDoSeverityRequest: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
         /** @enum {string} */
-        ToDoSeverityRequest: "Unknown" | "Backlog" | "Info" | "Warn" | "Error";
+        ToDoSeverityResponse: "Unknown" | "Debug" | "Info" | "Warn" | "Error";
         TypingDeleteRequest: {
             id: string;
         };

@@ -12,16 +12,16 @@ pub struct ToDoResponse {
     pub is_done: bool,
     pub is_recurring: bool,
     pub deadline: Option<String>,
-    pub severity: ToDoSeverityReponse,
+    pub severity: ToDoSeverityResponse,
     pub created_at: Option<String>,
     pub updated_at: Option<String>,
 }
 
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Serialize, ToSchema)]
-pub enum ToDoSeverityReponse {
+pub enum ToDoSeverityResponse {
     #[default]
     Unknown,
-    Backlog,
+    Debug,
     Info,
     Warn,
     Error,
@@ -45,11 +45,11 @@ impl From<ToDoEntity> for ToDoResponse {
     }
 }
 
-impl From<ToDoSeverityEntity> for ToDoSeverityReponse {
+impl From<ToDoSeverityEntity> for ToDoSeverityResponse {
     fn from(value: ToDoSeverityEntity) -> Self {
         match value {
             ToDoSeverityEntity::Unknown => Self::Unknown,
-            ToDoSeverityEntity::Backlog => Self::Backlog,
+            ToDoSeverityEntity::Debug => Self::Debug,
             ToDoSeverityEntity::Info => Self::Info,
             ToDoSeverityEntity::Warn => Self::Warn,
             ToDoSeverityEntity::Error => Self::Error,

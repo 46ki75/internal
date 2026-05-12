@@ -9,10 +9,11 @@ pub struct CreateToDoRequest {
 }
 
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Deserialize, ToSchema)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ToDoSeverityRequest {
     #[default]
     Unknown,
-    Backlog,
+    Debug,
     Info,
     Warn,
     Error,

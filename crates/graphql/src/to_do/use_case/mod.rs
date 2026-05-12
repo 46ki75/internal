@@ -74,7 +74,12 @@ impl ToDoUseCase {
             .properties
             .get("Deadline")
             .and_then(|deadline| match deadline {
-                PageProperty::Date(deadline) => deadline.date.clone().map(|d| d.to_string()),
+                PageProperty::Date(deadline) => deadline.date.as_ref().and_then(|d| {
+                    d.start.map(|start| match start {
+                        DateOrDateTime::Date(date) => date,
+                        DateOrDateTime::DateTime(dt) => dt.date(),
+                    })
+                }),
                 _ => None,
             });
 
@@ -110,8 +115,8 @@ impl ToDoUseCase {
             is_archived,
             deadline,
             severity,
-            created_at: Some(response.created_time.to_string()),
-            updated_at: Some(response.last_edited_time.to_string()),
+            created_at: Some(response.created_time.date()),
+            updated_at: Some(response.last_edited_time.date()),
         })
     }
 
@@ -120,6 +125,7 @@ impl ToDoUseCase {
         title: String,
         description: Option<String>,
         severity: Option<ToDoSeverityEntity>,
+        deadline: Option<time::Date>,
     ) -> Result<ToDoEntity, ToDoUseCaseError> {
         let properties = {
             let mut properties = std::collections::HashMap::new();
@@ -136,6 +142,19 @@ impl ToDoUseCase {
                 "Title".to_string(),
                 PageProperty::Title(PageTitleProperty::from(title.clone())),
             );
+
+            if let Some(deadline) = deadline {
+                properties.insert(
+                    "Deadline".to_string(),
+                    PageProperty::Date(PageDateProperty {
+                        date: Some(PageDatePropertyParameter {
+                            start: Some(DateOrDateTime::Date(deadline)),
+                            ..Default::default()
+                        }),
+                        ..Default::default()
+                    }),
+                );
+            }
 
             if let Some(description) = description {
                 properties.insert(
@@ -167,10 +186,10 @@ impl ToDoUseCase {
             is_done: false,
             is_recurring: false,
             is_archived: false,
-            deadline: None,
-            severity: ToDoSeverityEntity::Info,
-            created_at: Some(response.created_time.to_string()),
-            updated_at: Some(response.last_edited_time.to_string()),
+            deadline,
+            severity: severity.unwrap_or(ToDoSeverityEntity::Unknown),
+            created_at: Some(response.created_time.date()),
+            updated_at: Some(response.last_edited_time.date()),
         })
     }
 
@@ -228,6 +247,7 @@ mod tests {
                 "My Title".to_string(),
                 Some("My Description".to_string()),
                 None,
+                Some(time::Date::from_calendar_date(2024, time::Month::April, 4).unwrap()),
             )
             .await
             .unwrap();

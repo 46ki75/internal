@@ -12,13 +12,14 @@ pub struct ToDoResponse {
     pub is_done: bool,
     pub is_archived: bool,
     pub is_recurring: bool,
-    pub deadline: Option<String>,
+    pub deadline: Option<time::Date>,
     pub severity: ToDoSeverityResponse,
-    pub created_at: Option<String>,
-    pub updated_at: Option<String>,
+    pub created_at: Option<time::Date>,
+    pub updated_at: Option<time::Date>,
 }
 
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Serialize, ToSchema)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ToDoSeverityResponse {
     #[default]
     Unknown,

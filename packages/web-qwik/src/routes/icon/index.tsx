@@ -82,9 +82,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
     <div class={[styles["icon"], className]} style={style}>
       <ElmTextField
         label="Keyword"
-        onInput$={(event, element) => {
-          searchKeyword.value = element.value;
-        }}
+        value={searchKeyword}
       />
 
       <div class={styles["icon-content-type-group"]}>

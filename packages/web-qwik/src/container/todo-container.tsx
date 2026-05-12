@@ -30,6 +30,7 @@ import { Todo } from "~/components/todo/todo";
 import autoAnimate from "@formkit/auto-animate";
 
 import { paths } from "~/openapi/schema";
+import { TodoForm } from "~/components/todo/todo-form";
 
 export interface TodoContainerProps {
   class?: string;
@@ -39,6 +40,8 @@ export interface TodoContainerProps {
 
 type ToDo =
   paths["/api/v1/to-do"]["get"]["responses"]["200"]["content"]["application/json"][number];
+
+type Severity = ToDo["severity"];
 
 export const TodoContainer = component$<TodoContainerProps>(
   ({ class: className, style }) => {
@@ -90,7 +93,14 @@ export const TodoContainer = component$<TodoContainerProps>(
     useVisibleTask$(async () => {
       await execute();
     });
-    useOnWindow("focus", execute);
+    useOnWindow(
+      "focus",
+      $((event) => {
+        if (event.target === window) {
+          execute();
+        }
+      }),
+    );
 
     const updateStateStore = useStore<{
       updatingIds: Array<string>;
@@ -190,9 +200,43 @@ export const TodoContainer = component$<TodoContainerProps>(
       }
     });
 
+    const submit = $(
+      async ({
+        title,
+        severity,
+        deadline,
+      }: {
+        title: string;
+        severity: Severity;
+        deadline?: string;
+      }) => {
+        await authStore.tokens.refresh(authStore);
+        const accessToken = authStore.tokens.accessToken;
+
+        if (accessToken == null) throw new Error("Access token is null");
+
+        const res = await openApiClient.POST("/api/v1/to-do", {
+          params: {
+            header: { Authorization: `Bearer ${accessToken}` },
+          },
+          body: {
+            title: title,
+            severity: severity,
+            deadline: deadline,
+          },
+        });
+
+        if (res.data) {
+          todos.value = [...todos.value, res.data];
+        }
+      },
+    );
+
     return (
       <div class={[styles["todo-container"], className]} style={style}>
-        <ElmHeading level={3}>To Do</ElmHeading>
+        <ElmHeading level={2}>To Do</ElmHeading>
+
+        <TodoForm submit$={submit} />
 
         <div class={styles["sort-container"]}>
           <div

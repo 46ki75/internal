@@ -76,7 +76,12 @@ pub async fn create_to_do(
     let severity = request.severity.map(|s| s.into());
 
     let to_do: ToDoResponse = to_do_use_case
-        .create_to_do(request.title, request.description, severity)
+        .create_to_do(
+            request.title,
+            request.description,
+            severity,
+            request.deadline,
+        )
         .await?
         .into();
 

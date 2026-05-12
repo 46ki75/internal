@@ -6,6 +6,7 @@ import {
   NoSerialize,
   useComputed$,
   useSignal,
+  useTask$,
   useVisibleTask$,
 } from "@builder.io/qwik";
 
@@ -70,8 +71,9 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
   const fuseInstance = useSignal<NoSerialize<Fuse<BookmarkProps>> | null>(null);
   const searchKeyword = useSignal("");
 
-  const handleValueChange = $((value: string) => {
-    if (fuseInstance.value == null) {
+  useTask$(({ track }) => {
+    const keyword = track(() => searchKeyword.value);
+    if (fuseInstance.value == null && keyword !== "") {
       fuseInstance.value = noSerialize(
         new Fuse(bookmarks, {
           keys: [
@@ -82,8 +84,6 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
         }),
       );
     }
-
-    searchKeyword.value = value;
   });
 
   const searchResults = useComputed$(() => {
@@ -117,8 +117,7 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
       <ElmHeading level={3}>Search</ElmHeading>
       <ElmTextField
         label="Search"
-        value={searchKeyword.value}
-        onValueChange$={handleValueChange}
+        value={searchKeyword}
         onKeyDown$={handleKeyDown}
       />
 

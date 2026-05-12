@@ -24,7 +24,7 @@ reqwest = { version = "0.13", features = [
     "gzip",
     "brotli",
 ], default-features = false }
-async-graphql = "7.2.1"
+async-graphql = { version = "7.2.1", features = ["time"] }
 chrono = "0.4.43"
 lambda_http = "1.0.2"
 notionrs = { version = "0.25.0", features = ["rustls"] }
@@ -46,7 +46,7 @@ env_logger = { version = "0.11.9" }
 aws-sdk-ssm = "1.104.0"
 tracing-subscriber = { version = "0.3.22", features = ["ansi"] }
 tracing = "0.1.44"
-time = { version = "0.3.47", features = ["parsing"] }
+time = { version = "0.3.47", features = ["parsing", "serde-human-readable"] }
 bytes = "1.11.1"
 html-meta-scraper = "0.2.0"
 axum = "0.8.8"
@@ -60,7 +60,7 @@ aws-sdk-cognitoidentityprovider = "1.109.0"
 futures = "0.3.31"
 regex = "1.12.3"
 infer = "0.19.0"
-utoipa = "5.4.0"
+utoipa = { version = "5.4.0", features = ["time"] }
 utoipa-axum = "0.2.0"
 utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
 cached = { version = "0.59.0", features = ["async"] }

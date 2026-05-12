@@ -16,9 +16,11 @@ import { openApiClient } from "~/openapi/client";
 import {
   ElmButton,
   ElmInlineText,
+  ElmMdiIcon,
   ElmTextField,
   useLocalStorage,
 } from "@elmethis/qwik";
+import { mdiEarth, mdiPen } from "@mdi/js";
 
 export const BookmarkContainer = component$(() => {
   const authStore = useContext(AuthContext);
@@ -69,8 +71,8 @@ export const BookmarkContainer = component$(() => {
     }
   });
 
-  const name = useSignal<string | null>(null);
-  const url = useSignal<string | null>(null);
+  const name = useSignal("");
+  const url = useSignal("");
   const createBookmarkLoading = useSignal(false);
   const createBookmarkError = useSignal<string | null>(null);
 
@@ -151,17 +153,13 @@ export const BookmarkContainer = component$(() => {
 
       <ElmTextField
         label="Name"
-        icon="pen"
-        onInput$={(_, input) => {
-          name.value = input.value;
-        }}
+        icon={<ElmMdiIcon d={mdiPen} size="0.75rem" />}
+        value={name}
       />
       <ElmTextField
         label="URL"
-        icon="earth"
-        onInput$={(_, input) => {
-          url.value = input.value;
-        }}
+        icon={<ElmMdiIcon d={mdiEarth} size="0.75rem" />}
+        value={url}
       />
 
       <ElmButton

@@ -22,7 +22,7 @@ export const Primary: Story = {
     title: "Example ToDo Item",
     url: "https://www.notion.so/Example-ToDo-Item-1234567890abcdef1234567890abcdef",
     deadline: "2024-12-31",
-    severity: "Error",
+    severity: "ERROR",
     is_recurring: true,
     is_done: false,
     isLoading: false,

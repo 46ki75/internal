@@ -200,6 +200,8 @@ export interface components {
             url: string;
         };
         CreateToDoRequest: {
+            /** Format: date */
+            deadline?: string | null;
             description?: string | null;
             severity?: null | components["schemas"]["ToDoSeverityRequest"];
             title: string;
@@ -235,7 +237,9 @@ export interface components {
             url: string;
         };
         ToDoResponse: {
+            /** Format: date */
             created_at?: string | null;
+            /** Format: date */
             deadline?: string | null;
             description?: string | null;
             id: string;
@@ -245,13 +249,14 @@ export interface components {
             severity: components["schemas"]["ToDoSeverityResponse"];
             source: string;
             title: string;
+            /** Format: date */
             updated_at?: string | null;
             url: string;
         };
         /** @enum {string} */
         ToDoSeverityRequest: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
         /** @enum {string} */
-        ToDoSeverityResponse: "Unknown" | "Debug" | "Info" | "Warn" | "Error";
+        ToDoSeverityResponse: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
         TypingDeleteRequest: {
             id: string;
         };

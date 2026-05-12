@@ -74,7 +74,12 @@ impl ToDoUseCase {
             .properties
             .get("Deadline")
             .and_then(|deadline| match deadline {
-                PageProperty::Date(deadline) => deadline.date.clone().map(|d| d.to_string()),
+                PageProperty::Date(deadline) => deadline.date.as_ref().and_then(|d| {
+                    d.start.map(|start| match start {
+                        DateOrDateTime::Date(date) => date,
+                        DateOrDateTime::DateTime(dt) => dt.date(),
+                    })
+                }),
                 _ => None,
             });
 
@@ -110,8 +115,8 @@ impl ToDoUseCase {
             is_archived,
             deadline,
             severity,
-            created_at: Some(response.created_time.to_string()),
-            updated_at: Some(response.last_edited_time.to_string()),
+            created_at: Some(response.created_time.date()),
+            updated_at: Some(response.last_edited_time.date()),
         })
     }
 
@@ -183,8 +188,8 @@ impl ToDoUseCase {
             is_archived: false,
             deadline: None,
             severity: ToDoSeverityEntity::Info,
-            created_at: Some(response.created_time.to_string()),
-            updated_at: Some(response.last_edited_time.to_string()),
+            created_at: Some(response.created_time.date()),
+            updated_at: Some(response.last_edited_time.date()),
         })
     }
 

@@ -24,7 +24,7 @@ reqwest = { version = "0.13", features = [
     "gzip",
     "brotli",
 ], default-features = false }
-async-graphql = "7.2.1"
+async-graphql = { version = "7.2.1", features = ["time"] }
 chrono = "0.4.43"
 lambda_http = "1.0.2"
 notionrs = { version = "0.25.0", features = ["rustls"] }
@@ -46,7 +46,7 @@ env_logger = { version = "0.11.9" }
 aws-sdk-ssm = "1.104.0"
 tracing-subscriber = { version = "0.3.22", features = ["ansi"] }
 tracing = "0.1.44"
-time = { version = "0.3.47", features = ["parsing"] }
+time = { version = "0.3.47", features = ["parsing", "serde-human-readable"] }
 bytes = "1.11.1"
 html-meta-scraper = "0.2.0"
 axum = "0.8.8"

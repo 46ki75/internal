@@ -12,10 +12,10 @@ pub struct ToDo {
     pub description: Option<String>,
     pub is_done: bool,
     pub is_recurring: bool,
-    pub deadline: Option<String>,
+    pub deadline: Option<time::Date>,
     pub severity: ToDoSeverity,
-    pub created_at: Option<String>,
-    pub updated_at: Option<String>,
+    pub created_at: Option<time::Date>,
+    pub updated_at: Option<time::Date>,
 }
 
 #[derive(async_graphql::Enum, Default, Debug, Clone, Copy, PartialEq, Eq)]

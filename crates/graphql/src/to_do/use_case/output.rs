@@ -13,10 +13,10 @@ pub struct ToDoEntity {
     pub is_done: bool,
     pub is_recurring: bool,
     pub is_archived: bool,
-    pub deadline: Option<String>,
+    pub deadline: Option<time::Date>,
     pub severity: ToDoSeverityEntity,
-    pub created_at: Option<String>,
-    pub updated_at: Option<String>,
+    pub created_at: Option<time::Date>,
+    pub updated_at: Option<time::Date>,
 }
 
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]

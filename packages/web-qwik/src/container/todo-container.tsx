@@ -115,7 +115,6 @@ export const TodoContainer = component$<TodoContainerProps>(
         });
 
         if (data) {
-          console.log(data);
           const index = todos.value.findIndex((item) => item.id === id);
           if (index !== -1) {
             todos.value = todos.value.map((item, i) =>

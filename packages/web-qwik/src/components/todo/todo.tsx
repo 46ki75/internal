@@ -83,11 +83,11 @@ export interface TodoProps {
   is_recurring: boolean;
   is_done: boolean;
   isLoading?: boolean;
-  onClick$?: QRL<(id: string, is_done: boolean) => Promise<void>>;
+  onClick$: QRL<(id: string, is_done: boolean) => Promise<void>>;
 }
 
-export const Todo = component$<TodoProps>(
-  ({
+export const Todo = component$<TodoProps>((props) => {
+  const {
     class: className,
     style,
     id,
@@ -98,72 +98,71 @@ export const Todo = component$<TodoProps>(
     is_recurring,
     is_done,
     isLoading,
-    onClick$,
-  }) => {
-    return (
-      <div
-        key={id}
+  } = props;
+
+  return (
+    <div
+      key={id}
+      class={[
+        styles["todo-item-row"],
+        className,
+        {
+          [styles["loading"]]: isLoading,
+          [styles["is-done"]]: is_done,
+        },
+      ]}
+      style={style}
+    >
+      <span
         class={[
-          styles["todo-item-row"],
-          className,
+          styles["todo-item-checkbox"],
           {
-            [styles["loading"]]: isLoading,
             [styles["is-done"]]: is_done,
           },
         ]}
-        style={style}
+        onClick$={() => props.onClick$(props.id, props.is_done)}
+      ></span>
+
+      <ElmInlineIcon
+        src={NotionIcon}
+        class={styles["todo-item-notion-icon"]}
+      />
+      <ElmMdiIcon
+        d={mdiRefresh}
+        size="1.5rem"
+        color={is_recurring ? "#59b57c" : "gray"}
+        class={[
+          styles["todo-item-recurring-icon"],
+          {
+            [styles["disabled"]]: !is_recurring,
+          },
+        ]}
+      />
+
+      <TodoSeverity
+        class={styles["todo-item-severity"]}
+        severity={severity}
+      />
+
+      <ElmMdiIcon
+        d={mdiCalendar}
+        size="1.25rem"
+        style={{
+          opacity: deadline ? 1 : 0.25,
+        }}
+        class={styles["todo-item-deadline-icon"]}
+      />
+
+      <Deadline deadline={deadline} class={styles["todo-item-deadline"]} />
+
+      <a
+        href={url.replace("https://", "notion://")}
+        class={styles["todo-item-text"]}
       >
-        <span
-          class={[
-            styles["todo-item-checkbox"],
-            {
-              [styles["is-done"]]: is_done,
-            },
-          ]}
-          onClick$={() => onClick$?.(id, !is_done)}
-        ></span>
+        {title}
+      </a>
 
-        <ElmInlineIcon
-          src={NotionIcon}
-          class={styles["todo-item-notion-icon"]}
-        />
-        <ElmMdiIcon
-          d={mdiRefresh}
-          size="1.5rem"
-          color={is_recurring ? "#59b57c" : "gray"}
-          class={[
-            styles["todo-item-recurring-icon"],
-            {
-              [styles["disabled"]]: !is_recurring,
-            },
-          ]}
-        />
-
-        <TodoSeverity
-          class={styles["todo-item-severity"]}
-          severity={severity}
-        />
-
-        <ElmMdiIcon
-          d={mdiCalendar}
-          size="1.25rem"
-          style={{
-            opacity: deadline ? 1 : 0.25,
-          }}
-          class={styles["todo-item-deadline-icon"]}
-        />
-
-        <Deadline deadline={deadline} class={styles["todo-item-deadline"]} />
-
-        <a
-          href={url.replace("https://", "notion://")}
-          class={styles["todo-item-text"]}
-        >
-          {title}
-        </a>
-
-        {isLoading && <div class={styles["loading-bar"]}></div>}
-      </div>
-    );
-  },
-);
+      {isLoading && <div class={styles["loading-bar"]}></div>}
+    </div>
+  );
+});

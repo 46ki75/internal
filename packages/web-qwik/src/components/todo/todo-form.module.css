@@ -9,7 +9,7 @@
     grid-template-rows: auto;
     grid-template-areas: "severity-select title-input submit-button";
 
-    @container (width < 700px) {
+    @container (width < 650px) {
       grid-template-columns: 1fr 1fr;
       grid-template-rows: auto auto;
       grid-template-areas:

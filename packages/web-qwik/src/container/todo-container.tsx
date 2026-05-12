@@ -235,7 +235,7 @@ export const TodoContainer = component$<TodoContainerProps>(
           ) : (
             sortedTodos.value?.map((item) => (
               <Todo
-                key={item.id}
+                key={`${item.id}-${item.is_done}`}
                 id={item.id}
                 title={item.title}
                 url={item.url}

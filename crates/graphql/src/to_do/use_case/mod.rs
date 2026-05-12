@@ -69,6 +69,7 @@ impl ToDoUseCase {
             source: "Notion:todo".to_string(),
             is_done: false,
             is_recurring: false,
+            is_archived: false,
             deadline: None,
             severity: ToDoSeverityEntity::Info,
             created_at: Some(response.created_time.to_string()),
@@ -116,6 +117,26 @@ impl ToDoUseCase {
             Err(ToDoUseCaseError::PropertyNotFound("Severity".to_string()))
         }?;
 
+        let is_recurring =
+            match properties
+                .get("IsRecurring")
+                .ok_or(ToDoUseCaseError::PropertyNotFound(
+                    "IsRecurring".to_string(),
+                ))? {
+                PageProperty::Checkbox(is_done) => Ok(is_done.checkbox),
+                _ => Err(ToDoUseCaseError::PropertyNotFound(
+                    "IsRecurring".to_string(),
+                )),
+            }?;
+
+        let is_archived = match properties
+            .get("IsArchived")
+            .ok_or(ToDoUseCaseError::PropertyNotFound("IsArchived".to_string()))?
+        {
+            PageProperty::Checkbox(is_done) => Ok(is_done.checkbox),
+            _ => Err(ToDoUseCaseError::PropertyNotFound("IsArchived".to_string())),
+        }?;
+
         Ok(ToDoEntity {
             id: response.id,
             url: response.url,
@@ -123,7 +144,8 @@ impl ToDoUseCase {
             title,
             description: None,
             is_done,
-            is_recurring: false,
+            is_recurring,
+            is_archived,
             deadline: None,
             severity,
             created_at: Some(response.created_time.to_string()),
@@ -133,7 +155,7 @@ impl ToDoUseCase {
 
     pub async fn list_notion_to_do(&self) -> Result<Vec<ToDoEntity>, ToDoUseCaseError> {
         let filter = notionrs_types::object::request::filter::Filter::and(vec![
-            notionrs_types::object::request::filter::Filter::checkbox_is_not_checked("IsDone"),
+            notionrs_types::object::request::filter::Filter::checkbox_is_not_checked("IsArchived"),
         ]);
 
         let response = self.to_do_repository.list_notion_to_do(filter).await?;
@@ -178,6 +200,15 @@ impl ToDoUseCase {
                     _ => Err(ToDoUseCaseError::PropertyNotFound(
                         "IsRecurring".to_string(),
                     )),
+                }?;
+
+                let is_archived = match result
+                    .properties
+                    .get("IsArchived")
+                    .ok_or(ToDoUseCaseError::PropertyNotFound("IsArchived".to_string()))?
+                {
+                    PageProperty::Checkbox(is_done) => Ok(is_done.checkbox),
+                    _ => Err(ToDoUseCaseError::PropertyNotFound("IsArchived".to_string())),
                 }?;
 
                 let deadline =
@@ -226,6 +257,7 @@ impl ToDoUseCase {
                     description,
                     is_done,
                     is_recurring,
+                    is_archived,
                     deadline,
                     severity,
                     created_at,

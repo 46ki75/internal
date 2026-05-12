@@ -86,11 +86,11 @@ export interface TodoProps {
 }
 
 const colorMap: Record<Severity, string> = {
-  Unknown: "#868e9c",
-  Debug: "#9a776b",
-  Info: "#4c6da2",
-  Warn: "#bfa056",
-  Error: "#b34444",
+  UNKNOWN: "#868e9c",
+  DEBUG: "#9a776b",
+  INFO: "#4c6da2",
+  WARN: "#bfa056",
+  ERROR: "#b34444",
 };
 
 export const Todo = component$<TodoProps>(

@@ -26,7 +26,13 @@ export interface TodoFormProps {
 
   style?: CSSProperties;
 
-  submit$: QRL<(t: { title: string; severity: Severity }) => Promise<void>>;
+  submit$: QRL<
+    (t: {
+      title: string;
+      severity: Severity;
+      deadline: string;
+    }) => Promise<void>
+  >;
 }
 
 export const TodoForm = component$<TodoFormProps>(
@@ -43,6 +49,7 @@ export const TodoForm = component$<TodoFormProps>(
 
     const title = useSignal("");
     const selectedSeverity = useSignal<Severity>("INFO");
+    const deadline = useSignal<string>("");
     const isLoading = useSignal(false);
     const error = useSignal<string | null>(null);
 
@@ -51,9 +58,14 @@ export const TodoForm = component$<TodoFormProps>(
       error.value = null;
 
       try {
-        await submit$({ title: title.value, severity: selectedSeverity.value });
+        await submit$({
+          title: title.value,
+          severity: selectedSeverity.value,
+          deadline: deadline.value,
+        });
         title.value = "";
         selectedSeverity.value = "INFO";
+        deadline.value = "";
       } catch (e) {
         if (e instanceof Error) {
           error.value = e.message;
@@ -80,6 +92,14 @@ export const TodoForm = component$<TodoFormProps>(
             label="Title"
             value={title}
             loading={isLoading.value}
+          />
+          <input
+            class={styles["deadline-input"]}
+            type="date"
+            value={deadline.value}
+            onInput$={(e) =>
+              (deadline.value = (e.target as HTMLInputElement).value)
+            }
           />
           <ElmButton
             class={styles["submit-button"]}

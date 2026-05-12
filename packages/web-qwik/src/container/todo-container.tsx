@@ -201,7 +201,15 @@ export const TodoContainer = component$<TodoContainerProps>(
     });
 
     const submit = $(
-      async ({ title, severity }: { title: string; severity: Severity }) => {
+      async ({
+        title,
+        severity,
+        deadline,
+      }: {
+        title: string;
+        severity: Severity;
+        deadline: string;
+      }) => {
         await authStore.tokens.refresh(authStore);
         const accessToken = authStore.tokens.accessToken;
 
@@ -214,6 +222,7 @@ export const TodoContainer = component$<TodoContainerProps>(
           body: {
             title: title,
             severity: severity,
+            deadline: deadline,
           },
         });
 

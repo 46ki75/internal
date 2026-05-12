@@ -109,13 +109,19 @@ export const TodoContainer = component$<TodoContainerProps>(
 
         if (accessToken == null) return;
 
-        await openApiClient.PUT("/api/v1/to-do", {
+        const { data } = await openApiClient.PUT("/api/v1/to-do", {
           params: { header: { Authorization: `Bearer ${accessToken}` } },
           body: { id: id, is_done: is_done },
         });
 
-        if (todos.value != null) {
-          todos.value = todos.value?.filter((item) => item.id !== id);
+        if (data) {
+          console.log(data);
+          const index = todos.value.findIndex((item) => item.id === id);
+          if (index !== -1) {
+            todos.value = todos.value.map((item, i) =>
+              i === index ? data : item,
+            );
+          }
         }
       } finally {
         const index = updateStateStore.updatingIds.indexOf(id);

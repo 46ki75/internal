@@ -14,7 +14,9 @@
     "checkbox notion-icon recurring-icon severity deadline-icon deadline"
     "checkbox text text text text text";
 
-  transition: opacity 200ms;
+  transition:
+    opacity 200ms,
+    background-color 200ms;
 
   &.is-done {
     opacity: 0.5;

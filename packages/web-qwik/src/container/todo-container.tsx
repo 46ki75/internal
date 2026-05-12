@@ -136,6 +136,14 @@ export const TodoContainer = component$<TodoContainerProps>(
 
       const sorted = [...todos.value];
 
+      const isDoneSortFn = (
+        a: (typeof todos.value)[0],
+        b: (typeof todos.value)[0],
+      ) => {
+        if (a.is_done === b.is_done) return 0;
+        return a.is_done ? 1 : -1;
+      };
+
       const deadlineSortFn = (
         a: (typeof todos.value)[0],
         b: (typeof todos.value)[0],
@@ -166,11 +174,13 @@ export const TodoContainer = component$<TodoContainerProps>(
 
       if (sort.value === "deadline") {
         return sorted.sort(
-          (a, b) => deadlineSortFn(a, b) || severitySortFn(a, b),
+          (a, b) =>
+            isDoneSortFn(a, b) || deadlineSortFn(a, b) || severitySortFn(a, b),
         );
       } else {
         return sorted.sort(
-          (a, b) => severitySortFn(a, b) || deadlineSortFn(a, b),
+          (a, b) =>
+            isDoneSortFn(a, b) || severitySortFn(a, b) || deadlineSortFn(a, b),
         );
       }
     });

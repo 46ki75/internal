@@ -1,0 +1,26 @@
+.todo-severity {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 0.125rem 0.25rem;
+  width: 5rem;
+  user-select: none;
+  opacity: 0.8;
+  color: white;
+  background-color: var(--color);
+  border: 1px solid var(--color);
+  border-radius: 0.25rem;
+  text-transform: uppercase;
+  text-align: center;
+  font-family: monospace;
+
+  .icon {
+    fill: oklch(from white l c h / 75%);
+  }
+
+  .text {
+    flex-grow: 1;
+    text-align: center;
+  }
+}

@@ -13,6 +13,7 @@ import { mdiCalendar, mdiRefresh } from "@mdi/js";
 
 import { Temporal } from "@js-temporal/polyfill";
 import { components } from "~/openapi/schema";
+import { TodoSeverity } from "./todo-severity";
 
 export interface DeadlineProps {
   class?: string;
@@ -85,14 +86,6 @@ export interface TodoProps {
   onClick$?: QRL<(id: string, is_done: boolean) => Promise<void>>;
 }
 
-const colorMap: Record<Severity, string> = {
-  UNKNOWN: "#868e9c",
-  DEBUG: "#9a776b",
-  INFO: "#4c6da2",
-  WARN: "#bfa056",
-  ERROR: "#b34444",
-};
-
 export const Todo = component$<TodoProps>(
   ({
     class: className,
@@ -146,12 +139,10 @@ export const Todo = component$<TodoProps>(
           ]}
         />
 
-        <span
+        <TodoSeverity
           class={styles["todo-item-severity"]}
-          style={{ "--color": colorMap[severity] }}
-        >
-          {severity}
-        </span>
+          severity={severity}
+        />
 
         <ElmMdiIcon
           d={mdiCalendar}

@@ -66,16 +66,23 @@ export const TodoForm = component$<TodoFormProps>(
     });
 
     return (
-      <div>
-        <div class={[styles["todo-form"], className]} style={style}>
+      <div class={[styles.wrapper, className]} style={style}>
+        <div class={[styles["todo-form-kit"], className]} style={style}>
           <ElmSelect
+            class={styles["severity-select"]}
             label="Severity"
             options={options}
             selectedOptionId={selectedSeverity}
             loading={isLoading.value}
           />
-          <ElmTextField label="Title" value={title} loading={isLoading.value} />
+          <ElmTextField
+            class={styles["title-input"]}
+            label="Title"
+            value={title}
+            loading={isLoading.value}
+          />
           <ElmButton
+            class={styles["submit-button"]}
             onClick$={handleSubmit}
             loading={isLoading.value}
             disabled={title.value.trim() === ""}

@@ -120,6 +120,7 @@ impl ToDoUseCase {
         title: String,
         description: Option<String>,
         severity: Option<ToDoSeverityEntity>,
+        deadline: Option<time::Date>,
     ) -> Result<ToDoEntity, ToDoUseCaseError> {
         let properties = {
             let mut properties = std::collections::HashMap::new();
@@ -136,6 +137,19 @@ impl ToDoUseCase {
                 "Title".to_string(),
                 PageProperty::Title(PageTitleProperty::from(title.clone())),
             );
+
+            if let Some(deadline) = deadline {
+                properties.insert(
+                    "Deadline".to_string(),
+                    PageProperty::Date(PageDateProperty {
+                        date: Some(PageDatePropertyParameter {
+                            start: Some(DateOrDateTime::Date(deadline)),
+                            ..Default::default()
+                        }),
+                        ..Default::default()
+                    }),
+                );
+            }
 
             if let Some(description) = description {
                 properties.insert(
@@ -228,6 +242,7 @@ mod tests {
                 "My Title".to_string(),
                 Some("My Description".to_string()),
                 None,
+                Some(time::Date::from_calendar_date(2024, time::Month::April, 4).unwrap()),
             )
             .await
             .unwrap();

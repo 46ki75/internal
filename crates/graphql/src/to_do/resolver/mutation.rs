@@ -28,7 +28,7 @@ impl ToDoMutationResolver {
         let severity = input.severity.map(|s| s.into());
 
         let to_do = to_do_use_case
-            .create_to_do(input.title, input.description, severity)
+            .create_to_do(input.title, input.description, severity, None)
             .await
             .map_err(|e| e.to_string())?
             .into();

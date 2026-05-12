@@ -6,6 +6,7 @@ pub struct CreateToDoRequest {
     pub title: String,
     pub description: Option<String>,
     pub severity: Option<ToDoSeverityRequest>,
+    pub deadline: Option<time::Date>,
 }
 
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Deserialize, ToSchema)]

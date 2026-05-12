@@ -18,6 +18,103 @@ pub struct ToDoUseCase {
 }
 
 impl ToDoUseCase {
+    fn convert_page_response_to_to_do_entity(
+        &self,
+        response: &PageResponse,
+    ) -> Result<ToDoEntity, ToDoUseCaseError> {
+        let id = response.id.clone();
+
+        let url = response.url.clone();
+
+        let source = String::from("Notion:todo");
+
+        let title = response
+            .properties
+            .get("Title")
+            .ok_or(ToDoUseCaseError::PropertyNotFound("title".to_string()))?
+            .to_string();
+
+        let description = response.properties.get("Description").and_then(|d| {
+            let description = d.to_string();
+            if description.trim().is_empty() {
+                None
+            } else {
+                Some(description)
+            }
+        });
+
+        let is_done = match response
+            .properties
+            .get("IsDone")
+            .ok_or(ToDoUseCaseError::PropertyNotFound("IsDone".to_string()))?
+        {
+            PageProperty::Checkbox(is_done) => Ok(is_done.checkbox),
+            _ => Err(ToDoUseCaseError::PropertyNotFound("IsDone".to_string())),
+        }?;
+
+        let is_recurring = match response.properties.get("IsRecurring").ok_or(
+            ToDoUseCaseError::PropertyNotFound("IsRecurring".to_string()),
+        )? {
+            PageProperty::Checkbox(is_done) => Ok(is_done.checkbox),
+            _ => Err(ToDoUseCaseError::PropertyNotFound(
+                "IsRecurring".to_string(),
+            )),
+        }?;
+
+        let is_archived = match response
+            .properties
+            .get("IsArchived")
+            .ok_or(ToDoUseCaseError::PropertyNotFound("IsArchived".to_string()))?
+        {
+            PageProperty::Checkbox(is_done) => Ok(is_done.checkbox),
+            _ => Err(ToDoUseCaseError::PropertyNotFound("IsArchived".to_string())),
+        }?;
+
+        let deadline = response
+            .properties
+            .get("Deadline")
+            .and_then(|deadline| match deadline {
+                PageProperty::Date(deadline) => deadline.date.clone().map(|d| d.to_string()),
+                _ => None,
+            });
+
+        let severity: ToDoSeverityEntity = response
+            .properties
+            .get("Severity")
+            .and_then(|s| {
+                if let PageProperty::Select(select) = s {
+                    select.select.as_ref().map(|select_name| {
+                        let select_name_str = select_name.to_string();
+                        let severity =
+                            serde_plain::from_str::<ToDoSeverityEntity>(&select_name_str)
+                                .inspect_err(|e| {
+                                    tracing::warn!("Unexpected variant detected in severity: {}", e)
+                                })
+                                .unwrap_or(ToDoSeverityEntity::Unknown);
+                        severity
+                    })
+                } else {
+                    None
+                }
+            })
+            .unwrap_or(ToDoSeverityEntity::Unknown);
+
+        Ok(ToDoEntity {
+            id,
+            url,
+            source,
+            title,
+            description,
+            is_done,
+            is_recurring,
+            is_archived,
+            deadline,
+            severity,
+            created_at: Some(response.created_time.to_string()),
+            updated_at: Some(response.last_edited_time.to_string()),
+        })
+    }
+
     pub async fn create_to_do(
         &self,
         title: String,
@@ -89,106 +186,11 @@ impl ToDoUseCase {
             PageProperty::Checkbox(PageCheckboxProperty::from(is_done)),
         );
 
-        let result = self.to_do_repository.update_to_do(id, properties).await?;
+        let page_response = self.to_do_repository.update_to_do(id, properties).await?;
 
-        let id = result.id.clone();
+        let to_do_entity = self.convert_page_response_to_to_do_entity(&page_response)?;
 
-        let url = result.url.clone();
-
-        let source = String::from("Notion:todo");
-
-        let title = result
-            .properties
-            .get("Title")
-            .ok_or(ToDoUseCaseError::PropertyNotFound("title".to_string()))?
-            .to_string();
-
-        let description = result.properties.get("Description").and_then(|d| {
-            let description = d.to_string();
-            if description.trim().is_empty() {
-                None
-            } else {
-                Some(description)
-            }
-        });
-
-        let is_done = match result
-            .properties
-            .get("IsDone")
-            .ok_or(ToDoUseCaseError::PropertyNotFound("IsDone".to_string()))?
-        {
-            PageProperty::Checkbox(is_done) => Ok(is_done.checkbox),
-            _ => Err(ToDoUseCaseError::PropertyNotFound("IsDone".to_string())),
-        }?;
-
-        let is_recurring =
-            match result
-                .properties
-                .get("IsRecurring")
-                .ok_or(ToDoUseCaseError::PropertyNotFound(
-                    "IsRecurring".to_string(),
-                ))? {
-                PageProperty::Checkbox(is_done) => Ok(is_done.checkbox),
-                _ => Err(ToDoUseCaseError::PropertyNotFound(
-                    "IsRecurring".to_string(),
-                )),
-            }?;
-
-        let is_archived = match result
-            .properties
-            .get("IsArchived")
-            .ok_or(ToDoUseCaseError::PropertyNotFound("IsArchived".to_string()))?
-        {
-            PageProperty::Checkbox(is_done) => Ok(is_done.checkbox),
-            _ => Err(ToDoUseCaseError::PropertyNotFound("IsArchived".to_string())),
-        }?;
-
-        let deadline = result
-            .properties
-            .get("Deadline")
-            .and_then(|deadline| match deadline {
-                PageProperty::Date(deadline) => deadline.date.clone().map(|d| d.to_string()),
-                _ => None,
-            });
-
-        let severity: ToDoSeverityEntity = result
-            .properties
-            .get("Severity")
-            .and_then(|s| {
-                if let PageProperty::Select(select) = s {
-                    select.select.as_ref().map(|select_name| {
-                        let select_name_str = select_name.to_string();
-                        let severity =
-                            serde_plain::from_str::<ToDoSeverityEntity>(&select_name_str)
-                                .inspect_err(|e| {
-                                    tracing::warn!("Unexpected variant detected in severity: {}", e)
-                                })
-                                .unwrap_or(ToDoSeverityEntity::Unknown);
-                        severity
-                    })
-                } else {
-                    None
-                }
-            })
-            .unwrap_or(ToDoSeverityEntity::Unknown);
-
-        let created_at = Some(result.created_time.to_string());
-        let updated_at = Some(result.last_edited_time.to_string());
-
-        Ok(ToDoEntity {
-            id,
-            url,
-            source,
-            title,
-            description,
-            is_done,
-            is_recurring,
-            is_archived,
-            deadline,
-            severity,
-            created_at,
-            updated_at,
-        })
+        Ok(to_do_entity)
     }
 
     pub async fn list_notion_to_do(&self) -> Result<Vec<ToDoEntity>, ToDoUseCaseError> {
@@ -200,107 +202,9 @@ impl ToDoUseCase {
 
         let todos = response
             .iter()
-            .map(|result| {
-                let id = result.id.clone();
-
-                let url = result.url.clone();
-
-                let source = String::from("Notion:todo");
-
-                let title = result
-                    .properties
-                    .get("Title")
-                    .ok_or(ToDoUseCaseError::PropertyNotFound("title".to_string()))?
-                    .to_string();
-
-                let description = result.properties.get("Description").and_then(|d| {
-                    let description = d.to_string();
-                    if description.trim().is_empty() {
-                        None
-                    } else {
-                        Some(description)
-                    }
-                });
-
-                let is_done = match result
-                    .properties
-                    .get("IsDone")
-                    .ok_or(ToDoUseCaseError::PropertyNotFound("IsDone".to_string()))?
-                {
-                    PageProperty::Checkbox(is_done) => Ok(is_done.checkbox),
-                    _ => Err(ToDoUseCaseError::PropertyNotFound("IsDone".to_string())),
-                }?;
-
-                let is_recurring = match result.properties.get("IsRecurring").ok_or(
-                    ToDoUseCaseError::PropertyNotFound("IsRecurring".to_string()),
-                )? {
-                    PageProperty::Checkbox(is_done) => Ok(is_done.checkbox),
-                    _ => Err(ToDoUseCaseError::PropertyNotFound(
-                        "IsRecurring".to_string(),
-                    )),
-                }?;
-
-                let is_archived = match result
-                    .properties
-                    .get("IsArchived")
-                    .ok_or(ToDoUseCaseError::PropertyNotFound("IsArchived".to_string()))?
-                {
-                    PageProperty::Checkbox(is_done) => Ok(is_done.checkbox),
-                    _ => Err(ToDoUseCaseError::PropertyNotFound("IsArchived".to_string())),
-                }?;
-
-                let deadline =
-                    result
-                        .properties
-                        .get("Deadline")
-                        .and_then(|deadline| match deadline {
-                            PageProperty::Date(deadline) => {
-                                deadline.date.clone().map(|d| d.to_string())
-                            }
-                            _ => None,
-                        });
-
-                let severity: ToDoSeverityEntity = result
-                    .properties
-                    .get("Severity")
-                    .and_then(|s| {
-                        if let PageProperty::Select(select) = s {
-                            select.select.as_ref().map(|select_name| {
-                                let select_name_str = select_name.to_string();
-                                let severity =
-                                    serde_plain::from_str::<ToDoSeverityEntity>(&select_name_str)
-                                        .inspect_err(|e| {
-                                            tracing::warn!(
-                                                "Unexpected variant detected in severity: {}",
-                                                e
-                                            )
-                                        })
-                                        .unwrap_or(ToDoSeverityEntity::Unknown);
-                                severity
-                            })
-                        } else {
-                            None
-                        }
-                    })
-                    .unwrap_or(ToDoSeverityEntity::Unknown);
-
-                let created_at = Some(result.created_time.to_string());
-                let updated_at = Some(result.last_edited_time.to_string());
-
-                Ok(ToDoEntity {
-                    id,
-                    url,
-                    source,
-                    title,
-                    description,
-                    is_done,
-                    is_recurring,
-                    is_archived,
-                    deadline,
-                    severity,
-                    created_at,
-                    updated_at,
-                })
+            .map(|page_response| {
+                let to_do_entity = self.convert_page_response_to_to_do_entity(page_response)?;
+                Ok(to_do_entity)
             })
             .collect::<Result<Vec<ToDoEntity>, ToDoUseCaseError>>()?;
 

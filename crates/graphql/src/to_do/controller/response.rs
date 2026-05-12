@@ -19,6 +19,7 @@ pub struct ToDoResponse {
 }
 
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Serialize, ToSchema)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ToDoSeverityResponse {
     #[default]
     Unknown,

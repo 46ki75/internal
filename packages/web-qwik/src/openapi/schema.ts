@@ -251,7 +251,7 @@ export interface components {
         /** @enum {string} */
         ToDoSeverityRequest: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
         /** @enum {string} */
-        ToDoSeverityResponse: "Unknown" | "Debug" | "Info" | "Warn" | "Error";
+        ToDoSeverityResponse: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
         TypingDeleteRequest: {
             id: string;
         };

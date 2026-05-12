@@ -98,7 +98,7 @@ export const TodoContainer = component$<TodoContainerProps>(
       updatingIds: [],
     });
 
-    const handleUpdate = $(async (id: string) => {
+    const handleUpdate = $(async (id: string, is_done: boolean) => {
       if (updateStateStore.updatingIds.includes(id)) return;
 
       updateStateStore.updatingIds.push(id);
@@ -109,13 +109,18 @@ export const TodoContainer = component$<TodoContainerProps>(
 
         if (accessToken == null) return;
 
-        await openApiClient.PUT("/api/v1/to-do", {
+        const { data } = await openApiClient.PUT("/api/v1/to-do", {
           params: { header: { Authorization: `Bearer ${accessToken}` } },
-          body: { id: id, is_done: true },
+          body: { id: id, is_done: is_done },
         });
 
-        if (todos.value != null) {
-          todos.value = todos.value?.filter((item) => item.id !== id);
+        if (data) {
+          const index = todos.value.findIndex((item) => item.id === id);
+          if (index !== -1) {
+            todos.value = todos.value.map((item, i) =>
+              i === index ? data : item,
+            );
+          }
         }
       } finally {
         const index = updateStateStore.updatingIds.indexOf(id);
@@ -135,6 +140,14 @@ export const TodoContainer = component$<TodoContainerProps>(
       if (!todos.value) return [];
 
       const sorted = [...todos.value];
+
+      const isDoneSortFn = (
+        a: (typeof todos.value)[0],
+        b: (typeof todos.value)[0],
+      ) => {
+        if (a.is_done === b.is_done) return 0;
+        return a.is_done ? 1 : -1;
+      };
 
       const deadlineSortFn = (
         a: (typeof todos.value)[0],
@@ -166,11 +179,13 @@ export const TodoContainer = component$<TodoContainerProps>(
 
       if (sort.value === "deadline") {
         return sorted.sort(
-          (a, b) => deadlineSortFn(a, b) || severitySortFn(a, b),
+          (a, b) =>
+            isDoneSortFn(a, b) || deadlineSortFn(a, b) || severitySortFn(a, b),
         );
       } else {
         return sorted.sort(
-          (a, b) => severitySortFn(a, b) || deadlineSortFn(a, b),
+          (a, b) =>
+            isDoneSortFn(a, b) || severitySortFn(a, b) || deadlineSortFn(a, b),
         );
       }
     });
@@ -219,13 +234,14 @@ export const TodoContainer = component$<TodoContainerProps>(
           ) : (
             sortedTodos.value?.map((item) => (
               <Todo
-                key={item.id}
+                key={`${item.id}-${item.is_done}`}
                 id={item.id}
                 title={item.title}
                 url={item.url}
                 deadline={item.deadline}
                 severity={item.severity}
                 is_recurring={item.is_recurring}
+                is_done={item.is_done}
                 onClick$={handleUpdate}
                 isLoading={updateStateStore.updatingIds.includes(item.id)}
               />

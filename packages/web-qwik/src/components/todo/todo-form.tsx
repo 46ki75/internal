@@ -1,0 +1,92 @@
+import {
+  $,
+  component$,
+  JSXOutput,
+  QRL,
+  useSignal,
+  type CSSProperties,
+} from "@builder.io/qwik";
+
+import styles from "./todo-form.module.css";
+import {
+  ElmButton,
+  ElmInlineText,
+  ElmMdiIcon,
+  ElmSelect,
+  ElmTextField,
+} from "@elmethis/qwik";
+import { components } from "~/openapi/schema";
+import { TodoSeverity } from "./todo-severity";
+import { mdiSend } from "@mdi/js";
+
+type Severity = components["schemas"]["ToDoSeverityResponse"];
+
+export interface TodoFormProps {
+  class?: string;
+
+  style?: CSSProperties;
+
+  submit$: QRL<(t: { title: string; severity: Severity }) => Promise<void>>;
+}
+
+export const TodoForm = component$<TodoFormProps>(
+  ({ class: className, style, submit$ }) => {
+    const options: Array<{
+      id: Severity extends string ? Severity : never;
+      slot: JSXOutput;
+    }> = (["UNKNOWN", "DEBUG", "INFO", "WARN", "ERROR"] as const).map(
+      (severity) => ({
+        id: severity,
+        slot: <TodoSeverity severity={severity} />,
+      }),
+    );
+
+    const title = useSignal("");
+    const selectedSeverity = useSignal<Severity>("INFO");
+    const isLoading = useSignal(false);
+    const error = useSignal<string | null>(null);
+
+    const handleSubmit = $(async () => {
+      isLoading.value = true;
+      error.value = null;
+
+      try {
+        await submit$({ title: title.value, severity: selectedSeverity.value });
+        title.value = "";
+        selectedSeverity.value = "INFO";
+      } catch (e) {
+        if (e instanceof Error) {
+          error.value = e.message;
+        } else {
+          error.value = String(e);
+        }
+      } finally {
+        isLoading.value = false;
+      }
+    });
+
+    return (
+      <div>
+        <div class={[styles["todo-form"], className]} style={style}>
+          <ElmSelect
+            label="Severity"
+            options={options}
+            selectedOptionId={selectedSeverity}
+            loading={isLoading.value}
+          />
+          <ElmTextField label="Title" value={title} loading={isLoading.value} />
+          <ElmButton onClick$={handleSubmit} loading={isLoading.value}>
+            <ElmMdiIcon d={mdiSend} />
+          </ElmButton>
+          {title.value}
+        </div>
+
+        <div class={styles["todo-error"]}>
+          {error.value && (
+            <ElmInlineText color="#c56565">Error: {error.value}</ElmInlineText>
+          )}
+        </div>
+      </div>
+    );
+  },
+);

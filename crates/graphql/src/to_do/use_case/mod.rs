@@ -186,8 +186,8 @@ impl ToDoUseCase {
             is_done: false,
             is_recurring: false,
             is_archived: false,
-            deadline: None,
-            severity: ToDoSeverityEntity::Info,
+            deadline,
+            severity: severity.unwrap_or(ToDoSeverityEntity::Unknown),
             created_at: Some(response.created_time.date()),
             updated_at: Some(response.last_edited_time.date()),
         })

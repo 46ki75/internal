@@ -80,8 +80,9 @@ export interface TodoProps {
   deadline?: string | null;
   severity: Severity;
   is_recurring: boolean;
+  is_done: boolean;
   isLoading?: boolean;
-  onClick$?: QRL<(id: string) => Promise<void>>;
+  onClick$?: QRL<(id: string, is_done: boolean) => Promise<void>>;
 }
 
 const colorMap: Record<Severity, string> = {
@@ -102,6 +103,7 @@ export const Todo = component$<TodoProps>(
     deadline,
     severity,
     is_recurring,
+    is_done,
     isLoading,
     onClick$,
   }) => {
@@ -113,13 +115,19 @@ export const Todo = component$<TodoProps>(
           className,
           {
             [styles["loading"]]: isLoading,
+            [styles["is-done"]]: is_done,
           },
         ]}
         style={style}
       >
         <span
-          class={[styles["todo-item-checkbox"]]}
-          onClick$={() => onClick$?.(id)}
+          class={[
+            styles["todo-item-checkbox"],
+            {
+              [styles["is-done"]]: is_done,
+            },
+          ]}
+          onClick$={() => onClick$?.(id, !is_done)}
         ></span>
 
         <ElmInlineIcon
@@ -162,6 +170,8 @@ export const Todo = component$<TodoProps>(
         >
           {title}
         </a>
+
+        {isLoading && <div class={styles["loading-bar"]}></div>}
       </div>
     );
   },

@@ -98,7 +98,7 @@ export const TodoContainer = component$<TodoContainerProps>(
       updatingIds: [],
     });
 
-    const handleUpdate = $(async (id: string) => {
+    const handleUpdate = $(async (id: string, is_done: boolean) => {
       if (updateStateStore.updatingIds.includes(id)) return;
 
       updateStateStore.updatingIds.push(id);
@@ -111,7 +111,7 @@ export const TodoContainer = component$<TodoContainerProps>(
 
         await openApiClient.PUT("/api/v1/to-do", {
           params: { header: { Authorization: `Bearer ${accessToken}` } },
-          body: { id: id, is_done: true },
+          body: { id: id, is_done: is_done },
         });
 
         if (todos.value != null) {
@@ -226,6 +226,7 @@ export const TodoContainer = component$<TodoContainerProps>(
                 deadline={item.deadline}
                 severity={item.severity}
                 is_recurring={item.is_recurring}
+                is_done={item.is_done}
                 onClick$={handleUpdate}
                 isLoading={updateStateStore.updatingIds.includes(item.id)}
               />

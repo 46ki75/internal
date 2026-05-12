@@ -1,18 +1,25 @@
 .todo-item-row {
   display: grid;
+  position: relative;
+  overflow: hidden;
   align-items: center;
   gap: 0.25rem 0.25rem;
   width: 100%;
   border-left: 2px solid oklch(from gray l c h / 0.25);
   box-sizing: border-box;
   padding: 0.25rem 0 0.25rem 0.5rem;
-  grid-template-columns: 2rem 1.5rem 1.5rem 4rem 1.5rem 1fr;
+  grid-template-columns: 2rem 1.5rem 1.5rem 4rem 1.5rem 1fr 2rem;
   grid-template-rows: auto auto;
   grid-template-areas:
     "checkbox notion-icon recurring-icon severity deadline-icon deadline"
     "checkbox text text text text text";
 
   transition: opacity 200ms;
+
+  &.is-done {
+    opacity: 0.5;
+    background-color: oklch(from gray l c h / 0.125);
+  }
 
   &.loading {
     opacity: 0.25;
@@ -30,6 +37,14 @@
 
     &:hover {
       background-color: oklch(from gray l c h / 0.5);
+    }
+
+    &.is-done {
+      background-color: oklch(from gray l c h / 0.5);
+
+      &:hover {
+        background-color: transparent;
+      }
     }
   }
 
@@ -94,5 +109,25 @@
     &:active {
       transform: translateX(1px) translateY(1px);
     }
+  }
+
+  .loading-bar {
+    position: absolute;
+    content: "";
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background-color: #6987b8;
+    animation: loading-bar 1s linear infinite;
+  }
+}
+
+@keyframes loading-bar {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
   }
 }

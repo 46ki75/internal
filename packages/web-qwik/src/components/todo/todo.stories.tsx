@@ -24,6 +24,7 @@ export const Primary: Story = {
     deadline: "2024-12-31",
     severity: "Error",
     is_recurring: true,
+    is_done: false,
     isLoading: false,
   },
 };

@@ -239,6 +239,7 @@ export interface components {
             deadline?: string | null;
             description?: string | null;
             id: string;
+            is_archived: boolean;
             is_done: boolean;
             is_recurring: boolean;
             severity: components["schemas"]["ToDoSeverityResponse"];

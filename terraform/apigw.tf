@@ -8,7 +8,7 @@ resource "aws_apigatewayv2_integration" "backend" {
   integration_type = "AWS_PROXY"
 
   connection_type = "INTERNET"
-  integration_uri = aws_lambda_alias.graphql.invoke_arn
+  integration_uri = aws_lambda_alias.http_api.invoke_arn
 
   timeout_milliseconds = 29 * 1000
 }
@@ -84,8 +84,8 @@ resource "aws_apigatewayv2_authorizer" "backend" {
 resource "aws_lambda_permission" "apigwv2" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_alias.graphql.function_name
-  qualifier     = aws_lambda_alias.graphql.name
+  function_name = aws_lambda_alias.http_api.function_name
+  qualifier     = aws_lambda_alias.http_api.name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.backend.execution_arn}/*/*/*"
 }

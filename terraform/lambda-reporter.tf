@@ -82,6 +82,6 @@ resource "aws_lambda_permission" "allow_cloudwatch_logs" {
   action         = "lambda:InvokeFunction"
   function_name  = aws_lambda_function.reporter.function_name
   principal      = "logs.amazonaws.com"
-  source_arn     = "${aws_cloudwatch_log_group.lambda_graphql.arn}:*"
+  source_arn     = "${aws_cloudwatch_log_group.lambda_http_api.arn}:*"
   source_account = data.aws_caller_identity.current.account_id
 }

@@ -22,7 +22,7 @@
     "dev.debug": "node --inspect-brk ./node_modules/vite/bin/vite.js --mode ssr --force",
     "fmt": "prettier --write .",
     "fmt.check": "prettier --check .",
-    "generate:openapi": "openapi-typescript http://localhost:9000/lambda-url/internal-graphql/api-gateway/api/v1/openapi.json -o src/openapi/schema.ts",
+    "generate:openapi": "openapi-typescript http://localhost:9000/lambda-url/http-api/api-gateway/api/v1/openapi.json -o src/openapi/schema.ts",
     "lint": "eslint \"src/**/*.ts*\"",
     "postdeploy": "./scripts/invalidate.sh",
     "predeploy": "pnpm run build",

@@ -7,7 +7,7 @@ import {
   useContext,
   useSignal,
   type CSSProperties,
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 
 import styles from "./icon.module.css";
 import { ElmInlineText, ElmTextField, useAsyncState } from "@elmethis/qwik";

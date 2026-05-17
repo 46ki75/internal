@@ -1,11 +1,17 @@
 {
   "version": 1,
   "skills": {
+    "qwik": {
+      "source": "46ki75/skills",
+      "sourceType": "github",
+      "skillPath": "skills/qwik/SKILL.md",
+      "computedHash": "e7e23e4d1f0c8ba91f50b59d16cdd2efaf77cd7e01b61403eac6e6cad0c6c0cc"
+    },
     "web-view-transition": {
       "source": "46ki75/skills",
       "sourceType": "github",
       "skillPath": "skills/web-view-transition/SKILL.md",
-      "computedHash": "dda96b9b386b4c5c821365af07eebb3768dc4aaefb21edb223ed62f6d3fa2f20"
+      "computedHash": "7296cd3ac94a592e0889817f36c7424dcd30e22eb5e758fe82b9ea6b2d13a66e"
     }
   }
 }

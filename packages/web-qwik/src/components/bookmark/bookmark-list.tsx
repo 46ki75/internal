@@ -8,7 +8,7 @@ import {
   useSignal,
   useTask$,
   useVisibleTask$,
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 
 import styles from "./bookmark-list.module.css";
 import { Bookmark, BookmarkProps } from "./bookmark";

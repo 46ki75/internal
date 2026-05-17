@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-framework-qwik";
 import { TodoForm, type TodoFormProps } from "./todo-form";
-import { $ } from "@builder.io/qwik";
+import { $ } from "@qwik.dev/core";
 
 const meta: Meta<TodoFormProps> = {
   title: "Components/ToDo/todo-form",

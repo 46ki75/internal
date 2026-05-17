@@ -1,4 +1,4 @@
-import { component$, QRL, type CSSProperties } from "@builder.io/qwik";
+import { component$, QRL, type CSSProperties } from "@qwik.dev/core";
 
 import styles from "./header.module.css";
 import {

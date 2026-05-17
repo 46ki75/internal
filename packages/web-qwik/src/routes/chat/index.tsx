@@ -4,9 +4,9 @@ import {
   useStore,
   useTask$,
   type CSSProperties,
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 
-import { useAgent } from "@elmethis/qwik";
+import { ElmAgUiAgent, useAgent } from "@elmethis/qwik";
 
 import styles from "./chat.module.css";
 import { AuthContext } from "~/context/auth-context";
@@ -24,7 +24,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
     Authorization: "",
   });
 
-  const { AgentUI, setPromptTemplates } = useAgent({
+  const agent = useAgent({
     url: "/invocations",
     headers: headers,
   });
@@ -33,7 +33,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
     const accessToken = track(() => authStore.tokens.accessToken);
     headers.Authorization = `Bearer ${accessToken}`;
 
-    setPromptTemplates([
+    await agent.setPromptTemplates$([
       {
         description: "Ask about AWS",
         content: "What is a new feature called Amazon S3 Files?",
@@ -43,7 +43,13 @@ export default component$<IndexProps>(({ class: className, style }) => {
 
   return (
     <div class={[styles["chat"], className]} style={style}>
-      <AgentUI style={{ height: "100%" }} />
+      <ElmAgUiAgent
+        state={agent.state}
+        send$={agent.send$}
+        retry$={agent.retry$}
+        abort$={agent.abort$}
+        style={{ height: "100%" }}
+      />
     </div>
   );
 });

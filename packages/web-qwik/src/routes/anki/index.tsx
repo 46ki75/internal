@@ -7,7 +7,7 @@ import {
   useSignal,
   useVisibleTask$,
   type CSSProperties,
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 
 import styles from "./anki.module.css";
 import { AnkiContext } from "~/context/anki-context";

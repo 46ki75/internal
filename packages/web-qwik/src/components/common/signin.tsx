@@ -5,7 +5,7 @@ import {
   useTask$,
   type CSSProperties,
   type QRL,
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 
 import styles from "./signin.module.css";
 import {
@@ -58,14 +58,12 @@ export const Signin = component$<SigninProps>(
         <ElmHeading level={1}>Sign In</ElmHeading>
         <ElmTextField
           label="username"
-          icon="user"
           value={username}
           loading={isLoading}
           disabled={isDisabled}
         />
         <ElmTextField
           label="password"
-          icon="lock"
           value={password}
           isPassword
           loading={isLoading}

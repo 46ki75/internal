@@ -2,12 +2,28 @@
  * This is the base config for vite.
  * When building, the adapter config is used which loads this file and extends it.
  */
-import { defineConfig, type UserConfig } from "vite";
-import { qwikVite } from "@builder.io/qwik/optimizer";
-import { qwikCity } from "@builder.io/qwik-city/vite";
+import { defineConfig, type UserConfig, type Plugin } from "vite";
+import { qwikVite } from "@qwik.dev/core/optimizer";
+import { qwikRouter } from "@qwik.dev/router/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import pkg from "./package.json";
 import Stream from "node:stream";
+import { fileURLToPath } from "node:url";
+
+// `pkce-challenge` (transitive dep of @modelcontextprotocol/sdk via
+// @elmethis/qwik) only declares `browser` / `node` exports — no `default` —
+// so Vite's resolver can't find an entry. Force its `browser` condition.
+const pkceChallengeBrowserResolver: Plugin = {
+  name: "pkce-challenge-browser-resolver",
+  enforce: "pre",
+  resolveId(id) {
+    if (id === "pkce-challenge") {
+      const nodeUrl = import.meta.resolve!("pkce-challenge", import.meta.url);
+      const nodePath = fileURLToPath(nodeUrl);
+      return nodePath.replace(/index\.node\.js$/, "index.browser.js");
+    }
+  },
+};
 
 const ENDPOINT = `https://${
   process.env.VITE_STAGE_NAME === "prod"
@@ -24,11 +40,16 @@ const { dependencies = {}, devDependencies = {} } = pkg as any as {
 errorOnDuplicatesPkgDeps(devDependencies, dependencies);
 
 /**
- * Note that Vite normally starts from `index.html` but the qwikCity plugin makes start at `src/entry.ssr.tsx` instead.
+ * Note that Vite normally starts from `index.html` but the qwikRouter plugin makes start at `src/entry.ssr.tsx` instead.
  */
 export default defineConfig(({ command, mode }): UserConfig => {
   return {
-    plugins: [qwikCity(), qwikVite(), tsconfigPaths({ root: "." })],
+    plugins: [
+      pkceChallengeBrowserResolver,
+      qwikRouter(),
+      qwikVite(),
+      tsconfigPaths({ root: "." }),
+    ],
     // This tells Vite which dependencies to pre-build in dev mode.
     optimizeDeps: {
       // Put problematic deps that break bundling here, mostly those with binaries.
@@ -110,8 +131,8 @@ function errorOnDuplicatesPkgDeps(
     /qwik/i.test(value),
   );
 
-  // any errors for missing "qwik-city-plan"
-  // [PLUGIN_ERROR]: Invalid module "@qwik-city-plan" is not a valid package
+  // any errors for missing "qwik-router-config"
+  // [PLUGIN_ERROR]: Invalid module "@qwik-router-config" is not a valid package
   msg = `Move qwik packages ${qwikPkg.join(", ")} to devDependencies`;
 
   if (qwikPkg.length > 0) {

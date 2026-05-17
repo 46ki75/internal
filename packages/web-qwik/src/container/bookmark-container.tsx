@@ -4,7 +4,7 @@ import {
   useContext,
   useSignal,
   useVisibleTask$,
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 
 import styles from "./bookmark-container.module.css";
 import {
@@ -16,11 +16,9 @@ import { openApiClient } from "~/openapi/client";
 import {
   ElmButton,
   ElmInlineText,
-  ElmMdiIcon,
   ElmTextField,
   useLocalStorage,
 } from "@elmethis/qwik";
-import { mdiEarth, mdiPen } from "@mdi/js";
 
 export const BookmarkContainer = component$(() => {
   const authStore = useContext(AuthContext);
@@ -151,16 +149,8 @@ export const BookmarkContainer = component$(() => {
     <div class={styles["bookmark-container"]}>
       <BookmarkList {...bookmarkStore.value} />
 
-      <ElmTextField
-        label="Name"
-        icon={<ElmMdiIcon d={mdiPen} size="0.75rem" />}
-        value={name}
-      />
-      <ElmTextField
-        label="URL"
-        icon={<ElmMdiIcon d={mdiEarth} size="0.75rem" />}
-        value={url}
-      />
+      <ElmTextField label="Name" value={name} />
+      <ElmTextField label="URL" value={url} />
 
       <ElmButton
         block

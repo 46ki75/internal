@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-framework-qwik";
 import { Signin, type SigninProps } from "./signin";
-import { $, component$, useSignal } from "@builder.io/qwik";
+import { $, component$, useSignal } from "@qwik.dev/core";
 
 import { Amplify } from "aws-amplify";
 import { fetchAuthSession, signIn } from "aws-amplify/auth";

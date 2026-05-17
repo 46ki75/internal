@@ -2,10 +2,11 @@ import {
   $,
   createContextId,
   QRL,
+  useContext,
   useContextProvider,
   useStore,
   useVisibleTask$,
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 import { signOut } from "aws-amplify/auth";
 
 // AWS Amplify
@@ -113,39 +114,52 @@ export const useAuthContextProvider = () => {
   });
 
   useContextProvider(AuthContext, authStore);
+};
+
+/**
+ * Client-side bootstrap for the auth store. Must be called from a normal
+ * `component$` (NOT `root.tsx`) so the `useVisibleTask$` actually fires —
+ * Qwik v2's root component has no ordinary DOM host and its client-side
+ * hooks never run. Pair with `useAuthContextProvider()` in `root.tsx`.
+ */
+export const useAuthEffect = () => {
+  const authStore = useContext(AuthContext);
 
   // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(async () => {
-    configure();
+  useVisibleTask$(
+    async () => {
+      configure();
 
-    let attempts = 0;
+      let attempts = 0;
 
-    try {
-      while (authStore.tokens.loading) {
-        await new Promise((resolve) => setTimeout(resolve, 200));
-        attempts++;
+      try {
+        while (authStore.tokens.loading) {
+          await new Promise((resolve) => setTimeout(resolve, 200));
+          attempts++;
 
-        if (attempts > 25)
-          throw new Error(
-            "Failed to fetch auth session after multiple attempts.",
-          );
-      }
+          if (attempts > 25)
+            throw new Error(
+              "Failed to fetch auth session after multiple attempts.",
+            );
+        }
 
-      authStore.tokens.loading = true;
-      await authStore.tokens.refresh(authStore);
-      const { username, userId } = await getCurrentUser();
-      if (username && userId) {
-        authStore.sessionState = "login";
-      } else {
+        authStore.tokens.loading = true;
+        await authStore.tokens.refresh(authStore);
+        const { username, userId } = await getCurrentUser();
+        if (username && userId) {
+          authStore.sessionState = "login";
+        } else {
+          authStore.sessionState = "logout";
+        }
+      } catch {
+        console.error(
+          "Failed to fetch auth session. User might not be authenticated.",
+        );
         authStore.sessionState = "logout";
+      } finally {
+        authStore.tokens.loading = false;
       }
-    } catch {
-      console.error(
-        "Failed to fetch auth session. User might not be authenticated.",
-      );
-      authStore.sessionState = "logout";
-    } finally {
-      authStore.tokens.loading = false;
-    }
-  });
+    },
+    { strategy: "document-ready" },
+  );
 };

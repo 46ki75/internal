@@ -10,7 +10,7 @@ import {
   useStore,
   useVisibleTask$,
   type CSSProperties,
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 
 import styles from "./todo-container.module.css";
 import {
@@ -176,12 +176,12 @@ export const TodoContainer = component$<TodoContainerProps>(
         a: (typeof todos.value)[0],
         b: (typeof todos.value)[0],
       ) => {
-        const severityOrder: Record<string, number> = {
-          Error: 4,
-          Warn: 3,
-          Info: 2,
-          Backlog: 1,
-          Unknown: 0,
+        const severityOrder: Record<Severity, number> = {
+          ERROR: 4,
+          WARN: 3,
+          INFO: 2,
+          DEBUG: 1,
+          UNKNOWN: 0,
         };
 
         return severityOrder[b.severity] - severityOrder[a.severity];
@@ -276,7 +276,7 @@ export const TodoContainer = component$<TodoContainerProps>(
           {todos.value.length === 0 ? (
             <ElmBlockFallback></ElmBlockFallback>
           ) : (
-            sortedTodos.value?.map((item) => (
+            sortedTodos.value.map((item) => (
               <Todo
                 key={`${item.id}-${item.is_done}`}
                 id={item.id}

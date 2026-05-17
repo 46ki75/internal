@@ -1,18 +1,24 @@
-import { staticAdapter } from "@builder.io/qwik-city/adapters/static/vite";
-import { extendConfig } from "@builder.io/qwik-city/vite";
+import { ssgAdapter } from "@qwik.dev/router/adapters/ssg/vite";
+import { extendConfig } from "@qwik.dev/router/vite";
 import baseConfig from "../../vite.config";
+
+const ENDPOINT = `https://${
+  process.env.VITE_STAGE_NAME === "prod"
+    ? "internal"
+    : process.env.VITE_STAGE_NAME + "-internal"
+}.46ki75.com`;
 
 export default extendConfig(baseConfig, () => {
   return {
     build: {
       ssr: true,
       rollupOptions: {
-        input: ["@qwik-city-plan"],
+        input: ["@qwik-router-config"],
       },
     },
     plugins: [
-      staticAdapter({
-        origin: "https://yoursite.qwik.dev",
+      ssgAdapter({
+        origin: ENDPOINT,
       }),
     ],
   };

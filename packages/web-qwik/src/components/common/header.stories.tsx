@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "storybook-framework-qwik";
 import { Header, type HeaderProps } from "./header";
-import { $ } from "@builder.io/qwik";
+import { $ } from "@qwik.dev/core";
 import { mdiHome, mdiTag } from "@mdi/js";
 
 const meta: Meta<HeaderProps> = {

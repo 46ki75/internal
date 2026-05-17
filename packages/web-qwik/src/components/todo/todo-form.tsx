@@ -1,11 +1,10 @@
 import {
   $,
   component$,
-  JSXOutput,
   QRL,
   useSignal,
   type CSSProperties,
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 
 import styles from "./todo-form.module.css";
 import {
@@ -14,9 +13,9 @@ import {
   ElmMdiIcon,
   ElmSelect,
   ElmTextField,
+  type ElmSelectOption,
 } from "@elmethis/qwik";
 import { components } from "~/openapi/schema";
-import { TodoSeverity } from "./todo-severity";
 import { mdiSend } from "@mdi/js";
 
 type Severity = components["schemas"]["ToDoSeverityResponse"];
@@ -37,15 +36,12 @@ export interface TodoFormProps {
 
 export const TodoForm = component$<TodoFormProps>(
   ({ class: className, style, submit$ }) => {
-    const options: Array<{
-      id: Severity extends string ? Severity : never;
-      slot: JSXOutput;
-    }> = (["UNKNOWN", "DEBUG", "INFO", "WARN", "ERROR"] as const).map(
-      (severity) => ({
-        id: severity,
-        slot: <TodoSeverity severity={severity} />,
-      }),
-    );
+    const options: ElmSelectOption[] = (
+      ["UNKNOWN", "DEBUG", "INFO", "WARN", "ERROR"] as const
+    ).map((severity) => ({
+      id: severity,
+      label: severity,
+    }));
 
     const title = useSignal("");
     const selectedSeverity = useSignal<Severity>("INFO");

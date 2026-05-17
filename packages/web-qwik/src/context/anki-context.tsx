@@ -6,7 +6,7 @@ import {
   useContextProvider,
   useStore,
   useVisibleTask$,
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 import { openApiClient } from "~/openapi/client";
 import { paths } from "~/openapi/schema";
 import { AuthContext } from "./auth-context";
@@ -330,45 +330,53 @@ export const useAnkiContextProvider = () => {
     }
   });
 
+  // `document-ready`: called from a layout that returns a Fragment, so the
+  // default intersection-observer has no host element to attach to.
   // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(({ cleanup }) => {
-    const controller = new AbortController();
-    cleanup(() => controller.abort());
+  useVisibleTask$(
+    ({ cleanup }) => {
+      const controller = new AbortController();
+      cleanup(() => controller.abort());
 
-    fetchAnkiList(controller);
-  });
+      fetchAnkiList(controller);
+    },
+    { strategy: "document-ready" },
+  );
 
   // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(({ cleanup, track }) => {
-    const controller = new AbortController();
-    cleanup(() => controller.abort());
+  useVisibleTask$(
+    ({ cleanup, track }) => {
+      const controller = new AbortController();
+      cleanup(() => controller.abort());
 
-    const currentIndex = track(() => ankiStore.ankiList.currentIndex);
+      const currentIndex = track(() => ankiStore.ankiList.currentIndex);
 
-    if (currentIndex === null) return;
+      if (currentIndex === null) return;
 
-    const currentAnkiRef = ankiStore.ankiList.data[currentIndex];
-    if (currentAnkiRef)
-      ankiStore.fetchAnkiBlock(
-        ankiStore,
-        currentAnkiRef.metadata.page_id,
-        controller.signal,
-      );
+      const currentAnkiRef = ankiStore.ankiList.data[currentIndex];
+      if (currentAnkiRef)
+        ankiStore.fetchAnkiBlock(
+          ankiStore,
+          currentAnkiRef.metadata.page_id,
+          controller.signal,
+        );
 
-    const nextAnkiRef = ankiStore.ankiList.data[currentIndex + 1];
-    if (nextAnkiRef)
-      ankiStore.fetchAnkiBlock(
-        ankiStore,
-        nextAnkiRef.metadata.page_id,
-        controller.signal,
-      );
+      const nextAnkiRef = ankiStore.ankiList.data[currentIndex + 1];
+      if (nextAnkiRef)
+        ankiStore.fetchAnkiBlock(
+          ankiStore,
+          nextAnkiRef.metadata.page_id,
+          controller.signal,
+        );
 
-    const nextNextAnkiRef = ankiStore.ankiList.data[currentIndex + 2];
-    if (nextNextAnkiRef)
-      ankiStore.fetchAnkiBlock(
-        ankiStore,
-        nextNextAnkiRef.metadata.page_id,
-        controller.signal,
-      );
-  });
+      const nextNextAnkiRef = ankiStore.ankiList.data[currentIndex + 2];
+      if (nextNextAnkiRef)
+        ankiStore.fetchAnkiBlock(
+          ankiStore,
+          nextNextAnkiRef.metadata.page_id,
+          controller.signal,
+        );
+    },
+    { strategy: "document-ready" },
+  );
 };

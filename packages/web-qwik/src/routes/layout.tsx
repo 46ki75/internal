@@ -1,5 +1,5 @@
-import { $, component$, Slot, useContext } from "@builder.io/qwik";
-import { DocumentHead, useNavigate } from "@builder.io/qwik-city";
+import { $, component$, Slot, useContext } from "@qwik.dev/core";
+import { DocumentHead, useNavigate } from "@qwik.dev/router";
 import {
   mdiCreation,
   mdiFaceMan,
@@ -10,15 +10,20 @@ import {
 import { Header } from "~/components/common/header";
 
 import { useAnkiContextProvider } from "~/context/anki-context";
-import { AuthContext } from "~/context/auth-context";
+import { AuthContext, useAuthEffect } from "~/context/auth-context";
 
 import styles from "./root-layout.module.css";
 import { useModal } from "@elmethis/qwik";
 import { Signin } from "~/components/common/signin";
 
 export default component$(() => {
-  const authStore = useContext(AuthContext);
+  // Run the auth bootstrap effect here (NOT in `root.tsx`): Qwik v2's
+  // root has no DOM host so its `useVisibleTask$` never fires on the
+  // client. The provider itself is still mounted in `root.tsx` so the
+  // store is serialized and visible to every route.
+  useAuthEffect();
   useAnkiContextProvider();
+  const authStore = useContext(AuthContext);
 
   const navigate = useNavigate();
 

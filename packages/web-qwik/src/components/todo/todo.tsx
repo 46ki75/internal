@@ -3,7 +3,7 @@ import {
   QRL,
   useComputed$,
   type CSSProperties,
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 
 import styles from "./todo.module.css";
 import { ElmInlineIcon, ElmInlineText, ElmMdiIcon } from "@elmethis/qwik";

@@ -48,8 +48,8 @@ importers:
         specifier: ^0.8.0
         version: 0.8.0(vue@3.5.34(typescript@5.8.3))
       '@elmethis/qwik':
-        specifier: ^0.1.0-alpha.1
-        version: 0.1.0-alpha.1(@cfworker/json-schema@4.1.1)(@qwik.dev/core@2.0.0-beta.35(patch_hash=zqdujbi3o2mg7lelrzt5ve6sni)(prettier@3.6.2)(vite@7.3.2(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.8.2)))
+        specifier: ^0.1.0-alpha.2
+        version: 0.1.0-alpha.2(@cfworker/json-schema@4.1.1)(@qwik.dev/core@2.0.0-beta.35(patch_hash=zqdujbi3o2mg7lelrzt5ve6sni)(prettier@3.6.2)(vite@7.3.2(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.8.2)))
       '@eslint/js':
         specifier: ^9
         version: 9.39.4
@@ -532,8 +532,8 @@ packages:
     peerDependencies:
       vue: ^3.4.0
 
-  '@elmethis/qwik@0.1.0-alpha.1':
-    resolution: {integrity: sha512-o80PKBaNhhV9qG5Qnb2LUQnSnc2e4Te+8tSyWAIa6Paybz0JLT+oaoMY7oL+AbeuCvLEB5oERqMqMnPTGgCrdQ==}
+  '@elmethis/qwik@0.1.0-alpha.2':
+    resolution: {integrity: sha512-Xnvxncq3/bylW9WrpYv02Y2d8B6GH38xHNXFLJTcqCXD2ZtRKuuEyTsHoyU69ls97CgTnHBIAJERbQuN4o9b3A==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     peerDependencies:
       '@qwik.dev/core': '>=2.0.0-beta.31'
@@ -6548,7 +6548,7 @@ snapshots:
       shiki: 3.22.0
       vue: 3.5.34(typescript@5.8.3)
 
-  '@elmethis/qwik@0.1.0-alpha.1(@cfworker/json-schema@4.1.1)(@qwik.dev/core@2.0.0-beta.35(patch_hash=zqdujbi3o2mg7lelrzt5ve6sni)(prettier@3.6.2)(vite@7.3.2(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.8.2)))':
+  '@elmethis/qwik@0.1.0-alpha.2(@cfworker/json-schema@4.1.1)(@qwik.dev/core@2.0.0-beta.35(patch_hash=zqdujbi3o2mg7lelrzt5ve6sni)(prettier@3.6.2)(vite@7.3.2(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.8.2)))':
     dependencies:
       '@a2ui/web_core': 0.10.0
       '@ag-ui/client': 0.0.53

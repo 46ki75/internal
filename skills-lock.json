@@ -7,6 +7,12 @@
       "skillPath": "skills/qwik/SKILL.md",
       "computedHash": "e7e23e4d1f0c8ba91f50b59d16cdd2efaf77cd7e01b61403eac6e6cad0c6c0cc"
     },
+    "rust-toasty": {
+      "source": "46ki75/skills",
+      "sourceType": "github",
+      "skillPath": "skills/rust-toasty/SKILL.md",
+      "computedHash": "fc2d61a43efb37d168f36267843534156dbf8738dac34ba0b363cf6fecb39575"
+    },
     "web-view-transition": {
       "source": "46ki75/skills",
       "sourceType": "github",

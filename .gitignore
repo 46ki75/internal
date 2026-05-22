@@ -1,3 +1,5 @@
+notes/
+
 .env
 .env.*
 !.env.example

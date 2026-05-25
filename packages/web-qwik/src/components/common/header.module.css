@@ -13,10 +13,10 @@
   align-items: center;
 
   backdrop-filter: blur(2px);
-  background-color: oklch(from #25282e l c h / 0.05);
+  background-color: #d9d3cc;
 
   [data-theme="dark"] & {
-    background-color: oklch(from #eff0f2 l c h / 0.1);
+    background-color: #242629;
   }
 
   .link-container {

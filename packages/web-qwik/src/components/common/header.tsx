@@ -38,7 +38,7 @@ export const Header = component$<HeaderProps>(
         <div class={styles["link-container"]}>
           {links.map((link, index) => (
             <div class={styles["link"]} key={index} onClick$={link.onClick$}>
-              <ElmMdiIcon d={link.d} size="1.75rem" />
+              <ElmMdiIcon d={link.d} size="1.75rem" color="#937f69" />
             </div>
           ))}
         </div>

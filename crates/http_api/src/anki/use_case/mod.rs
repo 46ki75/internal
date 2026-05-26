@@ -21,26 +21,30 @@ pub struct AnkiUseCase {
     pub anki_repository: std::sync::Arc<dyn AnkiRepository + Send + Sync>,
 }
 
+// The renderer (`@elmethis/qwik`'s `ElmA2ui`) resolves the root via the
+// hardcoded id "root", so each section's synthetic root Column must use
+// that exact id rather than a UUID.
+const SECTION_ROOT_ID: &str = "root";
+
 fn build_section_surface(
     source: &n2a2ui_a2ui::v0_9::Surface,
     child_ids: Vec<String>,
 ) -> n2a2ui_a2ui::v0_9::Surface {
-    let root_id = format!("anki-section-{}", uuid::Uuid::new_v4());
-
     let root_column = n2a2ui_a2ui::v0_9::Column {
-        id: root_id.clone(),
+        id: SECTION_ROOT_ID.to_string(),
         children: n2a2ui_a2ui::v0_9::ChildList::Static(child_ids),
         ..Default::default()
     };
 
     let mut components = source.components.clone();
+    components.shift_remove(&source.root);
     components.insert(
-        root_id.clone(),
+        SECTION_ROOT_ID.to_string(),
         n2a2ui_a2ui::v0_9::Component::Column(root_column),
     );
 
     n2a2ui_a2ui::v0_9::Surface {
-        root: root_id,
+        root: SECTION_ROOT_ID.to_string(),
         components,
     }
 }

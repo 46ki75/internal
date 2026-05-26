@@ -1,6 +1,7 @@
 import { $, component$, Slot, useContext } from "@qwik.dev/core";
 import { DocumentHead, useNavigate } from "@qwik.dev/router";
 import {
+  mdiCertificate,
   mdiCreation,
   mdiFaceMan,
   mdiHome,
@@ -65,6 +66,12 @@ export default component$(() => {
             d: mdiCreation,
             onClick$: $(() => {
               navigate("/chat");
+            }),
+          },
+          {
+            d: mdiCertificate,
+            onClick$: $(() => {
+              navigate("/practical_test_en.html");
             }),
           },
         ]}

@@ -29,7 +29,7 @@ chrono = "0.4.43"
 lambda_http = "1.0.2"
 notionrs = { version = "0.27.0", features = ["rustls"] }
 notionrs_types = "0.20.0"
-n2a2ui = "0.1.1"
+n2a2ui = "0.1.2"
 n2a2ui-a2ui = "0.1.0"
 indexmap = { version = "2", features = ["serde"] }
 serde = { version = "1.0.228", features = ["derive"] }

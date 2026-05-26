@@ -118,7 +118,8 @@ pub async fn get_or_init_n2a2ui_client()
                 notionrs_client,
                 reqwest_client: reqwest::Client::new(),
                 enable_unsupported_block: true,
-                enable_fetch_image_meta: false,
+                enable_fetch_image_meta: true,
+                enable_fetch_bookmark_meta: true,
             };
 
             Ok(client)

@@ -162,7 +162,9 @@ export const BookmarkContainer = component$(() => {
 
       {createBookmarkError.value && (
         <p>
-          <ElmInlineText text={createBookmarkError.value} color="#c56565" />
+          <ElmInlineText color="#c56565">
+            {createBookmarkError.value}
+          </ElmInlineText>
         </p>
       )}
     </div>

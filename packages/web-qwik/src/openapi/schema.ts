@@ -4,828 +4,828 @@
  */
 
 export interface paths {
-    "/api/v1/anki": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["anki_list"];
-        put?: never;
-        post: operations["create_anki"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  "/api/v1/anki": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/anki/block/{page_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["block_list"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations["anki_list"];
+    put?: never;
+    post: operations["create_anki"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/anki/block/{page_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/anki/{page_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["anki"];
-        put: operations["update_anki"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations["block_list"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/anki/{page_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/bookmark": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["bookmark_list"];
-        put?: never;
-        post: operations["create_bookmark"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations["anki"];
+    put: operations["update_anki"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/bookmark": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/icon": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["list_icons"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations["bookmark_list"];
+    put?: never;
+    post: operations["create_bookmark"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/icon": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/image": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["fetch_images"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations["list_icons"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/image": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/image/tag": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["fetch_image_tags"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations["fetch_images"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/image/tag": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/to-do": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["to_do_list"];
-        put: operations["update_to_do"];
-        post: operations["create_to_do"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations["fetch_image_tags"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/to-do": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/typing": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["typing_list"];
-        put?: never;
-        post: operations["upsert_typing"];
-        delete: operations["delete_typing"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations["to_do_list"];
+    put: operations["update_to_do"];
+    post: operations["create_to_do"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/typing": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    get: operations["typing_list"];
+    put?: never;
+    post: operations["upsert_typing"];
+    delete: operations["delete_typing"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        AnkiBlockResponse: {
-            back: unknown;
-            explanation: unknown;
-            front: unknown;
-        };
-        AnkiResponse: {
-            created_at: string;
-            description?: string | null;
-            /** Format: double */
-            ease_factor: number;
-            is_review_required: boolean;
-            next_review_at: string;
-            page_id: string;
-            /** Format: int32 */
-            repetition_count: number;
-            tags: components["schemas"]["AnkiTagResponse"][];
-            title?: string | null;
-            updated_at: string;
-            url: string;
-        };
-        AnkiTagResponse: {
-            color: string;
-            id: string;
-            name: string;
-        };
-        BookmarkResponse: {
-            favicon?: string | null;
-            favorite: boolean;
-            id: string;
-            name?: string | null;
-            notion_url: string;
-            nsfw: boolean;
-            tag?: null | components["schemas"]["BookmarkTagReponse"];
-            url?: string | null;
-        };
-        BookmarkTagReponse: {
-            color: string;
-            id: string;
-            name: string;
-        };
-        CreateAnkiRequest: {
-            title?: string | null;
-        };
-        CreateBookmarkRequestBody: {
-            name: string;
-            url: string;
-        };
-        CreateToDoRequest: {
-            /** Format: date */
-            deadline?: string | null;
-            description?: string | null;
-            severity?: null | components["schemas"]["ToDoSeverityRequest"];
-            title: string;
-        };
-        FetchImagesResponse: {
-            images: components["schemas"]["ImageResponse"][];
-            next_cursor?: string | null;
-        };
-        IconResponse: {
-            content_type?: string | null;
-            id: string;
-            name: string;
-            url: string;
-        };
-        ImageResponse: {
-            images: string[];
-            name: string;
-            notable_tags: string[];
-            sources: components["schemas"]["ImageSourceResponse"][];
-            tags: string[];
-            title: string;
-            uploaded_at?: string | null;
-            url?: string | null;
-        };
-        ImageSourceResponse: {
-            color: string;
-            id: string;
-            name: string;
-        };
-        ImageTagResponse: {
-            tag_name: string;
-            tag_type: string;
-            url: string;
-        };
-        ToDoResponse: {
-            /** Format: date */
-            created_at?: string | null;
-            /** Format: date */
-            deadline?: string | null;
-            description?: string | null;
-            id: string;
-            is_archived: boolean;
-            is_done: boolean;
-            is_recurring: boolean;
-            severity: components["schemas"]["ToDoSeverityResponse"];
-            source: string;
-            title: string;
-            /** Format: date */
-            updated_at?: string | null;
-            url: string;
-        };
-        /** @enum {string} */
-        ToDoSeverityRequest: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
-        /** @enum {string} */
-        ToDoSeverityResponse: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
-        TypingDeleteRequest: {
-            id: string;
-        };
-        TypingResponse: {
-            description: string;
-            id: string;
-            text: string;
-        };
-        TypingUpsertRequest: {
-            description: string;
-            id?: string | null;
-            text: string;
-        };
-        UpdateAnkiRequest: {
-            /** Format: double */
-            ease_factor?: number | null;
-            in_trash?: boolean | null;
-            is_review_required?: boolean | null;
-            next_review_at?: string | null;
-            /** Format: int32 */
-            repetition_count?: number | null;
-        };
-        UpdateToDoInput: {
-            id: string;
-            is_done: boolean;
-        };
+  schemas: {
+    AnkiBlockResponse: {
+      back: unknown;
+      explanation: unknown;
+      front: unknown;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    AnkiResponse: {
+      created_at: string;
+      description?: string | null;
+      /** Format: double */
+      ease_factor: number;
+      is_review_required: boolean;
+      next_review_at: string;
+      page_id: string;
+      /** Format: int32 */
+      repetition_count: number;
+      tags: components["schemas"]["AnkiTagResponse"][];
+      title?: string | null;
+      updated_at: string;
+      url: string;
+    };
+    AnkiTagResponse: {
+      color: string;
+      id: string;
+      name: string;
+    };
+    BookmarkResponse: {
+      favicon?: string | null;
+      favorite: boolean;
+      id: string;
+      name?: string | null;
+      notion_url: string;
+      nsfw: boolean;
+      tag?: null | components["schemas"]["BookmarkTagReponse"];
+      url?: string | null;
+    };
+    BookmarkTagReponse: {
+      color: string;
+      id: string;
+      name: string;
+    };
+    CreateAnkiRequest: {
+      title?: string | null;
+    };
+    CreateBookmarkRequestBody: {
+      name: string;
+      url: string;
+    };
+    CreateToDoRequest: {
+      /** Format: date */
+      deadline?: string | null;
+      description?: string | null;
+      severity?: null | components["schemas"]["ToDoSeverityRequest"];
+      title: string;
+    };
+    FetchImagesResponse: {
+      images: components["schemas"]["ImageResponse"][];
+      next_cursor?: string | null;
+    };
+    IconResponse: {
+      content_type?: string | null;
+      id: string;
+      name: string;
+      url: string;
+    };
+    ImageResponse: {
+      images: string[];
+      name: string;
+      notable_tags: string[];
+      sources: components["schemas"]["ImageSourceResponse"][];
+      tags: string[];
+      title: string;
+      uploaded_at?: string | null;
+      url?: string | null;
+    };
+    ImageSourceResponse: {
+      color: string;
+      id: string;
+      name: string;
+    };
+    ImageTagResponse: {
+      tag_name: string;
+      tag_type: string;
+      url: string;
+    };
+    ToDoResponse: {
+      /** Format: date */
+      created_at?: string | null;
+      /** Format: date */
+      deadline?: string | null;
+      description?: string | null;
+      id: string;
+      is_archived: boolean;
+      is_done: boolean;
+      is_recurring: boolean;
+      severity: components["schemas"]["ToDoSeverityResponse"];
+      source: string;
+      title: string;
+      /** Format: date */
+      updated_at?: string | null;
+      url: string;
+    };
+    /** @enum {string} */
+    ToDoSeverityRequest: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
+    /** @enum {string} */
+    ToDoSeverityResponse: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
+    TypingDeleteRequest: {
+      id: string;
+    };
+    TypingResponse: {
+      description: string;
+      id: string;
+      text: string;
+    };
+    TypingUpsertRequest: {
+      description: string;
+      id?: string | null;
+      text: string;
+    };
+    UpdateAnkiRequest: {
+      /** Format: double */
+      ease_factor?: number | null;
+      in_trash?: boolean | null;
+      is_review_required?: boolean | null;
+      next_review_at?: string | null;
+      /** Format: int32 */
+      repetition_count?: number | null;
+    };
+    UpdateToDoInput: {
+      id: string;
+      is_done: boolean;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    anki_list: {
-        parameters: {
-            query?: {
-                page_size?: number;
-                next_cursor?: string;
-            };
-            header: {
-                Authorization: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Anki */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AnkiResponse"][];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
-        };
+  anki_list: {
+    parameters: {
+      query?: {
+        page_size?: number;
+        next_cursor?: string;
+      };
+      header: {
+        Authorization: string;
+      };
+      path?: never;
+      cookie?: never;
     };
-    create_anki: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Anki */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateAnkiRequest"];
-            };
+        content: {
+          "application/json": components["schemas"]["AnkiResponse"][];
         };
-        responses: {
-            /** @description Anki */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AnkiResponse"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          "text/plain": string;
+        };
+      };
     };
-    block_list: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path: {
-                /** @description UUIDv4 */
-                page_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Anki */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AnkiBlockResponse"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
-        };
+  };
+  create_anki: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path?: never;
+      cookie?: never;
     };
-    anki: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path: {
-                /** @description UUIDv4 */
-                page_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Anki */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AnkiResponse"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateAnkiRequest"];
+      };
     };
-    update_anki: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path: {
-                /** @description UUIDv4 */
-                page_id: string;
-            };
-            cookie?: never;
+    responses: {
+      /** @description Anki */
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateAnkiRequest"];
-            };
+        content: {
+          "application/json": components["schemas"]["AnkiResponse"];
         };
-        responses: {
-            /** @description Anki */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AnkiResponse"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          "text/plain": string;
+        };
+      };
     };
-    bookmark_list: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Bookmarks */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BookmarkResponse"][];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
-        };
+  };
+  block_list: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path: {
+        /** @description UUIDv4 */
+        page_id: string;
+      };
+      cookie?: never;
     };
-    create_bookmark: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Anki */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateBookmarkRequestBody"];
-            };
+        content: {
+          "application/json": components["schemas"]["AnkiBlockResponse"];
         };
-        responses: {
-            /** @description Bookmark */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BookmarkResponse"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          "text/plain": string;
+        };
+      };
     };
-    list_icons: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Icon */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["IconResponse"][];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
-        };
+  };
+  anki: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path: {
+        /** @description UUIDv4 */
+        page_id: string;
+      };
+      cookie?: never;
     };
-    fetch_images: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Anki */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Images */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FetchImagesResponse"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["AnkiResponse"];
         };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/plain": string;
+        };
+      };
     };
-    fetch_image_tags: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Image tags */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ImageTagResponse"][];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
-        };
+  };
+  update_anki: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path: {
+        /** @description UUIDv4 */
+        page_id: string;
+      };
+      cookie?: never;
     };
-    to_do_list: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Bookmark */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ToDoResponse"][];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateAnkiRequest"];
+      };
     };
-    update_to_do: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Anki */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateToDoInput"];
-            };
+        content: {
+          "application/json": components["schemas"]["AnkiResponse"];
         };
-        responses: {
-            /** @description Bookmark */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ToDoResponse"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          "text/plain": string;
+        };
+      };
     };
-    create_to_do: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateToDoRequest"];
-            };
-        };
-        responses: {
-            /** @description Bookmark */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ToDoResponse"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
-        };
+  };
+  bookmark_list: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path?: never;
+      cookie?: never;
     };
-    typing_list: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Bookmarks */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Typing list */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TypingResponse"][];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["BookmarkResponse"][];
         };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/plain": string;
+        };
+      };
     };
-    upsert_typing: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["TypingUpsertRequest"];
-            };
-        };
-        responses: {
-            /** @description Upsert typing */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TypingResponse"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
-        };
+  };
+  create_bookmark: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path?: never;
+      cookie?: never;
     };
-    delete_typing: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["TypingDeleteRequest"];
-            };
-        };
-        responses: {
-            /** @description Delete typing */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TypingResponse"];
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateBookmarkRequestBody"];
+      };
     };
+    responses: {
+      /** @description Bookmark */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["BookmarkResponse"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/plain": string;
+        };
+      };
+    };
+  };
+  list_icons: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Icon */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["IconResponse"][];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/plain": string;
+        };
+      };
+    };
+  };
+  fetch_images: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Images */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["FetchImagesResponse"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/plain": string;
+        };
+      };
+    };
+  };
+  fetch_image_tags: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Image tags */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ImageTagResponse"][];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/plain": string;
+        };
+      };
+    };
+  };
+  to_do_list: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Bookmark */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ToDoResponse"][];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/plain": string;
+        };
+      };
+    };
+  };
+  update_to_do: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateToDoInput"];
+      };
+    };
+    responses: {
+      /** @description Bookmark */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ToDoResponse"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/plain": string;
+        };
+      };
+    };
+  };
+  create_to_do: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateToDoRequest"];
+      };
+    };
+    responses: {
+      /** @description Bookmark */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ToDoResponse"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/plain": string;
+        };
+      };
+    };
+  };
+  typing_list: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Typing list */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TypingResponse"][];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/plain": string;
+        };
+      };
+    };
+  };
+  upsert_typing: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["TypingUpsertRequest"];
+      };
+    };
+    responses: {
+      /** @description Upsert typing */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TypingResponse"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/plain": string;
+        };
+      };
+    };
+  };
+  delete_typing: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["TypingDeleteRequest"];
+      };
+    };
+    responses: {
+      /** @description Delete typing */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TypingResponse"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/plain": string;
+        };
+      };
+    };
+  };
 }

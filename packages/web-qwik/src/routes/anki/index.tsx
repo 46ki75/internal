@@ -12,12 +12,14 @@ import {
 import styles from "./anki.module.css";
 import { AnkiContext } from "~/context/anki-context";
 import {
+  blockCatalog,
+  ElmA2ui,
   ElmBlockFallback,
   ElmButton,
   ElmInlineText,
-  ElmJarkup,
   ElmMdiIcon,
 } from "@elmethis/qwik";
+import { surfaceToMessages } from "./surface-to-messages";
 import {
   mdiAlertDecagram,
   mdiBookEdit,
@@ -171,36 +173,52 @@ export default component$<IndexProps>(({ class: className, style }) => {
         <ElmBlockFallback />
       ) : (
         <>
-          <div class={styles["anki-jarkup-container"]}>
-            <div class={styles["jarkup-header"]}>
+          <div class={styles["anki-block-container"]}>
+            <div class={styles["block-header"]}>
               <ElmMdiIcon d={mdiMessageQuestionOutline} />
               <ElmInlineText>Front</ElmInlineText>
             </div>
-            <div class={styles["jarkup-renderer"]}>
-              <ElmJarkup jsonComponents={currentAnki.value.block.front} />
+            <div class={styles["block-renderer"]}>
+              <ElmA2ui
+                catalog={blockCatalog}
+                messages={surfaceToMessages(
+                  currentAnki.value.block.front,
+                  `${currentAnki.value.metadata.page_id}-front`,
+                )}
+              />
             </div>
           </div>
 
           {isShowingAnswer.value && (
             <>
-              <div class={styles["anki-jarkup-container"]}>
-                <div class={styles["jarkup-header"]}>
+              <div class={styles["anki-block-container"]}>
+                <div class={styles["block-header"]}>
                   <ElmMdiIcon d={mdiMessageAlertOutline} />
                   <ElmInlineText>Back</ElmInlineText>
                 </div>
-                <div class={styles["jarkup-renderer"]}>
-                  <ElmJarkup jsonComponents={currentAnki.value.block.back} />
+                <div class={styles["block-renderer"]}>
+                  <ElmA2ui
+                    catalog={blockCatalog}
+                    messages={surfaceToMessages(
+                      currentAnki.value.block.back,
+                      `${currentAnki.value.metadata.page_id}-back`,
+                    )}
+                  />
                 </div>
               </div>
 
-              <div class={styles["anki-jarkup-container"]}>
-                <div class={styles["jarkup-header"]}>
+              <div class={styles["anki-block-container"]}>
+                <div class={styles["block-header"]}>
                   <ElmMdiIcon d={mdiMessageCheckOutline} />
                   <ElmInlineText>Explanation</ElmInlineText>
                 </div>
-                <div class={styles["jarkup-renderer"]}>
-                  <ElmJarkup
-                    jsonComponents={currentAnki.value.block.explanation}
+                <div class={styles["block-renderer"]}>
+                  <ElmA2ui
+                    catalog={blockCatalog}
+                    messages={surfaceToMessages(
+                      currentAnki.value.block.explanation,
+                      `${currentAnki.value.metadata.page_id}-explanation`,
+                    )}
                   />
                 </div>
               </div>

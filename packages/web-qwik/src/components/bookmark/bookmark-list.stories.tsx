@@ -13,11 +13,31 @@ const meta: Meta<BookmarkListProps> = {
 export default meta;
 type Story = StoryObj<BookmarkListProps>;
 
-const TAG_FRONTEND = { id: "925b3496-680f-4c6d-8b01-04a6367d0f71", name: "Frontend", color: "#c56565" };
-const TAG_BACKEND = { id: "b2e4f123-1a2b-3c4d-5e6f-7a8b9c0d1e2f", name: "Backend", color: "#65a8c5" };
-const TAG_DEVOPS = { id: "d3f5a678-2b3c-4d5e-6f7a-8b9c0d1e2f3a", name: "DevOps", color: "#65c583" };
-const TAG_TOOLS = { id: "e4a6b789-3c4d-5e6f-7a8b-9c0d1e2f3a4b", name: "Tools", color: "#c5a265" };
-const TAG_DOCS = { id: "f5b7c890-4d5e-6f7a-8b9c-0d1e2f3a4b5c", name: "Docs", color: "#a265c5" };
+const TAG_FRONTEND = {
+  id: "925b3496-680f-4c6d-8b01-04a6367d0f71",
+  name: "Frontend",
+  color: "#c56565",
+};
+const TAG_BACKEND = {
+  id: "b2e4f123-1a2b-3c4d-5e6f-7a8b9c0d1e2f",
+  name: "Backend",
+  color: "#65a8c5",
+};
+const TAG_DEVOPS = {
+  id: "d3f5a678-2b3c-4d5e-6f7a-8b9c0d1e2f3a",
+  name: "DevOps",
+  color: "#65c583",
+};
+const TAG_TOOLS = {
+  id: "e4a6b789-3c4d-5e6f-7a8b-9c0d1e2f3a4b",
+  name: "Tools",
+  color: "#c5a265",
+};
+const TAG_DOCS = {
+  id: "f5b7c890-4d5e-6f7a-8b9c-0d1e2f3a4b5c",
+  name: "Docs",
+  color: "#a265c5",
+};
 
 export const Primary: Story = {
   args: {

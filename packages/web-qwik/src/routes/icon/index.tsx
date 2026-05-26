@@ -80,10 +80,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
 
   return (
     <div class={[styles["icon"], className]} style={style}>
-      <ElmTextField
-        label="Keyword"
-        value={searchKeyword}
-      />
+      <ElmTextField label="Keyword" value={searchKeyword} />
 
       <div class={styles["icon-content-type-group"]}>
         <div class={styles["icon-content-type-group-header"]}>

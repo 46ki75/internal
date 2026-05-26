@@ -123,10 +123,7 @@ export const Todo = component$<TodoProps>((props) => {
         onClick$={() => props.onClick$(props.id, !props.is_done)}
       ></span>
 
-      <ElmInlineIcon
-        src={NotionIcon}
-        class={styles["todo-item-notion-icon"]}
-      />
+      <ElmInlineIcon src={NotionIcon} class={styles["todo-item-notion-icon"]} />
       <ElmMdiIcon
         d={mdiRefresh}
         size="1.5rem"
@@ -139,10 +136,7 @@ export const Todo = component$<TodoProps>((props) => {
         ]}
       />
 
-      <TodoSeverity
-        class={styles["todo-item-severity"]}
-        severity={severity}
-      />
+      <TodoSeverity class={styles["todo-item-severity"]} severity={severity} />
 
       <ElmMdiIcon
         d={mdiCalendar}

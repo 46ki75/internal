@@ -10,15 +10,14 @@ import {
 import { openApiClient } from "~/openapi/client";
 import { paths } from "~/openapi/schema";
 import { AuthContext } from "./auth-context";
-import { ElmJarkupProps } from "@elmethis/qwik";
 
 type AnkiMeta =
   paths["/api/v1/anki/{page_id}"]["get"]["responses"]["200"]["content"]["application/json"];
 
 type AnkiBlock = {
-  back: ElmJarkupProps["jsonComponents"];
-  explanation: ElmJarkupProps["jsonComponents"];
-  front: ElmJarkupProps["jsonComponents"];
+  back: unknown;
+  explanation: unknown;
+  front: unknown;
 };
 
 export interface AnkiStore {

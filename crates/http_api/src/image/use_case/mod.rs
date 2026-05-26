@@ -23,9 +23,7 @@ impl ImageUseCase {
     }
 
     #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self), err))]
-    pub async fn fetch_image_tags(
-        &self,
-    ) -> Result<Vec<output::ImageTagOutput>, ImageUseCaseError> {
+    pub async fn fetch_image_tags(&self) -> Result<Vec<output::ImageTagOutput>, ImageUseCaseError> {
         let dtos = self.repository.fetch_image_tags().await?;
         Ok(dtos.into_iter().map(output::ImageTagOutput::from).collect())
     }

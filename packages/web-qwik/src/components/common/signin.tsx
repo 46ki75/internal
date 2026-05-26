@@ -30,59 +30,57 @@ export interface SigninProps {
   onSubmit$: QRL<(username: string, password: string) => void>;
 }
 
-export const Signin = component$<SigninProps>(
-  (props) => {
-    const { class: className, style, isLoading, isDisabled, onSubmit$ } = props;
-    const username = useSignal("");
-    const password = useSignal("");
-    const innerError = useSignal<string | null>(null);
+export const Signin = component$<SigninProps>((props) => {
+  const { class: className, style, isLoading, isDisabled, onSubmit$ } = props;
+  const username = useSignal("");
+  const password = useSignal("");
+  const innerError = useSignal<string | null>(null);
 
-    useTask$(({ track }) => {
-      const e = track(() => props.error);
-      innerError.value = e ? e : null;
-    });
+  useTask$(({ track }) => {
+    const e = track(() => props.error);
+    innerError.value = e ? e : null;
+  });
 
-    const handleClick = $(() => {
-      if (!username.value || !password.value) {
-        innerError.value = "Username and password are required.";
-        return;
-      } else {
-        innerError.value = null;
-      }
+  const handleClick = $(() => {
+    if (!username.value || !password.value) {
+      innerError.value = "Username and password are required.";
+      return;
+    } else {
+      innerError.value = null;
+    }
 
-      onSubmit$(username.value, password.value);
-    });
+    onSubmit$(username.value, password.value);
+  });
 
-    return (
-      <div class={[styles["signin"], className]} style={style}>
-        <ElmHeading level={1}>Sign In</ElmHeading>
-        <ElmTextField
-          label="username"
-          value={username}
-          loading={isLoading}
-          disabled={isDisabled}
-        />
-        <ElmTextField
-          label="password"
-          value={password}
-          isPassword
-          loading={isLoading}
-          disabled={isDisabled}
-        />
-        <ElmButton
-          block
-          loading={isLoading}
-          disabled={isDisabled}
-          onClick$={handleClick}
-        >
-          <ElmMdiIcon d={mdiSend} />
-          Sign In
-        </ElmButton>
+  return (
+    <div class={[styles["signin"], className]} style={style}>
+      <ElmHeading level={1}>Sign In</ElmHeading>
+      <ElmTextField
+        label="username"
+        value={username}
+        loading={isLoading}
+        disabled={isDisabled}
+      />
+      <ElmTextField
+        label="password"
+        value={password}
+        isPassword
+        loading={isLoading}
+        disabled={isDisabled}
+      />
+      <ElmButton
+        block
+        loading={isLoading}
+        disabled={isDisabled}
+        onClick$={handleClick}
+      >
+        <ElmMdiIcon d={mdiSend} />
+        Sign In
+      </ElmButton>
 
-        <ElmInlineText class={styles["error"]} color="#c56565">
-          {innerError.value}
-        </ElmInlineText>
-      </div>
-    );
-  },
-);
+      <ElmInlineText class={styles["error"]} color="#c56565">
+        {innerError.value}
+      </ElmInlineText>
+    </div>
+  );
+});

@@ -6,13 +6,15 @@ pub struct BookmarkState {
     pub bookmark_use_case: Arc<crate::bookmark::use_case::BookmarkUseCase>,
 }
 
-pub async fn init_bookmark_router(
-) -> Result<(axum::Router, utoipa::openapi::OpenApi), crate::error::Error> {
+pub async fn init_bookmark_router()
+-> Result<(axum::Router, utoipa::openapi::OpenApi), crate::error::Error> {
     let repository = Arc::new(crate::bookmark::repository::BookmarkRepositoryImpl {});
     let use_case = Arc::new(crate::bookmark::use_case::BookmarkUseCase {
         bookmark_repository: repository,
     });
-    let state = Arc::new(BookmarkState { bookmark_use_case: use_case });
+    let state = Arc::new(BookmarkState {
+        bookmark_use_case: use_case,
+    });
 
     let (router, api) = OpenApiRouter::new()
         .routes(routes!(crate::bookmark::controller::bookmark_list))

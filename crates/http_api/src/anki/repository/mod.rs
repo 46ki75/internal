@@ -8,7 +8,7 @@ pub enum AnkiRepositoryError {
     #[error("Notion API error: {0}")]
     NotionApi(String),
     #[error("block conversion error: {0}")]
-    BlockConversion(#[from] notion_to_jarkup::error::Error),
+    BlockConversion(#[from] n2a2ui::error::Error),
     #[error("internal error: {0}")]
     Internal(#[from] crate::error::Error),
 }
@@ -39,7 +39,7 @@ pub trait AnkiRepository: Send + Sync {
     async fn list_blocks_by_id(
         &self,
         page_id: &str,
-    ) -> Result<Vec<jarkup_rs::Component>, AnkiRepositoryError>;
+    ) -> Result<n2a2ui_a2ui::v0_9::Surface, AnkiRepositoryError>;
 }
 
 pub struct AnkiRepositoryImpl {}
@@ -147,13 +147,13 @@ impl AnkiRepository for AnkiRepositoryImpl {
     async fn list_blocks_by_id(
         &self,
         page_id: &str,
-    ) -> Result<Vec<jarkup_rs::Component>, AnkiRepositoryError> {
-        let client = crate::cache::get_or_init_notion_to_jarkup_client().await?;
+    ) -> Result<n2a2ui_a2ui::v0_9::Surface, AnkiRepositoryError> {
+        let client = crate::cache::get_or_init_n2a2ui_client().await?;
 
         tracing::debug!("Sending request to Notion API");
-        let blocks = client.convert_block(page_id).await?;
+        let surface = client.convert_block(page_id).await?;
 
-        Ok(blocks)
+        Ok(surface)
     }
 }
 
@@ -491,9 +491,20 @@ impl AnkiRepository for AnkiRepositoryStub {
     async fn list_blocks_by_id(
         &self,
         _page_id: &str,
-    ) -> Result<Vec<jarkup_rs::Component>, AnkiRepositoryError> {
-        let blocks = vec![];
+    ) -> Result<n2a2ui_a2ui::v0_9::Surface, AnkiRepositoryError> {
+        let root_id = "root".to_string();
+        let root = n2a2ui_a2ui::v0_9::Column {
+            id: root_id.clone(),
+            children: n2a2ui_a2ui::v0_9::ChildList::Static(Vec::new()),
+            ..Default::default()
+        };
 
-        Ok(blocks)
+        let mut components = indexmap::IndexMap::new();
+        components.insert(root_id.clone(), n2a2ui_a2ui::v0_9::Component::Column(root));
+
+        Ok(n2a2ui_a2ui::v0_9::Surface {
+            root: root_id,
+            components,
+        })
     }
 }

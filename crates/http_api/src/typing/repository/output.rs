@@ -65,11 +65,9 @@ impl TryFrom<aws_sdk_dynamodb::operation::query::QueryOutput> for TypingRecords 
     ) -> Result<Self, Self::Error> {
         use crate::typing::repository::TypingRepositoryError;
 
-        let items = value
-            .items
-            .ok_or(TypingRepositoryError::DynamoDbNoItems(
-                "No items found".to_string(),
-            ))?;
+        let items = value.items.ok_or(TypingRepositoryError::DynamoDbNoItems(
+            "No items found".to_string(),
+        ))?;
 
         let records = items
             .into_iter()
@@ -103,9 +101,7 @@ impl TryFrom<aws_sdk_dynamodb::operation::query::QueryOutput> for TypingRecords 
                     ))?
                     .as_s()
                     .map_err(|_| {
-                        TypingRepositoryError::DynamoDbType(
-                            "description is not String".to_string(),
-                        )
+                        TypingRepositoryError::DynamoDbType("description is not String".to_string())
                     })?
                     .to_string();
 

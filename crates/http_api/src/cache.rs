@@ -102,19 +102,19 @@ pub async fn get_or_init_notionrs_client() -> Result<&'static notionrs::Client, 
         .await
 }
 
-static NOTION_TO_JARKUP_CLIENT: tokio::sync::OnceCell<notion_to_jarkup::client::Client> =
+static N2A2UI_CLIENT: tokio::sync::OnceCell<n2a2ui::client::Client> =
     tokio::sync::OnceCell::const_new();
 
-/// Fetches the NotionRs Client from cache or initializes it if not already loaded.
-pub async fn get_or_init_notion_to_jarkup_client()
--> Result<&'static notion_to_jarkup::client::Client, crate::error::Error> {
-    NOTION_TO_JARKUP_CLIENT
+/// Fetches the n2a2ui Client from cache or initializes it if not already loaded.
+pub async fn get_or_init_n2a2ui_client()
+-> Result<&'static n2a2ui::client::Client, crate::error::Error> {
+    N2A2UI_CLIENT
         .get_or_try_init(|| async {
             let secret = get_or_init_notion_api_key().await?;
 
             let notionrs_client = notionrs::Client::new(secret.as_str());
 
-            let client = notion_to_jarkup::client::Client {
+            let client = n2a2ui::client::Client {
                 notionrs_client,
                 reqwest_client: reqwest::Client::new(),
                 enable_unsupported_block: true,

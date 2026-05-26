@@ -38,7 +38,9 @@ impl IntoResponse for BookmarkControllerError {
     )
 )]
 pub async fn bookmark_list(
-    axum::extract::State(state): axum::extract::State<std::sync::Arc<crate::bookmark::controller::router::BookmarkState>>,
+    axum::extract::State(state): axum::extract::State<
+        std::sync::Arc<crate::bookmark::controller::router::BookmarkState>,
+    >,
 ) -> Result<Json<Vec<BookmarkResponse>>, BookmarkControllerError> {
     let bookmark_use_case = state.bookmark_use_case.clone();
 
@@ -65,7 +67,9 @@ pub async fn bookmark_list(
     )
 )]
 pub async fn create_bookmark(
-    axum::extract::State(state): axum::extract::State<std::sync::Arc<crate::bookmark::controller::router::BookmarkState>>,
+    axum::extract::State(state): axum::extract::State<
+        std::sync::Arc<crate::bookmark::controller::router::BookmarkState>,
+    >,
     axum::extract::Json(payload): axum::extract::Json<CreateBookmarkRequestBody>,
 ) -> Result<Json<BookmarkResponse>, BookmarkControllerError> {
     let bookmark_use_case = state.bookmark_use_case.clone();

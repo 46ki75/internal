@@ -19,12 +19,17 @@ pub enum ImageRepositoryError {
 pub trait ImageRepository {
     fn fetch_images(
         &self,
-    ) -> Pin<Box<dyn Future<Output = Result<self::output::ImagePageDto, ImageRepositoryError>> + Send>>;
+    ) -> Pin<
+        Box<dyn Future<Output = Result<self::output::ImagePageDto, ImageRepositoryError>> + Send>,
+    >;
 
     fn fetch_image_tags(
         &self,
     ) -> Pin<
-        Box<dyn Future<Output = Result<Vec<self::output::ImageTagDto>, ImageRepositoryError>> + Send>,
+        Box<
+            dyn Future<Output = Result<Vec<self::output::ImageTagDto>, ImageRepositoryError>>
+                + Send,
+        >,
     >;
 
     fn create_image_tag(
@@ -41,8 +46,9 @@ impl ImageRepository for ImageRepositoryImpl {
     #[cfg_attr(not(rust_analyzer), tracing::instrument(skip(self), err))]
     fn fetch_images(
         &self,
-    ) -> Pin<Box<dyn Future<Output = Result<self::output::ImagePageDto, ImageRepositoryError>> + Send>>
-    {
+    ) -> Pin<
+        Box<dyn Future<Output = Result<self::output::ImagePageDto, ImageRepositoryError>> + Send>,
+    > {
         Box::pin(async move {
             let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;
             let stage_name = crate::cache::get_or_init_stage_name().await?;
@@ -77,7 +83,10 @@ impl ImageRepository for ImageRepositoryImpl {
     fn fetch_image_tags(
         &self,
     ) -> Pin<
-        Box<dyn Future<Output = Result<Vec<self::output::ImageTagDto>, ImageRepositoryError>> + Send>,
+        Box<
+            dyn Future<Output = Result<Vec<self::output::ImageTagDto>, ImageRepositoryError>>
+                + Send,
+        >,
     > {
         Box::pin(async move {
             let notionrs_client = crate::cache::get_or_init_notionrs_client().await?;

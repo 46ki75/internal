@@ -29,17 +29,14 @@ pub async fn try_init_schema() -> Result<
             tracing::debug!("Injecting dependencies: ToDo");
             let to_do_repository =
                 std::sync::Arc::new(crate::to_do::repository::ToDoRepositoryImpl {});
-            let to_do_use_case = std::sync::Arc::new(crate::to_do::use_case::ToDoUseCase {
-                to_do_repository,
-            });
+            let to_do_use_case =
+                std::sync::Arc::new(crate::to_do::use_case::ToDoUseCase { to_do_repository });
 
             tracing::debug!("Injecting dependencies: Typing");
-            let typing_repository: std::sync::Arc<
-                crate::typing::repository::TypingRepositoryImpl,
-            > = std::sync::Arc::new(crate::typing::repository::TypingRepositoryImpl {});
-            let typing_use_case = std::sync::Arc::new(crate::typing::use_case::TypingUseCase {
-                typing_repository,
-            });
+            let typing_repository: std::sync::Arc<crate::typing::repository::TypingRepositoryImpl> =
+                std::sync::Arc::new(crate::typing::repository::TypingRepositoryImpl {});
+            let typing_use_case =
+                std::sync::Arc::new(crate::typing::use_case::TypingUseCase { typing_repository });
 
             tracing::debug!("Building schema: QueryRoot");
             let query_root = crate::query::QueryRoot::default();

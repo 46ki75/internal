@@ -21,6 +21,30 @@ pub struct AnkiUseCase {
     pub anki_repository: std::sync::Arc<dyn AnkiRepository + Send + Sync>,
 }
 
+fn build_section_surface(
+    source: &n2a2ui_a2ui::v0_9::Surface,
+    child_ids: Vec<String>,
+) -> n2a2ui_a2ui::v0_9::Surface {
+    let root_id = format!("anki-section-{}", uuid::Uuid::new_v4());
+
+    let root_column = n2a2ui_a2ui::v0_9::Column {
+        id: root_id.clone(),
+        children: n2a2ui_a2ui::v0_9::ChildList::Static(child_ids),
+        ..Default::default()
+    };
+
+    let mut components = source.components.clone();
+    components.insert(
+        root_id.clone(),
+        n2a2ui_a2ui::v0_9::Component::Column(root_column),
+    );
+
+    n2a2ui_a2ui::v0_9::Surface {
+        root: root_id,
+        components,
+    }
+}
+
 impl AnkiUseCase {
     pub async fn get_anki_by_id(&self, id: &str) -> Result<AnkiEntity, AnkiUseCaseError> {
         let page = self.anki_repository.get_anki_by_id(id).await?;
@@ -52,11 +76,17 @@ impl AnkiUseCase {
     }
 
     pub async fn list_blocks(&self, id: &str) -> Result<AnkiBlockEntity, AnkiUseCaseError> {
-        let blocks = self.anki_repository.list_blocks_by_id(id).await?;
+        use n2a2ui_a2ui::v0_9::{ChildList, Component, DynamicString, HeadingLevel};
 
-        let mut front: Vec<jarkup_rs::Component> = Vec::new();
-        let mut back: Vec<jarkup_rs::Component> = Vec::new();
-        let mut explanation: Vec<jarkup_rs::Component> = Vec::new();
+        let surface = self.anki_repository.list_blocks_by_id(id).await?;
+
+        let root_children: Vec<String> = match surface.components.get(&surface.root) {
+            Some(Component::Column(column)) => match &column.children {
+                ChildList::Static(ids) => ids.clone(),
+                ChildList::Template(_) => Vec::new(),
+            },
+            _ => Vec::new(),
+        };
 
         enum Marker {
             Front,
@@ -65,61 +95,68 @@ impl AnkiUseCase {
         }
 
         let mut marker = Marker::Front;
+        let mut front: Vec<String> = Vec::new();
+        let mut back: Vec<String> = Vec::new();
+        let mut explanation: Vec<String> = Vec::new();
 
-        for block in blocks {
-            if let jarkup_rs::Component::BlockComponent(block_component) = &block {
-                if let jarkup_rs::BlockComponent::Heading(heading) = &block_component {
-                    if let jarkup_rs::HeadingLevel::H1 = heading.props.level {
-                        let text = heading
-                            .slots
-                            .default
-                            .clone()
-                            .into_iter()
-                            .filter_map(|slot| {
-                                if let jarkup_rs::InlineComponent::Text(text) = slot {
-                                    Some(text.props.text)
-                                } else {
-                                    None
-                                }
-                            })
-                            .collect::<String>()
-                            .trim()
-                            .to_lowercase();
+        for child_id in root_children {
+            if let Some(Component::Heading(heading)) = surface.components.get(&child_id) {
+                if matches!(heading.level, HeadingLevel::H1) {
+                    let heading_ids = match &heading.children {
+                        ChildList::Static(ids) => ids.as_slice(),
+                        ChildList::Template(_) => &[],
+                    };
 
-                        let text_str = text.as_str();
+                    let text = heading_ids
+                        .iter()
+                        .filter_map(|id| match surface.components.get(id) {
+                            Some(Component::RichText(rt)) => match &rt.text {
+                                DynamicString::Literal(s) => Some(s.as_str()),
+                                _ => None,
+                            },
+                            _ => None,
+                        })
+                        .collect::<String>()
+                        .trim()
+                        .to_lowercase();
 
-                        if text_str == "front" {
+                    match text.as_str() {
+                        "front" => {
                             marker = Marker::Front;
                             continue;
-                        } else if text_str == "back" {
+                        }
+                        "back" => {
                             marker = Marker::Back;
                             continue;
-                        } else if text_str == "explanation" {
+                        }
+                        "explanation" => {
                             marker = Marker::Explanation;
                             continue;
                         }
+                        _ => {}
                     }
                 }
+            }
 
-                match marker {
-                    Marker::Front => front.push(block),
-                    Marker::Back => back.push(block),
-                    Marker::Explanation => explanation.push(block),
-                }
+            match marker {
+                Marker::Front => front.push(child_id),
+                Marker::Back => back.push(child_id),
+                Marker::Explanation => explanation.push(child_id),
             }
         }
 
+        let front_surface = build_section_surface(&surface, front);
+        let back_surface = build_section_surface(&surface, back);
+        let explanation_surface = build_section_surface(&surface, explanation);
+
         Ok(AnkiBlockEntity {
-            front: serde_json::to_value(front)?,
-            back: serde_json::to_value(back)?,
-            explanation: serde_json::to_value(explanation)?,
+            front: serde_json::to_value(front_surface)?,
+            back: serde_json::to_value(back_surface)?,
+            explanation: serde_json::to_value(explanation_surface)?,
         })
     }
 
-    pub async fn create_anki(
-        &self,
-        title: Option<String>,
-    ) -> Result<AnkiEntity, AnkiUseCaseError> {
+    pub async fn create_anki(&self, title: Option<String>) -> Result<AnkiEntity, AnkiUseCaseError> {
         let mut properties: std::collections::HashMap<String, PageProperty> =
             std::collections::HashMap::new();
 

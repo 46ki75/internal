@@ -39,7 +39,9 @@ impl IntoResponse for AnkiControllerError {
     )
 )]
 pub async fn anki(
-    axum::extract::State(state): axum::extract::State<std::sync::Arc<crate::anki::controller::router::AnkiState>>,
+    axum::extract::State(state): axum::extract::State<
+        std::sync::Arc<crate::anki::controller::router::AnkiState>,
+    >,
     axum::extract::Path(page_id): axum::extract::Path<String>,
 ) -> Result<Json<AnkiResponse>, AnkiControllerError> {
     let anki_use_case = state.anki_use_case.clone();
@@ -62,7 +64,9 @@ pub async fn anki(
     )
 )]
 pub async fn anki_list(
-    axum::extract::State(state): axum::extract::State<std::sync::Arc<crate::anki::controller::router::AnkiState>>,
+    axum::extract::State(state): axum::extract::State<
+        std::sync::Arc<crate::anki::controller::router::AnkiState>,
+    >,
     axum::extract::Query(query_params): axum::extract::Query<ListAnkiQueryParams>,
 ) -> Result<Json<Vec<AnkiResponse>>, AnkiControllerError> {
     let anki_use_case = state.anki_use_case.clone();
@@ -94,7 +98,9 @@ pub async fn anki_list(
     )
 )]
 pub async fn block_list(
-    axum::extract::State(state): axum::extract::State<std::sync::Arc<crate::anki::controller::router::AnkiState>>,
+    axum::extract::State(state): axum::extract::State<
+        std::sync::Arc<crate::anki::controller::router::AnkiState>,
+    >,
     axum::extract::Path(page_id): axum::extract::Path<String>,
 ) -> Result<Json<AnkiBlockResponse>, AnkiControllerError> {
     let anki_use_case = state.anki_use_case.clone();
@@ -117,7 +123,9 @@ pub async fn block_list(
     )
 )]
 pub async fn create_anki(
-    axum::extract::State(state): axum::extract::State<std::sync::Arc<crate::anki::controller::router::AnkiState>>,
+    axum::extract::State(state): axum::extract::State<
+        std::sync::Arc<crate::anki::controller::router::AnkiState>,
+    >,
     axum::extract::Json(request): axum::extract::Json<CreateAnkiRequest>,
 ) -> Result<(StatusCode, Json<AnkiResponse>), AnkiControllerError> {
     let anki_use_case = state.anki_use_case.clone();
@@ -141,7 +149,9 @@ pub async fn create_anki(
     )
 )]
 pub async fn update_anki(
-    axum::extract::State(state): axum::extract::State<std::sync::Arc<crate::anki::controller::router::AnkiState>>,
+    axum::extract::State(state): axum::extract::State<
+        std::sync::Arc<crate::anki::controller::router::AnkiState>,
+    >,
     axum::extract::Path(page_id): axum::extract::Path<String>,
     axum::extract::Json(UpdateAnkiRequest {
         ease_factor,

@@ -261,7 +261,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
                     .find((key) => KEYMAP[key as keyof typeof KEYMAP] === index)
                     ?.toUpperCase()}
                 </ElmInlineText>
-                <ElmInlineText>{rating}</ElmInlineText>
+                <span>{rating}</span>
               </ElmButton>
             ))}
           </div>

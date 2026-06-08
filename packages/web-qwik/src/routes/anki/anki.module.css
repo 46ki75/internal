@@ -26,7 +26,7 @@
   .anki-block-container {
     border: 1px solid oklch(from gray l c h / 0.25);
     border-radius: 0.25rem;
-    background-color: #f5f6f7;
+    background-color: var(--elmethis-color-surface-raised);
     box-shadow: 0 0 2px oklch(from black l c h / 0.05);
 
     .block-header {
@@ -37,7 +37,7 @@
       align-items: center;
       justify-content: flex-start;
       gap: 0.5rem;
-      background-color: oklch(from gray l c h / 0.05);
+      background-color: var(--elmethis-color-surface-sunken);
       user-select: none;
     }
 

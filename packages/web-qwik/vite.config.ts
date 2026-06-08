@@ -10,6 +10,20 @@ import pkg from "./package.json";
 import Stream from "node:stream";
 import { fileURLToPath } from "node:url";
 
+// In `--mode ssr` dev, CSS Modules are server-rendered into the HTML rather
+// than injected by Vite's client-side CSS-HMR runtime, so edits to `.module.css`
+// files don't reapply on hot update. Force a full reload so SSR re-renders with
+// the new CSS.
+const cssModuleFullReload: Plugin = {
+  name: "css-module-full-reload",
+  handleHotUpdate({ file, server }) {
+    if (file.endsWith(".module.css")) {
+      server.ws.send({ type: "full-reload" });
+      return [];
+    }
+  },
+};
+
 // `pkce-challenge` (transitive dep of @modelcontextprotocol/sdk via
 // @elmethis/qwik) only declares `browser` / `node` exports — no `default` —
 // so Vite's resolver can't find an entry. Force its `browser` condition.
@@ -45,6 +59,7 @@ errorOnDuplicatesPkgDeps(devDependencies, dependencies);
 export default defineConfig(({ command, mode }): UserConfig => {
   return {
     plugins: [
+      cssModuleFullReload,
       pkceChallengeBrowserResolver,
       qwikRouter(),
       qwikVite(),

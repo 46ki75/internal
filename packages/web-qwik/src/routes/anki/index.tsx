@@ -234,9 +234,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
             onClick$={() => (isShowingAnswer.value = !isShowingAnswer.value)}
           >
             <ElmInlineText kbd>Enter</ElmInlineText>
-            <ElmInlineText>
-              {isShowingAnswer.value ? "Hide Answer" : "Show Answer"}
-            </ElmInlineText>
+            <span>{isShowingAnswer.value ? "Hide Answer" : "Show Answer"}</span>
           </ElmButton>
         ) : (
           <div class={styles["update-button-container"]}>

@@ -119,7 +119,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
     <div
       class={[styles["anki"], className]}
       style={style}
-      key={String(currentAnki?.value?.loading)}
+      key={currentAnki.value?.metadata.page_id ?? "none"}
     >
       <div class={styles["button-control"]}>
         <ElmButton block onClick$={open} loading={currentAnki.value == null}>

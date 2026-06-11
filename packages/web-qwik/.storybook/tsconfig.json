@@ -19,6 +19,7 @@
     "../src/**/*.stories.mdx",
     "*.ts",
     "*.js",
-    "preview.tsx"
+    "preview.tsx",
+    "../*.d.ts"
   ]
 }

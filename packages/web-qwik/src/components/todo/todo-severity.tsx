@@ -23,28 +23,28 @@ export interface TodoSeverityProps {
 const MAP: Record<
   Severity,
   {
-    color: string;
+    className: string;
     d: string;
   }
 > = {
   UNKNOWN: {
-    color: "#868e9c",
+    className: styles.unknown,
     d: mdiHelpRhombus,
   },
   DEBUG: {
-    color: "#9a776b",
+    className: styles.debug,
     d: mdiAlertOctagram,
   },
   INFO: {
-    color: "#4c6da2",
+    className: styles.info,
     d: mdiInformation,
   },
   WARN: {
-    color: "#bfa056",
+    className: styles.warn,
     d: mdiAlert,
   },
   ERROR: {
-    color: "#b34444",
+    className: styles.error,
     d: mdiAlertOctagram,
   },
 };
@@ -53,8 +53,8 @@ export const TodoSeverity = component$<TodoSeverityProps>(
   ({ class: className, style, severity }) => {
     return (
       <span
-        class={[styles["todo-severity"], className]}
-        style={{ ...style, "--color": MAP[severity].color }}
+        class={[styles["todo-severity"], MAP[severity].className, className]}
+        style={style}
       >
         <ElmMdiIcon d={MAP[severity].d} class={styles.icon} />
         <span class={styles.text}>{severity}</span>

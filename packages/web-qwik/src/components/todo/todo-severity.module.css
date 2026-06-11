@@ -8,19 +8,42 @@
   user-select: none;
   opacity: 0.8;
   color: white;
-  background-color: var(--color);
-  border: 1px solid var(--color);
   border-radius: 0.25rem;
   text-transform: uppercase;
   text-align: center;
   font-family: monospace;
 
   .icon {
-    fill: oklch(from white l c h / 75%);
+    color: currentColor;
   }
 
   .text {
     flex-grow: 1;
     text-align: center;
+  }
+
+  &.error {
+    color: var(--elmethis-color-accent-error);
+    background-color: var(--elmethis-color-accent-error-surface);
+  }
+
+  &.warn {
+    color: var(--elmethis-color-accent-warning);
+    background-color: var(--elmethis-color-accent-warning-surface);
+  }
+
+  &.info {
+    color: var(--elmethis-color-accent-info);
+    background-color: var(--elmethis-color-accent-info-surface);
+  }
+
+  &.debug {
+    color: var(--elmethis-color-accent-debug);
+    background-color: var(--elmethis-color-accent-debug-surface);
+  }
+
+  &.unknown {
+    color: var(--elmethis-color-accent-important);
+    background-color: var(--elmethis-color-accent-important-surface);
   }
 }

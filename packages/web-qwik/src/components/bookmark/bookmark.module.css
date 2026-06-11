@@ -36,13 +36,14 @@
   }
 
   .edit-icon {
-    box-sizing: border-box;
+    box-sizing: content-box;
     padding: 0.25rem;
     grid-area: edit-icon;
     transition: background-color 100ms;
+    color: var(--elmethis-color-neutral);
 
     &:hover {
-      background-color: oklch(from gray l c h / 0.25);
+      background-color: var(--elmethis-color-surface-base);
     }
   }
 

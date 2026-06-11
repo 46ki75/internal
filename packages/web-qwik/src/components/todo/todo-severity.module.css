@@ -11,7 +11,7 @@
   border-radius: 0.25rem;
   text-transform: uppercase;
   text-align: center;
-  font-family: monospace;
+  font-family: var(--font-mono);
 
   .icon {
     color: currentColor;
@@ -38,8 +38,7 @@
   }
 
   &.debug {
-    color: var(--elmethis-color-accent-debug);
-    background-color: var(--elmethis-color-accent-debug-surface);
+    color: var(--elmethis-color-neutral);
   }
 
   &.unknown {

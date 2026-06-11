@@ -1,5 +1,5 @@
 import type { Preview, StoryContext } from "storybook-framework-qwik";
-import type { Component } from "@builder.io/qwik";
+import type { Component } from "@qwik.dev/core";
 
 import "./sb.css";
 import "@elmethis/qwik/style.css";
@@ -35,6 +35,9 @@ export const preview: Preview = {
   decorators: [
     (Story: Component, context: StoryContext) => {
       const theme = context.globals.theme || "light";
+      // `color-scheme` drives the native light-dark() token resolution;
+      // `data-theme` covers the few non-color overrides that can't use it.
+      document.documentElement.style.colorScheme = theme;
       document.documentElement.setAttribute("data-theme", theme);
 
       return <Story />;

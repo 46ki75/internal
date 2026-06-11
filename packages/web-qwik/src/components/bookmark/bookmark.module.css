@@ -25,23 +25,25 @@
   cursor: pointer;
   transition: background-color 200ms;
   overflow: hidden;
+  background-color: var(--elmethis-color-surface);
 
   &.bookmark-focus {
-    background-color: oklab(from #6987b8 l a b / 0.125);
+    background-color: var(--elmethis-color-surface-sunken);
   }
 
   &:hover {
-    background-color: oklch(from #6987b8 l c h / 0.125);
+    background-color: var(--elmethis-color-surface-sunken);
   }
 
   .edit-icon {
-    box-sizing: border-box;
+    box-sizing: content-box;
     padding: 0.25rem;
     grid-area: edit-icon;
     transition: background-color 100ms;
+    color: var(--elmethis-color-neutral);
 
     &:hover {
-      background-color: oklch(from gray l c h / 0.25);
+      background-color: var(--elmethis-color-surface-base);
     }
   }
 

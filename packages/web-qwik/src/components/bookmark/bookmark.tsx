@@ -47,9 +47,11 @@ export const Bookmark = component$<BookmarkProps>(
         style={style}
         onClick$={handleClick}
       >
-        <span class={styles["edit-icon"]} onClick$={handleEdit$}>
-          <ElmMdiIcon d={mdiTagEdit} />
-        </span>
+        <ElmMdiIcon
+          d={mdiTagEdit}
+          class={styles["edit-icon"]}
+          onClick$={handleEdit$}
+        />
         <span class={styles["favorite-icon"]}>
           <ElmMdiIcon
             d={mdiStar}

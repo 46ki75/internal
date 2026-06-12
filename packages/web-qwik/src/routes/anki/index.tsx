@@ -122,13 +122,13 @@ export default component$<IndexProps>(({ class: className, style }) => {
       key={currentAnki.value?.metadata.page_id ?? "none"}
     >
       <div class={styles["button-control"]}>
-        <ElmButton block onClick$={open} loading={currentAnki.value == null}>
+        <ElmButton block onClick$={open} isLoading={currentAnki.value == null}>
           <ElmMdiIcon d={mdiBookEdit} />
           <span>Edit</span>
         </ElmButton>
         <ElmButton
           block
-          loading={ankiStore.create.loading}
+          isLoading={ankiStore.create.loading}
           onClick$={() => ankiStore.create.execute(ankiStore)}
         >
           <ElmMdiIcon d={mdiCreation} />
@@ -136,7 +136,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
         </ElmButton>
         <ElmButton
           block
-          loading={currentAnki.value == null || ankiStore.review.loading}
+          isLoading={currentAnki.value == null || ankiStore.review.loading}
           onClick$={() => ankiStore.review.execute(ankiStore)}
         >
           <ElmMdiIcon
@@ -150,7 +150,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
 
         <ElmButton
           block
-          loading={currentAnki.value == null || currentAnki.value.loading}
+          isLoading={currentAnki.value == null || currentAnki.value.loading}
           onClick$={() =>
             ankiStore.fetchAnkiBlock(
               ankiStore,

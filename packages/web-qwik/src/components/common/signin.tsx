@@ -58,19 +58,19 @@ export const Signin = component$<SigninProps>((props) => {
       <ElmTextField
         label="username"
         value={username}
-        loading={isLoading}
+        isLoading={isLoading}
         disabled={isDisabled}
       />
       <ElmTextField
         label="password"
         value={password}
         isPassword
-        loading={isLoading}
+        isLoading={isLoading}
         disabled={isDisabled}
       />
       <ElmButton
         block
-        loading={isLoading}
+        isLoading={isLoading}
         disabled={isDisabled}
         onClick$={handleClick}
       >

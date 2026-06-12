@@ -155,7 +155,7 @@ export const BookmarkContainer = component$(() => {
       <ElmButton
         block
         onClick$={handleCreateBookmark}
-        loading={createBookmarkLoading.value}
+        isLoading={createBookmarkLoading.value}
       >
         <span>Create Bookmark</span>
       </ElmButton>

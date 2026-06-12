@@ -81,13 +81,13 @@ export const TodoForm = component$<TodoFormProps>(
             label="Severity"
             options={options}
             selectedOptionId={selectedSeverity}
-            loading={isLoading.value}
+            isLoading={isLoading.value}
           />
           <ElmTextField
             class={styles["title-input"]}
             label="Title"
             value={title}
-            loading={isLoading.value}
+            isLoading={isLoading.value}
           />
           <input
             class={styles["deadline-input"]}
@@ -100,7 +100,7 @@ export const TodoForm = component$<TodoFormProps>(
           <ElmButton
             class={styles["submit-button"]}
             onClick$={handleSubmit}
-            loading={isLoading.value}
+            isLoading={isLoading.value}
             disabled={title.value.trim() === ""}
           >
             <ElmMdiIcon d={mdiSend} />

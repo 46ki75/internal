@@ -43,8 +43,8 @@ importers:
         specifier: ^0.9.2
         version: 0.9.2(@a2ui/web_core@0.10.0)(zod@3.25.76)
       '@elmethis/qwik':
-        specifier: ^1.0.0-alpha.23
-        version: 1.0.0-alpha.23(@cfworker/json-schema@4.1.1)(@qwik.dev/core@2.0.0-beta.36(prettier@3.6.2)(vite@7.3.2(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0)))
+        specifier: ^1.0.0-alpha.25
+        version: 1.0.0-alpha.25(@cfworker/json-schema@4.1.1)(@qwik.dev/core@2.0.0-beta.36(prettier@3.6.2)(vite@7.3.2(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0)))
       '@eslint/js':
         specifier: ^9
         version: 9.39.4
@@ -520,6 +520,13 @@ packages:
     peerDependencies:
       '@ag-ui/core': '>=0.0.48'
 
+  '@elmethis/core@0.10.0':
+    resolution: {integrity: sha512-y3pDx4dadbPOt55IggBsPDQD26Lt8oTcgM0yaRYJo/OBIvpF9jaA/MMIm1b+f44ZByQKe5M0nC3dbqwrEa/urg==}
+    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+    peerDependencies:
+      '@a2ui/web_core': '>=0.10.0'
+      zod: ^3
+
   '@elmethis/core@0.9.2':
     resolution: {integrity: sha512-z1s4jjTmpf7GOXui0cUcmVTJX705rau3fpwE5qs69QPlmQsI6Xm9NJ//6Z/wQ0CUeclKmNsZW1l1JC9cHNDJdw==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
@@ -527,8 +534,8 @@ packages:
       '@a2ui/web_core': '>=0.10.0'
       zod: ^3
 
-  '@elmethis/qwik@1.0.0-alpha.23':
-    resolution: {integrity: sha512-oxhRIOopsxpDIxae+DtKYZfA8LdUUfIQn5mI0ERcEQrfDobEqrvsQBUTqnec1Fu0xpZkd1ZEh47fI9y8AggZDg==}
+  '@elmethis/qwik@1.0.0-alpha.25':
+    resolution: {integrity: sha512-kqzlrYJp+lhioZTsrPHZxqZ5DETcLMT4pKp2HXytoKpoJPtcmMddFP7E80QVXhXuItzfehanVYoEuhT3lZwbpw==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     peerDependencies:
       '@qwik.dev/core': '>=2.0.0-beta.31'
@@ -6136,19 +6143,25 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
+  '@elmethis/core@0.10.0(@a2ui/web_core@0.10.0)(zod@3.25.76)':
+    dependencies:
+      '@a2ui/web_core': 0.10.0
+      zod: 3.25.76
+      zod-to-json-schema: 3.25.2(zod@3.25.76)
+
   '@elmethis/core@0.9.2(@a2ui/web_core@0.10.0)(zod@3.25.76)':
     dependencies:
       '@a2ui/web_core': 0.10.0
       zod: 3.25.76
       zod-to-json-schema: 3.25.2(zod@3.25.76)
 
-  '@elmethis/qwik@1.0.0-alpha.23(@cfworker/json-schema@4.1.1)(@qwik.dev/core@2.0.0-beta.36(prettier@3.6.2)(vite@7.3.2(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0)))':
+  '@elmethis/qwik@1.0.0-alpha.25(@cfworker/json-schema@4.1.1)(@qwik.dev/core@2.0.0-beta.36(prettier@3.6.2)(vite@7.3.2(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0)))':
     dependencies:
       '@46ki75/ikuma-theme': 0.0.10
       '@a2ui/web_core': 0.10.0
       '@ag-ui/client': 0.0.55
       '@ag-ui/core': 0.0.55
-      '@elmethis/core': 0.9.2(@a2ui/web_core@0.10.0)(zod@3.25.76)
+      '@elmethis/core': 0.10.0(@a2ui/web_core@0.10.0)(zod@3.25.76)
       '@formkit/auto-animate': 0.9.0
       '@mdi/js': 7.4.47
       '@modelcontextprotocol/sdk': 1.29.0(@cfworker/json-schema@4.1.1)(zod@3.25.76)

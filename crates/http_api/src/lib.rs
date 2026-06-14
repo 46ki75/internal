@@ -15,6 +15,7 @@ pub mod resolver;
 pub mod router;
 pub mod schema;
 pub mod to_do;
+pub mod trivia;
 pub mod tts;
 pub mod typing;
 

@@ -77,6 +77,14 @@ pub async fn get_or_init_notion_bookmark_data_source_id() -> Result<String, crat
     .await
 }
 
+pub async fn get_or_init_notion_trivia_data_source_id() -> Result<String, crate::error::Error> {
+    let stage_name = get_or_init_stage_name().await?;
+    get_parameter(format!(
+        "/{stage_name}/46ki75/internal/notion/trivia/data_source/id"
+    ))
+    .await
+}
+
 pub async fn get_or_init_notion_icon_data_source_id() -> Result<String, crate::error::Error> {
     let stage_name = get_or_init_stage_name().await?;
     get_parameter(format!(

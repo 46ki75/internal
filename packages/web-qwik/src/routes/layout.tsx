@@ -5,6 +5,7 @@ import {
   mdiCreation,
   mdiFaceMan,
   mdiHome,
+  mdiLightbulbOnOutline,
   mdiPaletteSwatch,
   mdiTag,
 } from "@mdi/js";
@@ -48,6 +49,12 @@ export default component$(() => {
             d: mdiTag,
             onClick$: $(() => {
               navigate("/anki");
+            }),
+          },
+          {
+            d: mdiLightbulbOnOutline,
+            onClick$: $(() => {
+              navigate("/trivia");
             }),
           },
           {

@@ -132,6 +132,54 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/trivia": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations["trivia_list"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/trivia/block/{page_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations["trivia_block_list"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/trivia/{page_id}/view": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations["increment_view"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/typing": {
     parameters: {
       query?: never;
@@ -257,6 +305,18 @@ export interface components {
     ToDoSeverityRequest: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
     /** @enum {string} */
     ToDoSeverityResponse: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
+    TriviaBlockResponse: {
+      surface: unknown;
+    };
+    TriviaResponse: {
+      created_at: string;
+      page_id: string;
+      title?: string | null;
+      updated_at: string;
+      url: string;
+      /** Format: int32 */
+      view_count: number;
+    };
     TypingDeleteRequest: {
       id: string;
     };
@@ -714,6 +774,107 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["ToDoResponse"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/plain": string;
+        };
+      };
+    };
+  };
+  trivia_list: {
+    parameters: {
+      query?: {
+        page_size?: number;
+      };
+      header: {
+        Authorization: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Trivia */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TriviaResponse"][];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/plain": string;
+        };
+      };
+    };
+  };
+  trivia_block_list: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path: {
+        /** @description UUIDv4 */
+        page_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Trivia */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TriviaBlockResponse"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/plain": string;
+        };
+      };
+    };
+  };
+  increment_view: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path: {
+        /** @description UUIDv4 */
+        page_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Trivia */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TriviaResponse"];
         };
       };
       /** @description Internal Server Error */

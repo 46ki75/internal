@@ -24,7 +24,9 @@ pub(crate) struct OutgoingMessage {
 /// There are some code example in the following URLs:
 /// - https://github.com/awslabs/aws-lambda-rust-runtime/tree/main/examples
 /// - https://github.com/aws-samples/serverless-rust-demo/
-pub(crate) async fn function_handler(event: LambdaEvent<IncomingMessage>) -> Result<OutgoingMessage, Error> {
+pub(crate) async fn function_handler(
+    event: LambdaEvent<IncomingMessage>,
+) -> Result<OutgoingMessage, Error> {
     // Extract some useful info from the request
     let command = event.payload.command;
 
@@ -45,7 +47,12 @@ mod tests {
 
     #[tokio::test]
     async fn test_generic_handler() {
-        let event = LambdaEvent::new(IncomingMessage { command: "test".to_string() }, Context::default());
+        let event = LambdaEvent::new(
+            IncomingMessage {
+                command: "test".to_string(),
+            },
+            Context::default(),
+        );
         let response = function_handler(event).await.unwrap();
         assert_eq!(response.msg, "Command test.");
     }

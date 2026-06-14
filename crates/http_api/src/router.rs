@@ -29,6 +29,8 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                 crate::image::controller::router::init_image_router().await?;
             let (to_do_router, to_do_api) =
                 crate::to_do::controller::router::init_to_do_router().await?;
+            let (trivia_router, trivia_api) =
+                crate::trivia::controller::router::init_trivia_router().await?;
             let (typing_router, typing_api) =
                 crate::typing::controller::router::init_typing_router().await?;
 
@@ -38,6 +40,7 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                 .merge_from(icon_api)
                 .merge_from(image_api)
                 .merge_from(to_do_api)
+                .merge_from(trivia_api)
                 .merge_from(typing_api);
 
             let combined_router = anki_router
@@ -45,6 +48,7 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                 .merge(icon_router)
                 .merge(image_router)
                 .merge(to_do_router)
+                .merge(trivia_router)
                 .merge(typing_router);
 
             let app = Router::new()

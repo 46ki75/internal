@@ -3,6 +3,7 @@ import {
   component$,
   useComputed$,
   useContext,
+  useSignal,
   useStore,
   useVisibleTask$,
   type CSSProperties,
@@ -68,6 +69,21 @@ export default component$<IndexProps>(({ class: className, style }) => {
     store.currentIndex != null ? store.data[store.currentIndex] : null,
   );
 
+  // Derive the leaf values that mutate after the initial render (block loads
+  // async; view_count bumps on dwell). Reading them inside their own computed
+  // subscribes to the nested store property, so a later mutation re-renders —
+  // reading `current.value.block` does not, because `current` only tracks the
+  // index/array, not the item's properties.
+  const currentBlock = useComputed$(() => {
+    const i = store.currentIndex;
+    return i != null ? (store.data[i]?.block ?? null) : null;
+  });
+
+  const currentViewCount = useComputed$(() => {
+    const i = store.currentIndex;
+    return i != null ? (store.data[i]?.metadata.view_count ?? 0) : 0;
+  });
+
   const fetchList = $(async (append: boolean, signal?: AbortSignal) => {
     store.loading = true;
     try {
@@ -105,13 +121,23 @@ export default component$<IndexProps>(({ class: className, style }) => {
     }
   });
 
+  // Write-backs go through `store.data[index] = {...}` (replacing the element),
+  // not by mutating an object returned from `.find()`. A `.find()` result is
+  // not a tracked store proxy, so mutating its properties never notifies
+  // subscribers — the async block would land in the store but never render.
+  const patchItem = $((pageId: string, patch: Partial<TriviaItem>) => {
+    const index = store.data.findIndex((t) => t.metadata.page_id === pageId);
+    if (index < 0) return;
+    store.data[index] = { ...store.data[index], ...patch };
+  });
+
   const fetchBlock = $(async (pageId?: string, signal?: AbortSignal) => {
     const item = store.data.find((t) => t.metadata.page_id === pageId);
     try {
       if (!pageId || !item) return;
       if (item.loading || item.block) return;
 
-      item.loading = true;
+      await patchItem(pageId, { loading: true });
       await authStore.tokens.refresh(authStore);
 
       const { data } = await openApiClient.GET(
@@ -125,7 +151,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
         },
       );
 
-      if (data) item.block = data;
+      if (data) await patchItem(pageId, { block: data, loading: false });
     } catch (error) {
       if (!(error instanceof Error && error.name === "AbortError")) {
         store.error =
@@ -133,7 +159,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
           (error instanceof Error ? error.message : String(error));
       }
     } finally {
-      if (item && !signal?.aborted) item.loading = false;
+      if (!signal?.aborted) await patchItem(pageId ?? "", { loading: false });
     }
   });
 
@@ -153,7 +179,10 @@ export default component$<IndexProps>(({ class: className, style }) => {
           },
         },
       );
-      if (data) item.metadata.view_count = data.view_count;
+      if (data)
+        await patchItem(pageId, {
+          metadata: { ...item.metadata, view_count: data.view_count },
+        });
     } catch {
       // A failed view increment should not interrupt browsing.
     }
@@ -168,10 +197,16 @@ export default component$<IndexProps>(({ class: className, style }) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
-  // Initial load.
+  // Initial load. The `initialized` guard is required: this visible task can
+  // fire more than once, and a second `fetchList(false)` would replace
+  // `store.data` with fresh (block-less) items — clobbering an already-loaded
+  // block and reverting the page to the loading state.
+  const initialized = useSignal(false);
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(
     ({ cleanup }) => {
+      if (initialized.value) return;
+      initialized.value = true;
       const controller = new AbortController();
       cleanup(() => controller.abort());
       fetchList(false, controller.signal);
@@ -215,7 +250,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
         </ElmInlineText>
       </div>
 
-      {!current.value?.block ? (
+      {!currentBlock.value ? (
         <ElmBlockFallback />
       ) : (
         <div class={styles["trivia-block-container"]}>
@@ -223,20 +258,20 @@ export default component$<IndexProps>(({ class: className, style }) => {
             <div class={styles["block-header-left"]}>
               <ElmMdiIcon d={mdiLightbulbOnOutline} />
               <ElmInlineText>
-                {current.value.metadata.title ?? "Untitled"}
+                {current.value?.metadata.title ?? "Untitled"}
               </ElmInlineText>
             </div>
             <div class={styles["block-header-left"]}>
               <ElmMdiIcon d={mdiEye} color="#868e9c" />
-              <ElmInlineText>{current.value.metadata.view_count}</ElmInlineText>
+              <ElmInlineText>{currentViewCount.value}</ElmInlineText>
             </div>
           </div>
           <div class={styles["block-renderer"]}>
             <ElmA2ui
               catalog={blockCatalog}
               messages={surfaceToMessages(
-                current.value.block.surface,
-                current.value.metadata.page_id,
+                currentBlock.value.surface,
+                current.value?.metadata.page_id ?? "",
               )}
             />
           </div>

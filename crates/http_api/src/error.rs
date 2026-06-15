@@ -9,6 +9,12 @@ pub enum Error {
     #[error("serde error: {0}")]
     SerdeJson(#[from] serde_json::Error),
 
+    #[error("HTTP request error: {0}")]
+    Reqwest(#[from] reqwest::Error),
+
+    #[error("could not infer file type from bytes")]
+    InferUnknownType,
+
     // Boxed: this AWS `SdkError` is ~360 bytes and would otherwise dominate the
     // size of `Error` — and of every enum that wraps it via `#[from]`.
     #[error("SSM SDK error: {0}")]

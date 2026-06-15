@@ -134,9 +134,78 @@ mod tests {
         let trivia_repository = std::sync::Arc::new(TriviaRepositoryStub);
         let trivia_use_case = TriviaUseCase { trivia_repository };
 
-        let _ = trivia_use_case
+        let blocks = trivia_use_case
             .list_blocks("4a3720d5-fcdd-46f1-a7b8-51e168ac5e8e")
             .await
             .unwrap();
+
+        assert_eq!(blocks.surface["root"], "root");
+    }
+
+    // ---- normalize_root (pure) ----
+
+    use n2a2ui_a2ui::v0_9::{ChildList, Column, Component, Surface};
+
+    fn column(id: &str, children: &[&str]) -> Component {
+        Component::Column(Column {
+            id: id.to_string(),
+            children: ChildList::Static(children.iter().map(|s| s.to_string()).collect()),
+            ..Default::default()
+        })
+    }
+
+    #[test]
+    fn normalize_root_rewrites_id_and_preserves_children() {
+        let mut components = indexmap::IndexMap::new();
+        components.insert("orig".to_string(), column("orig", &["a", "b"]));
+        components.insert("a".to_string(), column("a", &[]));
+        components.insert("b".to_string(), column("b", &[]));
+        let source = Surface {
+            root: "orig".to_string(),
+            components,
+        };
+
+        let result = normalize_root(source);
+
+        assert_eq!(result.root, SECTION_ROOT_ID);
+        assert!(result.components.contains_key(SECTION_ROOT_ID));
+        assert!(!result.components.contains_key("orig"));
+        match result.components.get(SECTION_ROOT_ID) {
+            Some(Component::Column(col)) => match &col.children {
+                ChildList::Static(ids) => {
+                    assert_eq!(ids, &vec!["a".to_string(), "b".to_string()])
+                }
+                _ => panic!("expected static children"),
+            },
+            _ => panic!("expected a Column at the root id"),
+        }
+        assert!(result.components.contains_key("a"));
+        assert!(result.components.contains_key("b"));
+    }
+
+    #[test]
+    fn normalize_root_non_column_root_yields_empty_children() {
+        let mut components = indexmap::IndexMap::new();
+        components.insert(
+            "orig".to_string(),
+            Component::RichText(n2a2ui_a2ui::v0_9::RichText {
+                id: "orig".to_string(),
+                ..Default::default()
+            }),
+        );
+        let source = Surface {
+            root: "orig".to_string(),
+            components,
+        };
+
+        let result = normalize_root(source);
+
+        match result.components.get(SECTION_ROOT_ID) {
+            Some(Component::Column(col)) => match &col.children {
+                ChildList::Static(ids) => assert!(ids.is_empty()),
+                _ => panic!("expected static children"),
+            },
+            _ => panic!("expected a Column at the root id"),
+        }
     }
 }

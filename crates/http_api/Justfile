@@ -8,4 +8,20 @@ deploy  STAGE_NAME: build
     cargo lambda deploy --binary-name http-api "{{STAGE_NAME}}-46ki75-internal-lambda-function-http-api"
 
 test:
-    cargo test --lib
+    cargo test -p http-api --lib
+
+# Instrumented hermetic run (no report yet)
+test-cov:
+    cargo llvm-cov --no-report -p http-api --lib
+
+# AI-friendly per-file table (drops 100%-covered files) + uncovered line numbers
+coverage: test-cov
+    cargo llvm-cov report --show-missing-lines --color=always 2>&1 | grep -v " 100.00%"
+
+# Local HTML drilldown
+coverage-html: test-cov
+    cargo llvm-cov report --html --open
+
+# CI / Codecov upload
+coverage-ci: test-cov
+    cargo llvm-cov report --lcov --output-path lcov.info

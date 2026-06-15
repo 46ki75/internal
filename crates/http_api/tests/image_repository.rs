@@ -1,7 +1,8 @@
 use http_api::image::repository::{ImageRepository, ImageRepositoryImpl};
 
 #[tokio::test]
-async fn test_fetch_image_tags() {
+#[ignore = "live: hits Notion via AWS-backed config, requires network + credentials"]
+async fn live_fetch_image_tags() {
     let repository = ImageRepositoryImpl {};
 
     let result = repository.fetch_image_tags().await;
@@ -12,7 +13,8 @@ async fn test_fetch_image_tags() {
 }
 
 #[tokio::test]
-async fn test_fetch_images() {
+#[ignore = "live: hits Notion via AWS-backed config, requires network + credentials"]
+async fn live_fetch_images() {
     let repository = ImageRepositoryImpl {};
 
     let result = repository.fetch_images().await;

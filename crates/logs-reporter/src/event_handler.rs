@@ -2,6 +2,9 @@ use aws_config::BehaviorVersion;
 use aws_lambda_events::event::cloudwatch_logs::LogsEvent;
 use lambda_runtime::{Error, LambdaEvent};
 
+// Variants intentionally match the uppercase CloudWatch/syslog level names;
+// they are surfaced verbatim in alert emails via `{:?}`.
+#[allow(clippy::upper_case_acronyms)]
 #[derive(Debug)]
 enum Level {
     DEBUG,

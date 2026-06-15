@@ -1,0 +1,15 @@
+# Coverage is a guardrail, not a merge gate: keep all status checks
+# informational so they never fail a PR. Flip `informational` to false (and
+# optionally set a `target`/`threshold`) once you want coverage to block.
+coverage:
+  status:
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        informational: true
+
+comment:
+  layout: "reach, diff, files"
+  require_changes: false

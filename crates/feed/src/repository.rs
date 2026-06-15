@@ -1,34 +1,15 @@
-use std::pin::Pin;
-
+use crate::BoxFuture;
 use reqwest::header::USER_AGENT;
 
 pub trait Repository {
-    fn fetch_html(
-        &self,
-        url: &str,
-    ) -> Pin<
-        Box<
-            dyn std::future::Future<Output = Result<String, Box<dyn std::error::Error>>>
-                + Send
-                + Sync,
-        >,
-    >;
+    fn fetch_html(&self, url: &str) -> BoxFuture<Result<String, Box<dyn std::error::Error>>>;
 }
 
 #[derive(Debug)]
 pub struct RepositoryImpl {}
 
 impl Repository for RepositoryImpl {
-    fn fetch_html(
-        &self,
-        url: &str,
-    ) -> Pin<
-        Box<
-            dyn std::future::Future<Output = Result<String, Box<dyn std::error::Error>>>
-                + Send
-                + Sync,
-        >,
-    > {
+    fn fetch_html(&self, url: &str) -> BoxFuture<Result<String, Box<dyn std::error::Error>>> {
         let url = url.to_owned();
 
         Box::pin(async move {

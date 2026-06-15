@@ -16,7 +16,7 @@ impl BookmarkQueryResolver {
             .await
             .map_err(|e| e.to_string())?
             .into_iter()
-            .map(|bookmark_entity| super::Bookmark::from(bookmark_entity))
+            .map(super::Bookmark::from)
             .collect::<Vec<super::Bookmark>>();
 
         Ok(bookmarks)

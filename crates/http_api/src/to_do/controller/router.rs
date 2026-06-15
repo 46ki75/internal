@@ -15,12 +15,16 @@ pub async fn init_to_do_router()
         to_do_use_case: use_case,
     });
 
-    let (router, api) = OpenApiRouter::new()
+    Ok(to_do_router(state))
+}
+
+/// Builds the to_do router from injected state. Split out from
+/// [`init_to_do_router`] so tests can drive it with a stub-backed use_case.
+pub fn to_do_router(state: Arc<ToDoState>) -> (axum::Router, utoipa::openapi::OpenApi) {
+    OpenApiRouter::new()
         .routes(routes!(crate::to_do::controller::to_do_list))
         .routes(routes!(crate::to_do::controller::create_to_do))
         .routes(routes!(crate::to_do::controller::update_to_do))
         .with_state(state)
-        .split_for_parts();
-
-    Ok((router, api))
+        .split_for_parts()
 }

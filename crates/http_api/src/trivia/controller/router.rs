@@ -16,12 +16,16 @@ pub async fn init_trivia_router()
         trivia_use_case: use_case,
     });
 
-    let (router, api) = OpenApiRouter::new()
+    Ok(trivia_router(state))
+}
+
+/// Builds the trivia router from injected state. Split out from
+/// [`init_trivia_router`] so tests can drive it with a stub-backed use_case.
+pub fn trivia_router(state: Arc<TriviaState>) -> (axum::Router, utoipa::openapi::OpenApi) {
+    OpenApiRouter::new()
         .routes(routes!(crate::trivia::controller::trivia_list))
         .routes(routes!(crate::trivia::controller::trivia_block_list))
         .routes(routes!(crate::trivia::controller::increment_view))
         .with_state(state)
-        .split_for_parts();
-
-    Ok((router, api))
+        .split_for_parts()
 }

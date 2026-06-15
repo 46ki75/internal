@@ -16,11 +16,15 @@ pub async fn init_bookmark_router()
         bookmark_use_case: use_case,
     });
 
-    let (router, api) = OpenApiRouter::new()
+    Ok(bookmark_router(state))
+}
+
+/// Builds the bookmark router from injected state. Split out from
+/// [`init_bookmark_router`] so tests can drive it with a stub-backed use_case.
+pub fn bookmark_router(state: Arc<BookmarkState>) -> (axum::Router, utoipa::openapi::OpenApi) {
+    OpenApiRouter::new()
         .routes(routes!(crate::bookmark::controller::bookmark_list))
         .routes(routes!(crate::bookmark::controller::create_bookmark))
         .with_state(state)
-        .split_for_parts();
-
-    Ok((router, api))
+        .split_for_parts()
 }

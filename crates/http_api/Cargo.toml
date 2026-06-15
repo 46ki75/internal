@@ -67,3 +67,8 @@ utoipa-axum = "0.2.0"
 utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
 cached = { version = "0.59.0", features = ["async"] }
 serde_plain = "1.0.2"
+
+[dev-dependencies]
+# In-process API tests drive the router via `oneshot` and read response bodies.
+tower = { version = "0.5", features = ["util"] }
+http-body-util = "0.1"

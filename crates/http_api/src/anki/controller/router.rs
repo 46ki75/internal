@@ -16,14 +16,18 @@ pub async fn init_anki_router()
         anki_use_case: use_case,
     });
 
-    let (router, api) = OpenApiRouter::new()
+    Ok(anki_router(state))
+}
+
+/// Builds the anki router from injected state. Split out from
+/// [`init_anki_router`] so tests can drive it with a stub-backed use_case.
+pub fn anki_router(state: Arc<AnkiState>) -> (axum::Router, utoipa::openapi::OpenApi) {
+    OpenApiRouter::new()
         .routes(routes!(crate::anki::controller::anki))
         .routes(routes!(crate::anki::controller::anki_list))
         .routes(routes!(crate::anki::controller::block_list))
         .routes(routes!(crate::anki::controller::create_anki))
         .routes(routes!(crate::anki::controller::update_anki))
         .with_state(state)
-        .split_for_parts();
-
-    Ok((router, api))
+        .split_for_parts()
 }

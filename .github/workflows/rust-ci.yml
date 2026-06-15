@@ -29,7 +29,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ci:
+  # Formatting only: no workspace compile, so this fails fast (seconds).
+  fmt:
+    name: Format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -39,18 +41,53 @@ jobs:
       - name: Install pinned Rust toolchain
         run: rustup show active-toolchain || rustup toolchain install
 
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just
+
+      - name: just fmt-check
+        run: just fmt-check
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install pinned Rust toolchain
+        run: rustup show active-toolchain || rustup toolchain install
+
       - uses: Swatinem/rust-cache@v2
 
       - uses: taiki-e/install-action@v2
         with:
           tool: just
 
-      - name: just ci
-        run: just ci
+      - name: just lint
+        run: just lint
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install pinned Rust toolchain
+        run: rustup show active-toolchain || rustup toolchain install
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just
+
+      - name: just test
+        run: just test
 
   # Report-only: surfaces hermetic-test coverage but never gates the merge
   # (coverage is a guardrail, not a target).
   coverage:
+    name: Coverage
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5

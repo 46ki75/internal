@@ -165,3 +165,97 @@ impl ImageRepository for ImageRepositoryImpl {
         })
     }
 }
+
+pub struct ImageRepositoryStub;
+
+impl ImageRepository for ImageRepositoryStub {
+    fn fetch_images(
+        &self,
+    ) -> Pin<
+        Box<dyn Future<Output = Result<self::output::ImagePageDto, ImageRepositoryError>> + Send>,
+    > {
+        Box::pin(async move {
+            let image = self::output::ImageDto {
+                title: PageTitleProperty {
+                    title: vec![RichText::from("alpha".to_string())],
+                    ..Default::default()
+                },
+                name: PageRichTextProperty {
+                    rich_text: vec![RichText::from("alpha-name".to_string())],
+                    ..Default::default()
+                },
+                sources: PageMultiSelectProperty::default(),
+                url: PageUrlProperty {
+                    url: Some("https://example.com/alpha.png".to_string()),
+                    ..Default::default()
+                },
+                tags: PageRelationProperty::default(),
+                notable_tags: PageRelationProperty::default(),
+                uploaded_at: PageDateProperty::default(),
+                images: PageFilesProperty::default(),
+            };
+
+            Ok(self::output::ImagePageDto {
+                images: vec![image],
+                next_cursor: None,
+            })
+        })
+    }
+
+    fn fetch_image_tags(
+        &self,
+    ) -> Pin<
+        Box<
+            dyn Future<Output = Result<Vec<self::output::ImageTagDto>, ImageRepositoryError>>
+                + Send,
+        >,
+    > {
+        Box::pin(async move {
+            Ok(vec![self::output::ImageTagDto {
+                tag_name: PageTitleProperty {
+                    title: vec![RichText::from("artist-tag".to_string())],
+                    ..Default::default()
+                },
+                url: PageUrlProperty {
+                    url: Some("https://example.com/artist".to_string()),
+                    ..Default::default()
+                },
+                tag_type: PageSelectProperty {
+                    select: Some(Select {
+                        name: "Artist".to_string(),
+                        ..Default::default()
+                    }),
+                    ..Default::default()
+                },
+            }])
+        })
+    }
+
+    fn create_image_tag(
+        &self,
+        tag_name: String,
+        url: String,
+        tag_type: self::output::ImageTagTypeDtoInput,
+    ) -> Pin<Box<dyn Future<Output = Result<self::output::ImageTagDto, ImageRepositoryError>> + Send>>
+    {
+        Box::pin(async move {
+            Ok(self::output::ImageTagDto {
+                tag_name: PageTitleProperty {
+                    title: vec![RichText::from(tag_name)],
+                    ..Default::default()
+                },
+                url: PageUrlProperty {
+                    url: Some(url),
+                    ..Default::default()
+                },
+                tag_type: PageSelectProperty {
+                    select: Some(Select {
+                        name: serde_plain::to_string(&tag_type).unwrap_or_default(),
+                        ..Default::default()
+                    }),
+                    ..Default::default()
+                },
+            })
+        })
+    }
+}

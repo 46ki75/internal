@@ -28,3 +28,41 @@ impl ImageUseCase {
         Ok(dtos.into_iter().map(output::ImageTagOutput::from).collect())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::image::repository::ImageRepositoryStub;
+
+    #[tokio::test]
+    async fn fetch_images_maps_dtos() {
+        let use_case = ImageUseCase {
+            repository: Arc::new(ImageRepositoryStub),
+        };
+
+        let page = use_case.fetch_images().await.unwrap();
+
+        assert_eq!(page.images.len(), 1);
+        assert_eq!(page.images[0].title, "alpha");
+        assert_eq!(page.images[0].name, "alpha-name");
+        assert_eq!(
+            page.images[0].url.as_deref(),
+            Some("https://example.com/alpha.png")
+        );
+        assert!(page.next_cursor.is_none());
+    }
+
+    #[tokio::test]
+    async fn fetch_image_tags_maps_dtos() {
+        let use_case = ImageUseCase {
+            repository: Arc::new(ImageRepositoryStub),
+        };
+
+        let tags = use_case.fetch_image_tags().await.unwrap();
+
+        assert_eq!(tags.len(), 1);
+        assert_eq!(tags[0].tag_name, "artist-tag");
+        assert_eq!(tags[0].url, "https://example.com/artist");
+        assert_eq!(tags[0].tag_type, "Artist");
+    }
+}

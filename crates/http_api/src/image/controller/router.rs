@@ -15,11 +15,15 @@ pub async fn init_image_router()
         image_use_case: use_case,
     });
 
-    let (router, api) = OpenApiRouter::new()
+    Ok(image_router(state))
+}
+
+/// Builds the image router from injected state. Split out from
+/// [`init_image_router`] so tests can drive it with a stub-backed use_case.
+pub fn image_router(state: Arc<ImageState>) -> (axum::Router, utoipa::openapi::OpenApi) {
+    OpenApiRouter::new()
         .routes(routes!(crate::image::controller::fetch_images))
         .routes(routes!(crate::image::controller::fetch_image_tags))
         .with_state(state)
-        .split_for_parts();
-
-    Ok((router, api))
+        .split_for_parts()
 }

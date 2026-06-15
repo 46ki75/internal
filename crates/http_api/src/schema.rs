@@ -1,8 +1,29 @@
 use async_graphql::{EmptySubscription, Schema};
+use std::sync::Arc;
 
-static SCHEMA: tokio::sync::OnceCell<
-    Schema<crate::query::QueryRoot, crate::mutation::MutationRoot, EmptySubscription>,
-> = tokio::sync::OnceCell::const_new();
+type ApiSchema = Schema<crate::query::QueryRoot, crate::mutation::MutationRoot, EmptySubscription>;
+
+static SCHEMA: tokio::sync::OnceCell<ApiSchema> = tokio::sync::OnceCell::const_new();
+
+/// Assembles the GraphQL schema from injected use_cases. Split out from
+/// [`try_init_schema`] so tests can build a schema backed by stub repositories.
+pub fn build_schema(
+    anki_use_case: Arc<crate::anki::use_case::AnkiUseCase>,
+    bookmark_use_case: Arc<crate::bookmark::use_case::BookmarkUseCase>,
+    to_do_use_case: Arc<crate::to_do::use_case::ToDoUseCase>,
+    typing_use_case: Arc<crate::typing::use_case::TypingUseCase>,
+) -> ApiSchema {
+    Schema::build(
+        crate::query::QueryRoot::default(),
+        crate::mutation::MutationRoot::default(),
+        EmptySubscription,
+    )
+    .data(anki_use_case)
+    .data(bookmark_use_case)
+    .data(to_do_use_case)
+    .data(typing_use_case)
+    .finish()
+}
 
 pub async fn try_init_schema() -> Result<
     &'static Schema<crate::query::QueryRoot, crate::mutation::MutationRoot, EmptySubscription>,
@@ -38,19 +59,13 @@ pub async fn try_init_schema() -> Result<
             let typing_use_case =
                 std::sync::Arc::new(crate::typing::use_case::TypingUseCase { typing_repository });
 
-            tracing::debug!("Building schema: QueryRoot");
-            let query_root = crate::query::QueryRoot::default();
-
-            tracing::debug!("Building schema: MutationRoot");
-            let mutation_root = crate::mutation::MutationRoot::default();
-
             tracing::debug!("Building schema: Schema");
-            Ok(Schema::build(query_root, mutation_root, EmptySubscription)
-                .data(anki_use_case)
-                .data(bookmark_use_case)
-                .data(to_do_use_case)
-                .data(typing_use_case)
-                .finish())
+            Ok(build_schema(
+                anki_use_case,
+                bookmark_use_case,
+                to_do_use_case,
+                typing_use_case,
+            ))
         })
         .await
 }

@@ -47,3 +47,42 @@ jobs:
 
       - name: just ci
         run: just ci
+
+  # Report-only: surfaces hermetic-test coverage but never gates the merge
+  # (coverage is a guardrail, not a target).
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install pinned Rust toolchain
+        run: rustup show active-toolchain || rustup toolchain install
+
+      # cargo-llvm-cov needs the instrumentation tools; rust-toolchain.toml
+      # uses the minimal profile, so add the component explicitly.
+      - name: Add llvm-tools
+        run: rustup component add llvm-tools-preview
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just,cargo-llvm-cov
+
+      - name: Generate coverage
+        run: just coverage-ci
+
+      - name: Write coverage summary
+        run: |
+          {
+            echo '### Coverage (hermetic tests)'
+            echo '```'
+            cargo llvm-cov report --summary-only
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload lcov.info
+        uses: actions/upload-artifact@v4
+        with:
+          name: lcov
+          path: lcov.info

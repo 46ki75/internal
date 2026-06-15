@@ -61,3 +61,16 @@ impl TtsRepository for TtsRepositoryImpl {
         })
     }
 }
+
+pub struct TtsRepositoryStub;
+
+impl TtsRepository for TtsRepositoryStub {
+    fn text_to_speach(
+        &self,
+        _text: &str,
+    ) -> std::pin::Pin<
+        Box<dyn std::future::Future<Output = Result<bytes::Bytes, crate::error::Error>> + Send>,
+    > {
+        Box::pin(async move { Ok(bytes::Bytes::from_static(b"stub-audio-bytes")) })
+    }
+}

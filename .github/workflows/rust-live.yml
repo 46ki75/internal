@@ -1,0 +1,31 @@
+name: Rust CI (live)
+
+# Manual-dispatch only. Runs the hermetic gate plus the live tests
+# (`-- --ignored`), which hit AWS (SSM) and the network. Live-test failures
+# are unrelated to any single diff, so this MUST NOT gate PR merges.
+#
+# Setup required before this can pass:
+#   - A `live` environment with required reviewers (the approval gate).
+#   - AWS credentials available to the job (OIDC role or environment secrets).
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ci-live:
+    runs-on: ubuntu-latest
+    environment: live
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install pinned Rust toolchain
+        run: rustup show active-toolchain || rustup toolchain install
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just
+
+      - name: just ci-live
+        run: just ci-live

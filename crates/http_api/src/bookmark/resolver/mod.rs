@@ -29,7 +29,7 @@ impl From<BookmarkEntity> for Bookmark {
             name: value.name,
             url: value.url,
             favicon: value.favicon,
-            tag: value.tag.map(|tag| BookmarkTag::from(tag)),
+            tag: value.tag.map(BookmarkTag::from),
             nsfw: value.nsfw,
             favorite: value.favorite,
             notion_url: value.notion_url,

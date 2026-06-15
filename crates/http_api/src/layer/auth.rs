@@ -3,6 +3,12 @@ use http::StatusCode;
 #[derive(Debug, Clone)]
 pub struct AuthLayer {}
 
+impl Default for AuthLayer {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl AuthLayer {
     pub fn new() -> Self {
         Self {}
@@ -33,7 +39,7 @@ impl<S> AuthMiddleware<S> {
     ) -> Result<(), axum::response::Response> {
         let sdk_config = &aws_config::load_defaults(aws_config::BehaviorVersion::latest()).await;
 
-        let client = aws_sdk_cognitoidentityprovider::Client::new(&sdk_config);
+        let client = aws_sdk_cognitoidentityprovider::Client::new(sdk_config);
 
         let authorization_header_value = Self::extract_authorization_header_value(headers).ok_or(
             axum::response::IntoResponse::into_response((
@@ -51,42 +57,33 @@ impl<S> AuthMiddleware<S> {
 
         let result = client.get_user().access_token(access_token).send().await;
 
-        let user = match result {
+        match result {
             Ok(_user) => Ok(()),
             Err(_) => Err(axum::response::IntoResponse::into_response((
                 StatusCode::UNAUTHORIZED,
                 "Invalid token.",
             ))),
-        };
-
-        user
+        }
     }
 
     fn extract_authorization_header_value(
         headers: &http::HeaderMap<http::HeaderValue>,
     ) -> Option<String> {
-        let value =
-            headers
-                .get(http::header::AUTHORIZATION)
-                .and_then(|authorization_header_value| {
-                    authorization_header_value
-                        .to_str()
-                        .ok()
-                        .map(|s| s.to_owned())
-                });
-
-        value
+        headers
+            .get(http::header::AUTHORIZATION)
+            .and_then(|authorization_header_value| {
+                authorization_header_value
+                    .to_str()
+                    .ok()
+                    .map(|s| s.to_owned())
+            })
     }
 
     fn normalize_bearer_token(autorization_header_value: String) -> Option<String> {
         let re: regex::Regex = regex::Regex::new(r"^(?:Bearer\s+)?([A-Za-z0-9\-_\.=]+)$").unwrap();
 
-        let token = re.captures(&autorization_header_value).and_then(|t| {
-            let first = t.get(1).map(|m| m.as_str().to_string());
-            first
-        });
-
-        token
+        re.captures(&autorization_header_value)
+            .and_then(|t| t.get(1).map(|m| m.as_str().to_string()))
     }
 }
 

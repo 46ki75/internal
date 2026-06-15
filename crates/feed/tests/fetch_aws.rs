@@ -2,7 +2,8 @@ use feed::use_case::UseCase;
 use std::sync::Arc;
 
 #[tokio::test]
-async fn fetch_aws() {
+#[ignore = "live: fetches a real AWS web page over the network"]
+async fn live_fetch_aws() {
     let repository = feed::repository::RepositoryImpl {};
     let use_case = feed::use_case::UseCaseImpl {
         repository: Arc::new(repository),
@@ -22,7 +23,8 @@ async fn fetch_aws() {
 }
 
 #[tokio::test]
-async fn parse_feed() {
+#[ignore = "live: fetches a real RSS feed over the network"]
+async fn live_parse_feed() {
     let repository = feed::repository::RepositoryImpl {};
     let use_case = feed::use_case::UseCaseImpl {
         repository: Arc::new(repository),

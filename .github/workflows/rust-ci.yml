@@ -1,0 +1,49 @@
+name: Rust CI
+
+# Hermetic PR gate: formatting, clippy (-D warnings), and the hermetic test
+# tier. Live tests are `#[ignore]`'d and run only via rust-live.yml.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "crates/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "rust-toolchain.toml"
+      - "Justfile"
+      - ".github/workflows/rust-ci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "crates/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "rust-toolchain.toml"
+      - "Justfile"
+      - ".github/workflows/rust-ci.yml"
+
+# Cancel superseded runs on the same ref.
+concurrency:
+  group: rust-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # Installs the toolchain + components (rustfmt, clippy) pinned in
+      # rust-toolchain.toml, so CI runs against the declared version.
+      - name: Install pinned Rust toolchain
+        run: rustup show active-toolchain || rustup toolchain install
+
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just
+
+      - name: just ci
+        run: just ci

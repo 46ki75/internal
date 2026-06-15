@@ -92,12 +92,12 @@ fn convert_page_response_to_to_do_entity(
             if let PageProperty::Select(select) = s {
                 select.select.as_ref().map(|select_name| {
                     let select_name_str = select_name.to_string();
-                    let severity = serde_plain::from_str::<ToDoSeverityEntity>(&select_name_str)
+
+                    serde_plain::from_str::<ToDoSeverityEntity>(&select_name_str)
                         .inspect_err(|e| {
                             tracing::warn!("Unexpected variant detected in severity: {}", e)
                         })
-                        .unwrap_or(ToDoSeverityEntity::Unknown);
-                    severity
+                        .unwrap_or(ToDoSeverityEntity::Unknown)
                 })
             } else {
                 None

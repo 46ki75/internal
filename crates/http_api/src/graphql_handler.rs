@@ -33,25 +33,23 @@ pub async fn graphql_handler(
                 .body(axum::body::Body::from(body));
 
             match response {
-                Ok(r) => return Ok(r),
-                Err(err) => {
-                    return Err((
-                        axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-                        axum::Json::from(
-                            serde_json::json!({"message": format!("Failed to serialize response: {}", err)}),
-                        ),
-                    ));
-                }
+                Ok(r) => Ok(r),
+                Err(err) => Err((
+                    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                    axum::Json::from(
+                        serde_json::json!({"message": format!("Failed to serialize response: {}", err)}),
+                    ),
+                )),
             }
         }
         Err(err) => {
             lambda_http::tracing::error!("Failed to serialize response: {}", err);
-            return Err((
+            Err((
                 axum::http::StatusCode::INTERNAL_SERVER_ERROR,
                 axum::Json::from(
                     serde_json::json!({"message": format!("Failed to serialize response: {}", err)}),
                 ),
-            ));
+            ))
         }
-    };
+    }
 }

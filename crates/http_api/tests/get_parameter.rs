@@ -1,7 +1,8 @@
 use http_api::cache::get_parameter;
 
 #[tokio::test]
-async fn test_get_parameter() {
+#[ignore = "live: reads a real SSM Parameter Store value, requires AWS credentials"]
+async fn live_get_parameter() {
     let parameter_name = "/dev/46ki75/internal/notion/anki/data_source/id".to_owned();
 
     let start = std::time::Instant::now();

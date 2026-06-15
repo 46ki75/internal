@@ -80,41 +80,41 @@ fn partition_blocks_by_section(
     let mut explanation: Vec<String> = Vec::new();
 
     for child_id in root_children {
-        if let Some(Component::Heading(heading)) = surface.components.get(&child_id) {
-            if matches!(heading.level, HeadingLevel::H1) {
-                let heading_ids = match &heading.children {
-                    ChildList::Static(ids) => ids.as_slice(),
-                    ChildList::Template(_) => &[],
-                };
+        if let Some(Component::Heading(heading)) = surface.components.get(&child_id)
+            && matches!(heading.level, HeadingLevel::H1)
+        {
+            let heading_ids = match &heading.children {
+                ChildList::Static(ids) => ids.as_slice(),
+                ChildList::Template(_) => &[],
+            };
 
-                let text = heading_ids
-                    .iter()
-                    .filter_map(|id| match surface.components.get(id) {
-                        Some(Component::RichText(rt)) => match &rt.text {
-                            DynamicString::Literal(s) => Some(s.as_str()),
-                            _ => None,
-                        },
+            let text = heading_ids
+                .iter()
+                .filter_map(|id| match surface.components.get(id) {
+                    Some(Component::RichText(rt)) => match &rt.text {
+                        DynamicString::Literal(s) => Some(s.as_str()),
                         _ => None,
-                    })
-                    .collect::<String>()
-                    .trim()
-                    .to_lowercase();
+                    },
+                    _ => None,
+                })
+                .collect::<String>()
+                .trim()
+                .to_lowercase();
 
-                match text.as_str() {
-                    "front" => {
-                        marker = Marker::Front;
-                        continue;
-                    }
-                    "back" => {
-                        marker = Marker::Back;
-                        continue;
-                    }
-                    "explanation" => {
-                        marker = Marker::Explanation;
-                        continue;
-                    }
-                    _ => {}
+            match text.as_str() {
+                "front" => {
+                    marker = Marker::Front;
+                    continue;
                 }
+                "back" => {
+                    marker = Marker::Back;
+                    continue;
+                }
+                "explanation" => {
+                    marker = Marker::Explanation;
+                    continue;
+                }
+                _ => {}
             }
         }
 

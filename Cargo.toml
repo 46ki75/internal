@@ -1,3 +1,18 @@
 [workspace]
 members = ["crates/*"]
-resolver = "2"
+resolver = "3"
+
+# Versions shared by 2+ crates live here; each crate opts in with
+# `foo.workspace = true` and layers on its own crate-local features.
+[workspace.dependencies]
+aws-config = "1.8.14"
+lambda_runtime = "1.0.1"
+serde = "1.0.228"
+serde_json = "1.0.149"
+thiserror = "2.0.18"
+tokio = "1.49.0"
+
+# Lints applied uniformly across the workspace; each crate opts in with
+# `[lints] workspace = true`.
+[workspace.lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(rust_analyzer)'] }

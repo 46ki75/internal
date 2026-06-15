@@ -39,7 +39,7 @@ impl TtsRepository for TtsRepositoryImpl {
                 .header("x-api-key", secret)
                 .body(body_value.to_string());
 
-            let response = request.send().await.unwrap().bytes().await.unwrap();
+            let response = request.send().await?.error_for_status()?.bytes().await?;
 
             #[derive(Deserialize)]
             struct Response {
@@ -51,11 +51,10 @@ impl TtsRepository for TtsRepositoryImpl {
             let voice = client
                 .get(download_url)
                 .send()
-                .await
-                .unwrap()
+                .await?
+                .error_for_status()?
                 .bytes()
-                .await
-                .unwrap();
+                .await?;
 
             Ok(voice)
         })

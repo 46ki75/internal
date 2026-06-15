@@ -17,12 +17,10 @@ pub enum TypingControllerError {
 
 impl IntoResponse for TypingControllerError {
     fn into_response(self) -> axum::response::Response {
-        tracing::error!(error = ?self, "request failed");
         let status = match &self {
             Self::UseCase(_) => StatusCode::INTERNAL_SERVER_ERROR,
         };
-        let body = serde_json::json!({ "error": self.to_string() });
-        (status, Json(body)).into_response()
+        crate::error::render_error_response(status, &self)
     }
 }
 

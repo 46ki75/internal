@@ -1,6 +1,6 @@
 //! # Execute
 //!
-//! This module contains the Axum and GraphQL executors.
+//! This module contains the Axum executor.
 
 /// Execute an Axum app with a Lambda event.
 pub async fn execute_axum(

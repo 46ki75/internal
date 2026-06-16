@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 use crate::to_do::controller::request::ToDoSeverityRequest;
-use crate::to_do::resolver::ToDoSeverity;
 
 #[derive(Default, Debug)]
 pub struct ToDoEntity {
@@ -28,18 +27,6 @@ pub enum ToDoSeverityEntity {
     Info,
     Warn,
     Error,
-}
-
-impl From<ToDoSeverity> for ToDoSeverityEntity {
-    fn from(value: ToDoSeverity) -> Self {
-        match value {
-            ToDoSeverity::Unknown => Self::Unknown,
-            ToDoSeverity::Debug => Self::Debug,
-            ToDoSeverity::Info => Self::Info,
-            ToDoSeverity::Warn => Self::Warn,
-            ToDoSeverity::Error => Self::Error,
-        }
-    }
 }
 
 impl From<ToDoSeverityRequest> for ToDoSeverityEntity {

@@ -24,7 +24,6 @@ reqwest = { version = "0.13", features = [
     "gzip",
     "brotli",
 ], default-features = false }
-async-graphql = { version = "7.2.1", features = ["time"] }
 chrono = "0.4.43"
 lambda_http = "1.0.2"
 notionrs = { version = "0.27.0", features = ["rustls"] }

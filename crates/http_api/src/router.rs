@@ -70,10 +70,6 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                         })
                     }),
                 )
-                .route(
-                    "/api-gateway/api/graphql",
-                    axum::routing::post(crate::graphql_handler::graphql_handler),
-                )
                 .layer(tower_http::compression::CompressionLayer::new());
 
             Ok(app)

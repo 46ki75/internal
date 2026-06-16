@@ -40,11 +40,11 @@ importers:
   packages/web-qwik:
     devDependencies:
       '@elmethis/core':
-        specifier: ^0.9.2
-        version: 0.9.2(@a2ui/web_core@0.10.0)(zod@3.25.76)
+        specifier: ^0.13.0
+        version: 0.13.0(@a2ui/web_core@0.10.0)(zod@3.25.76)
       '@elmethis/qwik':
-        specifier: ^1.0.0-alpha.25
-        version: 1.0.0-alpha.25(@cfworker/json-schema@4.1.1)(@qwik.dev/core@2.0.0-beta.36(prettier@3.6.2)(vite@7.3.2(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0)))
+        specifier: ^1.0.0-alpha.29
+        version: 1.0.0-alpha.29(@cfworker/json-schema@4.1.1)(@qwik.dev/core@2.0.0-beta.36(prettier@3.6.2)(vite@7.3.2(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0)))
       '@eslint/js':
         specifier: ^9
         version: 9.39.4
@@ -147,20 +147,20 @@ packages:
   '@ag-ui/client@0.0.52':
     resolution: {integrity: sha512-U407VvDDwR5qs8TiyN1qY38x87qMWc2n0epw8iA5aa1qwzCKBBDgg3Fkm4JogQf0X4jwNsz8HUbIZrBB56mrpg==}
 
-  '@ag-ui/client@0.0.55':
-    resolution: {integrity: sha512-cyTY0S1UK3ynFCtLh6XPkxECQiYL6XvFcAei5FD4yYzln5agSCZ3cAmdD86mwE4UbS5teS3Nci8Q5tEAjrRRgA==}
+  '@ag-ui/client@0.0.57':
+    resolution: {integrity: sha512-Xap2alG9Z0/j5kb3x4D7oTpe2sw1dfrC9rgJJr2NZu5vKcm8dzIPNd31mF2B4zS3BKqYIu245yxKPhEtT30MHw==}
 
   '@ag-ui/core@0.0.52':
     resolution: {integrity: sha512-Xo0bUaNV56EqylzcrAuhUkQX7et7+SZIrqZZtEByGwEq/I1EHny6ZMkWHLkKR7UNi0FJZwJyhKYmKJS3B2SEgA==}
 
-  '@ag-ui/core@0.0.55':
-    resolution: {integrity: sha512-Pj7Ke0NsCxbCFgI3xK5YE56LaMRxnXnyeDUgDFTYxeF6KZDcSf5E0x2gB6/37w6bE0hcn/LRNPFd8Es18eIEzA==}
+  '@ag-ui/core@0.0.57':
+    resolution: {integrity: sha512-gho1OWjNE6E3Rl7ZEZ1wr2CEpUHjLFU0FqzCZZk439TicLu+BfLCMkMokB07bMGlRmbJ60hM6LW60iOVauCx+Q==}
 
   '@ag-ui/encoder@0.0.52':
     resolution: {integrity: sha512-6GVDTb1dv2rjap7VVnmXYypDutZi6nrsTcdfxoP6ryDG5ynlXtmmS+FSDAt62JbIMD5CtEE963xNCb6d1iXw9g==}
 
-  '@ag-ui/encoder@0.0.55':
-    resolution: {integrity: sha512-co4RB8kCatQ/+sBOR+nmNMzuKKWynHD73U/MTn9yG8rdznG51KuAPlQAwTP03VChFgO5GfNqEAzcGf5dR6jyMg==}
+  '@ag-ui/encoder@0.0.57':
+    resolution: {integrity: sha512-ifD9NctR4xyPDR58xF9GK1bj/S8oECFkTeDfuYD8tXdbcOstIJ2TOqU2zhiCKnw7Vw+zR9Qv3TbsM9E7Gi9X3Q==}
 
   '@ag-ui/langgraph@0.0.29':
     resolution: {integrity: sha512-7Q4YMtuI53N3uyZbEhYsIpfwYK1l5mWX88nm7BE242lIpPsiLIj3RL8xpT8lojqmR9MyZ72jlHIhXm1hbsrZjg==}
@@ -176,8 +176,8 @@ packages:
   '@ag-ui/proto@0.0.52':
     resolution: {integrity: sha512-+iCGzNUNL50YIoThVmsolWPjG4MJidl+R9k8QAGVwErEfHRtQ64KFyrdpeOXNVuWtM3SViJqPSgFyv7eGVS63A==}
 
-  '@ag-ui/proto@0.0.55':
-    resolution: {integrity: sha512-DNavmWA/dL3u4mpB+g/NPzF7XrYLjVFgmS8CnSOsenrmO64XVoR5RrbQghzaKvP9VNkhvdFI9tllpItfE3Pryw==}
+  '@ag-ui/proto@0.0.57':
+    resolution: {integrity: sha512-pPENOZt0P6ibH8sCTgq05wLYXi5t3P9B5r/1bWYehXjUxtyOdnukSlWM++SsCIwUXsQdm/b3aBgGjEeTF7RenA==}
 
   '@ai-sdk/anthropic@2.0.78':
     resolution: {integrity: sha512-88zglac49Dyf0osHVKX8Cgim5mo+xfVACSMbNlVt7q97S2hWTuMeVSPCyDM8UCJQ6m3jNNLlMZLEwVdOdxZjBg==}
@@ -520,22 +520,15 @@ packages:
     peerDependencies:
       '@ag-ui/core': '>=0.0.48'
 
-  '@elmethis/core@0.10.0':
-    resolution: {integrity: sha512-y3pDx4dadbPOt55IggBsPDQD26Lt8oTcgM0yaRYJo/OBIvpF9jaA/MMIm1b+f44ZByQKe5M0nC3dbqwrEa/urg==}
+  '@elmethis/core@0.13.0':
+    resolution: {integrity: sha512-1DpJybbo+REUjN48d6b74xly5huaa/5LkDsZB+XJs4943fBVRi5tEt8RTxS+bR9BlrdxnF4ICR22vnGUe2u/xg==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     peerDependencies:
       '@a2ui/web_core': '>=0.10.0'
       zod: ^3
 
-  '@elmethis/core@0.9.2':
-    resolution: {integrity: sha512-z1s4jjTmpf7GOXui0cUcmVTJX705rau3fpwE5qs69QPlmQsI6Xm9NJ//6Z/wQ0CUeclKmNsZW1l1JC9cHNDJdw==}
-    engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
-    peerDependencies:
-      '@a2ui/web_core': '>=0.10.0'
-      zod: ^3
-
-  '@elmethis/qwik@1.0.0-alpha.25':
-    resolution: {integrity: sha512-kqzlrYJp+lhioZTsrPHZxqZ5DETcLMT4pKp2HXytoKpoJPtcmMddFP7E80QVXhXuItzfehanVYoEuhT3lZwbpw==}
+  '@elmethis/qwik@1.0.0-alpha.29':
+    resolution: {integrity: sha512-n2aOoTZzCECFdx1N/xCq6YRQE0qhU5DtaCfZTloEwXMePSTWk824QZGNC2w/bh9ePhLKRkD539/PzJzAcaojJw==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     peerDependencies:
       '@qwik.dev/core': '>=2.0.0-beta.31'
@@ -5302,11 +5295,11 @@ snapshots:
       uuid: 11.1.1
       zod: 3.25.76
 
-  '@ag-ui/client@0.0.55':
+  '@ag-ui/client@0.0.57':
     dependencies:
-      '@ag-ui/core': 0.0.55
-      '@ag-ui/encoder': 0.0.55
-      '@ag-ui/proto': 0.0.55
+      '@ag-ui/core': 0.0.57
+      '@ag-ui/encoder': 0.0.57
+      '@ag-ui/proto': 0.0.57
       '@types/uuid': 10.0.0
       compare-versions: 6.1.1
       fast-json-patch: 3.1.1
@@ -5319,7 +5312,7 @@ snapshots:
     dependencies:
       zod: 3.25.76
 
-  '@ag-ui/core@0.0.55':
+  '@ag-ui/core@0.0.57':
     dependencies:
       zod: 3.25.76
 
@@ -5328,10 +5321,10 @@ snapshots:
       '@ag-ui/core': 0.0.52
       '@ag-ui/proto': 0.0.52
 
-  '@ag-ui/encoder@0.0.55':
+  '@ag-ui/encoder@0.0.57':
     dependencies:
-      '@ag-ui/core': 0.0.55
-      '@ag-ui/proto': 0.0.55
+      '@ag-ui/core': 0.0.57
+      '@ag-ui/proto': 0.0.57
 
   '@ag-ui/langgraph@0.0.29(@ag-ui/client@0.0.52)(@ag-ui/core@0.0.52)(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(vue@3.5.34(typescript@6.0.3))(ws@8.20.1)(zod-to-json-schema@3.25.2(zod@3.25.76))':
     dependencies:
@@ -5370,9 +5363,9 @@ snapshots:
       '@bufbuild/protobuf': 2.11.0
       '@protobuf-ts/protoc': 2.11.1
 
-  '@ag-ui/proto@0.0.55':
+  '@ag-ui/proto@0.0.57':
     dependencies:
-      '@ag-ui/core': 0.0.55
+      '@ag-ui/core': 0.0.57
       '@bufbuild/protobuf': 2.11.0
       '@protobuf-ts/protoc': 2.11.1
 
@@ -6148,25 +6141,19 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@elmethis/core@0.10.0(@a2ui/web_core@0.10.0)(zod@3.25.76)':
+  '@elmethis/core@0.13.0(@a2ui/web_core@0.10.0)(zod@3.25.76)':
     dependencies:
       '@a2ui/web_core': 0.10.0
       zod: 3.25.76
       zod-to-json-schema: 3.25.2(zod@3.25.76)
 
-  '@elmethis/core@0.9.2(@a2ui/web_core@0.10.0)(zod@3.25.76)':
-    dependencies:
-      '@a2ui/web_core': 0.10.0
-      zod: 3.25.76
-      zod-to-json-schema: 3.25.2(zod@3.25.76)
-
-  '@elmethis/qwik@1.0.0-alpha.25(@cfworker/json-schema@4.1.1)(@qwik.dev/core@2.0.0-beta.36(prettier@3.6.2)(vite@7.3.2(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0)))':
+  '@elmethis/qwik@1.0.0-alpha.29(@cfworker/json-schema@4.1.1)(@qwik.dev/core@2.0.0-beta.36(prettier@3.6.2)(vite@7.3.2(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0)))':
     dependencies:
       '@46ki75/ikuma-theme': 0.0.10
       '@a2ui/web_core': 0.10.0
-      '@ag-ui/client': 0.0.55
-      '@ag-ui/core': 0.0.55
-      '@elmethis/core': 0.10.0(@a2ui/web_core@0.10.0)(zod@3.25.76)
+      '@ag-ui/client': 0.0.57
+      '@ag-ui/core': 0.0.57
+      '@elmethis/core': 0.13.0(@a2ui/web_core@0.10.0)(zod@3.25.76)
       '@formkit/auto-animate': 0.9.0
       '@mdi/js': 7.4.47
       '@modelcontextprotocol/sdk': 1.29.0(@cfworker/json-schema@4.1.1)(zod@3.25.76)

@@ -2522,9 +2522,9 @@ dependencies = [
 
 [[package]]
 name = "n2a2ui"
-version = "0.1.2"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "94d50748ba69545407734e7521e857aef8a1941c9855841a79ed5f5f0a4e047c"
+checksum = "5bb4d434a9db4e3d9d0d9a988db0cd58dcf7f2059d03a30a535073d87e5184ec"
 dependencies = [
  "async-stream",
  "futures",
@@ -2542,9 +2542,9 @@ dependencies = [
 
 [[package]]
 name = "n2a2ui-a2ui"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b98da460928c240ac83030c9ebd82c8e9e46ffa540840d34809f00ec9c0683b4"
+checksum = "9d1bd1ac9df7e4782ceca7902748bfe361bad3e1513d2840561610594b1af1ae"
 dependencies = [
  "indexmap",
  "serde",

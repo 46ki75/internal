@@ -8,7 +8,7 @@ Polyglot monorepo with three independent workspaces and shared Terraform:
 
 - `crates/*` — Rust workspace (`Cargo.toml` at root). Each crate is its own AWS Lambda binary.
 - `packages/*` — pnpm workspace (`pnpm-workspace.yaml`).
-- `python/*` — uv workspace (`pyproject.toml` at root). `python/fetch` runs as a containerized Lambda.
+- `python/*` — uv workspace (`pyproject.toml` at root). `python/fetch` runs as a containerized Lambda; `python/ag-ui-server` runs as a containerized Bedrock AgentCore runtime.
 - `terraform/` — single Terraform stack that provisions all `dev`/`stg`/`prod` infra (CloudFront, API Gateway, Lambda, Cognito, DynamoDB, SNS, Route53). State lives in the shared S3 bucket `shared-46ki75-internal-s3-bucket-terraform-tfstate`.
 
 Stages are `dev` | `stg` | `prod` and are passed via `STAGE_NAME` (Rust/server) or `VITE_STAGE_NAME` (web). Domains: `{stage-}internal.46ki75.com` (web) and `api.{stage-}internal.46ki75.com` (API Gateway). `prod` drops the stage prefix.
@@ -53,15 +53,19 @@ pnpm generate:openapi     # regenerate src/openapi/schema.ts from a running http
 
 `pnpm deploy.*` runs `scripts/deploy-s3.sh` (S3 sync to `<stage>-46ki75-internal-s3-bucket-web`) then `scripts/invalidate.sh` (looks up the CloudFront distribution by alias domain).
 
-### `packages/ag-ui-server` (CopilotKit on Hono, deployed to Bedrock AgentCore)
+### `python/ag-ui-server` (Claude Agent SDK over AG-UI, deployed to Bedrock AgentCore)
+
+A FastAPI app (uv workspace member) that runs a [Claude Agent SDK][casdk] agent and exposes it over the **AG-UI protocol**. Replaces the former CopilotKit-on-Hono server; the web frontend (`@elmethis/qwik` `useAgent` → `@ag-ui/client`) is unchanged.
 
 ```
-pnpm dev                       # node --env-file=.env --watch src/server.ts
-pnpm build                     # esbuild bundle to dist/server.mjs (build.ts)
-pnpm build.container.{dev|stg|prod}  # docker buildx for linux/arm64
+uv sync --package ag-ui-server --group dev
+uv run --package ag-ui-server pytest python/ag-ui-server/tests   # hermetic (mocks SSM + the SDK)
+STAGE_NAME=dev python/ag-ui-server/build.sh                      # build arm64 + push to <stage>/ag-ui-server ECR
 ```
 
-The container exposes both the standard CopilotKit routes under `/copilotkit/builtin` and a `/invocations` shim that Bedrock AgentCore calls — the shim rewrites the URL to target the `default` agent.
+Serves the AgentCore `AGUI` contract: `POST /invocations` (AG-UI `RunAgentInput` → AG-UI SSE) and `GET /ping` (health). The model is authenticated with a **Claude Pro/Max subscription** `claude setup-token` OAuth token read from SSM at `/<stage>/46ki75/internal/claude-code/secret` (no Bedrock model invocation); the only tool is the public AWS Knowledge MCP server. AgentCore validates the Cognito JWT at the edge. After pushing a new image, `terraform apply` (with a fresh `TAG` for a new runtime version). See `python/ag-ui-server/README.md`.
+
+[casdk]: https://github.com/anthropics/claude-agent-sdk-python
 
 ### `python/fetch`
 

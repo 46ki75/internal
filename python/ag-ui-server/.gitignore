@@ -1,0 +1,6 @@
+# Pinned at build time from the workspace lock by build.sh.
+requirements.txt
+
+# Python bytecode cache.
+__pycache__/
+*.pyc

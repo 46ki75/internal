@@ -111,16 +111,29 @@ resource "aws_iam_policy" "bedrock_agentcore_runtime_ag_ui_server" {
         ]
       },
       {
-        Sid    = "BedrockModelInvocation"
+        # Subscription auth: the Claude Agent SDK reaches Anthropic directly with
+        # a `claude setup-token` OAuth token read from this SSM SecureString at
+        # startup (no Bedrock model invocation is used).
+        Sid    = "ReadModelSecret"
         Effect = "Allow"
-        Action = [
-          "bedrock:InvokeModel",
-          "bedrock:InvokeModelWithResponseStream"
-        ]
+        Action = ["ssm:GetParameter"]
         Resource = [
-          "arn:aws:bedrock:*::foundation-model/*",
-          "arn:aws:bedrock:ap-northeast-1:${data.aws_caller_identity.current.account_id}:*"
+          "arn:aws:ssm:ap-northeast-1:${data.aws_caller_identity.current.account_id}:parameter/${terraform.workspace}/46ki75/internal/claude-code/secret"
         ]
+      },
+      {
+        # That parameter is a SecureString; decrypting it needs kms:Decrypt on the
+        # key that encrypted it. Scope the grant to calls made through SSM in the
+        # secret's region rather than naming a specific key ARN.
+        Sid      = "DecryptModelSecret"
+        Effect   = "Allow"
+        Action   = ["kms:Decrypt"]
+        Resource = ["*"]
+        Condition = {
+          StringEquals = {
+            "kms:ViaService" = "ssm.ap-northeast-1.amazonaws.com"
+          }
+        }
       }
     ]
   })
@@ -160,14 +173,23 @@ resource "aws_bedrockagentcore_agent_runtime" "ag-ui-server" {
   }
 
   environment_variables = {
-    "OPENROUTER_API_KEY" = data.aws_ssm_parameter.openrouter_api_key.value
-    "MODEL_ID"           = "minimax/minimax-m2.5:free"
+    # The OAuth token itself is never passed here; the runtime reads it from SSM
+    # (SecureString) at startup using the param name/region below.
+    "CLAUDE_CODE_OAUTH_TOKEN_PARAM"  = "/${terraform.workspace}/46ki75/internal/claude-code/secret"
+    "CLAUDE_CODE_OAUTH_TOKEN_REGION" = "ap-northeast-1"
+    "MODEL_ID"                       = "claude-sonnet-4-6"
+    "MCP_URL"                        = "https://knowledge-mcp.global.api.aws"
   }
-}
 
-data "aws_ssm_parameter" "openrouter_api_key" {
-  name            = "/${terraform.workspace}/46ki75/internal/openrouter/secret"
-  with_decryption = true
+  # The container reads the model secret from SSM at startup, so the execution
+  # role must already grant ssm:GetParameter + kms:Decrypt before a new runtime
+  # version's container boots. Force the policy/attachment to update first; a new
+  # IAM statement can still take a few seconds to propagate, so a container that
+  # starts in that window may fail once and is replaced (AgentCore retries).
+  depends_on = [
+    aws_iam_policy.bedrock_agentcore_runtime_ag_ui_server,
+    aws_iam_role_policy_attachment.bedrock_agentcore_runtime_ag_ui_server,
+  ]
 }
 
 locals {

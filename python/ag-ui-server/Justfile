@@ -1,0 +1,27 @@
+# ag-ui-server — build the linux/arm64 image, push it to the stage's ECR repo,
+# and roll out a new Amazon Bedrock AgentCore runtime version via Terraform.
+#
+#   just deploy dev      # build + push a fresh tag, then terraform apply
+#   just build stg       # build + push only (no rollout)
+#   just test            # hermetic tests
+#
+# A fresh per-build TAG is what makes the rollout work: the runtime's
+# container_uri is rendered from var.ag_ui_server_image_tag, so a changing tag is
+# what Terraform detects to create a new runtime version. Re-deploying :latest
+# alone is a no-op — the runtime keeps the cached image.
+
+tf := justfile_directory() / "../../terraform"
+
+# Hermetic tests (mocks SSM + the Claude Agent SDK).
+test:
+    uv run --package ag-ui-server pytest {{justfile_directory()}}/tests
+
+# Build the arm64 image and push it to <stage>/ag-ui-server as :TAG and :latest.
+build STAGE_NAME TAG=`date +%Y%m%d-%H%M%S`:
+    STAGE_NAME={{STAGE_NAME}} TAG={{TAG}} {{justfile_directory()}}/build.sh
+
+# Build + push a fresh tag, then terraform apply to roll a new runtime version
+# (interactive — review the plan).
+deploy STAGE_NAME TAG=`date +%Y%m%d-%H%M%S`: (build STAGE_NAME TAG)
+    terraform -chdir={{tf}} workspace select {{STAGE_NAME}}
+    terraform -chdir={{tf}} apply -var=ag_ui_server_image_tag={{TAG}}

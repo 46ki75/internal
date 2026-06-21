@@ -1,5 +1,6 @@
 import {
   component$,
+  noSerialize,
   useContext,
   useStore,
   useTask$,
@@ -24,32 +25,39 @@ export default component$<IndexProps>(({ class: className, style }) => {
     Authorization: "",
   });
 
-  const agent = useAgent({
-    url: "/invocations",
-    headers: headers,
-  });
+  const agent = noSerialize(
+    useAgent({
+      url: "/invocations",
+      headers: headers,
+    }),
+  );
 
   useTask$(async ({ track }) => {
     const accessToken = track(() => authStore.tokens.accessToken);
     headers.Authorization = `Bearer ${accessToken}`;
 
-    await agent.setPromptTemplates$([
-      {
-        description: "Ask about AWS",
-        content: "What is a new feature called Amazon S3 Files?",
-      },
-    ]);
+    if (agent) {
+      await agent.setPromptTemplates$([
+        {
+          description: "Ask about AWS",
+          content: "What is a new feature called Amazon S3 Files?",
+        },
+      ]);
+    }
   });
 
   return (
     <div class={[styles["chat"], className]} style={style}>
-      <ElmAgUiAgent
-        state={agent.state}
-        send$={agent.send$}
-        retry$={agent.retry$}
-        abort$={agent.abort$}
-        style={{ height: "100%" }}
-      />
+      {agent && (
+        <ElmAgUiAgent
+          state={agent.state}
+          send$={agent.send$}
+          retry$={agent.retry$}
+          abort$={agent.abort$}
+          dequeue$={agent.dequeue$}
+          style={{ height: "100%" }}
+        />
+      )}
     </div>
   );
 });

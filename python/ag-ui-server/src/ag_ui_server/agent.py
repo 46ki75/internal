@@ -49,7 +49,7 @@ You have access to the AWS Knowledge MCP server — use it to ground answers abo
 AWS services, APIs, and recent announcements in authoritative, current sources
 rather than answering from memory. Prefer a small number of focused searches.
 When you use search results, cite the source URL inline as [title](url).
-Answer concisely in the user's language."""
+"""
 
 
 def build_agent_options(config: Config) -> ClaudeAgentOptions:

@@ -35,9 +35,17 @@ REPO="${REGISTRY}/${STAGE_NAME}/ag-ui-server"
 aws ecr get-login-password --region "$REGION" \
   | docker login --username AWS --password-stdin "$REGISTRY"
 
+# Also move :latest onto this image (unless TAG already is :latest) so a plain
+# `terraform apply`, which defaults the runtime tag back to :latest, can never
+# roll the runtime back to an image older than the one just deployed.
+EXTRA_TAGS=()
+if [[ "$TAG" != "latest" ]]; then
+  EXTRA_TAGS+=(-t "${REPO}:latest")
+fi
+
 # --provenance=false: AgentCore Runtime wants a single linux/arm64 manifest, not
 # a buildx attestation/manifest-list (same gotcha as AWS Lambda images).
 docker buildx build --platform linux/arm64 --provenance=false \
-  -t "${REPO}:${TAG}" --push "$HERE"
+  -t "${REPO}:${TAG}" "${EXTRA_TAGS[@]}" --push "$HERE"
 
-echo "pushed ${REPO}:${TAG}"
+echo "pushed ${REPO}:${TAG}${EXTRA_TAGS:+ and ${REPO}:latest}"

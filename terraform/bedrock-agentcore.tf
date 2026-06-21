@@ -145,14 +145,14 @@ resource "aws_iam_role_policy_attachment" "bedrock_agentcore_runtime_ag_ui_serve
 }
 
 
-# Image tag the runtime pulls. The deploy Justfile passes a unique per-build tag
-# so Terraform sees a changed container_uri and rolls out a new runtime version —
-# re-pushing :latest alone never changes state, so the runtime would keep the
-# cached image. Defaults to "latest" (which the build also pushes), so a plain
-# `terraform apply` stays on the most recently deployed image.
-variable "ag_ui_server_image_tag" {
-  type    = string
-  default = "latest"
+# Resolve the :latest tag to its immutable image digest at plan time. A bare
+# :latest string never changes, so Terraform would no-op and the runtime would
+# keep its cached image; the digest changes on every new push, so Terraform sees
+# a diff and rolls a new runtime version — pinned to exact bits. The deploy
+# Justfile pushes :latest (alongside a dated audit tag) before `terraform apply`.
+data "aws_ecr_image" "ag-ui-server" {
+  repository_name = aws_ecr_repository.ag-ui-server.name
+  image_tag       = "latest"
 }
 
 resource "aws_bedrockagentcore_agent_runtime" "ag-ui-server" {
@@ -161,7 +161,7 @@ resource "aws_bedrockagentcore_agent_runtime" "ag-ui-server" {
 
   agent_runtime_artifact {
     container_configuration {
-      container_uri = "${aws_ecr_repository.ag-ui-server.repository_url}:${var.ag_ui_server_image_tag}"
+      container_uri = "${aws_ecr_repository.ag-ui-server.repository_url}@${data.aws_ecr_image.ag-ui-server.image_digest}"
     }
   }
 

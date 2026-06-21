@@ -5,10 +5,10 @@
 #   just build stg       # build + push only (no rollout)
 #   just test            # hermetic tests
 #
-# A fresh per-build TAG is what makes the rollout work: the runtime's
-# container_uri is rendered from var.ag_ui_server_image_tag, so a changing tag is
-# what Terraform detects to create a new runtime version. Re-deploying :latest
-# alone is a no-op — the runtime keeps the cached image.
+# What makes the rollout work: build.sh pushes :latest, and Terraform resolves
+# :latest to its image digest (data.aws_ecr_image), so a new push changes the
+# digest and Terraform rolls a new runtime version. Re-deploying without a new
+# image is a no-op — the digest is unchanged.
 
 tf := justfile_directory() / "../../terraform"
 
@@ -24,4 +24,4 @@ build STAGE_NAME TAG=`date +%Y%m%d-%H%M%S`:
 # (interactive — review the plan).
 deploy STAGE_NAME TAG=`date +%Y%m%d-%H%M%S`: (build STAGE_NAME TAG)
     terraform -chdir={{tf}} workspace select {{STAGE_NAME}}
-    terraform -chdir={{tf}} apply -var=ag_ui_server_image_tag={{TAG}}
+    terraform -chdir={{tf}} apply

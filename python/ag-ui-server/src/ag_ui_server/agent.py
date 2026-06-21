@@ -27,8 +27,6 @@ KNOWLEDGE_TOOLS = f"mcp__{MCP_SERVER_NAME}"
 # all so the agent can only call the managed Knowledge MCP tools — never the
 # bundled WebSearch/WebFetch, a shell, or the filesystem.
 HIDDEN_BUILTINS = [
-    "WebSearch",
-    "WebFetch",
     "Bash",
     "BashOutput",
     "KillShell",
@@ -68,7 +66,11 @@ def build_agent_options(config: Config) -> ClaudeAgentOptions:
             }
         },
         # The agent may use the Knowledge MCP tools; everything else is hidden.
-        allowed_tools=[KNOWLEDGE_TOOLS],
+        allowed_tools=[
+            KNOWLEDGE_TOOLS,
+            "WebSearch",
+            "WebFetch",
+        ],
         disallowed_tools=HIDDEN_BUILTINS,
         # No on-disk CLAUDE.md / settings exist in the container, but pin to none
         # so the agent stays hermetic regardless of the filesystem.

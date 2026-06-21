@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
 from typing import Any
 
 import anyio
@@ -17,7 +18,7 @@ def _stream(event: dict[str, Any]) -> StreamEvent:
 
 
 def _collect(messages: list[Any]) -> list[Any]:
-    async def _aiter() -> Any:
+    async def _aiter() -> AsyncIterator[Any]:
         for message in messages:
             yield message
 

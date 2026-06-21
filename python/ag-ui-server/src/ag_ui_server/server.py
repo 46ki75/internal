@@ -13,7 +13,7 @@ from __future__ import annotations
 import logging
 import os
 import time
-from collections.abc import AsyncIterator
+from collections.abc import AsyncGenerator, AsyncIterator
 from contextlib import asynccontextmanager
 
 from ag_ui.core import (
@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
     """Load config and authenticate the SDK once at startup.
 
     The OAuth token is read from SSM and exported before the first ``query()``,
@@ -75,7 +75,7 @@ async def ping() -> JSONResponse:
 async def invocations(input_data: RunAgentInput, request: Request) -> StreamingResponse:
     """Run the agent for one AG-UI run and stream the result as SSE events."""
     config: Config = request.app.state.config
-    encoder = EventEncoder(accept=request.headers.get("accept"))
+    encoder = EventEncoder(accept=request.headers.get("accept") or "")
 
     async def event_generator() -> AsyncIterator[str]:
         yield encoder.encode(

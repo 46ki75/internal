@@ -134,6 +134,18 @@ resource "aws_iam_policy" "bedrock_agentcore_runtime_ag_ui_server" {
             "kms:ViaService" = "ssm.ap-northeast-1.amazonaws.com"
           }
         }
+      },
+      {
+        # Mirror/resume Claude Agent SDK session transcripts in the session table.
+        Sid    = "SessionStore"
+        Effect = "Allow"
+        Action = [
+          "dynamodb:Query",
+          "dynamodb:BatchWriteItem",
+          "dynamodb:PutItem",
+          "dynamodb:DeleteItem"
+        ]
+        Resource = [aws_dynamodb_table.ag-ui-session.arn]
       }
     ]
   })
@@ -189,6 +201,10 @@ resource "aws_bedrockagentcore_agent_runtime" "ag-ui-server" {
     "CLAUDE_CODE_OAUTH_TOKEN_REGION" = "ap-northeast-1"
     "MODEL_ID"                       = "claude-sonnet-4-6"
     "MCP_URL"                        = "https://knowledge-mcp.global.api.aws"
+    # Setting this turns on server-side session persistence/resume (experimental).
+    # Unset it to fall back to the stateless, client-replayed history path.
+    "SESSION_TABLE_NAME"   = aws_dynamodb_table.ag-ui-session.name
+    "SESSION_TABLE_REGION" = "ap-northeast-1"
   }
 
   # The container reads the model secret from SSM at startup, so the execution

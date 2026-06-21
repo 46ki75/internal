@@ -21,6 +21,12 @@ class Config:
     mcp_url: str
     # Upper bound on agentic turns (tool calls + final answer) per invocation.
     max_turns: int
+    # DynamoDB table that mirrors SDK session transcripts. When unset, the
+    # runtime stays stateless (client-replayed history); when set, sessions are
+    # persisted and resumed server-side. See ``session_store.py``.
+    session_table_name: str | None
+    # Region the session table lives in. Defaults to boto3's resolved region.
+    session_table_region: str | None
 
     @classmethod
     def from_env(cls) -> Config:
@@ -32,6 +38,8 @@ class Config:
             model_id=os.environ.get("MODEL_ID", "claude-sonnet-4-6"),
             mcp_url=os.environ.get("MCP_URL", "https://knowledge-mcp.global.api.aws"),
             max_turns=int(os.environ.get("MAX_TURNS", "20")),
+            session_table_name=os.environ.get("SESSION_TABLE_NAME") or None,
+            session_table_region=os.environ.get("SESSION_TABLE_REGION") or None,
         )
 
 

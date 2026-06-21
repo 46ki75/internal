@@ -15,6 +15,8 @@ import os
 import time
 from collections.abc import AsyncGenerator, AsyncIterator
 from contextlib import asynccontextmanager
+from typing import Any
+from uuid import NAMESPACE_URL, uuid5
 
 from ag_ui.core import (
     EventType,
@@ -33,10 +35,15 @@ from .agent import build_agent_options
 from .agui_bridge import translate
 from .config import Config
 from .model_auth import configure_sdk_env, fetch_oauth_token
-from .prompt import build_prompt
+from .prompt import build_latest_user_prompt, build_prompt
+from .session_store import DynamoDBSessionStore
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Fixed namespace for deriving a stable per-thread SDK session id (a valid UUID)
+# from the AG-UI ``thread_id``, so the same conversation always resumes itself.
+_THREAD_NS = uuid5(NAMESPACE_URL, "46ki75/internal/ag-ui-server/thread")
 
 
 @asynccontextmanager
@@ -50,8 +57,18 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
     config = Config.from_env()
     configure_sdk_env(fetch_oauth_token(config))
     app.state.config = config
+    app.state.session_store = (
+        DynamoDBSessionStore(
+            config.session_table_name, region=config.session_table_region
+        )
+        if config.session_table_name
+        else None
+    )
     logger.info(
-        "ag-ui-server ready (model=%s, mcp=%s)", config.model_id, config.mcp_url
+        "ag-ui-server ready (model=%s, mcp=%s, sessions=%s)",
+        config.model_id,
+        config.mcp_url,
+        config.session_table_name or "disabled",
     )
     yield
 
@@ -71,10 +88,38 @@ async def ping() -> JSONResponse:
     return JSONResponse({"status": "Healthy", "time_of_last_update": int(time.time())})
 
 
+def _plan_run(
+    config: Config,
+    store: DynamoDBSessionStore | None,
+    input_data: RunAgentInput,
+) -> tuple[Any, str]:
+    """Choose the SDK options and prompt for one run.
+
+    Stateless (no store): replay the whole client-held transcript. Stateful: key
+    a stable session id off ``thread_id`` and either create it (first turn) or
+    resume it (once the client echoes a prior assistant turn), sending only the
+    newest user message so resumed history isn't duplicated.
+    """
+    if store is None:
+        return build_agent_options(config), build_prompt(input_data)
+
+    session_id = str(uuid5(_THREAD_NS, input_data.thread_id))
+    resuming = any(
+        getattr(message, "role", None) == "assistant"
+        for message in (input_data.messages or [])
+    )
+    if resuming:
+        options = build_agent_options(config, session_store=store, resume=session_id)
+        return options, build_latest_user_prompt(input_data)
+    options = build_agent_options(config, session_store=store, session_id=session_id)
+    return options, build_prompt(input_data)
+
+
 @app.post("/invocations")
 async def invocations(input_data: RunAgentInput, request: Request) -> StreamingResponse:
     """Run the agent for one AG-UI run and stream the result as SSE events."""
     config: Config = request.app.state.config
+    store: DynamoDBSessionStore | None = request.app.state.session_store
     encoder = EventEncoder(accept=request.headers.get("accept") or "")
 
     async def event_generator() -> AsyncIterator[str]:
@@ -86,8 +131,7 @@ async def invocations(input_data: RunAgentInput, request: Request) -> StreamingR
             )
         )
         try:
-            options = build_agent_options(config)
-            prompt = build_prompt(input_data)
+            options, prompt = _plan_run(config, store, input_data)
             async for event in translate(query(prompt=prompt, options=options)):
                 yield encoder.encode(event)
             yield encoder.encode(

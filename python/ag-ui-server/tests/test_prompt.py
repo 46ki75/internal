@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from ag_ui.core import AssistantMessage, Context, RunAgentInput, UserMessage
 
-from ag_ui_server.prompt import build_prompt
+from ag_ui_server.prompt import build_latest_user_prompt, build_prompt
 
 
 def _input(messages: list, context: list | None = None) -> RunAgentInput:
@@ -51,3 +51,33 @@ def test_multi_turn_renders_transcript() -> None:
     assert "assistant: First answer" in prompt
     assert "user: Follow-up" in prompt
     assert "Respond to the most recent user message." in prompt
+
+
+def test_latest_user_prompt_sends_only_newest_turn() -> None:
+    # On a resumed session the SDK already holds prior turns, so only the newest
+    # user message is sent — no transcript, no earlier turns.
+    prompt = build_latest_user_prompt(
+        _input(
+            [
+                UserMessage(id="1", role="user", content="First question"),
+                AssistantMessage(id="2", role="assistant", content="First answer"),
+                UserMessage(id="3", role="user", content="Follow-up"),
+            ]
+        )
+    )
+    assert prompt == "Follow-up"
+
+
+def test_latest_user_prompt_appends_context() -> None:
+    prompt = build_latest_user_prompt(
+        _input(
+            [
+                UserMessage(id="1", role="user", content="First"),
+                AssistantMessage(id="2", role="assistant", content="Answer"),
+                UserMessage(id="3", role="user", content="Second"),
+            ],
+            context=[Context(description="locale", value="en-US")],
+        )
+    )
+    assert "Second" in prompt
+    assert "locale: en-US" in prompt

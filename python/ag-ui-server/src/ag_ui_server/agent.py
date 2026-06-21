@@ -11,9 +11,14 @@ Knowledge MCP — never run a shell or search the web any other way.
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from claude_agent_sdk import ClaudeAgentOptions
 
 from .config import Config
+
+if TYPE_CHECKING:
+    from claude_agent_sdk import SessionStore
 
 # Name we register the MCP server under; the SDK namespaces its tools as
 # ``mcp__<server>__<tool>``.
@@ -27,8 +32,6 @@ KNOWLEDGE_TOOLS = f"mcp__{MCP_SERVER_NAME}"
 # all so the agent can only call the managed Knowledge MCP tools — never the
 # bundled WebSearch/WebFetch, a shell, or the filesystem.
 HIDDEN_BUILTINS = [
-    "WebSearch",
-    "WebFetch",
     "Bash",
     "BashOutput",
     "KillShell",
@@ -52,11 +55,22 @@ When you use search results, cite the source URL inline as [title](url).
 """
 
 
-def build_agent_options(config: Config) -> ClaudeAgentOptions:
+def build_agent_options(
+    config: Config,
+    *,
+    session_store: SessionStore | None = None,
+    session_id: str | None = None,
+    resume: str | None = None,
+) -> ClaudeAgentOptions:
     """Assemble the single-agent configuration as Claude Agent SDK options.
 
     ``include_partial_messages`` is enabled so the agent's text and tool calls
     stream token-by-token, which the AG-UI bridge forwards as incremental events.
+
+    When ``session_store`` is supplied the run is persisted: pass ``session_id``
+    on a conversation's first turn (creates the session) and ``resume`` on later
+    turns (rehydrates history from the store). They are mutually exclusive; all
+    three default to ``None`` (the SDK's stateless behavior).
     """
     return ClaudeAgentOptions(
         model=config.model_id,
@@ -68,7 +82,11 @@ def build_agent_options(config: Config) -> ClaudeAgentOptions:
             }
         },
         # The agent may use the Knowledge MCP tools; everything else is hidden.
-        allowed_tools=[KNOWLEDGE_TOOLS],
+        allowed_tools=[
+            KNOWLEDGE_TOOLS,
+            "WebSearch",
+            "WebFetch",
+        ],
         disallowed_tools=HIDDEN_BUILTINS,
         # No on-disk CLAUDE.md / settings exist in the container, but pin to none
         # so the agent stays hermetic regardless of the filesystem.
@@ -78,4 +96,8 @@ def build_agent_options(config: Config) -> ClaudeAgentOptions:
         # Stream partial assistant/tool deltas (raw Anthropic stream events) so
         # the bridge can emit incremental AG-UI events.
         include_partial_messages=True,
+        # Persistence/resume — all None unless a session store is wired in.
+        session_store=session_store,
+        session_id=session_id,
+        resume=resume,
     )

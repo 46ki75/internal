@@ -96,7 +96,7 @@ def _translate_stream_event(
         return
 
     if etype == "content_block_start":
-        index = event.get("index")
+        index: int = event["index"]
         block = event.get("content_block") or {}
         block_type = block.get("type")
         if block_type == "text":
@@ -129,7 +129,7 @@ def _translate_stream_event(
         return
 
     if etype == "content_block_delta":
-        entry = blocks.get(event.get("index"))
+        entry = blocks.get(event["index"])
         if entry is None:
             return
         kind, identifier = entry
@@ -163,7 +163,7 @@ def _translate_stream_event(
         return
 
     if etype == "content_block_stop":
-        entry = blocks.pop(event.get("index"), None)
+        entry = blocks.pop(event["index"], None)
         if entry is None:
             return
         kind, identifier = entry

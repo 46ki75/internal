@@ -36,6 +36,21 @@ def build_prompt(input_data: RunAgentInput) -> str:
     )
 
 
+def build_latest_user_prompt(input_data: RunAgentInput) -> str:
+    """Build the prompt for a *resumed* session: only the newest user turn.
+
+    When the SDK resumes a session it already holds the prior turns, so resending
+    the whole transcript (as :func:`build_prompt` does) would duplicate history.
+    Send just the latest user message; fall back to the full prompt if none is
+    found.
+    """
+    messages = [m for m in (input_data.messages or []) if _message_text(m).strip()]
+    for message in reversed(messages):
+        if message.role == "user":
+            return _message_text(message) + _context_block(input_data)
+    return build_prompt(input_data)
+
+
 def _context_block(input_data: RunAgentInput) -> str:
     context = input_data.context or []
     if not context:

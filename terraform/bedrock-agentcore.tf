@@ -194,6 +194,15 @@ resource "aws_bedrockagentcore_agent_runtime" "ag-ui-server" {
     network_mode = "PUBLIC"
   }
 
+  # Tear the per-session microVM down 60s after the last activity (the floor;
+  # AgentCore rejects anything below 60s) instead of the 15-minute default, so
+  # idle instances don't keep billing after a run finishes. Resumes are
+  # unaffected: transcripts live in the DynamoDB SessionStore, so a later invoke
+  # with the same session id spins up a fresh microVM and replays history.
+  lifecycle_configuration {
+    idle_runtime_session_timeout = 60
+  }
+
   environment_variables = {
     # The OAuth token itself is never passed here; the runtime reads it from SSM
     # (SecureString) at startup using the param name/region below.

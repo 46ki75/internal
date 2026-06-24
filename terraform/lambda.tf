@@ -73,8 +73,12 @@ resource "aws_lambda_function" "http_api" {
 
   environment {
     variables = {
-      STAGE_NAME      = terraform.workspace
-      RUST_LOG        = "http_api=debug"
+      STAGE_NAME = terraform.workspace
+      # The `warn` baseline guarantees every crate's WARN/ERROR reaches
+      # CloudWatch (so the reporter's `{$.level=...}` subscription filters always
+      # fire), independent of the per-crate debug list. Each feature logs under
+      # its own `http_api_<feature>` target; the binary itself under `http_api`.
+      RUST_LOG        = "warn,http_api=debug,http_api_core=debug,http_api_anki=debug,http_api_bookmark=debug,http_api_icon=debug,http_api_image=debug,http_api_to_do=debug,http_api_trivia=debug,http_api_typing=debug"
       RUST_LOG_FORMAT = "JSON"
     }
   }

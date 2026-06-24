@@ -1,0 +1,29 @@
+[package]
+name = "http-api-to-do"
+version = "0.1.0"
+edition = "2024"
+
+[lints]
+workspace = true
+
+[dependencies]
+http-api-core = { path = "../http-api-core" }
+
+async-trait.workspace = true
+axum.workspace = true
+futures.workspace = true
+http.workspace = true
+notionrs.workspace = true
+notionrs_types.workspace = true
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+utoipa.workspace = true
+utoipa-axum.workspace = true
+
+serde_plain = "1.0.2"
+time = { version = "0.3.47", features = ["parsing", "serde-human-readable"] }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt"] }

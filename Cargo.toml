@@ -5,12 +5,35 @@ resolver = "3"
 # Versions shared by 2+ crates live here; each crate opts in with
 # `foo.workspace = true` and layers on its own crate-local features.
 [workspace.dependencies]
+async-trait = "0.1.89"
 aws-config = "1.8.14"
+aws-sdk-cognitoidentityprovider = "1.109.0"
+aws-sdk-dynamodb = "1.105.0"
+aws-sdk-ssm = "1.104.0"
+axum = "0.8.8"
+cached = { version = "0.59.0", features = ["async"] }
+chrono = "0.4.43"
+futures = "0.3.31"
+http = "1.4.0"
 lambda_runtime = "1.0.1"
+n2a2ui = "0.2.0"
+notionrs = { version = "0.27.0", features = ["rustls"] }
+notionrs_types = "0.20.0"
+regex = "1.12.3"
+reqwest = { version = "0.13", features = [
+    "rustls",
+    "http2",
+    "gzip",
+    "brotli",
+], default-features = false }
 serde = "1.0.228"
 serde_json = "1.0.149"
 thiserror = "2.0.18"
 tokio = "1.49.0"
+tower = "0.5.3"
+tracing = "0.1.44"
+utoipa = { version = "5.4.0", features = ["time"] }
+utoipa-axum = "0.2.0"
 
 # Lints applied uniformly across the workspace; each crate opts in with
 # `[lints] workspace = true`.

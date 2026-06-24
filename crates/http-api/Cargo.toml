@@ -1,0 +1,51 @@
+[package]
+name = "http-api"
+version = "0.1.0"
+edition = "2024"
+
+# Starting in Rust 1.62 you can use `cargo add` to add dependencies 
+# to your project.
+#
+# If you're using an older Rust version,
+# download cargo-edit(https://github.com/killercup/cargo-edit#installation) 
+# to install the `add` subcommand.
+#
+# Running `cargo add DEPENDENCY_NAME` will
+# add the latest version of a dependency to the list,
+# and it will keep the alphabetic ordering for you.
+
+[lints]
+workspace = true
+
+[dependencies]
+http-api-core = { path = "../http-api-core" }
+http-api-anki = { path = "../http-api-anki" }
+http-api-bookmark = { path = "../http-api-bookmark" }
+http-api-icon = { path = "../http-api-icon" }
+http-api-image = { path = "../http-api-image" }
+http-api-to-do = { path = "../http-api-to-do" }
+http-api-trivia = { path = "../http-api-trivia" }
+http-api-typing = { path = "../http-api-typing" }
+
+# Router assembly + Lambda glue. Feature-specific deps now live in each
+# `http-api-<feature>` crate.
+axum.workspace = true
+http.workspace = true
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+tokio = { workspace = true, features = ["macros", "rt-multi-thread", "sync"] }
+tracing.workspace = true
+utoipa.workspace = true
+
+lambda_http = "1.0.2"
+tracing-subscriber = { version = "0.3.22", features = ["ansi"] }
+tower-http = { version = "0.6.8", features = [
+    "compression-gzip",
+    "compression-br",
+] }
+utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
+
+[dev-dependencies]
+# In-process API tests drive the router via `oneshot` and read response bodies.
+tower = { version = "0.5", features = ["util"] }
+http-body-util = "0.1"

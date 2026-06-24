@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Polyglot monorepo with three independent workspaces and shared Terraform:
 
-- `crates/*` — Rust workspace (`Cargo.toml` at root). Each crate is its own AWS Lambda binary.
+- `crates/*` — Rust workspace (`Cargo.toml` at root). Lambda binaries: `http-api`, `feed`, `logs-reporter`. The rest are libraries — `http-api-core` (shared error/cache/auth) and one `http-api-<feature>` crate per REST router — assembled by the `http-api` binary.
 - `packages/*` — pnpm workspace (`pnpm-workspace.yaml`).
 - `python/*` — uv workspace (`pyproject.toml` at root). `python/fetch` runs as a containerized Lambda; `python/ag-ui-server` runs as a containerized Bedrock AgentCore runtime.
 - `terraform/` — single Terraform stack that provisions all `dev`/`stg`/`prod` infra (CloudFront, API Gateway, Lambda, Cognito, DynamoDB, SNS, Route53). State lives in the shared S3 bucket `shared-46ki75-internal-s3-bucket-terraform-tfstate`.
@@ -15,22 +15,21 @@ Stages are `dev` | `stg` | `prod` and are passed via `STAGE_NAME` (Rust/server) 
 
 ## Common commands
 
-### `crates/http_api` (main API Lambda)
+### `crates/http-api` (main API Lambda)
 
-Uses [`just`](https://github.com/casey/just):
+The `http-api` binary assembles the per-feature router crates into one Axum app. Per-crate recipes use [`just`](https://github.com/casey/just):
 
 ```
 just dev                  # cargo lambda watch with STAGE_NAME=dev, debug logs
-just test                 # cargo test --lib
 just build                # cargo lambda build --arm64 --release
 just deploy <STAGE_NAME>  # cargo lambda deploy to <STAGE_NAME>-46ki75-internal-lambda-function-http-api
 ```
 
-To run a single test: `cargo test --lib --package http-api <test_name>`. When `cargo lambda watch` is running, the local URL is `http://localhost:9000/lambda-url/http-api/...`.
+Workspace-wide gates live in the **root `Justfile`**: `just fmt-check`, `just lint` (`clippy --workspace -D warnings`), `just test` (`cargo test --workspace`), and `just ci` (all three). Run a single test with `cargo test -p <crate> <test_name>` — most feature tests live in their own `http-api-<feature>` crate, not the binary. When `cargo lambda watch` is running, the local URL is `http://localhost:9000/lambda-url/http-api/...`.
 
 ### `crates/logs-reporter` (CloudWatch Logs → SNS)
 
-Same `just` recipes as `http_api`; deploys to `<STAGE_NAME>-46ki75-internal-lambda-function-reporter`.
+Same per-crate `just` recipes as `http-api`; deploys to `<STAGE_NAME>-46ki75-internal-lambda-function-reporter`.
 
 ### `crates/feed`
 
@@ -49,7 +48,7 @@ pnpm deploy.{dev|stg|prod}  # build → s3 sync → CloudFront invalidate
 pnpm generate:openapi     # regenerate src/openapi/schema.ts from a running http-api
 ```
 
-`generate:openapi` requires `crates/http_api` running locally (`just dev` in that crate) — it hits `http://localhost:9000/lambda-url/http-api/api-gateway/api/v1/openapi.json`. Re-run whenever the Rust API surface changes.
+`generate:openapi` requires `crates/http-api` running locally (`just dev` in that crate) — it hits `http://localhost:9000/lambda-url/http-api/api-gateway/api/v1/openapi.json`. Re-run whenever the Rust API surface changes.
 
 `pnpm deploy.*` runs `scripts/deploy-s3.sh` (S3 sync to `<stage>-46ki75-internal-s3-bucket-web`) then `scripts/invalidate.sh` (looks up the CloudFront distribution by alias domain).
 
@@ -77,28 +76,26 @@ Operates against the shared remote state in `shared-46ki75-internal-s3-bucket-te
 
 ## Architecture
 
-### `crates/http_api` — Axum + Lambda, serves REST and GraphQL
+### `crates/http-api` — Axum + Lambda REST API (multi-crate)
 
-Single Lambda binary running Axum over `lambda_http`. Each feature module (`anki`, `bookmark`, `to_do`, `icon`, `image`, `typing`, `tts`) follows a strict layered layout:
+The REST API is split across the workspace and assembled into one Lambda binary:
+
+- **`http-api`** — the binary. `src/router.rs::init_router` builds the Axum app; `src/execute.rs` adapts `lambda_http::Request` ↔ Axum. `src/lib.rs` re-exports each feature crate under its short name (`pub use http_api_bookmark as bookmark;`) so `crate::<feature>::…` paths — and `http_api::<feature>::…` in `tests/` — keep resolving.
+- **`http-api-core`** — shared infrastructure, the only intra-workspace dependency of the feature crates: `error::Error` (crate-wide error + `render_error_response`), `cache` (memoized AWS/Notion clients and `get_parameter` SSM reads via the `cached` crate), and `layer` (Axum middleware).
+- **`http-api-<feature>`** — one library crate per REST router (`anki`, `bookmark`, `icon`, `image`, `to-do`, `trivia`, `typing`). Independent of each other (no feature→feature deps), each with a strict layered layout:
 
 ```
-src/<feature>/
-  controller/   REST handlers + utoipa-axum router (e.g. controller/router.rs::init_<feature>_router)
-  resolver/     async-graphql Query/Mutation resolvers
+crates/http-api-<feature>/src/
+  controller/   REST handlers + utoipa-axum router (controller/router.rs::init_<feature>_router)
   use_case/     business logic (no I/O, depends on repository trait)
   repository/   I/O (Notion, DynamoDB, AWS SDKs); concrete `*RepositoryImpl`
 ```
 
-Two assembly points wire features together:
+`src/router.rs::init_router` merges each feature's REST `OpenApiRouter`, mounts Swagger UI at `/api-gateway/api/v1/swagger-ui`, exposes OpenAPI JSON at `/api-gateway/api/v1/openapi.json`, registers `/api-gateway/api/health`, and wraps everything in gzip/br compression. The whole router is cached in a `OnceCell` so Lambda cold starts only build it once.
 
-- `src/router.rs::init_router` — builds the Axum app: merges each feature's REST `OpenApiRouter`, mounts Swagger UI at `/api-gateway/api/v1/swagger-ui`, exposes OpenAPI JSON at `/api-gateway/api/v1/openapi.json`, registers `/api-gateway/api/graphql` and `/api-gateway/api/health`, and wraps everything in gzip/br compression. The whole router is cached in a `OnceCell` so Lambda cold starts only build it once.
-- `src/schema.rs::try_init_schema` — builds the async-graphql `Schema` and injects per-feature `UseCase`s as `.data(...)`. Resolvers retrieve them via `ctx.data::<Arc<XxxUseCase>>()`.
+To add a feature: create an `http-api-<feature>` crate (depend on `http-api-core`, expose `init_<feature>_router`), then wire it into the binary in three places — a path dep in `crates/http-api/Cargo.toml`, a `pub use http_api_<feature> as <feature>;` in `src/lib.rs`, and a `.merge(...)` in `src/router.rs::init_router`.
 
-When adding a feature, both REST (`init_router`) and GraphQL (`try_init_schema`) need the new use_case wired up — they share the same use_case/repository layer.
-
-`src/cache.rs` provides shared caching via the `cached` crate. `src/error.rs` is the crate-wide error type. `src/execute.rs` adapts `lambda_http::Request` ↔ Axum.
-
-External integrations live in `notionrs` / `notion-to-jarkup` (Notion content), AWS SDKs (DynamoDB, SSM, Cognito), and `html-meta-scraper` (bookmarks).
+Feature crates read their per-feature SSM keys inline via `http_api_core::cache::get_parameter` (no per-feature wrapper). External integrations: `notionrs` / `n2a2ui` (Notion content → A2UI), AWS SDKs (DynamoDB, SSM, Cognito), and `html-meta-scraper` (bookmarks).
 
 ### `packages/web-qwik` — Qwik City SSG
 
@@ -106,7 +103,7 @@ External integrations live in `notionrs` / `notion-to-jarkup` (Notion content), 
 - `src/components/` — feature components grouped by domain (`bookmark/`, `todo/`, `common/`, `icon/`).
 - `src/container/` — page-level containers that compose components and talk to the API.
 - `src/context/` — Qwik contexts (`auth-context.tsx` wraps Cognito via `aws-amplify`; `anki-context.tsx` for Anki feature state).
-- `src/openapi/schema.ts` — generated from `http_api`'s OpenAPI; do not edit by hand. Consumed via `openapi-fetch`.
+- `src/openapi/schema.ts` — generated from `http-api`'s OpenAPI; do not edit by hand. Consumed via `openapi-fetch`.
 - Build target is SSG (`adapters/static`); output in `dist/` is uploaded to S3 and served via CloudFront. Long-cache the hashed `build/**/*.js` files (handled by CloudFront config).
 
 ### Auth and config
@@ -116,4 +113,4 @@ External integrations live in `notionrs` / `notion-to-jarkup` (Notion content), 
 
 ### Logging
 
-Rust crates use `tracing` + `tracing-subscriber`. `RUST_LOG` controls level; `RUST_LOG_FORMAT=json|pretty` switches between human-readable (default) and JSON (used in deployed Lambdas). `logs-reporter` subscribes to CloudWatch Logs and forwards filtered events to SNS for email alerting.
+Rust crates use `tracing` + `tracing-subscriber`. `RUST_LOG` controls level; `RUST_LOG_FORMAT=json|pretty` switches between human-readable (default) and JSON (used in deployed Lambdas). Each `http-api` feature logs under its own `http_api_<feature>` target (plus `http_api_core`), so `RUST_LOG` filters must list them all — see the `http-api` `Justfile` and `terraform/lambda.tf`. `logs-reporter` subscribes to CloudWatch Logs and forwards filtered events to SNS for email alerting.

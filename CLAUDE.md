@@ -15,6 +15,10 @@ Stages are `dev` | `stg` | `prod` and are passed via `STAGE_NAME` (Rust/server) 
 
 ## Common commands
 
+### Git hooks (lefthook)
+
+`lefthook.yml` defines a `pre-commit` hook that auto-formats staged files and re-stages the fixes (`stage_fixed`): `cargo fmt --all` for Rust, Prettier for `packages/web-qwik/src`, and `markdownlint-cli2 --fix` for Markdown. Hooks install on `pnpm install` (root `prepare` → `lefthook install`). Heavier gates (clippy, tests, typecheck) stay in CI. Run manually with `pnpm exec lefthook run pre-commit`; bypass once with `git commit --no-verify`.
+
 ### `crates/http-api` (main API Lambda)
 
 The `http-api` binary assembles the per-feature router crates into one Axum app. Per-crate recipes use [`just`](https://github.com/casey/just):

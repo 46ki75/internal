@@ -1,0 +1,49 @@
+# Git hooks managed by lefthook (https://lefthook.dev).
+#
+# Installed automatically on `pnpm install` via the root `prepare` script
+# (`lefthook install`). Run manually with `pnpm exec lefthook run pre-commit`.
+#
+# pre-commit auto-formats the staged files and re-stages the fixes
+# (`stage_fixed`). The heavier gates — clippy `-D warnings`, `cargo test`,
+# `tsc` typecheck, eslint — intentionally stay in CI, not here.
+
+pre-commit:
+  parallel: true
+  # Skip while resolving merge conflicts or rebasing.
+  skip:
+    - merge
+    - rebase
+  jobs:
+    # Rust: format the whole workspace so each crate's edition (rust-toolchain
+    # is pinned; crates mix 2021/2024) is respected, then re-stage the staged
+    # *.rs files that changed.
+    - name: rustfmt
+      glob: "**/*.rs"
+      run: cargo fmt --all
+      stage_fixed: true
+
+    # Web (packages/web-qwik): Prettier on staged TS/TSX/CSS under src/.
+    # `root` sets the CWD (so .prettierignore applies) and makes
+    # {staged_files} relative to it; globs stay repo-root-relative.
+    - name: prettier
+      root: "packages/web-qwik/"
+      glob:
+        - "packages/web-qwik/src/*.{ts,tsx,css}"
+        - "packages/web-qwik/src/**/*.{ts,tsx,css}"
+      run: pnpm exec prettier --write {staged_files}
+      stage_fixed: true
+
+    # Markdown: markdownlint-cli2 --fix, honoring .markdownlint-cli2.yaml.
+    # `exclude` mirrors the `ignores:` in that config, which only applies to
+    # its own globbing — not to files passed explicitly on the command line.
+    - name: markdownlint
+      glob:
+        - "*.md"
+        - "**/*.md"
+      exclude:
+        - "CLAUDE.md"
+        - ".claude/**"
+        - ".agents/**"
+        - "notes/**"
+      run: pnpm exec markdownlint-cli2 --fix {staged_files}
+      stage_fixed: true

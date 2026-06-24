@@ -67,3 +67,27 @@ fmt:
     - name: terraform
       glob: "*.tf"
       run: "terraform fmt {files}"
+
+# lefthook run lint --file <path>
+check:
+  parallel: true
+  jobs:
+    - name: rust
+      glob: "*.rs"
+      run: "cargo clippy --all-targets --all-features -- -D warnings"
+
+    - name: python-lint
+      glob: "*.py"
+      run: "uv run ruff check {files}"
+
+    - name: python-typecheck
+      glob: "*.py"
+      run: "uv run pyright {files}"
+
+    - name: prettier
+      glob: "*.{ts,tsx,css}"
+      run: "pnpm exec prettier --check {files}"
+
+    - name: terraform
+      glob: "*.tf"
+      run: "terraform fmt -check {files}"

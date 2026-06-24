@@ -1038,6 +1038,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "pyright" },
     { name = "ruff" },
 ]
 
@@ -1045,7 +1046,10 @@ dev = [
 requires-dist = [{ name = "pyright", specifier = ">=1.1.410" }]
 
 [package.metadata.requires-dev]
-dev = [{ name = "ruff", specifier = ">=0.15.19" }]
+dev = [
+    { name = "pyright", specifier = ">=1.1.410" },
+    { name = "ruff", specifier = ">=0.15.19" },
+]
 
 [[package]]
 name = "jinja2"

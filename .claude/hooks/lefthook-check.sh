@@ -26,12 +26,16 @@ for f in "${files[@]}"; do
 done
 [ ${#args[@]} -eq 0 ] && exit 0
 
-output=$(NO_COLOR=1 pnpm exec lefthook run check "${args[@]}" 2>&1)
+# `output: false` in lefthook.yml keeps this quiet on success and limits a
+# failure to just the failing command's output (no banner/summary/ANSI).
+raw=$(NO_COLOR=1 pnpm exec lefthook run check "${args[@]}" 2>&1)
 status=$?
-output=$(printf '%s' "$output" | sed -E 's/\x1b\[[0-9;]*m//g')
+[ "$status" -eq 0 ] && exit 0
 
-if [ "$status" -ne 0 ]; then
-  jq -n --arg r "$output" \
-    '{decision: "block", reason: ("`lefthook run check` failed — fix these before stopping:\n\n" + $r)}'
-fi
+# Strip any ANSI a tool emitted on its own; never block with an empty reason.
+raw=$(printf '%s' "$raw" | sed -E 's/\x1b\[[0-9;]*m//g')
+[ -n "${raw//[$' \t\n']/}" ] || raw="lefthook run check exited $status"
+
+jq -n --arg r "$raw" \
+  '{decision: "block", reason: ("`lefthook run check` failed — fix these before stopping:\n\n" + $r)}'
 exit 0

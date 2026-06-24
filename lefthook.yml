@@ -8,6 +8,10 @@
 # (`stage_fixed`). The heavier gates — clippy `-D warnings`, `cargo test`,
 # `tsc` typecheck, eslint — intentionally stay in CI, not here.
 
+# Print nothing on success; on failure print only the failing command's output.
+# Keeps runs quiet and gives the Claude Code `check` hook a minimal report.
+output: false
+
 pre-commit:
   parallel: true
   # Skip while resolving merge conflicts or rebasing.

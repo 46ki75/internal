@@ -55,3 +55,15 @@ fmt:
     - name: rust
       glob: "*.rs"
       run: "rustfmt --edition 2024 {files}"
+
+    - name: python
+      glob: "*.py"
+      run: "uv run ruff format {files}"
+
+    - name: prettier
+      glob: "*.{ts,tsx,css}"
+      run: "pnpm exec prettier --write {files}"
+
+    - name: terraform
+      glob: "*.tf"
+      run: "terraform fmt {files}"

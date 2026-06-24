@@ -1,5 +1,5 @@
 dev:
-    STAGE_NAME=dev RUST_LOG=http_api=debug,http_api_core=debug,http_api_anki=debug,http_api_bookmark=debug,http_api_icon=debug,http_api_image=debug,http_api_to_do=debug,http_api_trivia=debug,http_api_typing=debug cargo lambda watch --package http-api
+    STAGE_NAME=dev RUST_LOG=warn,http_api=debug,http_api_core=debug,http_api_anki=debug,http_api_bookmark=debug,http_api_icon=debug,http_api_image=debug,http_api_to_do=debug,http_api_trivia=debug,http_api_typing=debug cargo lambda watch --package http-api
 
 build:
     cargo lambda build --arm64 --release

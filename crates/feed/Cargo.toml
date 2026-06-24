@@ -1,7 +1,7 @@
 [package]
 name = "feed"
 version = "0.1.0"
-edition = "2021"
+edition.workspace = true
 
 [dependencies]
 fast_html2md = "0.0.61"

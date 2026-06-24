@@ -2,6 +2,11 @@
 members = ["crates/*"]
 resolver = "3"
 
+# Package fields shared by every crate; each crate opts in with
+# `edition.workspace = true`. Keeps the edition unified across the workspace.
+[workspace.package]
+edition = "2024"
+
 # Versions shared by 2+ crates live here; each crate opts in with
 # `foo.workspace = true` and layers on its own crate-local features.
 [workspace.dependencies]

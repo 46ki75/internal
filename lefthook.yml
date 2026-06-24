@@ -1,7 +1,8 @@
 # Git hooks managed by lefthook (https://lefthook.dev).
 #
 # Installed automatically on `pnpm install` via the root `prepare` script
-# (`lefthook install`). Run manually with `pnpm exec lefthook run pre-commit`.
+# (`lefthook install`). Run manually with `pnpm exec lefthook run pre-commit`;
+# format the whole repo on demand with `pnpm exec lefthook run fmt`.
 #
 # pre-commit auto-formats the staged files and re-stages the fixes
 # (`stage_fixed`). The heavier gates — clippy `-D warnings`, `cargo test`,
@@ -14,9 +15,8 @@ pre-commit:
     - merge
     - rebase
   jobs:
-    # Rust: format the whole workspace so each crate's edition (rust-toolchain
-    # is pinned; crates mix 2021/2024) is respected, then re-stage the staged
-    # *.rs files that changed.
+    # Rust: format the whole workspace (cargo fmt respects each crate's edition
+    # from Cargo.toml), then re-stage the staged *.rs files that changed.
     - name: rustfmt
       glob: "**/*.rs"
       run: cargo fmt --all
@@ -37,13 +37,21 @@ pre-commit:
     # `exclude` mirrors the `ignores:` in that config, which only applies to
     # its own globbing — not to files passed explicitly on the command line.
     - name: markdownlint
-      glob:
+      glob: &md_glob
         - "*.md"
         - "**/*.md"
-      exclude:
+      exclude: &md_exclude
         - "CLAUDE.md"
         - ".claude/**"
         - ".agents/**"
         - "notes/**"
       run: pnpm exec markdownlint-cli2 --fix {staged_files}
       stage_fixed: true
+
+# lefthook run fmt --file <path>
+fmt:
+  parallel: true
+  jobs:
+    - name: rust
+      glob: "*.rs"
+      run: "rustfmt --edition 2024 {files}"

@@ -1,0 +1,126 @@
+use notionrs_types::prelude::*;
+
+pub struct BookmarkEntity {
+    pub id: String,
+    pub name: Option<String>,
+    pub url: Option<String>,
+    pub favicon: Option<String>,
+    pub tag: Option<BookmarkTagEntity>,
+    pub nsfw: bool,
+    pub favorite: bool,
+    pub notion_url: String,
+}
+
+impl TryFrom<PageResponse> for BookmarkEntity {
+    type Error = http_api_core::error::Error;
+    fn try_from(value: PageResponse) -> Result<Self, Self::Error> {
+        let id = value.id;
+
+        let properties = value.properties;
+
+        let name =
+            properties
+                .get("Name")
+                .ok_or(http_api_core::error::Error::NotionPropertyNotFound(
+                    String::from("Name"),
+                ))?;
+
+        let url =
+            properties
+                .get("URL")
+                .ok_or(http_api_core::error::Error::NotionPropertyNotFound(
+                    String::from("URL"),
+                ))?;
+
+        let tag =
+            properties
+                .get("Tag")
+                .ok_or(http_api_core::error::Error::NotionPropertyNotFound(
+                    String::from("Tag"),
+                ))?;
+
+        let nsfw =
+            properties
+                .get("NSFW")
+                .ok_or(http_api_core::error::Error::NotionPropertyNotFound(
+                    String::from("NSFW"),
+                ))?;
+
+        let favorite = properties.get("Favorite").ok_or(
+            http_api_core::error::Error::NotionPropertyNotFound(String::from("Favorite")),
+        )?;
+
+        let select = if let PageProperty::Select(select) = tag {
+            select.clone().select.and_then(|select| {
+                Some(BookmarkTagEntity {
+                    id: select
+                        .id
+                        .ok_or_else(|| {
+                            let error = http_api_core::error::Error::NotionPropertyNotFound(
+                                String::from("select.id"),
+                            );
+                            tracing::error!("{}", error);
+                            error
+                        })
+                        .ok()?,
+                    name: select.name,
+                    color: select
+                        .color
+                        .map(|color| {
+                            match color {
+                                SelectColor::Default => "#868e9c",
+                                SelectColor::Blue => "#6987b8",
+                                SelectColor::Brown => "#a17c5b",
+                                SelectColor::Gray => "#59b57c",
+                                SelectColor::Green => "#59b57c",
+                                SelectColor::Orange => "#d48b70",
+                                SelectColor::Pink => "#c9699e",
+                                SelectColor::Purple => "#9771bd",
+                                SelectColor::Red => "#c56565",
+                                SelectColor::Yellow => "#cdb57b",
+                            }
+                            .to_string()
+                        })
+                        .ok_or_else(|| {
+                            let error = http_api_core::error::Error::NotionPropertyNotFound(
+                                String::from("select.color"),
+                            );
+                            tracing::error!("{}", error);
+                            error
+                        })
+                        .ok()?,
+                })
+            })
+        } else {
+            None
+        };
+
+        Ok(BookmarkEntity {
+            id,
+            name: Some(name.to_string()),
+            url: Some(url.to_string()),
+            favicon: value.icon.map(|f| match f {
+                EmojiAndIcon::File(file) => file.get_url(),
+                EmojiAndIcon::Emoji(emoji) => emoji.emoji.to_string(),
+                EmojiAndIcon::CustomEmoji(custom_emoji) => custom_emoji.custom_emoji.url,
+                EmojiAndIcon::Icon(icon) => icon.icon.name,
+            }),
+            tag: select,
+            nsfw: match nsfw {
+                PageProperty::Checkbox(page_checkbox_property) => page_checkbox_property.checkbox,
+                _ => true,
+            },
+            favorite: match favorite {
+                PageProperty::Checkbox(page_checkbox_property) => page_checkbox_property.checkbox,
+                _ => false,
+            },
+            notion_url: value.url,
+        })
+    }
+}
+
+pub struct BookmarkTagEntity {
+    pub id: String,
+    pub name: String,
+    pub color: String,
+}

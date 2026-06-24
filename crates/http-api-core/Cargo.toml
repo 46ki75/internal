@@ -1,0 +1,26 @@
+[package]
+name = "http-api-core"
+version = "0.1.0"
+edition = "2024"
+
+[lints]
+workspace = true
+
+[dependencies]
+aws-config.workspace = true
+aws-sdk-cognitoidentityprovider.workspace = true
+aws-sdk-dynamodb.workspace = true
+aws-sdk-ssm.workspace = true
+axum.workspace = true
+cached.workspace = true
+futures.workspace = true
+http.workspace = true
+n2a2ui.workspace = true
+notionrs.workspace = true
+regex.workspace = true
+reqwest.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tokio = { workspace = true, features = ["sync"] }
+tower.workspace = true
+tracing.workspace = true

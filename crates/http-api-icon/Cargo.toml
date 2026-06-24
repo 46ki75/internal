@@ -1,0 +1,25 @@
+[package]
+name = "http-api-icon"
+version = "0.1.0"
+edition = "2024"
+
+[lints]
+workspace = true
+
+[dependencies]
+http-api-core = { path = "../http-api-core" }
+
+async-trait.workspace = true
+axum.workspace = true
+futures.workspace = true
+http.workspace = true
+notionrs.workspace = true
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+utoipa.workspace = true
+utoipa-axum.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt"] }

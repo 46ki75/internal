@@ -74,7 +74,9 @@ resource "aws_lambda_function" "http_api" {
   environment {
     variables = {
       STAGE_NAME      = terraform.workspace
-      RUST_LOG        = "http_api=debug"
+      # Each feature crate logs under its own `http_api_<feature>` target, so the
+      # filter lists them all (the binary itself logs under `http_api`).
+      RUST_LOG        = "http_api=debug,http_api_core=debug,http_api_anki=debug,http_api_bookmark=debug,http_api_icon=debug,http_api_image=debug,http_api_to_do=debug,http_api_trivia=debug,http_api_typing=debug"
       RUST_LOG_FORMAT = "JSON"
     }
   }

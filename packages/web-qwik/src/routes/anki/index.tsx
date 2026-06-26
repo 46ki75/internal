@@ -84,10 +84,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
   const open = $(() => {
     const a = document.createElement("a");
     if (!currentAnki.value?.metadata.url) return;
-    a.href = currentAnki.value?.metadata.url.replace(
-      /https?:\/\//,
-      "notion://",
-    );
+    a.href = currentAnki.value?.metadata.url;
     a.target = "_blank";
     a.rel = "noopener noreferrer";
     a.click();

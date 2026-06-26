@@ -149,10 +149,7 @@ export const Todo = component$<TodoProps>((props) => {
 
       <Deadline deadline={deadline} class={styles["todo-item-deadline"]} />
 
-      <a
-        href={url.replace("https://", "notion://")}
-        class={styles["todo-item-text"]}
-      >
+      <a href={url} class={styles["todo-item-text"]}>
         {title}
       </a>
 

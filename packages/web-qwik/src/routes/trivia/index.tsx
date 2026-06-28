@@ -23,7 +23,7 @@ import { mdiArrowRightThick, mdiEye, mdiLightbulbOnOutline } from "@mdi/js";
 
 import { openApiClient } from "~/openapi/client";
 import { paths } from "~/openapi/schema";
-import { AuthContext } from "~/context/auth-context";
+import { AuthContext, useAuthActions } from "~/context/auth-context";
 
 type TriviaMeta =
   paths["/api/v1/trivia"]["get"]["responses"]["200"]["content"]["application/json"][number];
@@ -56,6 +56,7 @@ export interface IndexProps {
 
 export default component$<IndexProps>(({ class: className, style }) => {
   const authStore = useContext(AuthContext);
+  const { refresh } = useAuthActions();
 
   const store = useStore<TriviaStore>({
     data: [],
@@ -87,7 +88,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
   const fetchList = $(async (append: boolean, signal?: AbortSignal) => {
     store.loading = true;
     try {
-      await authStore.tokens.refresh(authStore);
+      await refresh();
 
       const { data } = await openApiClient.GET("/api/v1/trivia", {
         params: {
@@ -138,7 +139,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
       if (item.loading || item.block) return;
 
       await patchItem(pageId, { loading: true });
-      await authStore.tokens.refresh(authStore);
+      await refresh();
 
       const { data } = await openApiClient.GET(
         "/api/v1/trivia/block/{page_id}",
@@ -169,7 +170,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
     store.viewed.push(pageId);
 
     try {
-      await authStore.tokens.refresh(authStore);
+      await refresh();
       const { data } = await openApiClient.POST(
         "/api/v1/trivia/{page_id}/view",
         {

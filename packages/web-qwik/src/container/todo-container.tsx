@@ -20,7 +20,7 @@ import {
   ElmMdiIcon,
 } from "@elmethis/qwik";
 import { openApiClient } from "~/openapi/client";
-import { AuthContext } from "~/context/auth-context";
+import { AuthContext, useAuthActions } from "~/context/auth-context";
 
 import { mdiAlert, mdiSortCalendarAscending, mdiSync } from "@mdi/js";
 
@@ -46,6 +46,7 @@ type Severity = ToDo["severity"];
 export const TodoContainer = component$<TodoContainerProps>(
   ({ class: className, style }) => {
     const authStore = useContext(AuthContext);
+    const { refresh } = useAuthActions();
 
     const todoItemContainerRef = useSignal<HTMLElement>();
     const animationController =
@@ -72,7 +73,7 @@ export const TodoContainer = component$<TodoContainerProps>(
     const execute = $(async () => {
       isLoading.value = true;
       try {
-        await authStore.tokens.refresh(authStore);
+        await refresh();
         const accessToken = authStore.tokens.accessToken;
 
         if (accessToken == null) return;
@@ -114,7 +115,7 @@ export const TodoContainer = component$<TodoContainerProps>(
       updateStateStore.updatingIds.push(id);
 
       try {
-        await authStore.tokens.refresh(authStore);
+        await refresh();
         const accessToken = authStore.tokens.accessToken;
 
         if (accessToken == null) return;
@@ -210,7 +211,7 @@ export const TodoContainer = component$<TodoContainerProps>(
         severity: Severity;
         deadline?: string;
       }) => {
-        await authStore.tokens.refresh(authStore);
+        await refresh();
         const accessToken = authStore.tokens.accessToken;
 
         if (accessToken == null) throw new Error("Access token is null");

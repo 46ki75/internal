@@ -10,7 +10,7 @@ import {
 } from "@qwik.dev/core";
 
 import styles from "./anki.module.css";
-import { AnkiContext } from "~/context/anki-context";
+import { AnkiContext, useAnkiActions } from "~/context/anki-context";
 import {
   blockCatalog,
   ElmA2ui,
@@ -43,6 +43,7 @@ const KEYMAP = { q: 0, w: 1, e: 2, a: 3, s: 4, d: 5 };
 
 export default component$<IndexProps>(({ class: className, style }) => {
   const ankiStore = useContext(AnkiContext);
+  const { updateByRating, create, review, fetchBlock } = useAnkiActions();
 
   const currentAnki = useComputed$(() =>
     ankiStore.ankiList.currentIndex != null
@@ -53,14 +54,9 @@ export default component$<IndexProps>(({ class: className, style }) => {
   const isShowingAnswer = useSignal(false);
 
   const handleUpdate = $((pageId?: string, performanceRating?: number) => {
-    if (!ankiStore.updateAnkiByPerformanceRating) return;
     if (!pageId || performanceRating == null) return;
 
-    ankiStore.updateAnkiByPerformanceRating(
-      ankiStore,
-      pageId,
-      performanceRating,
-    );
+    updateByRating(pageId, performanceRating);
 
     if (currentAnki.value?.metadata.page_id === pageId) {
       isShowingAnswer.value = false;
@@ -126,7 +122,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
         <ElmButton
           block
           isLoading={ankiStore.create.loading}
-          onClick$={() => ankiStore.create.execute(ankiStore)}
+          onClick$={() => create()}
         >
           <ElmMdiIcon d={mdiCreation} />
           <span>New</span>
@@ -134,7 +130,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
         <ElmButton
           block
           isLoading={currentAnki.value == null || ankiStore.review.loading}
-          onClick$={() => ankiStore.review.execute(ankiStore)}
+          onClick$={() => review()}
         >
           <ElmMdiIcon
             d={
@@ -148,12 +144,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
         <ElmButton
           block
           isLoading={currentAnki.value == null || currentAnki.value.loading}
-          onClick$={() =>
-            ankiStore.fetchAnkiBlock(
-              ankiStore,
-              currentAnki.value?.metadata.page_id,
-            )
-          }
+          onClick$={() => fetchBlock(currentAnki.value?.metadata.page_id)}
         >
           <ElmMdiIcon d={mdiRefresh} />
         </ElmButton>

@@ -12,7 +12,11 @@ import {
 import { Header } from "~/components/common/header";
 
 import { useAnkiContextProvider } from "~/context/anki-context";
-import { AuthContext, useAuthEffect } from "~/context/auth-context";
+import {
+  AuthContext,
+  useAuthActions,
+  useAuthEffect,
+} from "~/context/auth-context";
 
 import styles from "./root-layout.module.css";
 import { useModal } from "@elmethis/qwik";
@@ -26,13 +30,14 @@ export default component$(() => {
   useAuthEffect();
   useAnkiContextProvider();
   const authStore = useContext(AuthContext);
+  const { signIn, signOut } = useAuthActions();
 
   const navigate = useNavigate();
 
   const { Modal, show } = useModal({});
 
   const onSubmit$ = $(async (username: string, password: string) => {
-    await authStore.signIn(authStore, username, password);
+    await signIn(username, password);
   });
 
   return (
@@ -83,7 +88,7 @@ export default component$(() => {
           },
         ]}
         state={authStore.sessionState}
-        handleSignOutClick$={$(async () => authStore.signOut(authStore))}
+        handleSignOutClick$={$(async () => signOut())}
         handleSignInClick$={$(async () => show())}
       />
 

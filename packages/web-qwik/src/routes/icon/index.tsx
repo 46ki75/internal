@@ -11,7 +11,7 @@ import {
 
 import styles from "./icon.module.css";
 import { ElmInlineText, ElmTextField, useAsyncState } from "@elmethis/qwik";
-import { AuthContext } from "~/context/auth-context";
+import { AuthContext, useAuthActions } from "~/context/auth-context";
 import { openApiClient } from "~/openapi/client";
 import { IconCell } from "~/components/icon/icon-cell";
 
@@ -29,12 +29,13 @@ type Icon =
 
 export default component$<IndexProps>(({ class: className, style }) => {
   const authStore = useContext(AuthContext);
+  const { refresh } = useAuthActions();
   const searchKeyword = useSignal<string>("");
   const fuseInstance = useSignal<NoSerialize<Fuse<Icon>> | null>(null);
 
   const { state } = useAsyncState(
     $(async () => {
-      await authStore.tokens.refresh(authStore);
+      await refresh();
 
       const res = await openApiClient.GET("/api/v1/icon", {
         params: {

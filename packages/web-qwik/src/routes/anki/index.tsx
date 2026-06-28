@@ -3,43 +3,17 @@ import {
   component$,
   useComputed$,
   useContext,
-  useOnDocument,
-  useSignal,
-  useVisibleTask$,
   type CSSProperties,
 } from "@qwik.dev/core";
 
-import styles from "./anki.module.css";
 import { AnkiContext, useAnkiActions } from "~/context/anki-context";
-import {
-  blockCatalog,
-  ElmA2ui,
-  ElmBlockFallback,
-  ElmButton,
-  ElmInlineText,
-  ElmMdiIcon,
-} from "@elmethis/qwik";
-import { surfaceToMessages } from "./surface-to-messages";
-import {
-  mdiAlertDecagram,
-  mdiBookEdit,
-  mdiCircleSmall,
-  mdiCreation,
-  mdiMessageAlertOutline,
-  mdiMessageCheckOutline,
-  mdiMessageQuestionOutline,
-  mdiRefresh,
-  mdiSchool,
-  mdiTrayFull,
-} from "@mdi/js";
+import { AnkiReviewer, type AnkiCard } from "~/components/anki/anki-reviewer";
 
 export interface IndexProps {
   class?: string;
 
   style?: CSSProperties;
 }
-
-const KEYMAP = { q: 0, w: 1, e: 2, a: 3, s: 4, d: 5 };
 
 export default component$<IndexProps>(({ class: className, style }) => {
   const ankiStore = useContext(AnkiContext);
@@ -51,208 +25,61 @@ export default component$<IndexProps>(({ class: className, style }) => {
       : null,
   );
 
-  const isShowingAnswer = useSignal(false);
-
-  const handleUpdate = $((pageId?: string, performanceRating?: number) => {
-    if (!pageId || performanceRating == null) return;
-
-    updateByRating(pageId, performanceRating);
-
-    if (currentAnki.value?.metadata.page_id === pageId) {
-      isShowingAnswer.value = false;
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+  // Project the store item onto the display component's card shape. Reading the
+  // nested fields here subscribes this computed to them, so the reviewer
+  // re-renders when the block loads or the review flag toggles.
+  const card = useComputed$<AnkiCard | null>(() => {
+    const item = currentAnki.value;
+    if (!item) return null;
+    return {
+      pageId: item.metadata.page_id,
+      url: item.metadata.url,
+      isReviewRequired: item.metadata.is_review_required,
+      loading: item.loading,
+      block: item.block,
+    };
   });
 
-  const count = useComputed$(() => ankiStore.ankiList.data.length);
+  const queueCount = useComputed$(() => ankiStore.ankiList.data.length);
 
   const shouldLearnCount = useComputed$(() => {
     const now = new Date();
-    const count = ankiStore.ankiList.data.reduce((acc, { metadata }) => {
-      if (new Date(metadata.next_review_at) <= now) {
-        return acc + 1;
-      }
-      return acc;
-    }, 0);
-    return count;
+    return ankiStore.ankiList.data.reduce(
+      (acc, { metadata }) =>
+        new Date(metadata.next_review_at) <= now ? acc + 1 : acc,
+      0,
+    );
   });
 
   const open = $(() => {
+    const url = currentAnki.value?.metadata.url;
+    if (!url) return;
     const a = document.createElement("a");
-    if (!currentAnki.value?.metadata.url) return;
-    a.href = currentAnki.value?.metadata.url;
+    a.href = url;
     a.target = "_blank";
     a.rel = "noopener noreferrer";
     a.click();
   });
 
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(({ cleanup }) => {
-    const handler = (event: KeyboardEvent) => {
-      if (["Enter", " "].includes(event.key) && !isShowingAnswer.value) {
-        event.preventDefault();
-        isShowingAnswer.value = true;
-      }
-    };
-    document.addEventListener("keydown", handler);
-    cleanup(() => document.removeEventListener("keydown", handler));
+  const rate = $((rating: number) => {
+    const pageId = currentAnki.value?.metadata.page_id;
+    if (pageId) updateByRating(pageId, rating);
   });
 
-  useOnDocument(
-    "keydown",
-    $((event) => {
-      if (isShowingAnswer.value && Object.keys(KEYMAP).includes(event.key)) {
-        const rating = KEYMAP[event.key as keyof typeof KEYMAP];
-        handleUpdate(currentAnki.value?.metadata.page_id, rating);
-      }
-    }),
-  );
-
   return (
-    <div
-      class={[styles["anki"], className]}
+    <AnkiReviewer
+      class={className}
       style={style}
-      key={currentAnki.value?.metadata.page_id ?? "none"}
-    >
-      <div class={styles["button-control"]}>
-        <ElmButton block onClick$={open} isLoading={currentAnki.value == null}>
-          <ElmMdiIcon d={mdiBookEdit} />
-          <span>Edit</span>
-        </ElmButton>
-        <ElmButton
-          block
-          isLoading={ankiStore.create.loading}
-          onClick$={() => create()}
-        >
-          <ElmMdiIcon d={mdiCreation} />
-          <span>New</span>
-        </ElmButton>
-        <ElmButton
-          block
-          isLoading={currentAnki.value == null || ankiStore.review.loading}
-          onClick$={() => review()}
-        >
-          <ElmMdiIcon
-            d={
-              currentAnki.value?.metadata.is_review_required
-                ? mdiAlertDecagram
-                : mdiCircleSmall
-            }
-          />
-        </ElmButton>
-
-        <ElmButton
-          block
-          isLoading={currentAnki.value == null || currentAnki.value.loading}
-          onClick$={() => fetchBlock(currentAnki.value?.metadata.page_id)}
-        >
-          <ElmMdiIcon d={mdiRefresh} />
-        </ElmButton>
-      </div>
-
-      <div class={styles["anki-header"]}>
-        <ElmMdiIcon d={mdiSchool} color="#6987b8" />
-        <ElmInlineText>Should Learn: {shouldLearnCount.value}</ElmInlineText>
-        <ElmMdiIcon d={mdiTrayFull} color="#6987b8" />
-        <ElmInlineText>Queue: {count.value}</ElmInlineText>
-      </div>
-
-      {!currentAnki.value?.block ? (
-        <ElmBlockFallback />
-      ) : (
-        <>
-          <div class={styles["anki-block-container"]}>
-            <div class={styles["block-header"]}>
-              <ElmMdiIcon d={mdiMessageQuestionOutline} />
-              <ElmInlineText>Front</ElmInlineText>
-            </div>
-            <div class={styles["block-renderer"]}>
-              <ElmA2ui
-                catalog={blockCatalog}
-                messages={surfaceToMessages(
-                  currentAnki.value.block.front,
-                  `${currentAnki.value.metadata.page_id}-front`,
-                )}
-              />
-            </div>
-          </div>
-
-          {isShowingAnswer.value && (
-            <>
-              <div class={styles["anki-block-container"]}>
-                <div class={styles["block-header"]}>
-                  <ElmMdiIcon d={mdiMessageAlertOutline} />
-                  <ElmInlineText>Back</ElmInlineText>
-                </div>
-                <div class={styles["block-renderer"]}>
-                  <ElmA2ui
-                    catalog={blockCatalog}
-                    messages={surfaceToMessages(
-                      currentAnki.value.block.back,
-                      `${currentAnki.value.metadata.page_id}-back`,
-                    )}
-                  />
-                </div>
-              </div>
-
-              <div class={styles["anki-block-container"]}>
-                <div class={styles["block-header"]}>
-                  <ElmMdiIcon d={mdiMessageCheckOutline} />
-                  <ElmInlineText>Explanation</ElmInlineText>
-                </div>
-                <div class={styles["block-renderer"]}>
-                  <ElmA2ui
-                    catalog={blockCatalog}
-                    messages={surfaceToMessages(
-                      currentAnki.value.block.explanation,
-                      `${currentAnki.value.metadata.page_id}-explanation`,
-                    )}
-                  />
-                </div>
-              </div>
-            </>
-          )}
-        </>
-      )}
-
-      <div class={styles["button-container"]}>
-        {!isShowingAnswer.value ? (
-          <ElmButton
-            block
-            onClick$={() => (isShowingAnswer.value = !isShowingAnswer.value)}
-          >
-            <ElmInlineText kbd>Enter</ElmInlineText>
-            <span>{isShowingAnswer.value ? "Hide Answer" : "Show Answer"}</span>
-          </ElmButton>
-        ) : (
-          <div class={styles["update-button-container"]}>
-            {[
-              "FORGETFUL",
-              "INCORRECT",
-              "ALMOST",
-              "LUCKY",
-              "CORRECT",
-              "CONFIDENT",
-            ].map((rating, index) => (
-              <ElmButton
-                key={index}
-                block
-                onClick$={() =>
-                  handleUpdate(currentAnki.value?.metadata.page_id, index)
-                }
-                primary={index >= 3}
-              >
-                <ElmInlineText kbd>
-                  {Object.keys(KEYMAP)
-                    .find((key) => KEYMAP[key as keyof typeof KEYMAP] === index)
-                    ?.toUpperCase()}
-                </ElmInlineText>
-                <span>{rating}</span>
-              </ElmButton>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+      card={card.value}
+      queueCount={queueCount.value}
+      shouldLearnCount={shouldLearnCount.value}
+      createLoading={ankiStore.create.loading}
+      reviewLoading={ankiStore.review.loading}
+      onEdit$={open}
+      onCreate$={$(() => create())}
+      onReview$={$(() => review())}
+      onRefresh$={$(() => fetchBlock(currentAnki.value?.metadata.page_id))}
+      onRate$={rate}
+    />
   );
 });

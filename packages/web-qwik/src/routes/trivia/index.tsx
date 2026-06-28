@@ -18,7 +18,7 @@ import {
   ElmInlineText,
   ElmMdiIcon,
 } from "@elmethis/qwik";
-import { surfaceToMessages } from "../anki/surface-to-messages";
+import { surfaceToMessages } from "~/components/anki/surface-to-messages";
 import { mdiArrowRightThick, mdiEye, mdiLightbulbOnOutline } from "@mdi/js";
 
 import { openApiClient } from "~/openapi/client";

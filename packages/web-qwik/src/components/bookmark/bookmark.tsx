@@ -1,4 +1,4 @@
-import { $, component$, type CSSProperties } from "@qwik.dev/core";
+import { $, component$, sync$, type CSSProperties } from "@qwik.dev/core";
 
 import styles from "./bookmark.module.css";
 import { ElmInlineText, ElmMdiIcon } from "@elmethis/qwik";
@@ -18,20 +18,16 @@ export interface BookmarkProps {
 
 export const Bookmark = component$<BookmarkProps>(
   ({ icon, label, favorite, url, editUrl, focus, style }) => {
-    const handleClick = $((event: MouseEvent) => {
-      event.stopPropagation();
+    const handleClick = $(() => {
       const a = document.createElement("a");
       a.href = url;
-      a.target = "_blank";
       a.rel = "noreferrer";
       a.click();
     });
 
-    const handleEdit$ = $((event: MouseEvent) => {
-      event.stopPropagation();
+    const handleEdit$ = $(() => {
       const a = document.createElement("a");
       a.href = editUrl;
-      a.target = "_blank";
       a.rel = "noreferrer";
       a.click();
     });
@@ -50,7 +46,12 @@ export const Bookmark = component$<BookmarkProps>(
         <ElmMdiIcon
           d={mdiTagEdit}
           class={styles["edit-icon"]}
-          onClick$={handleEdit$}
+          onClick$={[
+            // sync$ runs during the path-walk so stopPropagation() actually
+            // stops the parent card's onClick$ (a plain $() handler can't).
+            sync$((event: MouseEvent) => event.stopPropagation()),
+            handleEdit$,
+          ]}
         />
         <span class={styles["favorite-icon"]}>
           <ElmMdiIcon

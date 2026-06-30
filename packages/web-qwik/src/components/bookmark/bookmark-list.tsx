@@ -7,37 +7,29 @@ import {
   useComputed$,
   useSignal,
   useTask$,
-  useVisibleTask$,
 } from "@qwik.dev/core";
 
 import styles from "./bookmark-list.module.css";
 import { Bookmark, BookmarkProps } from "./bookmark";
-import { ElmHeading, ElmMdiIcon, ElmTextField } from "@elmethis/qwik";
+import {
+  ElmHeading,
+  ElmMdiIcon,
+  ElmTextField,
+  useAutoAnimate,
+} from "@elmethis/qwik";
 import { mdiTag } from "@mdi/js";
 import Fuse from "fuse.js";
-
-import autoAnimate from "@formkit/auto-animate";
 
 export interface BookmarkListProps {
   bookmarks: BookmarkProps[];
 }
 
 export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
-  const bookmarkContainerRef = useSignal<HTMLElement>();
-  const bookmarkContainerAnimationController =
-    useSignal<NoSerialize<ReturnType<typeof autoAnimate>>>();
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(({ cleanup }) => {
-    if (bookmarkContainerRef.value) {
-      bookmarkContainerAnimationController.value = noSerialize(
-        autoAnimate(bookmarkContainerRef.value),
-      );
-    }
-    cleanup(() => {
-      if (bookmarkContainerAnimationController.value) {
-        bookmarkContainerAnimationController.value?.disable();
-      }
-    });
+  const { ref: bookmarkListContainerRef } = useAutoAnimate({
+    config: {},
+  });
+  const { ref: bookmarkContainerRef } = useAutoAnimate({
+    config: {},
   });
 
   const favorites: JSX.Element[] = [];
@@ -148,7 +140,7 @@ export const BookmarkList = component$<BookmarkListProps>(({ bookmarks }) => {
         {favorites}
       </div>
 
-      <div class={styles["tags-container"]}>
+      <div ref={bookmarkListContainerRef} class={styles["tags-container"]}>
         {Object.keys(tags).map((tagId) => (
           <div key={tagId} class={styles["tag-section"]}>
             <div

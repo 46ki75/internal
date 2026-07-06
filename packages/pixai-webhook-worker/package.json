@@ -1,0 +1,22 @@
+{
+  "name": "pixai-webhook-worker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Notion Worker that receives PixAI task webhooks and upserts pages in a Notion database",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.9.2"
+  },
+  "dependencies": {
+    "@notionhq/workers": "^0.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.8.0"
+  }
+}

@@ -1,2 +1,3 @@
 packages:
   - "packages/web-qwik"
+  - "packages/pixai-webhook-worker"

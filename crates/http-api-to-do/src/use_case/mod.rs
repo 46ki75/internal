@@ -145,6 +145,11 @@ impl ToDoUseCase {
                 PageProperty::Title(PageTitleProperty::from(title.clone())),
             );
 
+            properties.insert(
+                "Type".to_string(),
+                PageProperty::Select(PageSelectProperty::from("To Do")),
+            );
+
             if let Some(deadline) = deadline {
                 properties.insert(
                     "Deadline".to_string(),
@@ -217,6 +222,7 @@ impl ToDoUseCase {
     pub async fn list_notion_to_do(&self) -> Result<Vec<ToDoEntity>, ToDoUseCaseError> {
         let filter = notionrs_types::object::request::filter::Filter::and(vec![
             notionrs_types::object::request::filter::Filter::checkbox_is_not_checked("IsArchived"),
+            notionrs_types::object::request::filter::Filter::select_equals("Type", "To Do"),
         ]);
 
         let response = self.to_do_repository.list_notion_to_do(filter).await?;

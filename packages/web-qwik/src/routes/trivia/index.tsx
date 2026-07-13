@@ -11,12 +11,12 @@ import {
 
 import styles from "./trivia.module.css";
 import {
-  blockCatalog,
   ElmA2ui,
   ElmBlockFallback,
   ElmButton,
   ElmInlineText,
   ElmMdiIcon,
+  notionBlockCatalog,
 } from "@elmethis/qwik";
 import { surfaceToMessages } from "~/components/anki/surface-to-messages";
 import { mdiArrowRightThick, mdiEye, mdiLightbulbOnOutline } from "@mdi/js";
@@ -269,7 +269,7 @@ export default component$<IndexProps>(({ class: className, style }) => {
           </div>
           <div class={styles["block-renderer"]}>
             <ElmA2ui
-              catalog={blockCatalog}
+              catalog={notionBlockCatalog}
               messages={surfaceToMessages(
                 currentBlock.value.surface,
                 current.value?.metadata.page_id ?? "",

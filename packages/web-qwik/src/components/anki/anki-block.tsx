@@ -2,10 +2,10 @@ import { component$ } from "@qwik.dev/core";
 
 import styles from "./anki-block.module.css";
 import {
-  blockCatalog,
   ElmA2ui,
   ElmInlineText,
   ElmMdiIcon,
+  notionBlockCatalog,
 } from "@elmethis/qwik";
 import { surfaceToMessages } from "./surface-to-messages";
 
@@ -30,7 +30,7 @@ export const AnkiBlock = component$<AnkiBlockProps>(
       </div>
       <div class={styles["block-renderer"]}>
         <ElmA2ui
-          catalog={blockCatalog}
+          catalog={notionBlockCatalog}
           messages={surfaceToMessages(surface, surfaceId)}
         />
       </div>

@@ -88,6 +88,7 @@ pub async fn get_or_init_n2a2ui_client()
                 enable_unsupported_block: true,
                 enable_fetch_image_meta: true,
                 enable_fetch_bookmark_meta: true,
+                enable_html_embed: false,
             };
 
             Ok(client)

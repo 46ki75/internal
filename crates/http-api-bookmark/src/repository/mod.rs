@@ -98,6 +98,8 @@ impl BookmarkRepository for BookmarkRepositoryImpl {
         let response = request
             .send()
             .await
+            .map_err(|e| BookmarkRepositoryError::NotionApi(e.to_string()))?
+            .into_page()
             .map_err(|e| BookmarkRepositoryError::NotionApi(e.to_string()))?;
 
         Ok(response)

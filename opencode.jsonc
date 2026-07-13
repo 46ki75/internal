@@ -1,0 +1,10 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    "references": {
+        "elmethis": {
+            "repository": "46ki75/elmethis",
+            "branch": "main",
+            "description": "React, Vue, and Qwik components and hooks library",
+        },
+    },
+}

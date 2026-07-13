@@ -159,7 +159,8 @@ impl ImageRepository for ImageRepositoryImpl {
                 .data_source_id(data_source_id)
                 .properties(properties)
                 .send()
-                .await?;
+                .await?
+                .into_page()?;
 
             Ok(response.properties)
         })

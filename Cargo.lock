@@ -2186,9 +2186,9 @@ dependencies = [
 
 [[package]]
 name = "imagesize"
-version = "0.14.0"
+version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "09e54e57b4c48b40f7aec75635392b12b3421fa26fe8b4332e63138ed278459c"
+checksum = "65b27460c2c92b037f3f94c538ed9a3342f3fdf923606781629ccb35f82d042a"
 
 [[package]]
 name = "indexmap"
@@ -2569,9 +2569,9 @@ dependencies = [
 
 [[package]]
 name = "n2a2ui"
-version = "0.2.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5bb4d434a9db4e3d9d0d9a988db0cd58dcf7f2059d03a30a535073d87e5184ec"
+checksum = "5440430f8663554831a42d91721aa2d1fcbb5ae3a77430a7c40bd76553696469"
 dependencies = [
  "async-stream",
  "futures",
@@ -2589,9 +2589,9 @@ dependencies = [
 
 [[package]]
 name = "n2a2ui-a2ui"
-version = "0.2.0"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d1bd1ac9df7e4782ceca7902748bfe361bad3e1513d2840561610594b1af1ae"
+checksum = "497bd67d5ef579628c17b0f9f3f08205b1d4d3379bd367d9d77210a257b86954"
 dependencies = [
  "indexmap",
  "serde",
@@ -2616,9 +2616,9 @@ dependencies = [
 
 [[package]]
 name = "notionrs"
-version = "0.27.0"
+version = "0.28.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3cbd0b122b9d040ec173ddf928629b6aefe86f533afdb6c9433e09a61f6de9c2"
+checksum = "251de1a3854fbd5a09a42ec9fb0d8162a2a2eda31ce6f34f8c4dd5aa6ee9ae8b"
 dependencies = [
  "bytes",
  "futures",
@@ -2646,9 +2646,9 @@ dependencies = [
 
 [[package]]
 name = "notionrs_types"
-version = "0.20.0"
+version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "78c9580885282ddbc6296d29dd9d741d47a15c8e896db385d01461cf385f1190"
+checksum = "e6d7f2d3dae05b38c6d7762c8044b570f87de52de97b1af818554fc6ef316926"
 dependencies = [
  "notionrs_macro",
  "serde",

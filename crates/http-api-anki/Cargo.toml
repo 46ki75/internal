@@ -22,7 +22,7 @@ tracing.workspace = true
 utoipa.workspace = true
 utoipa-axum.workspace = true
 
-n2a2ui-a2ui = "0.2.0"
+n2a2ui-a2ui = "0.3.0"
 indexmap = { version = "2", features = ["serde"] }
 time = { version = "0.3.47", features = ["parsing", "serde-human-readable"] }
 

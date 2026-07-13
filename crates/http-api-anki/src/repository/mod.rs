@@ -118,6 +118,8 @@ impl AnkiRepository for AnkiRepositoryImpl {
         let response = request
             .send()
             .await
+            .map_err(|e| AnkiRepositoryError::NotionApi(e.to_string()))?
+            .into_page()
             .map_err(|e| AnkiRepositoryError::NotionApi(e.to_string()))?;
 
         Ok(response)

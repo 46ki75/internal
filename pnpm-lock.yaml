@@ -21,8 +21,8 @@ importers:
         specifier: ^0.20.0
         version: 0.20.0(@a2ui/web_core@0.10.0)(zod@3.25.76)
       '@elmethis/qwik':
-        specifier: ^1.0.0-alpha.41
-        version: 1.0.0-alpha.41(@qwik.dev/core@2.0.0-beta.36(prettier@3.6.2)(vite@7.3.5(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0)))
+        specifier: ^1.0.0-alpha.42
+        version: 1.0.0-alpha.42(@qwik.dev/core@2.0.0-beta.36(prettier@3.6.2)(vite@7.3.5(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0)))
       '@eslint/js':
         specifier: ^9
         version: 9.39.4
@@ -345,8 +345,8 @@ packages:
       '@a2ui/web_core': '>=0.10.0'
       zod: ^3
 
-  '@elmethis/qwik@1.0.0-alpha.41':
-    resolution: {integrity: sha512-M5ZK/pmLZdDnhbUduRgLTdt4um7sX3wjGt/C2ogrBiZXXFKDypWiIbQSUbC2OmObDEFnK1K6Y0N3TCA2GzJiow==}
+  '@elmethis/qwik@1.0.0-alpha.42':
+    resolution: {integrity: sha512-P2scmMXbo/nBBalXu0yH4Nf9HcpXMHPVfHqIeDCFxun8FjI1YTCOIJy3aeDQSAXLT7kWySTQ9W+LNuKwGb6Few==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     peerDependencies:
       '@qwik.dev/core': '>=2.0.0-beta.31'
@@ -713,6 +713,9 @@ packages:
   '@eslint/plugin-kit@0.3.5':
     resolution: {integrity: sha512-Z5kJ+wU3oA7MMIqVR9tyZRtjYPr4OC004Q4Rw7pgOKUOKkJfZ3O24nz3WYfGRpMDNmcOi3TwQOmgm7B7Tpii0w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@formkit/auto-animate@0.10.0':
+    resolution: {integrity: sha512-KGomRttjUfORuPUaR/ZGQw+6xfMrTM+sxnILv7JAd9AmabU9rg9i6gF/iC0Ih+QpKCubJpCA/1DX9UHKE8cX+A==}
 
   '@formkit/auto-animate@0.9.0':
     resolution: {integrity: sha512-VhP4zEAacXS3dfTpJpJ88QdLqMTcabMg0jwpOSxZ/VzfQVfl3GkZSCZThhGC5uhq/TxPHPzW0dzr4H9Bb1OgKA==}
@@ -5210,14 +5213,14 @@ snapshots:
       zod: 3.25.76
       zod-to-json-schema: 3.25.2(zod@3.25.76)
 
-  '@elmethis/qwik@1.0.0-alpha.41(@qwik.dev/core@2.0.0-beta.36(prettier@3.6.2)(vite@7.3.5(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0)))':
+  '@elmethis/qwik@1.0.0-alpha.42(@qwik.dev/core@2.0.0-beta.36(prettier@3.6.2)(vite@7.3.5(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0)))':
     dependencies:
       '@46ki75/ikuma-theme': 0.0.10
       '@a2ui/web_core': 0.10.0
       '@ag-ui/client': 0.0.57
       '@ag-ui/core': 0.0.57
       '@elmethis/core': 0.20.0(@a2ui/web_core@0.10.0)(zod@3.25.76)
-      '@formkit/auto-animate': 0.9.0
+      '@formkit/auto-animate': 0.10.0
       '@mdi/js': 7.4.47
       '@modelcontextprotocol/sdk': 1.29.0(zod@3.25.76)
       '@qwik.dev/core': 2.0.0-beta.36(prettier@3.6.2)(vite@7.3.5(@types/node@20.19.0)(jiti@2.6.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0))
@@ -5450,6 +5453,8 @@ snapshots:
     dependencies:
       '@eslint/core': 0.15.2
       levn: 0.4.1
+
+  '@formkit/auto-animate@0.10.0': {}
 
   '@formkit/auto-animate@0.9.0': {}
 

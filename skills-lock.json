@@ -6,6 +6,12 @@
       "sourceType": "github",
       "skillPath": "skills/qwik/SKILL.md",
       "computedHash": "b5e2159476dd4794dba4e2b4f22c42e5c9de9d75cb8e66ba06e0d0b5fc48e1cd"
+    },
+    "solidjs": {
+      "source": "46ki75/yaarr",
+      "sourceType": "github",
+      "skillPath": "skills/solidjs/SKILL.md",
+      "computedHash": "e5b7e01a43a2c5ea5416c0844db4f6a3e2085d87a14da595ae238e8bf3ee830f"
     }
   }
 }

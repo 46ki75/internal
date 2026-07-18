@@ -4,7 +4,7 @@
         "elmethis": {
             "repository": "46ki75/elmethis",
             "branch": "main",
-            "description": "React, Vue, and Qwik components and hooks library",
+            "description": "React, Vue, Solid, and Qwik components and hooks library",
         },
     },
 }

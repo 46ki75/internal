@@ -32,7 +32,7 @@
   "dependencies": {
     "@ag-ui/client": "0.0.57",
     "@elmethis/core": "^0.20.0",
-    "@elmethis/solid": "^0.2.0",
+    "@elmethis/solid": "^0.3.2",
     "@formkit/auto-animate": "^0.10.0",
     "@js-temporal/polyfill": "^0.5.1",
     "@mdi/js": "^7.4.47",

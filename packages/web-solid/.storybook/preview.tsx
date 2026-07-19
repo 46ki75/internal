@@ -1,5 +1,9 @@
-import { createDecorator, type Preview } from "storybook-solidjs-vite";
-import { Router } from "@solidjs/router";
+import { MemoryRouter, Route } from "@solidjs/router";
+import {
+  createDecorator,
+  createJSXDecorator,
+  type Preview,
+} from "storybook-solidjs-vite";
 
 import "@elmethis/solid/style.css";
 import "../src/global.css";
@@ -37,8 +41,13 @@ const preview: Preview = {
       const theme = context.globals.theme || "light";
       document.documentElement.style.colorScheme = theme;
       document.documentElement.setAttribute("data-theme", theme);
-      return <Router>{Story()}</Router>;
+      return Story();
     }),
+    createJSXDecorator((Story) => (
+      <MemoryRouter>
+        <Route path="*path" component={Story} />
+      </MemoryRouter>
+    )),
   ],
 };
 

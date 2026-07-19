@@ -3,7 +3,6 @@ import { Router, useLocation } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense, type ParentProps } from "solid-js";
 
-import "@elmethis/core/tokens.css";
 import "@elmethis/solid/style.css";
 import "./global.css";
 

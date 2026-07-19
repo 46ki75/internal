@@ -2,10 +2,9 @@
 
 A [Claude Agent SDK][claude-agent-sdk] agent exposed over the **[AG-UI][ag-ui]
 protocol** and deployed to an Amazon Bedrock **AgentCore Runtime**. It replaces
-the previous CopilotKit-on-Hono server: the web frontend
-(`@elmethis/qwik` `useAgent` → `@ag-ui/client` `HttpAgent`) is unchanged — it
-still POSTs an AG-UI `RunAgentInput` to `/invocations` and consumes an AG-UI SSE
-event stream.
+the previous CopilotKit-on-Hono server. The SolidStart web frontend uses
+`@ag-ui/client`'s `HttpAgent` directly; it POSTs an AG-UI `RunAgentInput` to
+`/invocations` and consumes an AG-UI SSE event stream.
 
 A member of the repo-root [uv](https://docs.astral.sh/uv/) workspace
 (`members = ["python/*"]`), packaged for the AgentCore Runtime as a `linux/arm64`
@@ -24,14 +23,14 @@ platform edge (inbound auth), so the container never validates the token itself.
 
 ## Modules
 
-| Module           | Responsibility                                                                            |
-| ---------------- | ----------------------------------------------------------------------------------------- |
-| `config.py`      | Read runtime configuration from environment variables.                                    |
-| `model_auth.py`  | Fetch the subscription OAuth token from SSM; export `CLAUDE_CODE_OAUTH_TOKEN` for the SDK. |
-| `agent.py`       | Build the `ClaudeAgentOptions` (model, system prompt, AWS Knowledge MCP, hidden builtins). |
-| `prompt.py`      | Render a `RunAgentInput` (full message history) into one prompt for `query()`.            |
-| `agui_bridge.py` | Translate the SDK message/stream events into AG-UI events.                                 |
-| `server.py`      | FastAPI app: `POST /invocations` (AG-UI SSE) and `GET /ping` (health).                     |
+| Module           | Responsibility                                                                              |
+| ---------------- | ------------------------------------------------------------------------------------------- |
+| `config.py`      | Read runtime configuration from environment variables.                                      |
+| `model_auth.py`  | Fetch the subscription OAuth token from SSM; export `CLAUDE_CODE_OAUTH_TOKEN` for the SDK.  |
+| `agent.py`       | Build the `ClaudeAgentOptions` (model, system prompt, AWS Knowledge MCP, hidden builtins).  |
+| `prompt.py`      | Render a `RunAgentInput` (full message history) into one prompt for `query()`.              |
+| `agui_bridge.py` | Translate the SDK message/stream events into AG-UI events.                                  |
+| `server.py`      | FastAPI app: `POST /invocations` (AG-UI SSE) and `GET /ping` (health).                      |
 
 ## Environment variables (set by Terraform on the runtime)
 

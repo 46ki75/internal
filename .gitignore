@@ -9,6 +9,9 @@ notes/
 node_modules/
 .pnpm-store/
 dist/
+.output/
+.vinxi/
+storybook-static/
 
 # Rust
 target/

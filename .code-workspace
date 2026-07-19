@@ -9,8 +9,8 @@
       "name": "terraform"
     },
     {
-      "path": "./packages/web",
-      "name": "web"
+      "path": "./packages/web-solid",
+      "name": "web-solid"
     },
     {
       "path": "./crates/graphql",

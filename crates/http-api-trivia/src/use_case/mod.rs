@@ -18,7 +18,7 @@ pub struct TriviaUseCase {
     pub trivia_repository: std::sync::Arc<dyn TriviaRepository + Send + Sync>,
 }
 
-// The renderer (`@elmethis/qwik`'s `ElmA2ui`) resolves the root via the
+// The renderer (`@elmethis/solid`'s `ElmA2ui`) resolves the root via the
 // hardcoded id "root", so the page's root Column must use that exact id
 // rather than the UUID Notion assigns.
 const SECTION_ROOT_ID: &str = "root";

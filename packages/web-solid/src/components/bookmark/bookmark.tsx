@@ -34,13 +34,17 @@ export const Bookmark = (props: BookmarkProps) => {
       class={styles.bookmark}
       classList={{ [styles["bookmark-focus"]]: Boolean(props.focus) }}
       style={props.style}
+      onClick={handleOpen}
     >
       <button
         type="button"
         class={styles["edit-icon"]}
         aria-label={`Edit ${props.label}`}
         style={{ border: "0", background: "none", cursor: "pointer" }}
-        onClick={handleEdit}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleEdit();
+        }}
       >
         <ElmMdiIcon d={mdiTagEdit} />
       </button>
@@ -48,7 +52,6 @@ export const Bookmark = (props: BookmarkProps) => {
         type="button"
         aria-label={`Open ${props.label}`}
         style={{ display: "contents" }}
-        onClick={handleOpen}
       >
         <span class={styles["favorite-icon"]}>
           <ElmMdiIcon

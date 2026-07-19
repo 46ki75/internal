@@ -24,8 +24,8 @@ importers:
         specifier: ^0.20.0
         version: 0.20.0(@a2ui/web_core@0.10.5)(zod@3.25.76)
       '@elmethis/solid':
-        specifier: ^0.3.2
-        version: 0.3.2(solid-js@1.9.14)(zod@3.25.76)
+        specifier: ^0.3.5
+        version: 0.3.5(solid-js@1.9.14)(zod@3.25.76)
       '@formkit/auto-animate':
         specifier: ^0.10.0
         version: 0.10.0
@@ -452,8 +452,8 @@ packages:
       '@a2ui/web_core': '>=0.10.0'
       zod: ^3
 
-  '@elmethis/solid@0.3.2':
-    resolution: {integrity: sha512-w9RRk0yLwvRCicr82+QvYup5ZPHXHzzeIaDDeVIM5OwCsLJ3hVbIwyIOveUzkeGlv9NXRwKkZmBO+ABjTXrnWg==}
+  '@elmethis/solid@0.3.5':
+    resolution: {integrity: sha512-9wI+Kw3Z2rmhjnQsLohafcrKIaGZcq2PW9/eyQdgw6Ds5VpOZimN89w6OPm9+fjb8+QEQ1cZaF00Oedu0XPKKQ==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     peerDependencies:
       solid-js: ^1.9.0
@@ -6008,7 +6008,7 @@ snapshots:
       zod: 3.25.76
       zod-to-json-schema: 3.25.2(zod@3.25.76)
 
-  '@elmethis/solid@0.3.2(solid-js@1.9.14)(zod@3.25.76)':
+  '@elmethis/solid@0.3.5(solid-js@1.9.14)(zod@3.25.76)':
     dependencies:
       '@46ki75/ikuma-theme': 0.0.10
       '@a2ui/web_core': 0.10.5

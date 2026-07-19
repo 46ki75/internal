@@ -1,0 +1,310 @@
+.chat {
+  --chat-border: oklch(from currentColor l c h / 12%);
+  --chat-muted: oklch(from currentColor l c h / 62%);
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-color: var(--chat-muted) transparent;
+  scrollbar-width: thin;
+}
+
+.messages {
+  flex: 1;
+  padding: 1rem 0.75rem 48dvh;
+}
+
+.empty {
+  min-height: 35dvh;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  padding: 1rem;
+
+  h1 {
+    max-width: 24rem;
+    margin: 0.5rem auto;
+    font-size: clamp(1.65rem, 5vw, 2.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+  }
+
+  p {
+    margin: 0 auto;
+    max-width: 22rem;
+    color: var(--chat-muted);
+  }
+}
+
+.eyebrow,
+.messageLabel,
+.queueMarker,
+.status {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  color: var(--elmethis-color-primary, #5879b0);
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.messageLabel {
+  color: var(--chat-muted);
+}
+
+.messageBody {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.65;
+}
+
+.user {
+  align-items: flex-end;
+
+  .messageBody {
+    max-width: 82%;
+    box-sizing: border-box;
+    padding: 0.75rem 1rem;
+    border-radius: 1rem 1rem 0.25rem 1rem;
+    background: var(--elmethis-color-surface-raised, #f7f7f9);
+    box-shadow: 0 0.125rem 0.75rem oklch(from black l c h / 8%);
+  }
+}
+
+.assistant {
+  padding-inline: 0.25rem;
+}
+
+.retry,
+.error button,
+.queueItem button {
+  appearance: none;
+  width: max-content;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+  opacity: 0.65;
+}
+
+.streaming {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--chat-muted);
+  font-size: 0.8rem;
+
+  span {
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse 1.2s infinite ease-in-out;
+  }
+
+  span:nth-child(2) {
+    animation-delay: 150ms;
+  }
+
+  span:nth-child(3) {
+    animation-delay: 300ms;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  60%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-0.2rem);
+  }
+}
+
+.error {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--elmethis-color-accent-error, #c56565);
+  border-radius: 0.5rem;
+  color: var(--elmethis-color-accent-error, #c56565);
+}
+
+.composerDock {
+  position: sticky;
+  bottom: 0;
+  padding: 0.5rem;
+  background: linear-gradient(
+    transparent,
+    var(--elmethis-color-surface, #efecea) 18%
+  );
+}
+
+.queue {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.queueItem {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--chat-border);
+  border-radius: 0.5rem;
+  background: var(--elmethis-color-surface-raised, #f7f7f9);
+}
+
+.queueMarker {
+  color: var(--elmethis-color-primary, #5879b0);
+}
+
+.queueText {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.templates {
+  margin-bottom: 0.5rem;
+
+  button {
+    appearance: none;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+    border: 1px solid var(--chat-border);
+    border-radius: 0.75rem;
+    padding: 0.65rem 0.8rem;
+    background: var(--elmethis-color-surface-raised, #f7f7f9);
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  button:hover:not(:disabled) {
+    border-color: var(--elmethis-color-primary, #5879b0);
+  }
+
+  small {
+    color: var(--chat-muted);
+  }
+}
+
+.composer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.65rem;
+  border: 1px solid var(--chat-border);
+  border-radius: 0.75rem;
+  background: var(--elmethis-color-surface-raised, #f7f7f9);
+  box-shadow: 0 0.25rem 1.5rem oklch(from black l c h / 12%);
+
+  label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  textarea {
+    box-sizing: border-box;
+    width: 100%;
+    max-height: 12rem;
+    resize: vertical;
+    border: 0;
+    outline: 0;
+    padding: 0.25rem;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    line-height: 1.4;
+  }
+}
+
+.composerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status {
+  flex: 1;
+  color: var(--chat-muted);
+}
+
+.send,
+.abort {
+  appearance: none;
+  border: 0;
+  border-radius: 0.45rem;
+  padding: 0.5rem 0.8rem;
+  color: white;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.send {
+  background: oklch(from #25282e l c h / 92%);
+}
+
+.abort {
+  background: var(--elmethis-color-accent-error, #c56565);
+}
+
+.send:disabled,
+.templates button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+@media (max-width: 420px) {
+  .messages {
+    padding-inline: 0.5rem;
+  }
+
+  .user .messageBody {
+    max-width: 92%;
+  }
+
+  .queueMarker {
+    display: none;
+  }
+
+  .queueItem {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .streaming span {
+    animation: none;
+  }
+}

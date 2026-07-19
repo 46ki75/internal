@@ -21,7 +21,7 @@ pub struct AnkiUseCase {
     pub anki_repository: std::sync::Arc<dyn AnkiRepository + Send + Sync>,
 }
 
-// The renderer (`@elmethis/qwik`'s `ElmA2ui`) resolves the root via the
+// The renderer (`@elmethis/solid`'s `ElmA2ui`) resolves the root via the
 // hardcoded id "root", so each section's synthetic root Column must use
 // that exact id rather than a UUID.
 const SECTION_ROOT_ID: &str = "root";

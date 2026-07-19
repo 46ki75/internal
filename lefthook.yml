@@ -26,14 +26,14 @@ pre-commit:
       run: cargo fmt --all
       stage_fixed: true
 
-    # Web (packages/web-qwik): Prettier on staged TS/TSX/CSS under src/.
+    # Web (packages/web-solid): Prettier on staged TS/TSX/CSS under src/.
     # `root` sets the CWD (so .prettierignore applies) and makes
     # {staged_files} relative to it; globs stay repo-root-relative.
     - name: prettier
-      root: "packages/web-qwik/"
+      root: "packages/web-solid/"
       glob:
-        - "packages/web-qwik/src/*.{ts,tsx,css}"
-        - "packages/web-qwik/src/**/*.{ts,tsx,css}"
+        - "packages/web-solid/src/*.{ts,tsx,css}"
+        - "packages/web-solid/src/**/*.{ts,tsx,css}"
       run: pnpm exec prettier --write {staged_files}
       stage_fixed: true
 

@@ -24,7 +24,7 @@ Domains: `{stage-}internal.46ki75.com` (web) and `api.{stage-}internal.46ki75.co
 ### Git hooks (lefthook)
 
 `lefthook.yml` defines a `pre-commit` hook that auto-formats staged files and re-stages the fixes (`stage_fixed`):
-`cargo fmt --all` for Rust, Prettier for `packages/web-qwik/src`, and `markdownlint-cli2 --fix` for Markdown.
+`cargo fmt --all` for Rust, Prettier for `packages/web-solid/src`, and `markdownlint-cli2 --fix` for Markdown.
 Hooks install on `pnpm install` (root `prepare` → `lefthook install`). Heavier gates (clippy, tests, typecheck)
 stay in CI. Run manually with `pnpm exec lefthook run pre-commit`; bypass once with
 `git commit --no-verify`.
@@ -53,14 +53,15 @@ Same per-crate `just` recipes as `http-api`; deploys to `<STAGE_NAME>-46ki75-int
 
 No `Justfile`. Use `cargo lambda build --release` / `cargo lambda deploy` directly.
 
-### `packages/web-qwik` (Qwik City frontend)
+### `packages/web-solid` (SolidStart frontend)
 
 ```sh
-pnpm dev                  # VITE_STAGE_NAME=dev vite --mode ssr
-pnpm build                # qwik build (typechecks, client+SSR+SSG via adapters/static)
+pnpm dev                  # VITE_STAGE_NAME=dev vinxi dev on :11070
+pnpm build                # SolidStart/Vinxi static prerender into .output/public
 pnpm build.types          # tsc --noEmit (typecheck only)
 pnpm lint                 # eslint src/**/*.ts*
 pnpm fmt / pnpm fmt.check # prettier
+pnpm test                 # Vitest component and model tests
 pnpm storybook            # dev on :11071
 pnpm deploy.{dev|stg|prod}  # build → s3 sync → CloudFront invalidate
 pnpm generate:openapi     # regenerate src/openapi/schema.ts from a running http-api
@@ -76,7 +77,7 @@ surface changes.
 
 A FastAPI app (uv workspace member) that runs a [Claude Agent SDK][casdk] agent and exposes it over the
 **AG-UI protocol**. Replaces the former CopilotKit-on-Hono server; the web frontend
-(`@elmethis/qwik` `useAgent` → `@ag-ui/client`) is unchanged.
+(`@ag-ui/client` `HttpAgent`) still uses the same AG-UI contract.
 
 ```sh
 uv sync --package ag-ui-server --group dev
@@ -141,14 +142,15 @@ Feature crates read their per-feature SSM keys inline via `http_api_core::cache:
 (no per-feature wrapper). External integrations: `notionrs` / `n2a2ui` (Notion content → A2UI), AWS SDKs
 (DynamoDB, SSM, Cognito), and `html-meta-scraper` (bookmarks).
 
-### `packages/web-qwik` — Qwik City SSG
+### `packages/web-solid` — SolidStart SSG
 
-- `src/routes/` — file-based routing (Qwik City). `layout.tsx` is the top-level shell (header + auth modal). Routes: `/`, `/anki`, `/chat`, `/icon`, `/swatch`.
+- `src/app.tsx` — SolidStart router root and persistent auth/Anki provider shell.
+- `src/routes/` — SolidStart file routes. Routes: `/`, `/anki`, `/chat`, `/icon`, `/swatch`, `/trivia`.
 - `src/components/` — feature components grouped by domain (`bookmark/`, `todo/`, `common/`, `icon/`).
-- `src/container/` — page-level containers that compose components and talk to the API.
-- `src/context/` — Qwik contexts (`auth-context.tsx` wraps Cognito via `aws-amplify`; `anki-context.tsx` for Anki feature state).
+- `src/container/` — stateful feature containers that compose testable components and talk to the API.
+- `src/context/` — Solid contexts (`auth-context.tsx` wraps Cognito via `aws-amplify`; `anki-context.tsx` owns Anki state and actions).
 - `src/openapi/schema.ts` — generated from `http-api`'s OpenAPI; do not edit by hand. Consumed via `openapi-fetch`.
-- Build target is SSG (`adapters/static`); output in `dist/` is uploaded to S3 and served via CloudFront. Long-cache the hashed `build/**/*.js` files (handled by CloudFront config).
+- Build target is SolidStart's static Nitro preset; `.output/public/` is uploaded to S3 and served via CloudFront. Hashed assets live under `_build/`.
 
 ### Auth and config
 

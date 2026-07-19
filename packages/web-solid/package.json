@@ -32,7 +32,7 @@
   "dependencies": {
     "@ag-ui/client": "0.0.57",
     "@elmethis/core": "^0.20.0",
-    "@elmethis/solid": "^0.1.1",
+    "@elmethis/solid": "^0.2.0",
     "@formkit/auto-animate": "^0.10.0",
     "@js-temporal/polyfill": "^0.5.1",
     "@mdi/js": "^7.4.47",
@@ -57,6 +57,7 @@
     "eslint": "9.32.0",
     "eslint-plugin-solid": "^0.14.5",
     "globals": "16.4.0",
+    "happy-dom": "^20.11.0",
     "openapi-typescript": "^7.13.0",
     "prettier": "3.6.2",
     "storybook": "^10.5.2",
@@ -66,7 +67,6 @@
     "typescript-plugin-css-modules": "latest",
     "vite": "7.3.5",
     "vite-plugin-solid": "^2.11.10",
-    "vitest": "^4.1.10",
-    "happy-dom": "^20.11.0"
+    "vitest": "^4.1.10"
   }
 }

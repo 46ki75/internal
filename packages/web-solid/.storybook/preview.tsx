@@ -1,6 +1,7 @@
 import { createDecorator, type Preview } from "storybook-solidjs-vite";
 import { Router } from "@solidjs/router";
 
+import "@elmethis/core/tokens.css";
 import "@elmethis/solid/style.css";
 import "../src/global.css";
 import "./sb.css";

@@ -9,6 +9,8 @@ use aws_sdk_cloudwatch::{
 };
 use serde::Deserialize;
 use thiserror::Error;
+use tracing::{error, info, warn};
+use tracing_subscriber::EnvFilter;
 
 const CLOUDWATCH_NAMESPACE: &str = "LLM";
 const METRIC_NAME: &str = "usage";
@@ -61,13 +63,23 @@ enum AppError {
 
 #[tokio::main]
 async fn main() -> ExitCode {
+    init_logging();
+
     match run().await {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
-            eprintln!("jcode-cloudwatch: {error}");
+            error!(error = %error, "command failed");
             ExitCode::FAILURE
         }
     }
+}
+
+fn init_logging() {
+    let filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info"));
+    tracing_subscriber::fmt()
+        .with_env_filter(filter)
+        .with_writer(std::io::stderr)
+        .init();
 }
 
 async fn run() -> Result<(), AppError> {
@@ -75,13 +87,14 @@ async fn run() -> Result<(), AppError> {
     let metrics = build_metrics(report);
 
     for index in metrics.provider_error_indexes {
-        eprintln!(
-            "jcode-cloudwatch: provider report at index {index} contains an error; publishing any available limits"
+        warn!(
+            provider_index = index,
+            "provider report contains an error; publishing any available limits"
         );
     }
 
     if metrics.data.is_empty() {
-        eprintln!("jcode-cloudwatch: no eligible metrics to publish");
+        info!("no eligible metrics to publish");
         return Ok(());
     }
 
@@ -89,10 +102,7 @@ async fn run() -> Result<(), AppError> {
     let client = Client::new(&config);
     publish_metrics(&client, &metrics.data).await?;
 
-    eprintln!(
-        "jcode-cloudwatch: published {} metric data",
-        metrics.data.len()
-    );
+    info!(metric_count = metrics.data.len(), "published metric data");
     Ok(())
 }
 

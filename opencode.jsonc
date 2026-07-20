@@ -7,4 +7,10 @@
             "description": "React, Vue, Solid, and Qwik components and hooks library",
         },
     },
+    "mcp": {
+      "AWS Knowledge": {
+        "type": "remote",
+        "url": "https://knowledge-mcp.global.api.aws"
+      }
+    },
 }

@@ -131,10 +131,6 @@ fn build_metrics(report: UsageReport) -> Metrics {
     let mut provider_error_indexes = Vec::new();
 
     for (index, provider) in report.providers.into_iter().enumerate() {
-        if provider.provider_name == "GitHub Copilot" {
-            continue;
-        }
-
         let provider_name = normalize_provider_name(&provider.provider_name);
         if provider.error == Some(true) {
             provider_error_indexes.push(index);
@@ -257,7 +253,7 @@ mod tests {
         let metrics = build_metrics(report);
 
         assert_eq!(CLOUDWATCH_NAMESPACE, "LLM");
-        assert_eq!(metrics.data.len(), 4);
+        assert_eq!(metrics.data.len(), 5);
         assert!(metrics.provider_error_indexes.is_empty());
 
         let expected = [
@@ -265,6 +261,7 @@ mod tests {
             ("OpenAI (ChatGPT)", "GPT-5.3-Codex-Spark (7d)", 25.5),
             ("Anthropic (Claude)", "5-hour window", 12.0),
             ("Anthropic (Claude)", "7-day window", 34.0),
+            ("GitHub Copilot", "Premium requests", 50.0),
         ];
 
         for (datum, (provider, limit, value)) in metrics.data.iter().zip(expected) {
@@ -280,15 +277,15 @@ mod tests {
     }
 
     #[test]
-    fn excludes_github_copilot() -> Result<(), Box<dyn std::error::Error>> {
+    fn includes_github_copilot_when_it_has_limits() -> Result<(), Box<dyn std::error::Error>> {
         let report = parse_usage_report(SAMPLE_JSON)?;
         let metrics = build_metrics(report);
 
-        assert!(metrics.data.iter().all(|datum| {
+        assert!(metrics.data.iter().any(|datum| {
             datum
                 .dimensions()
                 .iter()
-                .all(|dimension| dimension.value() != Some("GitHub Copilot"))
+                .any(|dimension| dimension.value() == Some("GitHub Copilot"))
         }));
         Ok(())
     }

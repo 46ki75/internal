@@ -27,11 +27,11 @@ const MAX_METRICS_PER_REQUEST: usize = 1_000;
 struct Args {
     /// AWS shared-config profile used to publish CloudWatch metrics.
     #[arg(long, value_name = "PROFILE")]
-    aws_profile: String,
+    aws_profile: Option<String>,
 
-    /// Path to the jcode executable.
+    /// Path to the jcode executable. Defaults to resolving jcode through PATH.
     #[arg(long, value_name = "PATH")]
-    jcode_path: PathBuf,
+    jcode_path: Option<PathBuf>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -101,7 +101,8 @@ fn init_logging() {
 }
 
 async fn run(args: &Args) -> Result<(), AppError> {
-    let report = read_usage_report(&args.jcode_path)?;
+    let jcode_path = args.jcode_path.as_deref().unwrap_or(Path::new("jcode"));
+    let report = read_usage_report(jcode_path)?;
     let metrics = build_metrics(report);
 
     for index in metrics.provider_error_indexes {
@@ -116,10 +117,12 @@ async fn run(args: &Args) -> Result<(), AppError> {
         return Ok(());
     }
 
-    let config = aws_config::defaults(BehaviorVersion::latest())
-        .profile_name(&args.aws_profile)
-        .load()
-        .await;
+    let config_loader = aws_config::defaults(BehaviorVersion::latest());
+    let config_loader = match &args.aws_profile {
+        Some(profile) => config_loader.profile_name(profile),
+        None => config_loader,
+    };
+    let config = config_loader.load().await;
     let client = Client::new(&config);
     publish_metrics(&client, &metrics.data).await?;
 
@@ -278,14 +281,18 @@ mod tests {
             "/opt/jcode",
         ])?;
 
-        assert_eq!(args.aws_profile, "metrics");
-        assert_eq!(args.jcode_path, Path::new("/opt/jcode"));
+        assert_eq!(args.aws_profile.as_deref(), Some("metrics"));
+        assert_eq!(args.jcode_path.as_deref(), Some(Path::new("/opt/jcode")));
         Ok(())
     }
 
     #[test]
-    fn requires_cli_arguments() {
-        assert!(Args::try_parse_from(["jcode-cloudwatch"]).is_err());
+    fn uses_defaults_when_cli_arguments_are_omitted() -> Result<(), clap::Error> {
+        let args = Args::try_parse_from(["jcode-cloudwatch"])?;
+
+        assert_eq!(args.aws_profile, None);
+        assert_eq!(args.jcode_path, None);
+        Ok(())
     }
 
     #[test]

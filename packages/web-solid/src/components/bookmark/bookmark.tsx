@@ -19,39 +19,31 @@ export interface BookmarkProps {
 }
 
 export const Bookmark = (props: BookmarkProps) => {
-  const handleOpen = () => {
-    if (props.onOpen) props.onOpen(props.url);
-    else window.open(props.url, "_blank", "noopener,noreferrer");
-  };
+  const handleOpen = () => props.onOpen?.(props.url);
 
-  const handleEdit = () => {
-    if (props.onEdit) props.onEdit(props.editUrl);
-    else window.open(props.editUrl, "_blank", "noopener,noreferrer");
-  };
+  const handleEdit = () => props.onEdit?.(props.editUrl);
 
   return (
     <div
       class={styles.bookmark}
       classList={{ [styles["bookmark-focus"]]: Boolean(props.focus) }}
       style={props.style}
-      onClick={handleOpen}
     >
-      <button
-        type="button"
+      <a
         class={styles["edit-icon"]}
+        href={props.editUrl}
+        rel="noreferrer"
         aria-label={`Edit ${props.label}`}
-        style={{ border: "0", background: "none", cursor: "pointer" }}
-        onClick={(e) => {
-          e.stopPropagation();
-          handleEdit();
-        }}
+        onClick={handleEdit}
       >
         <ElmMdiIcon d={mdiTagEdit} />
-      </button>
-      <button
-        type="button"
+      </a>
+      <a
+        class={styles["bookmark-link"]}
+        href={props.url}
+        rel="noreferrer"
         aria-label={`Open ${props.label}`}
-        style={{ display: "contents" }}
+        onClick={handleOpen}
       >
         <span class={styles["favorite-icon"]}>
           <ElmMdiIcon
@@ -79,7 +71,7 @@ export const Bookmark = (props: BookmarkProps) => {
         <ElmInlineText class={styles["bookmark-name"]} size="0.5rem">
           {props.label}
         </ElmInlineText>
-      </button>
+      </a>
     </div>
   );
 };

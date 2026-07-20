@@ -12,6 +12,7 @@ edition = "2024"
 [workspace.dependencies]
 async-trait = "0.1.89"
 aws-config = "1.8.14"
+aws-sdk-cloudwatch = "=1.118.0"
 aws-sdk-cognitoidentityprovider = "1.109.0"
 aws-sdk-dynamodb = "1.105.0"
 aws-sdk-ssm = "1.104.0"
@@ -37,6 +38,7 @@ thiserror = "2.0.18"
 tokio = "1.49.0"
 tower = "0.5.3"
 tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.22", features = ["ansi", "env-filter", "json"] }
 utoipa = { version = "5.4.0", features = ["time"] }
 utoipa-axum = "0.2.0"
 

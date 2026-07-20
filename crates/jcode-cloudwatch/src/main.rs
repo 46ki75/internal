@@ -1,12 +1,17 @@
 #![deny(clippy::unwrap_used)]
 
-use std::{process::Command, process::ExitCode};
+use std::{
+    path::{Path, PathBuf},
+    process::Command,
+    process::ExitCode,
+};
 
 use aws_config::BehaviorVersion;
 use aws_sdk_cloudwatch::{
     Client,
     types::{Dimension, MetricDatum, StandardUnit},
 };
+use clap::Parser;
 use serde::Deserialize;
 use thiserror::Error;
 use tracing::{error, info, warn};
@@ -16,6 +21,18 @@ const CLOUDWATCH_NAMESPACE: &str = "LLM";
 const METRIC_NAME: &str = "usage";
 const ERROR_METRIC_NAME: &str = "error";
 const MAX_METRICS_PER_REQUEST: usize = 1_000;
+
+#[derive(Debug, Parser)]
+#[command(version, about)]
+struct Args {
+    /// AWS shared-config profile used to publish CloudWatch metrics.
+    #[arg(long, value_name = "PROFILE")]
+    aws_profile: String,
+
+    /// Path to the jcode executable.
+    #[arg(long, value_name = "PATH")]
+    jcode_path: PathBuf,
+}
 
 #[derive(Debug, Deserialize)]
 struct UsageReport {
@@ -64,8 +81,9 @@ enum AppError {
 #[tokio::main]
 async fn main() -> ExitCode {
     init_logging();
+    let args = Args::parse();
 
-    match run().await {
+    match run(&args).await {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
             error!(error = %error, "command failed");
@@ -82,8 +100,8 @@ fn init_logging() {
         .init();
 }
 
-async fn run() -> Result<(), AppError> {
-    let report = read_usage_report()?;
+async fn run(args: &Args) -> Result<(), AppError> {
+    let report = read_usage_report(&args.jcode_path)?;
     let metrics = build_metrics(report);
 
     for index in metrics.provider_error_indexes {
@@ -98,7 +116,10 @@ async fn run() -> Result<(), AppError> {
         return Ok(());
     }
 
-    let config = aws_config::load_defaults(BehaviorVersion::latest()).await;
+    let config = aws_config::defaults(BehaviorVersion::latest())
+        .profile_name(&args.aws_profile)
+        .load()
+        .await;
     let client = Client::new(&config);
     publish_metrics(&client, &metrics.data).await?;
 
@@ -106,8 +127,8 @@ async fn run() -> Result<(), AppError> {
     Ok(())
 }
 
-fn read_usage_report() -> Result<UsageReport, AppError> {
-    let output = Command::new("jcode")
+fn read_usage_report(jcode_path: &Path) -> Result<UsageReport, AppError> {
+    let output = Command::new(jcode_path)
         .args(["usage", "--json"])
         .output()
         .map_err(AppError::StartJcode)?;
@@ -246,6 +267,26 @@ mod tests {
           ]
         }
     "#;
+
+    #[test]
+    fn parses_cli_arguments() -> Result<(), clap::Error> {
+        let args = Args::try_parse_from([
+            "jcode-cloudwatch",
+            "--aws-profile",
+            "metrics",
+            "--jcode-path",
+            "/opt/jcode",
+        ])?;
+
+        assert_eq!(args.aws_profile, "metrics");
+        assert_eq!(args.jcode_path, Path::new("/opt/jcode"));
+        Ok(())
+    }
+
+    #[test]
+    fn requires_cli_arguments() {
+        assert!(Args::try_parse_from(["jcode-cloudwatch"]).is_err());
+    }
 
     #[test]
     fn parses_sample_and_builds_expected_metrics() -> Result<(), Box<dyn std::error::Error>> {

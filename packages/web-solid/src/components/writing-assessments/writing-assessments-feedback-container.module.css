@@ -1,0 +1,11 @@
+.writing-assessments-feedback-container {
+  display: flex;
+  gap: 0.5rem;
+
+  .section {
+    flex: 1;
+    display: flex;
+    gap: 0.5rem;
+    flex-direction: column;
+  }
+}

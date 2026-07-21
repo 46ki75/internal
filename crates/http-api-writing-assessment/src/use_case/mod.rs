@@ -51,15 +51,21 @@ impl WritingAssessmentUseCase {
             .generate(&text, japanese_context.as_deref())
             .await?;
         let generated = generation.assessment;
-        validate_generated(&generated)?;
+        let score = validate_generated(&generated)?;
+        if score != generated.score {
+            tracing::warn!(
+                generated_score = generated.score,
+                derived_score = score,
+                "corrected generated writing assessment score"
+            );
+        }
 
         let assessment = Assessment {
             id: Uuid::now_v7().to_string(),
             original_text: text,
             japanese_context,
-            score: generated.score,
-            label: AssessmentLabel::for_score(generated.score)
-                .expect("generated score was validated"),
+            score,
+            label: AssessmentLabel::for_score(score).expect("derived score is between 1 and 5"),
             justification: generated.justification,
             feedback: generated
                 .feedback
@@ -100,7 +106,7 @@ impl WritingAssessmentUseCase {
     }
 }
 
-pub fn validate_generated(generated: &GeneratedAssessment) -> Result<(), GeneratorError> {
+pub fn validate_generated(generated: &GeneratedAssessment) -> Result<u8, GeneratorError> {
     if !(1..=5).contains(&generated.score) {
         return Err(GeneratorError::InvalidResponse(
             "score must be between 1 and 5".into(),
@@ -154,13 +160,10 @@ pub fn validate_generated(generated: &GeneratedAssessment) -> Result<(), Generat
     }
 
     let expected = score_from_observations(&observations);
-    if generated.score != expected && !(generated.score == 1 && expected == 2) {
-        return Err(GeneratorError::InvalidResponse(format!(
-            "score {} does not match count-derived score {expected}",
-            generated.score
-        )));
+    if generated.score == 1 && expected == 2 {
+        return Ok(1);
     }
-    Ok(())
+    Ok(expected)
 }
 
 fn score_from_observations(observations: &[&domain::GeneratedFeedback]) -> u8 {
@@ -221,13 +224,29 @@ mod tests {
     }
 
     #[test]
-    fn validates_count_derived_scores_and_score_one_exception() {
-        assert!(validate_generated(&generated(5, vec![])).is_ok());
-        assert!(validate_generated(&generated(4, vec![observation(Severity::Low); 2])).is_ok());
-        assert!(validate_generated(&generated(3, vec![observation(Severity::Medium); 2])).is_ok());
-        assert!(validate_generated(&generated(2, vec![observation(Severity::High); 2])).is_ok());
-        assert!(validate_generated(&generated(1, vec![observation(Severity::High); 2])).is_ok());
-        assert!(validate_generated(&generated(5, vec![observation(Severity::Medium)])).is_err());
+    fn derives_scores_from_observations_and_preserves_score_one_exception() {
+        assert_eq!(validate_generated(&generated(5, vec![])).unwrap(), 5);
+        assert_eq!(
+            validate_generated(&generated(4, vec![observation(Severity::Low); 2])).unwrap(),
+            4
+        );
+        assert_eq!(
+            validate_generated(&generated(3, vec![observation(Severity::Medium); 2])).unwrap(),
+            3
+        );
+        assert_eq!(
+            validate_generated(&generated(2, vec![observation(Severity::High); 2])).unwrap(),
+            2
+        );
+        assert_eq!(
+            validate_generated(&generated(1, vec![observation(Severity::High); 2])).unwrap(),
+            1
+        );
+        assert_eq!(validate_generated(&generated(4, vec![])).unwrap(), 5);
+        assert_eq!(
+            validate_generated(&generated(5, vec![observation(Severity::Medium)])).unwrap(),
+            4
+        );
     }
 
     #[test]
@@ -263,7 +282,7 @@ mod tests {
         let mut value = value;
         value.revised_text = None;
 
-        assert!(validate_generated(&value).is_ok());
+        assert_eq!(validate_generated(&value).unwrap(), 5);
     }
 
     struct GeneratorStub;

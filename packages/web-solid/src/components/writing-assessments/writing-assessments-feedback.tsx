@@ -14,11 +14,11 @@ export type WritingAssessmentsFeedbackProps =
   JSX.HTMLAttributes<HTMLDivElement> & {
     id: string;
     type: "error" | "intent_check" | "observation";
-    layer: "idiom" | "style" | null | undefined;
+    layer?: "idiom" | "style" | null;
     severity: "low" | "medium" | "high";
     original: string;
     revised: string;
-    pattern: string | null;
+    pattern?: string | null;
     reason: string;
   };
 

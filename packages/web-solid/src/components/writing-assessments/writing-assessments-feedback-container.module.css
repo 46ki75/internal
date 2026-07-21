@@ -19,3 +19,9 @@
   border: 1px solid var(--elmethis-color-neutral-weak);
   border-radius: 0.25rem;
 }
+
+@media (width <= 800px) {
+  .writing-assessments-feedback-container {
+    flex-direction: column;
+  }
+}

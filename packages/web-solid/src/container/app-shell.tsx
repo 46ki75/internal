@@ -7,6 +7,7 @@ import {
   mdiLightbulbOnOutline,
   mdiPaletteSwatch,
   mdiTag,
+  mdiTextBoxCheckOutline,
 } from "@mdi/js";
 import { Show, type ParentProps } from "solid-js";
 
@@ -21,6 +22,11 @@ const links = [
   { d: mdiLightbulbOnOutline, href: "/trivia", label: "Trivia" },
   { d: mdiPaletteSwatch, href: "/swatch", label: "Swatches" },
   { d: mdiFaceMan, href: "/icon", label: "Icons" },
+  {
+    d: mdiTextBoxCheckOutline,
+    href: "/writing-assessments",
+    label: "Writing assessments",
+  },
   { d: mdiCreation, href: "/chat", label: "Chat" },
   {
     d: mdiCertificate,

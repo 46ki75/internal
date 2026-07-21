@@ -214,12 +214,15 @@ async fn typing_unknown_path_is_404() {
 // ---- writing assessment ----
 
 use http_api::writing_assessment::{
-    repository::{AssessmentGenerator, AssessmentPersistence, GeneratorError, PersistenceError},
+    repository::{
+        AssessmentGenerator, AssessmentPersistence, GenerationResult, GeneratorError,
+        PersistenceError,
+    },
     use_case::{
         WritingAssessmentUseCase,
         domain::{
             Assessment, AssessmentLabel, FeedbackLayer, FeedbackType, GeneratedAssessment,
-            GeneratedFeedback, Severity,
+            GeneratedFeedback, ReasoningEffort, Severity,
         },
     },
 };
@@ -232,9 +235,9 @@ impl AssessmentGenerator for WritingGeneratorStub {
         &self,
         _text: &str,
         _japanese_context: Option<&str>,
-    ) -> Result<(GeneratedAssessment, String), GeneratorError> {
-        Ok((
-            GeneratedAssessment {
+    ) -> Result<GenerationResult, GeneratorError> {
+        Ok(GenerationResult {
+            assessment: GeneratedAssessment {
                 score: 4,
                 label: AssessmentLabel::NearNative,
                 justification: "One idiomatic improvement; polish is optional.".into(),
@@ -250,8 +253,9 @@ impl AssessmentGenerator for WritingGeneratorStub {
                 revised_text: Some("We analyzed the logs.".into()),
                 register: "neutral".into(),
             },
-            "test/model".into(),
-        ))
+            model: "test/model".into(),
+            reasoning_effort: ReasoningEffort::Medium,
+        })
     }
 }
 
@@ -269,8 +273,9 @@ fn writing_assessment_fixture() -> Assessment {
         revised_text: None,
         register: "neutral".into(),
         model: "test/model".into(),
+        reasoning_effort: Some(ReasoningEffort::Medium),
         created_at: "2026-07-21T00:00:00Z".into(),
-        schema_version: 1,
+        schema_version: 2,
     }
 }
 
@@ -336,6 +341,9 @@ async fn writing_assessment_create_returns_structured_feedback() {
     assert_eq!(json["feedback"][0]["type"], "observation");
     assert_eq!(json["feedback"][0]["layer"], "idiom");
     assert_eq!(json["feedback"][0]["severity"], "medium");
+    assert_eq!(json["model"], "test/model");
+    assert_eq!(json["reasoning_effort"], "medium");
+    assert_eq!(json["schema_version"], 2);
 }
 
 #[tokio::test]

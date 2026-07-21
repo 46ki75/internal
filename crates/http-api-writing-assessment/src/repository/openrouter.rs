@@ -1,8 +1,8 @@
 use serde::Deserialize;
 use serde_json::{Value, json};
 
-use super::{AssessmentGenerator, GeneratorError};
-use crate::use_case::domain::GeneratedAssessment;
+use super::{AssessmentGenerator, GenerationResult, GeneratorError};
+use crate::use_case::domain::{GeneratedAssessment, ReasoningEffort};
 
 const ENDPOINT: &str = "https://openrouter.ai/api/v1/chat/completions";
 const TOOL_NAME: &str = "submit_writing_assessment";
@@ -15,7 +15,7 @@ impl AssessmentGenerator for OpenRouterAssessmentGenerator {
         &self,
         text: &str,
         japanese_context: Option<&str>,
-    ) -> Result<(GeneratedAssessment, String), GeneratorError> {
+    ) -> Result<GenerationResult, GeneratorError> {
         let stage = http_api_core::cache::get_or_init_stage_name()
             .await
             .map_err(|error| GeneratorError::Configuration(error.to_string()))?;
@@ -23,6 +23,12 @@ impl AssessmentGenerator for OpenRouterAssessmentGenerator {
         let api_key = get_configuration_parameter(api_key_parameter).await?;
         let model_parameter = format!("/{stage}/46ki75/internal/openrouter/model");
         let model = get_configuration_parameter(model_parameter).await?;
+        let reasoning_effort_parameter =
+            format!("/{stage}/46ki75/internal/openrouter/reasoning-effort");
+        let reasoning_effort = get_configuration_parameter(reasoning_effort_parameter)
+            .await?
+            .parse::<ReasoningEffort>()
+            .map_err(GeneratorError::Configuration)?;
         let client = http_api_core::cache::get_or_init_reqwest_client()
             .await
             .map_err(|error| GeneratorError::Configuration(error.to_string()))?;
@@ -52,7 +58,8 @@ impl AssessmentGenerator for OpenRouterAssessmentGenerator {
                         "parameters": assessment_schema()
                     }
                 }],
-                "tool_choice": {"type": "function", "function": {"name": TOOL_NAME}}
+                "tool_choice": {"type": "function", "function": {"name": TOOL_NAME}},
+                "reasoning": {"effort": reasoning_effort}
             }))
             .send()
             .await
@@ -64,7 +71,12 @@ impl AssessmentGenerator for OpenRouterAssessmentGenerator {
             .await
             .map_err(|error| GeneratorError::InvalidResponse(error.to_string()))?;
 
-        parse_response(&body)
+        let (assessment, model) = parse_response(&body)?;
+        Ok(GenerationResult {
+            assessment,
+            model,
+            reasoning_effort,
+        })
     }
 }
 

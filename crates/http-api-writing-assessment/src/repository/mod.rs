@@ -4,7 +4,13 @@ mod openrouter;
 pub use dynamodb::DynamoDbAssessmentPersistence;
 pub use openrouter::OpenRouterAssessmentGenerator;
 
-use crate::use_case::domain::{Assessment, GeneratedAssessment};
+use crate::use_case::domain::{Assessment, GeneratedAssessment, ReasoningEffort};
+
+pub struct GenerationResult {
+    pub assessment: GeneratedAssessment,
+    pub model: String,
+    pub reasoning_effort: ReasoningEffort,
+}
 
 #[derive(Debug, thiserror::Error)]
 pub enum GeneratorError {
@@ -34,7 +40,7 @@ pub trait AssessmentGenerator {
         &self,
         text: &str,
         japanese_context: Option<&str>,
-    ) -> Result<(GeneratedAssessment, String), GeneratorError>;
+    ) -> Result<GenerationResult, GeneratorError>;
 }
 
 #[async_trait::async_trait]

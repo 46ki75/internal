@@ -23,6 +23,7 @@
 | `/環境名/46ki75/internal/notion/secret`                   | Notion の API キー / Lambda 環境変数として使用                                        | `dev` / `stg` / `prod` |
 | `/環境名/46ki75/internal/openrouter/secret`               | OpenRouter の API キー                                                                | `dev` / `stg` / `prod` |
 | `/環境名/46ki75/internal/openrouter/model`                | Writing Assessment で使用する OpenRouter モデル ID                                    | `dev` / `stg` / `prod` |
+| `/環境名/46ki75/internal/openrouter/reasoning-effort`     | OpenRouter モデルの reasoning effort                                                  | `dev` / `stg` / `prod` |
 | `/環境名/46ki75/internal/github/secret`                   | Notion の API キー / Lambda 環境変数として使用                                        | `dev` / `stg` / `prod` |
 | `/環境名/46ki75/internal/cognito/userpool/user/password`  | Cognito ユーザーのログインパスワード                                                  | `dev` / `stg` / `prod` |
 | `/環境名/46ki75/internal/notion/anki/database/id`         | Notion の Anki データベース / デプロイ時に Lambda 環境変数として使用                  | `dev` / `stg` / `prod` |

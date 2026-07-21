@@ -48,6 +48,35 @@ pub enum Severity {
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize, ToSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum ReasoningEffort {
+    None,
+    Minimal,
+    Low,
+    Medium,
+    High,
+    Xhigh,
+    Max,
+}
+
+impl std::str::FromStr for ReasoningEffort {
+    type Err = String;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        match value {
+            "none" => Ok(Self::None),
+            "minimal" => Ok(Self::Minimal),
+            "low" => Ok(Self::Low),
+            "medium" => Ok(Self::Medium),
+            "high" => Ok(Self::High),
+            "xhigh" => Ok(Self::Xhigh),
+            "max" => Ok(Self::Max),
+            _ => Err(format!("unsupported reasoning effort: {value}")),
+        }
+    }
+}
+
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize, ToSchema)]
 pub struct Feedback {
     pub id: String,
     #[serde(rename = "type")]
@@ -72,6 +101,8 @@ pub struct Assessment {
     pub revised_text: Option<String>,
     pub register: String,
     pub model: String,
+    #[serde(default)]
+    pub reasoning_effort: Option<ReasoningEffort>,
     pub created_at: String,
     pub schema_version: u8,
 }

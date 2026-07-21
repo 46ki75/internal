@@ -46,10 +46,11 @@ impl WritingAssessmentUseCase {
             return Err(WritingAssessmentUseCaseError::BlankText);
         }
 
-        let (generated, model) = self
+        let generation = self
             .generator
             .generate(&text, japanese_context.as_deref())
             .await?;
+        let generated = generation.assessment;
         validate_generated(&generated)?;
 
         let assessment = Assessment {
@@ -75,9 +76,10 @@ impl WritingAssessmentUseCase {
                 .collect(),
             revised_text: generated.revised_text,
             register: generated.register,
-            model,
+            model: generation.model,
+            reasoning_effort: Some(generation.reasoning_effort),
             created_at: Utc::now().to_rfc3339(),
-            schema_version: 1,
+            schema_version: 2,
         };
 
         self.persistence.put(&assessment).await?;
@@ -196,7 +198,10 @@ mod tests {
     use std::sync::Mutex;
 
     use super::*;
-    use crate::use_case::domain::{FeedbackLayer, GeneratedFeedback};
+    use crate::{
+        repository::GenerationResult,
+        use_case::domain::{FeedbackLayer, GeneratedFeedback, ReasoningEffort},
+    };
 
     fn observation(severity: Severity) -> GeneratedFeedback {
         GeneratedFeedback {
@@ -275,11 +280,12 @@ mod tests {
             &self,
             _text: &str,
             _japanese_context: Option<&str>,
-        ) -> Result<(GeneratedAssessment, String), GeneratorError> {
-            Ok((
-                generated(4, vec![observation(Severity::Medium)]),
-                "stub-model".into(),
-            ))
+        ) -> Result<GenerationResult, GeneratorError> {
+            Ok(GenerationResult {
+                assessment: generated(4, vec![observation(Severity::Medium)]),
+                model: "stub-model".into(),
+                reasoning_effort: ReasoningEffort::Medium,
+            })
         }
     }
 
@@ -326,7 +332,8 @@ mod tests {
             4
         );
         assert_eq!(result.model, "stub-model");
-        assert_eq!(result.schema_version, 1);
+        assert_eq!(result.reasoning_effort, Some(ReasoningEffort::Medium));
+        assert_eq!(result.schema_version, 2);
         assert_eq!(persistence.saved.lock().unwrap().as_ref(), Some(&result));
     }
 

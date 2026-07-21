@@ -266,6 +266,7 @@ export interface components {
       label: components["schemas"]["AssessmentLabel"];
       model: string;
       original_text: string;
+      reasoning_effort?: null | components["schemas"]["ReasoningEffort"];
       register: string;
       revised_text?: string | null;
       /** Format: int32 */
@@ -357,6 +358,15 @@ export interface components {
       tag_type: string;
       url: string;
     };
+    /** @enum {string} */
+    ReasoningEffort:
+      | "none"
+      | "minimal"
+      | "low"
+      | "medium"
+      | "high"
+      | "xhigh"
+      | "max";
     /** @enum {string} */
     Severity: "low" | "medium" | "high";
     ToDoResponse: {

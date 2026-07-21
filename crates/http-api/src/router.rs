@@ -33,6 +33,9 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                 crate::trivia::controller::router::init_trivia_router().await?;
             let (typing_router, typing_api) =
                 crate::typing::controller::router::init_typing_router().await?;
+            let (writing_assessment_router, writing_assessment_api) =
+                crate::writing_assessment::controller::router::init_writing_assessment_router()
+                    .await?;
 
             let merged_api = ApiDoc::openapi()
                 .merge_from(anki_api)
@@ -41,7 +44,8 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                 .merge_from(image_api)
                 .merge_from(to_do_api)
                 .merge_from(trivia_api)
-                .merge_from(typing_api);
+                .merge_from(typing_api)
+                .merge_from(writing_assessment_api);
 
             let combined_router = anki_router
                 .merge(bookmark_router)
@@ -49,7 +53,8 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                 .merge(image_router)
                 .merge(to_do_router)
                 .merge(trivia_router)
-                .merge(typing_router);
+                .merge(typing_router)
+                .merge(writing_assessment_router);
 
             let app = Router::new()
                 .nest("/api-gateway", combined_router)

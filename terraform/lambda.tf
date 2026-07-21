@@ -78,7 +78,7 @@ resource "aws_lambda_function" "http_api" {
       # CloudWatch (so the reporter's `{$.level=...}` subscription filters always
       # fire), independent of the per-crate debug list. Each feature logs under
       # its own `http_api_<feature>` target; the binary itself under `http_api`.
-      RUST_LOG        = "warn,http_api=debug,http_api_core=debug,http_api_anki=debug,http_api_bookmark=debug,http_api_icon=debug,http_api_image=debug,http_api_to_do=debug,http_api_trivia=debug,http_api_typing=debug"
+      RUST_LOG        = "warn,http_api=debug,http_api_core=debug,http_api_anki=debug,http_api_bookmark=debug,http_api_icon=debug,http_api_image=debug,http_api_to_do=debug,http_api_trivia=debug,http_api_typing=debug,http_api_writing_assessment=debug"
       RUST_LOG_FORMAT = "JSON"
     }
   }

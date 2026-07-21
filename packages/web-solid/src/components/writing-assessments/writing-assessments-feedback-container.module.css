@@ -9,3 +9,13 @@
     flex-direction: column;
   }
 }
+
+.fallback {
+  display: flex;
+  height: 10rem;
+  justify-content: center;
+  align-items: center;
+  color: var(--elmethis-color-neutral-weak);
+  border: 1px solid var(--elmethis-color-neutral-weak);
+  border-radius: 0.25rem;
+}

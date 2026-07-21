@@ -1,4 +1,4 @@
-import { createMemo, For, Show, splitProps, type JSX } from "solid-js";
+import { createMemo, For, splitProps, type JSX } from "solid-js";
 import { clsx } from "clsx";
 
 import styles from "./writing-assessments-feedback-container.module.css";
@@ -7,6 +7,14 @@ import {
   type WritingAssessmentsFeedbackProps,
 } from "./writing-assessments-feedback";
 import { ElmHeading } from "@elmethis/solid";
+
+const Fallback = () => {
+  return (
+    <div class={styles["fallback"]}>
+      <div>No Feedback</div>
+    </div>
+  );
+};
 
 const GROUPS = [
   { type: "error", heading: "Error" },
@@ -39,15 +47,13 @@ export const WritingAssessmentsFeedbackContainer = (
           );
 
           return (
-            <Show when={feedbacks().length > 0}>
-              <section class={styles["section"]}>
-                <ElmHeading level={3}>{group.heading}</ElmHeading>
+            <section class={styles["section"]}>
+              <ElmHeading level={3}>{group.heading}</ElmHeading>
 
-                <For each={feedbacks()}>
-                  {(feedback) => <WritingAssessmentsFeedback {...feedback} />}
-                </For>
-              </section>
-            </Show>
+              <For each={feedbacks()} fallback={<Fallback />}>
+                {(feedback) => <WritingAssessmentsFeedback {...feedback} />}
+              </For>
+            </section>
           );
         }}
       </For>

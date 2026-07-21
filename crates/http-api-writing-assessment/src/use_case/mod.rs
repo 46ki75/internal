@@ -65,7 +65,7 @@ impl WritingAssessmentUseCase {
                 .feedback
                 .into_iter()
                 .map(|feedback| Feedback {
-                    id: Uuid::new_v4().to_string(),
+                    id: Uuid::now_v7().to_string(),
                     feedback_type: feedback.feedback_type,
                     layer: feedback.layer,
                     severity: feedback.severity,
@@ -323,7 +323,7 @@ mod tests {
             Uuid::parse_str(&result.feedback[0].id)
                 .unwrap()
                 .get_version_num(),
-            4
+            7
         );
         assert_eq!(result.model, "stub-model");
         assert_eq!(result.reasoning_effort, Some(ReasoningEffort::Medium));

@@ -71,19 +71,11 @@ export const WritingAssesments = (props: WritingAssesmentsProps) => {
         </WritingAssessmentResult>
       </Show>
 
-      <WritingAssessmentResult
-        heading="Original Sentence"
-        marker="-"
-        color="#ae6e6e"
-      >
+      <WritingAssessmentResult heading="Original Sentence" color="#ae6e6e">
         {local.original_text}
       </WritingAssessmentResult>
 
-      <WritingAssessmentResult
-        heading="Revised Sentence"
-        marker="+"
-        color="#659878"
-      >
+      <WritingAssessmentResult heading="Revised Sentence" color="#659878">
         {local.revised_text}
       </WritingAssessmentResult>
 

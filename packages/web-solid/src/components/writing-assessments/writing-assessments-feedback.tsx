@@ -74,20 +74,20 @@ export const WritingAssessmentsFeedback = (
         <ElmInlineText class={styles["id"]}>{local.id}</ElmInlineText>
       </header>
 
-      <WritingAssessmentResult heading="Original" marker="-" color="#ae6e6e">
+      <WritingAssessmentResult heading="Original" color="#ae6e6e">
         {local.original}
       </WritingAssessmentResult>
 
-      <WritingAssessmentResult heading="Revised" marker="+" color="#659878">
+      <WritingAssessmentResult heading="Revised" color="#659878">
         {local.revised}
       </WritingAssessmentResult>
 
-      <WritingAssessmentResult heading="Reason" marker="?">
+      <WritingAssessmentResult heading="Reason">
         {local.reason}
       </WritingAssessmentResult>
 
       <Show when={local.pattern}>
-        <WritingAssessmentResult heading="Pattern" marker="!" color="#8d799f">
+        <WritingAssessmentResult heading="Pattern" color="#8d799f">
           {local.pattern}
         </WritingAssessmentResult>
       </Show>

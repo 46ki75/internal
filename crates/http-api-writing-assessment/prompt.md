@@ -30,7 +30,6 @@ Score observations deterministically. Let M be medium plus high observations, H 
 - M = 0 and L >= 2, or M = 1: score 4.
 - M = 2 or 3 with H <= 1: score 3.
 
-Errors and intent checks do not affect the score. Labels are fixed: 1
-`hard_to_follow`, 2 `awkward`, 3 `clear_but_non_native`, 4 `near_native`, and 5
-`native_like`. Keep the justification to one sentence and identify the
-original writing register.
+Errors and intent checks do not affect the score. Return the numeric score only;
+the application derives its fixed label. Keep the justification to one sentence
+and identify the original writing register.

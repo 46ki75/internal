@@ -239,7 +239,6 @@ impl AssessmentGenerator for WritingGeneratorStub {
         Ok(GenerationResult {
             assessment: GeneratedAssessment {
                 score: 4,
-                label: AssessmentLabel::NearNative,
                 justification: "One idiomatic improvement; polish is optional.".into(),
                 feedback: vec![GeneratedFeedback {
                     feedback_type: FeedbackType::Observation,

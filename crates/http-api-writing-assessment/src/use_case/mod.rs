@@ -58,7 +58,8 @@ impl WritingAssessmentUseCase {
             original_text: text,
             japanese_context,
             score: generated.score,
-            label: generated.label,
+            label: AssessmentLabel::for_score(generated.score)
+                .expect("generated score was validated"),
             justification: generated.justification,
             feedback: generated
                 .feedback
@@ -105,12 +106,6 @@ pub fn validate_generated(generated: &GeneratedAssessment) -> Result<(), Generat
             "score must be between 1 and 5".into(),
         ));
     }
-    if AssessmentLabel::for_score(generated.score).as_ref() != Some(&generated.label) {
-        return Err(GeneratorError::InvalidResponse(
-            "label does not match score".into(),
-        ));
-    }
-
     let observations = generated
         .feedback
         .iter()
@@ -218,7 +213,6 @@ mod tests {
     fn generated(score: u8, feedback: Vec<GeneratedFeedback>) -> GeneratedAssessment {
         GeneratedAssessment {
             score,
-            label: AssessmentLabel::for_score(score).unwrap(),
             justification: "Clear overall.".into(),
             revised_text: (!feedback.is_empty()).then(|| "Revised text.".into()),
             feedback,

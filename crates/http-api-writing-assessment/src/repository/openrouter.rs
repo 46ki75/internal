@@ -92,10 +92,9 @@ fn assessment_schema() -> Value {
     json!({
         "type": "object",
         "additionalProperties": false,
-        "required": ["score", "label", "justification", "feedback", "revised_text", "register"],
+        "required": ["score", "justification", "feedback", "revised_text", "register"],
         "properties": {
             "score": {"type": "integer", "minimum": 1, "maximum": 5},
-            "label": {"type": "string", "enum": ["hard_to_follow", "awkward", "clear_but_non_native", "near_native", "native_like"]},
             "justification": {"type": "string"},
             "feedback": {
                 "type": "array",
@@ -176,7 +175,6 @@ mod tests {
     fn arguments() -> String {
         json!({
             "score": 5,
-            "label": "native_like",
             "justification": "Natural and clear.",
             "feedback": [],
             "revised_text": null,

@@ -122,7 +122,6 @@ pub struct GeneratedFeedback {
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct GeneratedAssessment {
     pub score: u8,
-    pub label: AssessmentLabel,
     pub justification: String,
     pub feedback: Vec<GeneratedFeedback>,
     pub revised_text: Option<String>,

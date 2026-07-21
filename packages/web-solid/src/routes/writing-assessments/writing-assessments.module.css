@@ -147,6 +147,10 @@
 }
 
 .history-meta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
   overflow: hidden;
   color: var(--elmethis-color-neutral-weak);
   font-size: 0.7rem;

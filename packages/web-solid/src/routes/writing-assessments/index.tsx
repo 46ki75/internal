@@ -29,6 +29,7 @@ import { openApiClient } from "~/openapi/client";
 import type { components } from "~/openapi/schema";
 
 import styles from "./writing-assessments.module.css";
+import { WritingAssessmentsScore } from "~/components/writing-assessments/writing-assessments-score";
 
 type Assessment = components["schemas"]["Assessment"];
 type Score = 1 | 2 | 3 | 4 | 5;
@@ -357,13 +358,16 @@ export default function WritingAssessmentsRoute(
                       }}
                       onClick={() => setSelectedId(assessment.id)}
                     >
-                      <span class={styles["history-preview"]}>
+                      <ElmInlineText class={styles["history-preview"]}>
                         {assessment.original_text}
-                      </span>
-                      <span class={styles["history-meta"]}>
-                        Score {assessment.score} ·{" "}
+                      </ElmInlineText>
+                      <ElmInlineText class={styles["history-meta"]}>
+                        <WritingAssessmentsScore
+                          score={assessment.score as 1 | 2 | 3 | 4 | 5}
+                          label={false}
+                        />
                         {formatCreatedAt(assessment.created_at)}
-                      </span>
+                      </ElmInlineText>
                     </button>
                   )}
                 </For>

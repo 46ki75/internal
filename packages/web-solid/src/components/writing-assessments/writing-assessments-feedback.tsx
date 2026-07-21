@@ -74,7 +74,9 @@ export const WritingAssessmentsFeedback = (
       </header>
 
       <div class={styles["heading"]}>
-        <ElmInlineText size={"0.75rem"}>Original</ElmInlineText>
+        <ElmInlineText size={"0.75rem"} underline>
+          Original
+        </ElmInlineText>
       </div>
 
       <div class={styles["result"]}>
@@ -85,7 +87,9 @@ export const WritingAssessmentsFeedback = (
       </div>
 
       <div class={styles["heading"]}>
-        <ElmInlineText size={"0.75rem"}>Revised</ElmInlineText>
+        <ElmInlineText size={"0.75rem"} underline>
+          Revised
+        </ElmInlineText>
       </div>
 
       <div class={styles["result"]}>
@@ -96,7 +100,9 @@ export const WritingAssessmentsFeedback = (
       </div>
 
       <div class={styles["heading"]}>
-        <ElmInlineText size={"0.75rem"}>Reason</ElmInlineText>
+        <ElmInlineText size={"0.75rem"} underline>
+          Reason
+        </ElmInlineText>
       </div>
 
       <div class={styles["result"]}>
@@ -106,7 +112,9 @@ export const WritingAssessmentsFeedback = (
 
       <Show when={local.pattern}>
         <div class={styles["heading"]}>
-          <ElmInlineText size={"0.75rem"}>Pattern</ElmInlineText>
+          <ElmInlineText size={"0.75rem"} underline>
+            Pattern
+          </ElmInlineText>
         </div>
 
         <div class={styles["result"]}>

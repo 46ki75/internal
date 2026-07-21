@@ -76,7 +76,9 @@ export const WritingAssesments = (props: WritingAssesmentsProps) => {
 
       <div>
         <div class={styles["hading"]}>
-          <ElmInlineText size={"0.75rem"}>Original Sentence</ElmInlineText>
+          <ElmInlineText size={"0.75rem"} underline>
+            Original Sentence
+          </ElmInlineText>
         </div>
 
         <div class={styles["result"]}>
@@ -89,7 +91,9 @@ export const WritingAssesments = (props: WritingAssesmentsProps) => {
 
       <div>
         <div class={styles["hading"]}>
-          <ElmInlineText size={"0.75rem"}>Revised Sentence</ElmInlineText>
+          <ElmInlineText size={"0.75rem"} underline>
+            Revised Sentence
+          </ElmInlineText>
         </div>
 
         <div class={styles["result"]}>
@@ -102,7 +106,9 @@ export const WritingAssesments = (props: WritingAssesmentsProps) => {
 
       <div>
         <div class={styles["hading"]}>
-          <ElmInlineText size={"0.75rem"}>Justification</ElmInlineText>
+          <ElmInlineText size={"0.75rem"} underline>
+            Justification
+          </ElmInlineText>
         </div>
 
         <div class={styles["result"]}>
@@ -112,7 +118,9 @@ export const WritingAssesments = (props: WritingAssesmentsProps) => {
 
       <div>
         <div class={styles["hading"]}>
-          <ElmInlineText size={"0.75rem"}>Register</ElmInlineText>
+          <ElmInlineText size={"0.75rem"} underline>
+            Register
+          </ElmInlineText>
         </div>
 
         <div class={styles["result"]}>

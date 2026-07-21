@@ -44,7 +44,7 @@ tower-http = { version = "0.6.8", features = [
     "compression-gzip",
     "compression-br",
 ] }
-utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
+utoipa-scalar = { version = "0.3.0", features = ["axum"] }
 
 [dev-dependencies]
 # In-process API tests drive the router via `oneshot` and read response bodies.

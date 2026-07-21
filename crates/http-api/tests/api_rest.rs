@@ -352,3 +352,37 @@ async fn writing_assessment_create_rejects_blank_text() {
 
     assert_eq!(response.status(), StatusCode::BAD_REQUEST);
 }
+
+// ---- API documentation ----
+
+#[tokio::test]
+async fn scalar_ui_is_served() {
+    let router = http_api::router::init_router().await.unwrap().clone();
+    let response = router
+        .oneshot(
+            Request::get("/api-gateway/api/v1/scalar")
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), StatusCode::OK);
+    let content_type = response
+        .headers()
+        .get("content-type")
+        .unwrap()
+        .to_str()
+        .unwrap();
+    assert!(content_type.starts_with("text/html"));
+}
+
+#[tokio::test]
+async fn openapi_json_remains_available() {
+    let router = http_api::router::init_router().await.unwrap().clone();
+    let (status, json) = get_json(router, "/api-gateway/api/v1/openapi.json").await;
+
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(json["servers"][0]["url"], "/api-gateway");
+    assert!(json["paths"]["/api/v1/writing-assessments"].is_object());
+}

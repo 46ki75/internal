@@ -128,8 +128,8 @@ crates/http-api-<feature>/src/
   repository/   I/O (Notion, DynamoDB, AWS SDKs); concrete `*RepositoryImpl`
 ```
 
-`src/router.rs::init_router` merges each feature's REST `OpenApiRouter`, mounts Swagger UI at
-`/api-gateway/api/v1/swagger-ui`, exposes OpenAPI JSON at `/api-gateway/api/v1/openapi.json`, registers
+`src/router.rs::init_router` merges each feature's REST `OpenApiRouter`, mounts Scalar at
+`/api-gateway/api/v1/scalar`, exposes OpenAPI JSON at `/api-gateway/api/v1/openapi.json`, registers
 `/api-gateway/api/health`, and wraps everything in gzip/br compression. The whole router is cached in a
 `OnceCell` so Lambda cold starts only build it once.
 

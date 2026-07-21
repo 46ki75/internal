@@ -19,16 +19,10 @@ impl AssessmentGenerator for OpenRouterAssessmentGenerator {
         let stage = http_api_core::cache::get_or_init_stage_name()
             .await
             .map_err(|error| GeneratorError::Configuration(error.to_string()))?;
-        let api_key = http_api_core::cache::get_parameter(format!(
-            "/{stage}/46ki75/internal/openrouter/api-key"
-        ))
-        .await
-        .map_err(|error| GeneratorError::Configuration(error.to_string()))?;
-        let model = http_api_core::cache::get_parameter(format!(
-            "/{stage}/46ki75/internal/openrouter/model"
-        ))
-        .await
-        .map_err(|error| GeneratorError::Configuration(error.to_string()))?;
+        let api_key_parameter = format!("/{stage}/46ki75/internal/openrouter/secret");
+        let api_key = get_configuration_parameter(api_key_parameter).await?;
+        let model_parameter = format!("/{stage}/46ki75/internal/openrouter/model");
+        let model = get_configuration_parameter(model_parameter).await?;
         let client = http_api_core::cache::get_or_init_reqwest_client()
             .await
             .map_err(|error| GeneratorError::Configuration(error.to_string()))?;
@@ -72,6 +66,14 @@ impl AssessmentGenerator for OpenRouterAssessmentGenerator {
 
         parse_response(&body)
     }
+}
+
+async fn get_configuration_parameter(name: String) -> Result<String, GeneratorError> {
+    http_api_core::cache::get_parameter(name.clone())
+        .await
+        .map_err(|error| {
+            GeneratorError::Configuration(format!("failed to read SSM parameter {name}: {error:?}"))
+        })
 }
 
 fn assessment_schema() -> Value {

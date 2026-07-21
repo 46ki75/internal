@@ -2,15 +2,19 @@
 
 use axum::Router;
 use utoipa::OpenApi;
+use utoipa_scalar::{Scalar, Servable};
 
 #[derive(OpenApi)]
-#[openapi(info(
-    title = "http-api",
-    version = "1.0.0",
-    description = "API description",
-    contact(name = "Ikuma Yamashita", email = "me@ikuma.cloud"),
-    license(name = "GPL-3.0")
-))]
+#[openapi(
+    info(
+        title = "http-api",
+        version = "1.0.0",
+        description = "API description",
+        contact(name = "Ikuma Yamashita", email = "me@ikuma.cloud"),
+        license(name = "GPL-3.0")
+    ),
+    servers((url = "/api-gateway", description = "API Gateway base path"))
+)]
 struct ApiDoc;
 
 static ROUTER: tokio::sync::OnceCell<axum::Router> = tokio::sync::OnceCell::const_new();
@@ -56,12 +60,17 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
                 .merge(typing_router)
                 .merge(writing_assessment_router);
 
+            let scalar_api = merged_api.clone();
             let app = Router::new()
                 .nest("/api-gateway", combined_router)
-                .merge(
-                    utoipa_swagger_ui::SwaggerUi::new("/api-gateway/api/v1/swagger-ui")
-                        .url("/api-gateway/api/v1/openapi.json", merged_api),
+                .route(
+                    "/api-gateway/api/v1/openapi.json",
+                    axum::routing::get(move || {
+                        let openapi = merged_api.clone();
+                        async move { axum::Json(openapi) }
+                    }),
                 )
+                .merge(Scalar::with_url("/api-gateway/api/v1/scalar", scalar_api))
                 .route(
                     "/api-gateway/api/health",
                     axum::routing::get(|| async {

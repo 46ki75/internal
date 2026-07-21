@@ -11,6 +11,18 @@
     gap: 0.5rem;
     border-top: 4px solid var(--elmethis-color-primary-weak);
 
+    &.low {
+      border-top-color: var(--elmethis-color-accent-info);
+    }
+
+    &.medium {
+      border-top-color: var(--elmethis-color-accent-warning);
+    }
+
+    &.high {
+      border-top-color: var(--elmethis-color-accent-error);
+    }
+
     .severity {
       display: inline-flex;
       box-sizing: border-box;

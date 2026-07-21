@@ -48,7 +48,13 @@ export const WritingAssessmentsFeedback = (
       class={clsx(styles["writing-assessments-feedback"], local.class)}
       {...others}
     >
-      <header class={styles["header"]}>
+      <header
+        class={clsx(styles["header"], {
+          [styles["low"]]: local.severity === "low",
+          [styles["medium"]]: local.severity === "medium",
+          [styles["high"]]: local.severity === "high",
+        })}
+      >
         <div
           class={clsx(styles["severity"], {
             [styles["low"]]: local.severity === "low",

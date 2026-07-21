@@ -3,6 +3,7 @@ import { clsx } from "clsx";
 
 import styles from "./writing-assesments.module.css";
 import { ElmInlineText } from "@elmethis/solid";
+import { WritingAssessmentResult } from "./writing-assessment-result";
 
 export type WritingAssesmentsProps = JSX.HTMLAttributes<HTMLDivElement> & {
   japanese_context: string | null | undefined;
@@ -65,68 +66,34 @@ export const WritingAssesments = (props: WritingAssesmentsProps) => {
       </div>
 
       <Show when={local.japanese_context}>
-        <div class={styles["hading"]}>
-          <ElmInlineText size={"0.75rem"}>Japanese Context</ElmInlineText>
-        </div>
-
-        <div class={styles["result"]}>
-          <ElmInlineText>{local.japanese_context}</ElmInlineText>
-        </div>
+        <WritingAssessmentResult heading="Japanese Context" underline={false}>
+          {local.japanese_context}
+        </WritingAssessmentResult>
       </Show>
 
-      <div>
-        <div class={styles["hading"]}>
-          <ElmInlineText size={"0.75rem"} underline>
-            Original Sentence
-          </ElmInlineText>
-        </div>
+      <WritingAssessmentResult
+        heading="Original Sentence"
+        marker="-"
+        color="#ae6e6e"
+      >
+        {local.original_text}
+      </WritingAssessmentResult>
 
-        <div class={styles["result"]}>
-          <ElmInlineText color="#ae6e6e" class={styles["no-user-select"]}>
-            -&nbsp;
-          </ElmInlineText>
-          <ElmInlineText color="#ae6e6e">{local.original_text}</ElmInlineText>
-        </div>
-      </div>
+      <WritingAssessmentResult
+        heading="Revised Sentence"
+        marker="+"
+        color="#659878"
+      >
+        {local.revised_text}
+      </WritingAssessmentResult>
 
-      <div>
-        <div class={styles["hading"]}>
-          <ElmInlineText size={"0.75rem"} underline>
-            Revised Sentence
-          </ElmInlineText>
-        </div>
+      <WritingAssessmentResult heading="Justification">
+        {local.justification}
+      </WritingAssessmentResult>
 
-        <div class={styles["result"]}>
-          <ElmInlineText color="#659878" class={styles["no-user-select"]}>
-            +&nbsp;
-          </ElmInlineText>
-          <ElmInlineText color="#659878">{local.revised_text}</ElmInlineText>
-        </div>
-      </div>
-
-      <div>
-        <div class={styles["hading"]}>
-          <ElmInlineText size={"0.75rem"} underline>
-            Justification
-          </ElmInlineText>
-        </div>
-
-        <div class={styles["result"]}>
-          <ElmInlineText>{local.justification}</ElmInlineText>
-        </div>
-      </div>
-
-      <div>
-        <div class={styles["hading"]}>
-          <ElmInlineText size={"0.75rem"} underline>
-            Register
-          </ElmInlineText>
-        </div>
-
-        <div class={styles["result"]}>
-          <ElmInlineText>{local.register}</ElmInlineText>
-        </div>
-      </div>
+      <WritingAssessmentResult heading="Register">
+        {local.register}
+      </WritingAssessmentResult>
     </div>
   );
 };

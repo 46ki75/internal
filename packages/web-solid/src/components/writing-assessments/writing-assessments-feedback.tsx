@@ -3,6 +3,7 @@ import { clsx } from "clsx";
 
 import styles from "./writing-assessments-feedback.module.css";
 import { ElmInlineText, ElmMdiIcon } from "@elmethis/solid";
+import { WritingAssessmentResult } from "./writing-assessment-result";
 import {
   mdiSignalCellular1,
   mdiSignalCellular2,
@@ -73,56 +74,22 @@ export const WritingAssessmentsFeedback = (
         <ElmInlineText class={styles["id"]}>{local.id}</ElmInlineText>
       </header>
 
-      <div class={styles["heading"]}>
-        <ElmInlineText size={"0.75rem"} underline>
-          Original
-        </ElmInlineText>
-      </div>
+      <WritingAssessmentResult heading="Original" marker="-" color="#ae6e6e">
+        {local.original}
+      </WritingAssessmentResult>
 
-      <div class={styles["result"]}>
-        <ElmInlineText color="#ae6e6e" class={styles["no-user-select"]}>
-          -&nbsp;
-        </ElmInlineText>
-        <ElmInlineText color="#ae6e6e">{local.original}</ElmInlineText>
-      </div>
+      <WritingAssessmentResult heading="Revised" marker="+" color="#659878">
+        {local.revised}
+      </WritingAssessmentResult>
 
-      <div class={styles["heading"]}>
-        <ElmInlineText size={"0.75rem"} underline>
-          Revised
-        </ElmInlineText>
-      </div>
-
-      <div class={styles["result"]}>
-        <ElmInlineText color="#659878" class={styles["no-user-select"]}>
-          +&nbsp;
-        </ElmInlineText>
-        <ElmInlineText color="#659878">{local.revised}</ElmInlineText>
-      </div>
-
-      <div class={styles["heading"]}>
-        <ElmInlineText size={"0.75rem"} underline>
-          Reason
-        </ElmInlineText>
-      </div>
-
-      <div class={styles["result"]}>
-        <ElmInlineText class={styles["no-user-select"]}>?&nbsp;</ElmInlineText>
-        <ElmInlineText>{local.reason}</ElmInlineText>
-      </div>
+      <WritingAssessmentResult heading="Reason" marker="?">
+        {local.reason}
+      </WritingAssessmentResult>
 
       <Show when={local.pattern}>
-        <div class={styles["heading"]}>
-          <ElmInlineText size={"0.75rem"} underline>
-            Pattern
-          </ElmInlineText>
-        </div>
-
-        <div class={styles["result"]}>
-          <ElmInlineText color="#8d799f" class={styles["no-user-select"]}>
-            !&nbsp;
-          </ElmInlineText>
-          <ElmInlineText color="#8d799f">{local.revised}</ElmInlineText>
-        </div>
+        <WritingAssessmentResult heading="Pattern" marker="!" color="#8d799f">
+          {local.pattern}
+        </WritingAssessmentResult>
       </Show>
     </div>
   );

@@ -196,6 +196,38 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/writing-assessments": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations["list_writing_assessments"];
+    put?: never;
+    post: operations["create_writing_assessment"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/writing-assessments/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations["get_writing_assessment"];
+    put?: never;
+    post?: never;
+    delete: operations["delete_writing_assessment"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -225,6 +257,30 @@ export interface components {
       id: string;
       name: string;
     };
+    Assessment: {
+      created_at: string;
+      feedback: components["schemas"]["Feedback"][];
+      id: string;
+      japanese_context?: string | null;
+      justification: string;
+      label: components["schemas"]["AssessmentLabel"];
+      model: string;
+      original_text: string;
+      reasoning_effort?: null | components["schemas"]["ReasoningEffort"];
+      register: string;
+      revised_text?: string | null;
+      /** Format: int32 */
+      schema_version: number;
+      /** Format: int32 */
+      score: number;
+    };
+    /** @enum {string} */
+    AssessmentLabel:
+      | "hard_to_follow"
+      | "awkward"
+      | "clear_but_non_native"
+      | "near_native"
+      | "native_like";
     BookmarkResponse: {
       favicon?: string | null;
       favorite: boolean;
@@ -254,6 +310,24 @@ export interface components {
       severity?: null | components["schemas"]["ToDoSeverityRequest"];
       title: string;
     };
+    CreateWritingAssessmentRequest: {
+      japanese_context?: string | null;
+      text: string;
+    };
+    Feedback: {
+      id: string;
+      layer?: null | components["schemas"]["FeedbackLayer"];
+      original: string;
+      pattern?: string | null;
+      reason: string;
+      revised: string;
+      severity: components["schemas"]["Severity"];
+      type: components["schemas"]["FeedbackType"];
+    };
+    /** @enum {string} */
+    FeedbackLayer: "idiom" | "style";
+    /** @enum {string} */
+    FeedbackType: "error" | "intent_check" | "observation";
     FetchImagesResponse: {
       images: components["schemas"]["ImageResponse"][];
       next_cursor?: string | null;
@@ -284,6 +358,17 @@ export interface components {
       tag_type: string;
       url: string;
     };
+    /** @enum {string} */
+    ReasoningEffort:
+      | "none"
+      | "minimal"
+      | "low"
+      | "medium"
+      | "high"
+      | "xhigh"
+      | "max";
+    /** @enum {string} */
+    Severity: "low" | "medium" | "high";
     ToDoResponse: {
       /** Format: date */
       created_at?: string | null;
@@ -986,6 +1071,132 @@ export interface operations {
         content: {
           "text/plain": string;
         };
+      };
+    };
+  };
+  list_writing_assessments: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Writing assessments */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Assessment"][];
+        };
+      };
+    };
+  };
+  create_writing_assessment: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateWritingAssessmentRequest"];
+      };
+    };
+    responses: {
+      /** @description Writing assessment created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Assessment"];
+        };
+      };
+      /** @description Text is blank */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Generator failure */
+      502: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  get_writing_assessment: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path: {
+        /** @description Writing assessment ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Writing assessment */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Assessment"];
+        };
+      };
+      /** @description Writing assessment not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  delete_writing_assessment: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path: {
+        /** @description Writing assessment ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Deleted writing assessment */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Assessment"];
+        };
+      };
+      /** @description Writing assessment not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
       };
     };
   };

@@ -26,6 +26,7 @@ http-api-image = { path = "../http-api-image" }
 http-api-to-do = { path = "../http-api-to-do" }
 http-api-trivia = { path = "../http-api-trivia" }
 http-api-typing = { path = "../http-api-typing" }
+http-api-writing-assessment = { path = "../http-api-writing-assessment" }
 
 # Router assembly + Lambda glue. Feature-specific deps now live in each
 # `http-api-<feature>` crate.
@@ -43,9 +44,10 @@ tower-http = { version = "0.6.8", features = [
     "compression-gzip",
     "compression-br",
 ] }
-utoipa-swagger-ui = { version = "9.0.2", features = ["axum"] }
+utoipa-scalar = { version = "0.3.0", features = ["axum"] }
 
 [dev-dependencies]
 # In-process API tests drive the router via `oneshot` and read response bodies.
 tower = { version = "0.5", features = ["util"] }
 http-body-util = "0.1"
+async-trait.workspace = true

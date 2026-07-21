@@ -1,0 +1,27 @@
+.writing-assessments-feedback-container {
+  display: flex;
+  gap: 0.5rem;
+
+  .section {
+    flex: 1;
+    display: flex;
+    gap: 0.5rem;
+    flex-direction: column;
+  }
+}
+
+.fallback {
+  display: flex;
+  height: 10rem;
+  justify-content: center;
+  align-items: center;
+  color: var(--elmethis-color-neutral-weak);
+  border: 1px solid var(--elmethis-color-neutral-weak);
+  border-radius: 0.25rem;
+}
+
+@media (width <= 800px) {
+  .writing-assessments-feedback-container {
+    flex-direction: column;
+  }
+}

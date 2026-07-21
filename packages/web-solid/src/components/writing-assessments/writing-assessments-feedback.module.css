@@ -1,0 +1,65 @@
+.writing-assessments-feedback {
+  border: 1px solid oklch(from gray l c h / 0.25);
+  background-color: var(--elmethis-color-surface-raised);
+
+  .header {
+    box-sizing: border-box;
+    padding: 0.25rem;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5rem;
+    border-top: 4px solid var(--elmethis-color-primary-weak);
+
+    &.low {
+      border-top-color: var(--elmethis-color-accent-info);
+    }
+
+    &.medium {
+      border-top-color: var(--elmethis-color-accent-warning);
+    }
+
+    &.high {
+      border-top-color: var(--elmethis-color-accent-error);
+    }
+
+    .severity {
+      display: inline-flex;
+      box-sizing: border-box;
+      user-select: none;
+      gap: 0.25rem;
+      align-items: center;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      text-transform: uppercase;
+      font-weight: bold;
+
+      &.low {
+        color: var(--elmethis-color-accent-info);
+        background-color: var(--elmethis-color-accent-info-surface);
+      }
+
+      &.medium {
+        color: var(--elmethis-color-accent-warning);
+        background-color: var(--elmethis-color-accent-warning-surface);
+      }
+
+      &.high {
+        color: var(--elmethis-color-accent-error);
+        background-color: var(--elmethis-color-accent-error-surface);
+      }
+    }
+
+    .layer {
+      user-select: none;
+      text-transform: uppercase;
+      color: var(--elmethis-color-primary-weak);
+    }
+
+    .id {
+      font-family: "DM Mono", monospace;
+      font-size: 0.75em;
+      opacity: 0.5;
+    }
+  }
+}

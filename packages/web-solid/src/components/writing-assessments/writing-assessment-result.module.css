@@ -1,0 +1,10 @@
+.heading {
+  box-sizing: border-box;
+  padding-left: 0.25rem;
+  display: inline-flex;
+}
+
+.result {
+  box-sizing: border-box;
+  padding: 0.5rem;
+}

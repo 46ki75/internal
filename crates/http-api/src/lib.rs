@@ -14,6 +14,7 @@ pub use http_api_image as image;
 pub use http_api_to_do as to_do;
 pub use http_api_trivia as trivia;
 pub use http_api_typing as typing;
+pub use http_api_writing_assessment as writing_assessment;
 
 pub mod execute;
 pub mod router;

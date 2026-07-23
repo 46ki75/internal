@@ -15,6 +15,14 @@ interface ClientQueryOptions<TData, TQueryKey extends QueryKey> {
   queryFn: QueryFunction<TData, TQueryKey>;
 }
 
+/**
+ * Runs authenticated queries only after client-side cache restoration.
+ *
+ * Solid Query's `enabled` option can prevent a server fetch, but `createQuery`
+ * still creates an SSR resource. Those disabled resources prevented this
+ * SolidStart static build from completing, so this adapter uses the QueryClient
+ * directly while retaining its cache, deduplication, and refetch behavior.
+ */
 export const createClientQuery = <TData, TQueryKey extends QueryKey>(
   options: ClientQueryOptions<TData, TQueryKey>,
 ) => {

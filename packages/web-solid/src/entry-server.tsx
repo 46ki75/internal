@@ -5,7 +5,7 @@ import {
 } from "@solidjs/start/server";
 
 const Document = (props: DocumentComponentProps) => (
-  <html lang="en-us" class="transition">
+  <html lang="en-us">
     <head>{props.assets}</head>
     <body lang="en">
       <div id="app">{props.children}</div>

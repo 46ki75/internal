@@ -1,15 +1,17 @@
 import {
   createContext,
   createEffect,
-  onCleanup,
   untrack,
   useContext,
   type ParentProps,
 } from "solid-js";
 import { createStore } from "solid-js/store";
+import { useQueryClient } from "@tanstack/solid-query";
 
+import { createClientQuery } from "~/client-query";
 import { openApiClient } from "~/openapi/client";
 import type { paths } from "~/openapi/schema";
+import { QUERY_CACHE_DURATION, queryKeys } from "~/query-client";
 import { useAuth } from "./auth-context";
 
 type AnkiMeta =
@@ -40,12 +42,8 @@ interface AnkiState {
 
 interface AnkiContextValue {
   state: AnkiState;
-  fetchList: (signal?: AbortSignal) => Promise<void>;
-  fetchBlock: (
-    pageId?: string,
-    signal?: AbortSignal,
-    force?: boolean,
-  ) => Promise<void>;
+  fetchList: () => Promise<void>;
+  fetchBlock: (pageId?: string, force?: boolean) => Promise<void>;
   updateByRating: (pageId: string, rating: number) => Promise<void>;
   create: () => Promise<void>;
   review: () => Promise<void>;
@@ -55,6 +53,7 @@ const AnkiContext = createContext<AnkiContextValue>();
 
 export const AnkiProvider = (props: ParentProps) => {
   const auth = useAuth();
+  const queryClient = useQueryClient();
   const [state, setState] = createStore<AnkiState>({
     error: null,
     ankiList: { data: [], currentIndex: null, loading: false },
@@ -70,36 +69,34 @@ export const AnkiProvider = (props: ParentProps) => {
     );
   };
 
-  const fetchList = async (signal?: AbortSignal) => {
-    setState("ankiList", "loading", true);
-    try {
+  const ankiListQuery = createClientQuery({
+    queryKey: queryKeys.anki,
+    enabled: () => Boolean(auth.accessToken()),
+    queryFn: async ({ signal }) => {
       await auth.refresh();
-      const { data } = await openApiClient.GET("/api/v1/anki", {
-        params: {
-          header: { Authorization: `Bearer ${auth.accessToken()}` },
+      const { data, error, response } = await openApiClient.GET(
+        "/api/v1/anki",
+        {
+          params: {
+            header: { Authorization: `Bearer ${auth.accessToken()}` },
+          },
+          signal,
         },
-        signal,
-      });
-      if (data) {
-        setState(
-          "ankiList",
-          "data",
-          data.map((metadata) => ({ metadata, block: null, loading: false })),
+      );
+      if (!data) {
+        throw new Error(
+          `Failed to fetch Anki list (${response.status}): ${JSON.stringify(error)}`,
         );
-        setState("ankiList", "currentIndex", data.length > 0 ? 0 : null);
       }
-    } catch (error) {
-      setError("Failed to fetch Anki list. ", error);
-    } finally {
-      if (!signal?.aborted) setState("ankiList", "loading", false);
-    }
+      return data;
+    },
+  });
+
+  const fetchList = async () => {
+    await ankiListQuery.refetch();
   };
 
-  const fetchBlock = async (
-    pageId?: string,
-    signal?: AbortSignal,
-    force = false,
-  ) => {
+  const fetchBlock = async (pageId?: string, force = false) => {
     const index = state.ankiList.data.findIndex(
       (item) => item.metadata.page_id === pageId,
     );
@@ -109,21 +106,34 @@ export const AnkiProvider = (props: ParentProps) => {
 
     setState("ankiList", "data", index, "loading", true);
     try {
-      await auth.refresh();
-      const { data } = await openApiClient.GET("/api/v1/anki/block/{page_id}", {
-        params: {
-          header: { Authorization: `Bearer ${auth.accessToken()}` },
-          path: { page_id: pageId },
+      const data = await queryClient.fetchQuery({
+        queryKey: queryKeys.ankiBlock(pageId),
+        staleTime: force ? 0 : QUERY_CACHE_DURATION,
+        queryFn: async ({ signal }) => {
+          await auth.refresh();
+          const { data, error, response } = await openApiClient.GET(
+            "/api/v1/anki/block/{page_id}",
+            {
+              params: {
+                header: { Authorization: `Bearer ${auth.accessToken()}` },
+                path: { page_id: pageId },
+              },
+              signal,
+            },
+          );
+          if (!data) {
+            throw new Error(
+              `Failed to fetch Anki block (${response.status}): ${JSON.stringify(error)}`,
+            );
+          }
+          return data as AnkiBlock;
         },
-        signal,
       });
-      if (data) setState("ankiList", "data", index, "block", data as AnkiBlock);
+      setState("ankiList", "data", index, "block", data);
     } catch (error) {
       setError("Failed to fetch Anki block. ", error);
     } finally {
-      if (!signal?.aborted) {
-        setState("ankiList", "data", index, "loading", false);
-      }
+      setState("ankiList", "data", index, "loading", false);
     }
   };
 
@@ -180,6 +190,18 @@ export const AnkiProvider = (props: ParentProps) => {
         "metadata",
         "next_review_at",
         nextReviewAt,
+      );
+      queryClient.setQueryData<AnkiMeta[]>(queryKeys.anki, (items = []) =>
+        items.map((item) =>
+          item.page_id === pageId
+            ? {
+                ...item,
+                ease_factor: easeFactor,
+                repetition_count: repetitionCount,
+                next_review_at: nextReviewAt,
+              }
+            : item,
+        ),
       );
 
       void openApiClient
@@ -254,6 +276,13 @@ export const AnkiProvider = (props: ParentProps) => {
         "is_review_required",
         data.is_review_required,
       );
+      queryClient.setQueryData<AnkiMeta[]>(queryKeys.anki, (items = []) =>
+        items.map((item) =>
+          item.page_id === current.metadata.page_id
+            ? { ...item, is_review_required: data.is_review_required }
+            : item,
+        ),
+      );
     } catch (error) {
       setError("Failed to review Anki. ", error);
     } finally {
@@ -262,11 +291,35 @@ export const AnkiProvider = (props: ParentProps) => {
   };
 
   createEffect(() => {
-    const accessToken = auth.accessToken();
-    if (typeof window === "undefined" || !accessToken) return;
-    const controller = new AbortController();
-    untrack(() => void fetchList(controller.signal));
-    onCleanup(() => controller.abort());
+    setState("ankiList", "loading", ankiListQuery.isFetching());
+    if (!auth.accessToken()) return;
+    const queryError = ankiListQuery.error();
+    if (queryError) {
+      setError("Failed to fetch Anki list. ", queryError);
+      return;
+    }
+    const data = ankiListQuery.data();
+    if (!data) return;
+
+    const previousItems = untrack(() => state.ankiList.data);
+    const previousByPageId = new Map(
+      previousItems.map((item) => [item.metadata.page_id, item]),
+    );
+    setState(
+      "ankiList",
+      "data",
+      data.map((metadata) => {
+        const previous = previousByPageId.get(metadata.page_id);
+        return {
+          metadata,
+          block: previous?.block ?? null,
+          loading: previous?.loading ?? false,
+        };
+      }),
+    );
+    if (previousItems.length === 0) {
+      setState("ankiList", "currentIndex", data.length > 0 ? 0 : null);
+    }
   });
 
   createEffect(() => {
@@ -275,11 +328,9 @@ export const AnkiProvider = (props: ParentProps) => {
     const pageIds = [currentIndex, currentIndex + 1, currentIndex + 2]
       .map((index) => state.ankiList.data[index]?.metadata.page_id)
       .filter((pageId): pageId is string => pageId != null);
-    const controller = new AbortController();
     untrack(() => {
-      for (const pageId of pageIds) void fetchBlock(pageId, controller.signal);
+      for (const pageId of pageIds) void fetchBlock(pageId);
     });
-    onCleanup(() => controller.abort());
   });
 
   return (

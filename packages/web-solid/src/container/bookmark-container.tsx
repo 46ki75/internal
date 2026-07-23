@@ -1,22 +1,24 @@
-import { createEffect, createSignal, onCleanup, onMount, Show } from "solid-js";
+import { createMemo, createSignal, Show } from "solid-js";
 import { ElmButton, ElmInlineText, ElmTextField } from "@elmethis/solid";
+import { useQueryClient } from "@tanstack/solid-query";
 
 import styles from "./bookmark-container.module.css";
 import {
   BookmarkList,
   type BookmarkListProps,
 } from "~/components/bookmark/bookmark-list";
+import { createClientQuery } from "~/client-query";
 import { useAuth } from "~/context/auth-context";
 import { openApiClient } from "~/openapi/client";
+import { queryKeys } from "~/query-client";
 import { mapBookmarkResponse } from "./bookmark-model";
 
 type Bookmark = BookmarkListProps["bookmarks"][number];
-const BOOKMARKS_STORAGE_KEY = "bookmarks";
 const URL_PATTERN = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/\S*)?$/i;
 
 export const BookmarkContainer = () => {
   const auth = useAuth();
-  const [bookmarks, setBookmarks] = createSignal<Bookmark[]>([]);
+  const queryClient = useQueryClient();
   const [name, setName] = createSignal("");
   const [url, setUrl] = createSignal("");
   const [createBookmarkLoading, setCreateBookmarkLoading] = createSignal(false);
@@ -24,56 +26,35 @@ export const BookmarkContainer = () => {
     string | null
   >(null);
 
-  onMount(() => {
-    const cached = localStorage.getItem(BOOKMARKS_STORAGE_KEY);
-    if (cached) {
-      try {
-        const value: unknown = JSON.parse(cached);
-        if (
-          typeof value === "object" &&
-          value !== null &&
-          "bookmarks" in value &&
-          Array.isArray(value.bookmarks)
-        ) {
-          setBookmarks(value.bookmarks as Bookmark[]);
-        }
-      } catch {
-        // Ignore invalid cache data and replace it with the next valid state.
-      }
-    }
-
-    createEffect(() => {
-      localStorage.setItem(
-        BOOKMARKS_STORAGE_KEY,
-        JSON.stringify({ bookmarks: bookmarks() }),
-      );
-    });
-
-    createEffect(() => {
+  const bookmarksQuery = createClientQuery({
+    queryKey: queryKeys.bookmarks,
+    enabled: () => Boolean(auth.accessToken()),
+    queryFn: async ({ signal }) => {
+      await auth.refresh();
       const accessToken = auth.accessToken();
-      if (!accessToken) return;
+      if (!accessToken) throw new Error("Access token is not available");
 
-      const controller = new AbortController();
-      void (async () => {
-        try {
-          const { data } = await openApiClient.GET("/api/v1/bookmark", {
-            params: { header: { Authorization: `Bearer ${accessToken}` } },
-            signal: controller.signal,
-          });
-
-          if (data && !controller.signal.aborted) {
-            setBookmarks(data.map(mapBookmarkResponse));
-          }
-        } catch (error) {
-          if (!(error instanceof Error && error.name === "AbortError")) {
-            console.error("Failed to fetch bookmarks", error);
-          }
-        }
-      })();
-
-      onCleanup(() => controller.abort());
-    });
+      const { data, error, response } = await openApiClient.GET(
+        "/api/v1/bookmark",
+        {
+          params: { header: { Authorization: `Bearer ${accessToken}` } },
+          signal,
+        },
+      );
+      if (!data) {
+        throw new Error(
+          `Failed to fetch bookmarks (${response.status}): ${JSON.stringify(error)}`,
+        );
+      }
+      return data.map(mapBookmarkResponse);
+    },
   });
+
+  const bookmarks = createMemo(() =>
+    !auth.accessToken() || bookmarksQuery.isPending()
+      ? []
+      : (bookmarksQuery.data() ?? []),
+  );
 
   const handleCreateBookmark = async () => {
     setCreateBookmarkError(null);
@@ -104,7 +85,10 @@ export const BookmarkContainer = () => {
 
           if (!data) throw new Error("No data returned from API");
 
-          setBookmarks((current) => [...current, mapBookmarkResponse(data)]);
+          queryClient.setQueryData<Bookmark[]>(
+            queryKeys.bookmarks,
+            (current = []) => [...current, mapBookmarkResponse(data)],
+          );
           return;
         } catch (error) {
           setCreateBookmarkError(
@@ -119,7 +103,19 @@ export const BookmarkContainer = () => {
 
   return (
     <div class={styles["bookmark-container"]}>
-      <BookmarkList bookmarks={bookmarks()} />
+      <BookmarkList
+        bookmarks={bookmarks()}
+        isRefreshing={bookmarksQuery.isFetching()}
+        onRefresh={() => void bookmarksQuery.refetch()}
+      />
+
+      <Show when={bookmarksQuery.error()} keyed>
+        {(error) => (
+          <p role="alert">
+            <ElmInlineText color="#c56565">{error.message}</ElmInlineText>
+          </p>
+        )}
+      </Show>
 
       <ElmTextField
         label="Name"

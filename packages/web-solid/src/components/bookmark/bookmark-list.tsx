@@ -4,11 +4,13 @@ import styles from "./bookmark-list.module.css";
 import { Bookmark, type BookmarkProps } from "./bookmark";
 import { ElmHeading, ElmMdiIcon, ElmTextField } from "@elmethis/solid";
 import autoAnimate from "@formkit/auto-animate";
-import { mdiTag } from "@mdi/js";
+import { mdiRefresh, mdiTag } from "@mdi/js";
 import Fuse from "fuse.js";
 
 export interface BookmarkListProps {
   bookmarks: BookmarkProps[];
+  isRefreshing?: boolean;
+  onRefresh?: () => void;
 }
 
 export const BookmarkList = (props: BookmarkListProps) => {
@@ -81,7 +83,23 @@ export const BookmarkList = (props: BookmarkListProps) => {
 
   return (
     <div class={styles["bookmark-list"]}>
-      <ElmHeading level={2}>Bookmark</ElmHeading>
+      <div class={styles.header}>
+        <ElmHeading level={2}>Bookmark</ElmHeading>
+        <button
+          type="button"
+          class={styles["refresh-button"]}
+          aria-label="Refresh bookmarks"
+          disabled={props.isRefreshing}
+          onClick={() => props.onRefresh?.()}
+        >
+          <ElmMdiIcon
+            d={mdiRefresh}
+            size="1.5rem"
+            classList={{ [styles.loading]: props.isRefreshing }}
+            color={props.isRefreshing ? "#cdb57b" : undefined}
+          />
+        </button>
+      </div>
 
       <ElmHeading level={3}>Search</ElmHeading>
       <ElmTextField

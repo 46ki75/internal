@@ -1,7 +1,20 @@
 import { MetaProvider, Link, Meta, Title } from "@solidjs/meta";
 import { Router, useLocation } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
-import { Suspense, type ParentProps } from "solid-js";
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
+import {
+  IsRestoringProvider,
+  QueryClientProvider,
+} from "@tanstack/solid-query";
+import { persistQueryClient } from "@tanstack/solid-query-persist-client";
+import {
+  createSignal,
+  onCleanup,
+  onMount,
+  Suspense,
+  type ParentProps,
+} from "solid-js";
+import { isServer } from "solid-js/web";
 
 import "@elmethis/solid/style.css";
 import "./global.css";
@@ -9,6 +22,12 @@ import "./global.css";
 import { AppShell } from "~/container/app-shell";
 import { AnkiProvider } from "~/context/anki-context";
 import { AuthProvider } from "~/context/auth-context";
+import {
+  createQueryClient,
+  QUERY_CACHE_DURATION,
+  QUERY_CACHE_STORAGE_KEY,
+  shouldPersistQuery,
+} from "~/query-client";
 
 const Root = (props: ParentProps) => {
   const location = useLocation();
@@ -40,10 +59,48 @@ const Root = (props: ParentProps) => {
   );
 };
 
+const AppRouter = () => (
+  <Router root={Root}>
+    <FileRoutes />
+  </Router>
+);
+
+const QueryProvider = (props: ParentProps) => {
+  const queryClient = createQueryClient();
+  const [isRestoring, setIsRestoring] = createSignal(!isServer);
+
+  onMount(() => {
+    const persister = createSyncStoragePersister({
+      storage: window.localStorage,
+      key: QUERY_CACHE_STORAGE_KEY,
+    });
+    const [unsubscribe, restore] = persistQueryClient({
+      queryClient,
+      persister,
+      maxAge: QUERY_CACHE_DURATION,
+      buster: "v2",
+      dehydrateOptions: {
+        shouldDehydrateMutation: () => false,
+        shouldDehydrateQuery: shouldPersistQuery,
+      },
+    });
+    void restore.finally(() => setIsRestoring(false));
+    onCleanup(unsubscribe);
+  });
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <IsRestoringProvider value={isRestoring}>
+        {props.children}
+      </IsRestoringProvider>
+    </QueryClientProvider>
+  );
+};
+
 export default function App() {
   return (
-    <Router root={Root}>
-      <FileRoutes />
-    </Router>
+    <QueryProvider>
+      <AppRouter />
+    </QueryProvider>
   );
 }

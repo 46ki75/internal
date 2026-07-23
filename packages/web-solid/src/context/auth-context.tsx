@@ -15,7 +15,7 @@ import {
 } from "aws-amplify/auth";
 import { useQueryClient } from "@tanstack/solid-query";
 
-import { QUERY_CACHE_STORAGE_KEY } from "~/query-client";
+import { QUERY_CACHE_STORAGE_KEYS } from "~/query-client";
 
 export type SessionState = "pending" | "login" | "logout";
 
@@ -61,7 +61,7 @@ export const AuthProvider = (props: ParentProps) => {
 
   const clearQueryCache = () => {
     queryClient.clear();
-    localStorage.removeItem(QUERY_CACHE_STORAGE_KEY);
+    QUERY_CACHE_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
   };
 
   const refresh = async () => {

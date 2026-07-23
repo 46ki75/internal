@@ -14,6 +14,7 @@ import { mapBookmarkResponse } from "./bookmark-model";
 
 type Bookmark = BookmarkListProps["bookmarks"][number];
 const URL_PATTERN = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/\S*)?$/i;
+const BOOKMARK_STALE_TIME = 5 * 60 * 1000;
 
 export const BookmarkContainer = () => {
   const auth = useAuth();
@@ -28,6 +29,8 @@ export const BookmarkContainer = () => {
   const bookmarksQuery = createQuery(() => ({
     queryKey: queryKeys.bookmarks,
     enabled: Boolean(auth.accessToken()),
+    staleTime: BOOKMARK_STALE_TIME,
+    gcTime: Infinity,
     queryFn: async ({ signal }) => {
       await auth.refresh();
       const accessToken = auth.accessToken();

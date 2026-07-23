@@ -6,7 +6,10 @@ import {
   IsRestoringProvider,
   QueryClientProvider,
 } from "@tanstack/solid-query";
-import { persistQueryClient } from "@tanstack/solid-query-persist-client";
+import {
+  persistQueryClientRestore,
+  persistQueryClientSubscribe,
+} from "@tanstack/solid-query-persist-client";
 import {
   createSignal,
   onCleanup,
@@ -23,10 +26,13 @@ import { AppShell } from "~/container/app-shell";
 import { AnkiProvider } from "~/context/anki-context";
 import { AuthProvider } from "~/context/auth-context";
 import {
+  BOOKMARK_QUERY_CACHE_STORAGE_KEY,
   createQueryClient,
+  migrateQueryCacheStorage,
   QUERY_CACHE_DURATION,
-  QUERY_CACHE_STORAGE_KEY,
-  shouldPersistQuery,
+  shouldPersistBookmarkQuery,
+  shouldPersistTodoQuery,
+  TODO_QUERY_CACHE_STORAGE_KEY,
 } from "~/query-client";
 
 const Root = (props: ParentProps) => {
@@ -71,22 +77,47 @@ const QueryProvider = (props: ParentProps) => {
   const [isRestoring, setIsRestoring] = createSignal(!isServer);
 
   onMount(() => {
-    const persister = createSyncStoragePersister({
-      storage: window.localStorage,
-      key: QUERY_CACHE_STORAGE_KEY,
-    });
-    const [unsubscribe, restore] = persistQueryClient({
+    migrateQueryCacheStorage(window.localStorage);
+    const persistenceConfigs = [
+      {
+        key: BOOKMARK_QUERY_CACHE_STORAGE_KEY,
+        maxAge: Infinity,
+        shouldDehydrateQuery: shouldPersistBookmarkQuery,
+      },
+      {
+        key: TODO_QUERY_CACHE_STORAGE_KEY,
+        maxAge: QUERY_CACHE_DURATION,
+        shouldDehydrateQuery: shouldPersistTodoQuery,
+      },
+    ];
+    const persistenceOptions = persistenceConfigs.map((config) => ({
       queryClient,
-      persister,
-      maxAge: QUERY_CACHE_DURATION,
+      persister: createSyncStoragePersister({
+        storage: window.localStorage,
+        key: config.key,
+      }),
+      maxAge: config.maxAge,
       buster: "v2",
       dehydrateOptions: {
         shouldDehydrateMutation: () => false,
-        shouldDehydrateQuery: shouldPersistQuery,
+        shouldDehydrateQuery: config.shouldDehydrateQuery,
       },
+    }));
+    let unsubscribes: Array<() => void> = [];
+    let disposed = false;
+
+    void Promise.allSettled(
+      persistenceOptions.map(persistQueryClientRestore),
+    ).then(() => {
+      if (disposed) return;
+      unsubscribes = persistenceOptions.map(persistQueryClientSubscribe);
+      setIsRestoring(false);
     });
-    void restore.finally(() => setIsRestoring(false));
-    onCleanup(unsubscribe);
+
+    onCleanup(() => {
+      disposed = true;
+      unsubscribes.forEach((unsubscribe) => unsubscribe());
+    });
   });
 
   return (

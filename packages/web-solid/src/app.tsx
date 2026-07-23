@@ -67,6 +67,7 @@ const AppRouter = () => (
 
 const QueryProvider = (props: ParentProps) => {
   const queryClient = createQueryClient();
+  // Keep authenticated queries idle until localStorage has been restored.
   const [isRestoring, setIsRestoring] = createSignal(!isServer);
 
   onMount(() => {

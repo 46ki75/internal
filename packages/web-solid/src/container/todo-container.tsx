@@ -7,7 +7,7 @@ import {
   Show,
   type JSX,
 } from "solid-js";
-import { useQueryClient } from "@tanstack/solid-query";
+import { createQuery, useQueryClient } from "@tanstack/solid-query";
 import {
   ElmBlockFallback,
   ElmHeading,
@@ -20,7 +20,6 @@ import { mdiAlert, mdiSortCalendarAscending, mdiSync } from "@mdi/js";
 import styles from "./todo-container.module.css";
 import { Todo } from "~/components/todo/todo";
 import { TodoForm } from "~/components/todo/todo-form";
-import { createClientQuery } from "~/client-query";
 import { useAuth } from "~/context/auth-context";
 import { openApiClient } from "~/openapi/client";
 import { queryKeys } from "~/query-client";
@@ -40,9 +39,9 @@ export const TodoContainer = (props: TodoContainerProps) => {
   const [sort, setSort] = createSignal<TodoSort>("deadline");
   let todoItemContainerRef!: HTMLDivElement;
 
-  const todosQuery = createClientQuery({
+  const todosQuery = createQuery(() => ({
     queryKey: queryKeys.todos,
-    enabled: () => Boolean(auth.accessToken()),
+    enabled: Boolean(auth.accessToken()),
     queryFn: async ({ signal }) => {
       await auth.refresh();
       const accessToken = auth.accessToken();
@@ -64,12 +63,10 @@ export const TodoContainer = (props: TodoContainerProps) => {
       }
       return data;
     },
-  });
+  }));
 
   const todos = createMemo(() =>
-    !auth.accessToken() || todosQuery.isPending()
-      ? []
-      : (todosQuery.data() ?? []),
+    !auth.accessToken() || todosQuery.isPending ? [] : (todosQuery.data ?? []),
   );
   const sortedTodos = createMemo(() => sortTodos(todos(), sort()));
 
@@ -166,14 +163,14 @@ export const TodoContainer = (props: TodoContainerProps) => {
           type="button"
           class={styles["sync-button"]}
           aria-label="Refresh to-dos"
-          disabled={todosQuery.isFetching()}
+          disabled={todosQuery.isFetching}
           onClick={() => void todosQuery.refetch()}
         >
           <ElmMdiIcon
             d={mdiSync}
             size="1.5rem"
-            class={`${styles["sync-icon"]} ${todosQuery.isFetching() ? styles.loading : ""}`}
-            color={todosQuery.isFetching() ? "#cdb57b" : undefined}
+            class={`${styles["sync-icon"]} ${todosQuery.isFetching ? styles.loading : ""}`}
+            color={todosQuery.isFetching ? "#cdb57b" : undefined}
           />
         </button>
       </div>

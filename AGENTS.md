@@ -57,7 +57,7 @@ No `Justfile`. Use `cargo lambda build --release` / `cargo lambda deploy` direct
 
 ```sh
 pnpm dev                  # VITE_STAGE_NAME=dev vinxi dev on :11070
-pnpm build                # SolidStart/Vinxi static prerender into .output/public
+pnpm build                # SolidStart/Vinxi CSR bundle into .output/public
 pnpm build.types          # tsc --noEmit (typecheck only)
 pnpm lint                 # eslint src/**/*.ts*
 pnpm fmt / pnpm fmt.check # prettier
@@ -142,7 +142,7 @@ Feature crates read their per-feature SSM keys inline via `http_api_core::cache:
 (no per-feature wrapper). External integrations: `notionrs` / `n2a2ui` (Notion content → A2UI), AWS SDKs
 (DynamoDB, SSM, Cognito), and `html-meta-scraper` (bookmarks).
 
-### `packages/web-solid` — SolidStart SSG
+### `packages/web-solid` — SolidStart CSR
 
 - `src/app.tsx` — SolidStart router root and persistent auth/Anki provider shell.
 - `src/routes/` — SolidStart file routes. Routes: `/`, `/anki`, `/chat`, `/icon`, `/swatch`, `/trivia`.
@@ -150,7 +150,9 @@ Feature crates read their per-feature SSM keys inline via `http_api_core::cache:
 - `src/container/` — stateful feature containers that compose testable components and talk to the API.
 - `src/context/` — Solid contexts (`auth-context.tsx` wraps Cognito via `aws-amplify`; `anki-context.tsx` owns Anki state and actions).
 - `src/openapi/schema.ts` — generated from `http-api`'s OpenAPI; do not edit by hand. Consumed via `openapi-fetch`.
-- Build target is SolidStart's static Nitro preset; `.output/public/` is uploaded to S3 and served via CloudFront. Hashed assets live under `_build/`.
+- SSR is disabled. The static Nitro preset emits a browser-rendered app into `.output/public/`, which is
+  uploaded to S3 and served via CloudFront. Extensionless paths are rewritten to `/index.html`; hashed
+  assets live under `_build/`.
 
 ### Auth and config
 

@@ -6,9 +6,8 @@ import {
   type ParentProps,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import { useQueryClient } from "@tanstack/solid-query";
+import { createQuery, useQueryClient } from "@tanstack/solid-query";
 
-import { createClientQuery } from "~/client-query";
 import { openApiClient } from "~/openapi/client";
 import type { paths } from "~/openapi/schema";
 import { QUERY_CACHE_DURATION, queryKeys } from "~/query-client";
@@ -69,9 +68,9 @@ export const AnkiProvider = (props: ParentProps) => {
     );
   };
 
-  const ankiListQuery = createClientQuery({
+  const ankiListQuery = createQuery(() => ({
     queryKey: queryKeys.anki,
-    enabled: () => Boolean(auth.accessToken()),
+    enabled: Boolean(auth.accessToken()),
     queryFn: async ({ signal }) => {
       await auth.refresh();
       const { data, error, response } = await openApiClient.GET(
@@ -90,7 +89,7 @@ export const AnkiProvider = (props: ParentProps) => {
       }
       return data;
     },
-  });
+  }));
 
   const fetchList = async () => {
     await ankiListQuery.refetch();
@@ -291,14 +290,14 @@ export const AnkiProvider = (props: ParentProps) => {
   };
 
   createEffect(() => {
-    setState("ankiList", "loading", ankiListQuery.isFetching());
+    setState("ankiList", "loading", ankiListQuery.isFetching);
     if (!auth.accessToken()) return;
-    const queryError = ankiListQuery.error();
+    const queryError = ankiListQuery.error;
     if (queryError) {
       setError("Failed to fetch Anki list. ", queryError);
       return;
     }
-    const data = ankiListQuery.data();
+    const data = ankiListQuery.data;
     if (!data) return;
 
     const previousItems = untrack(() => state.ankiList.data);

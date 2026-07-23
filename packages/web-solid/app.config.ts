@@ -9,12 +9,10 @@ if (!(["dev", "stg", "prod"] as const).includes(stage as never)) {
 const endpoint = `https://${stage === "prod" ? "internal" : `${stage}-internal`}.46ki75.com`;
 
 export default defineConfig({
+  ssr: false,
   serialization: { mode: "json" },
   server: {
     preset: "static",
-    prerender: {
-      routes: ["/", "/anki", "/chat", "/icon", "/swatch", "/trivia"],
-    },
   },
   vite: {
     server: {

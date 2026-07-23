@@ -3,7 +3,7 @@ function handler(event) {
   var uri = request.uri
 
   if (!uri.includes('.')) {
-    request.uri += uri.endsWith('/') ? 'index.html' : '/index.html'
+    request.uri = '/index.html'
   }
 
   return request

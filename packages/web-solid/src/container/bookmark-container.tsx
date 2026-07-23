@@ -1,13 +1,12 @@
 import { createMemo, createSignal, Show } from "solid-js";
 import { ElmButton, ElmInlineText, ElmTextField } from "@elmethis/solid";
-import { useQueryClient } from "@tanstack/solid-query";
+import { createQuery, useQueryClient } from "@tanstack/solid-query";
 
 import styles from "./bookmark-container.module.css";
 import {
   BookmarkList,
   type BookmarkListProps,
 } from "~/components/bookmark/bookmark-list";
-import { createClientQuery } from "~/client-query";
 import { useAuth } from "~/context/auth-context";
 import { openApiClient } from "~/openapi/client";
 import { queryKeys } from "~/query-client";
@@ -26,9 +25,9 @@ export const BookmarkContainer = () => {
     string | null
   >(null);
 
-  const bookmarksQuery = createClientQuery({
+  const bookmarksQuery = createQuery(() => ({
     queryKey: queryKeys.bookmarks,
-    enabled: () => Boolean(auth.accessToken()),
+    enabled: Boolean(auth.accessToken()),
     queryFn: async ({ signal }) => {
       await auth.refresh();
       const accessToken = auth.accessToken();
@@ -48,12 +47,12 @@ export const BookmarkContainer = () => {
       }
       return data.map(mapBookmarkResponse);
     },
-  });
+  }));
 
   const bookmarks = createMemo(() =>
-    !auth.accessToken() || bookmarksQuery.isPending()
+    !auth.accessToken() || bookmarksQuery.isPending
       ? []
-      : (bookmarksQuery.data() ?? []),
+      : (bookmarksQuery.data ?? []),
   );
 
   const handleCreateBookmark = async () => {
@@ -105,11 +104,11 @@ export const BookmarkContainer = () => {
     <div class={styles["bookmark-container"]}>
       <BookmarkList
         bookmarks={bookmarks()}
-        isRefreshing={bookmarksQuery.isFetching()}
+        isRefreshing={bookmarksQuery.isFetching}
         onRefresh={() => void bookmarksQuery.refetch()}
       />
 
-      <Show when={bookmarksQuery.error()} keyed>
+      <Show when={bookmarksQuery.error} keyed>
         {(error) => (
           <p role="alert">
             <ElmInlineText color="#c56565">{error.message}</ElmInlineText>

@@ -15,6 +15,9 @@ export default defineConfig({
     preset: "static",
   },
   vite: {
+    build: {
+      cssCodeSplit: false,
+    },
     server: {
       headers: { "Cache-Control": "public, max-age=0" },
       port: 11070,

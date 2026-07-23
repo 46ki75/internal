@@ -24,8 +24,8 @@ importers:
         specifier: ^0.20.0
         version: 0.20.0(@a2ui/web_core@0.10.5)(zod@3.25.76)
       '@elmethis/solid':
-        specifier: ^0.4.0
-        version: 0.4.0(solid-js@1.9.14)
+        specifier: ^0.4.1
+        version: 0.4.1(solid-js@1.9.14)
       '@formkit/auto-animate':
         specifier: ^0.10.0
         version: 0.10.0
@@ -464,8 +464,8 @@ packages:
       '@a2ui/web_core': '>=0.10.0'
       zod: ^3
 
-  '@elmethis/solid@0.4.0':
-    resolution: {integrity: sha512-SeZWAJ/T2h1Xq8IQp3DuqhfmgwZYpDGGHJ4VVPyHRKsJXEBpTY38MnoVJCBIMa8xFSuQkyDERNxHNO6GPoFtSA==}
+  '@elmethis/solid@0.4.1':
+    resolution: {integrity: sha512-e7ag0NWJa9IJ8P4YbOJFwEJP+BK+hLt7AaeE3VfvP/k41T294GSMHTNQvvqf+X3Btz3CQ4zZDtWTcOkbzj0q8g==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
     peerDependencies:
       solid-js: ^1.9.0
@@ -3746,8 +3746,8 @@ packages:
     resolution: {integrity: sha512-pQpZbdBu7wCTmQUh7ufPmLr0pFoObnGUoL/yhtwJDgmmQpbkg/0HSVti25Fu4rmd1oCR6NGWe9vqTWuWv3GcNA==}
     hasBin: true
 
-  katex@0.17.0:
-    resolution: {integrity: sha512-Vdw0ATsQ9V+LuegM/BTwQqV/6cTl5lbGcIrU+BCgLxyf6bo38ybOr372tuSIxir3CN720flu1meYR6XzNMwQnw==}
+  katex@0.18.1:
+    resolution: {integrity: sha512-Td8GCYSxDAoMhHOlKmCFMJ/hz5qlAAb71n66Dryw9nfCVfumLo7nhuotbvKom/XPADmrYC3O5QR71EPq4DarJQ==}
     hasBin: true
 
   kebab-case@1.0.2:
@@ -6269,7 +6269,7 @@ snapshots:
       zod: 3.25.76
       zod-to-json-schema: 3.25.2(zod@3.25.76)
 
-  '@elmethis/solid@0.4.0(solid-js@1.9.14)':
+  '@elmethis/solid@0.4.1(solid-js@1.9.14)':
     dependencies:
       '@46ki75/ikuma-theme': 0.0.10
       '@a2ui/web_core': 0.10.5
@@ -6280,7 +6280,7 @@ snapshots:
       '@mdi/js': 7.4.47
       '@modelcontextprotocol/sdk': 1.29.0(zod@3.25.76)
       clsx: 2.1.1
-      katex: 0.17.0
+      katex: 0.18.1
       marked: 18.0.6
       shiki: 4.3.1
       solid-js: 1.9.14
@@ -9477,7 +9477,7 @@ snapshots:
     dependencies:
       commander: 8.3.0
 
-  katex@0.17.0:
+  katex@0.18.1:
     dependencies:
       commander: 8.3.0
 

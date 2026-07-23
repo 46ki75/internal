@@ -13,6 +13,9 @@ import {
   signIn as cognitoSignIn,
   signOut as cognitoSignOut,
 } from "aws-amplify/auth";
+import { useQueryClient } from "@tanstack/solid-query";
+
+import { QUERY_CACHE_STORAGE_KEY } from "~/query-client";
 
 export type SessionState = "pending" | "login" | "logout";
 
@@ -49,11 +52,17 @@ const configure = () => {
 const AuthContext = createContext<AuthContextValue>();
 
 export const AuthProvider = (props: ParentProps) => {
+  const queryClient = useQueryClient();
   const [sessionState, setSessionState] = createSignal<SessionState>("pending");
   const [errors, setErrors] = createSignal<string[]>([]);
   const [signingInProgress, setSigningInProgress] = createSignal(false);
   const [accessToken, setAccessToken] = createSignal<string | null>(null);
   let refreshInFlight: Promise<void> | undefined;
+
+  const clearQueryCache = () => {
+    queryClient.clear();
+    localStorage.removeItem(QUERY_CACHE_STORAGE_KEY);
+  };
 
   const refresh = async () => {
     if (refreshInFlight) return refreshInFlight;
@@ -66,7 +75,9 @@ export const AuthProvider = (props: ParentProps) => {
         const token = session.tokens?.accessToken.toString() ?? null;
         setAccessToken(token);
         setSessionState(token ? "login" : "logout");
+        if (!token) clearQueryCache();
       } catch (error) {
+        clearQueryCache();
         setAccessToken(null);
         setSessionState("logout");
         setErrors([error instanceof Error ? error.message : String(error)]);
@@ -88,6 +99,7 @@ export const AuthProvider = (props: ParentProps) => {
       const result = await cognitoSignIn({ username, password });
       if (result.isSignedIn) await refresh();
     } catch (error) {
+      clearQueryCache();
       setAccessToken(null);
       setSessionState("logout");
       setErrors([error instanceof Error ? error.message : String(error)]);
@@ -101,6 +113,7 @@ export const AuthProvider = (props: ParentProps) => {
     try {
       await cognitoSignOut();
     } finally {
+      clearQueryCache();
       setAccessToken(null);
       setSessionState("logout");
     }

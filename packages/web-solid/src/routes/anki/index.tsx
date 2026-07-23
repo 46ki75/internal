@@ -71,9 +71,7 @@ export default function AnkiRoute(props: IndexProps) {
         onEdit={open}
         onCreate={anki.create}
         onReview={anki.review}
-        onRefresh={() =>
-          anki.fetchBlock(currentAnki()?.metadata.page_id, undefined, true)
-        }
+        onRefresh={() => anki.fetchBlock(currentAnki()?.metadata.page_id, true)}
         onRate={rate}
       />
     </>

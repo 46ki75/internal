@@ -7,6 +7,7 @@ import {
   Show,
   type JSX,
 } from "solid-js";
+import { useQueryClient } from "@tanstack/solid-query";
 import {
   ElmBlockFallback,
   ElmHeading,
@@ -19,8 +20,10 @@ import { mdiAlert, mdiSortCalendarAscending, mdiSync } from "@mdi/js";
 import styles from "./todo-container.module.css";
 import { Todo } from "~/components/todo/todo";
 import { TodoForm } from "~/components/todo/todo-form";
+import { createClientQuery } from "~/client-query";
 import { useAuth } from "~/context/auth-context";
 import { openApiClient } from "~/openapi/client";
+import { queryKeys } from "~/query-client";
 import { sortTodos, type ToDo, type TodoSort } from "./todo-sort";
 
 export interface TodoContainerProps {
@@ -32,55 +35,48 @@ type Severity = ToDo["severity"];
 
 export const TodoContainer = (props: TodoContainerProps) => {
   const auth = useAuth();
-  const [todos, setTodos] = createSignal<ToDo[]>([]);
-  const [isLoading, setIsLoading] = createSignal(true);
+  const queryClient = useQueryClient();
   const [updatingIds, setUpdatingIds] = createSignal<string[]>([]);
   const [sort, setSort] = createSignal<TodoSort>("deadline");
-  const sortedTodos = createMemo(() => sortTodos(todos(), sort()));
   let todoItemContainerRef!: HTMLDivElement;
-  let fetchController: AbortController | undefined;
 
-  const execute = async () => {
-    fetchController?.abort();
-    const controller = new AbortController();
-    fetchController = controller;
-    setIsLoading(true);
-    try {
+  const todosQuery = createClientQuery({
+    queryKey: queryKeys.todos,
+    enabled: () => Boolean(auth.accessToken()),
+    queryFn: async ({ signal }) => {
       await auth.refresh();
       const accessToken = auth.accessToken();
-      if (accessToken == null) return;
+      if (accessToken == null) throw new Error("Access token is null");
 
-      const { data } = await openApiClient.GET("/api/v1/to-do", {
-        params: {
-          header: { Authorization: `Bearer ${accessToken}` },
+      const { data, error, response } = await openApiClient.GET(
+        "/api/v1/to-do",
+        {
+          params: {
+            header: { Authorization: `Bearer ${accessToken}` },
+          },
+          signal,
         },
-        signal: controller.signal,
-      });
-      if (!controller.signal.aborted) setTodos(data || []);
-    } catch (error) {
-      if (!(error instanceof Error && error.name === "AbortError")) {
-        console.error("Failed to fetch todos", error);
+      );
+      if (!data) {
+        throw new Error(
+          `Failed to fetch todos (${response.status}): ${JSON.stringify(error)}`,
+        );
       }
-    } finally {
-      if (fetchController === controller) {
-        fetchController = undefined;
-        setIsLoading(false);
-      }
-    }
-  };
+      return data;
+    },
+  });
+
+  const todos = createMemo(() =>
+    !auth.accessToken() || todosQuery.isPending()
+      ? []
+      : (todosQuery.data() ?? []),
+  );
+  const sortedTodos = createMemo(() => sortTodos(todos(), sort()));
 
   onMount(() => {
     const animationController = autoAnimate(todoItemContainerRef);
-    const handleFocus = (event: FocusEvent) => {
-      if (event.target === window) void execute();
-    };
-
-    window.addEventListener("focus", handleFocus);
-    void execute();
 
     onCleanup(() => {
-      window.removeEventListener("focus", handleFocus);
-      fetchController?.abort();
       if (animationController.destroy) animationController.destroy();
       else animationController.disable();
     });
@@ -101,7 +97,7 @@ export const TodoContainer = (props: TodoContainerProps) => {
       });
 
       if (data) {
-        setTodos((current) =>
+        queryClient.setQueryData<ToDo[]>(queryKeys.todos, (current = []) =>
           current.map((item) => (item.id === id ? data : item)),
         );
       }
@@ -130,7 +126,12 @@ export const TodoContainer = (props: TodoContainerProps) => {
       body: { title, severity, deadline },
     });
 
-    if (data) setTodos((current) => [...current, data]);
+    if (data) {
+      queryClient.setQueryData<ToDo[]>(queryKeys.todos, (current = []) => [
+        ...current,
+        data,
+      ]);
+    }
   };
 
   return (
@@ -161,12 +162,20 @@ export const TodoContainer = (props: TodoContainerProps) => {
           <ElmInlineText>Severity</ElmInlineText>
         </div>
 
-        <ElmMdiIcon
-          d={mdiSync}
-          size="1.5rem"
-          class={`${styles["sync-icon"]} ${isLoading() ? styles.loading : ""}`}
-          color={isLoading() ? "#cdb57b" : undefined}
-        />
+        <button
+          type="button"
+          class={styles["sync-button"]}
+          aria-label="Refresh to-dos"
+          disabled={todosQuery.isFetching()}
+          onClick={() => void todosQuery.refetch()}
+        >
+          <ElmMdiIcon
+            d={mdiSync}
+            size="1.5rem"
+            class={`${styles["sync-icon"]} ${todosQuery.isFetching() ? styles.loading : ""}`}
+            color={todosQuery.isFetching() ? "#cdb57b" : undefined}
+          />
+        </button>
       </div>
 
       <div ref={todoItemContainerRef} class={styles["todo-item-container"]}>

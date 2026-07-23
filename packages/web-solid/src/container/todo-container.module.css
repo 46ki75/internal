@@ -46,13 +46,24 @@
       }
     }
 
-    .sync-icon {
-      opacity: 0;
-      transition: opacity 200ms;
+    .sync-button {
+      display: flex;
+      margin-left: auto;
+      padding: 0.25rem;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
 
-      &.loading {
-        opacity: 1;
-        animation: spin 1s linear infinite;
+      &:disabled {
+        cursor: wait;
+      }
+
+      .sync-icon {
+        transition: color 200ms;
+
+        &.loading {
+          animation: spin 1s linear infinite;
+        }
       }
     }
   }

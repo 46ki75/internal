@@ -153,6 +153,8 @@ Feature crates read their per-feature SSM keys inline via `http_api_core::cache:
 - SSR is disabled. The static Nitro preset emits a browser-rendered app into `.output/public/`, which is
   uploaded to S3 and served via CloudFront. Extensionless paths are rewritten to `/index.html`; hashed
   assets live under `_build/`.
+- For theme-dependent CSS colors and images, use native `light-dark()` values instead of
+  `[data-theme="dark"]` selector overrides; Elmethis keeps the root `color-scheme` in sync.
 
 ### Auth and config
 

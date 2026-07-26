@@ -31,6 +31,7 @@ export const BookmarkContainer = () => {
     enabled: Boolean(auth.accessToken()),
     staleTime: BOOKMARK_STALE_TIME,
     gcTime: Infinity,
+    reconcile: "id",
     queryFn: async ({ signal }) => {
       await auth.refresh();
       const accessToken = auth.accessToken();

@@ -10,13 +10,7 @@ import {
   persistQueryClientRestore,
   persistQueryClientSubscribe,
 } from "@tanstack/solid-query-persist-client";
-import {
-  createSignal,
-  onCleanup,
-  onMount,
-  Suspense,
-  type ParentProps,
-} from "solid-js";
+import { createSignal, onCleanup, onMount, type ParentProps } from "solid-js";
 import { isServer } from "solid-js/web";
 
 import "@elmethis/solid/style.css";
@@ -56,9 +50,7 @@ const Root = (props: ParentProps) => {
       />
       <AuthProvider>
         <AnkiProvider>
-          <AppShell>
-            <Suspense>{props.children}</Suspense>
-          </AppShell>
+          <AppShell>{props.children}</AppShell>
         </AnkiProvider>
       </AuthProvider>
     </MetaProvider>

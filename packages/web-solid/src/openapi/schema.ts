@@ -1046,6 +1046,13 @@ export interface operations {
           "application/json": components["schemas"]["TypingResponse"];
         };
       };
+      /** @description Invalid typing item ID */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
       /** @description Internal Server Error */
       500: {
         headers: {
@@ -1081,6 +1088,13 @@ export interface operations {
           "application/json": components["schemas"]["TypingResponse"];
         };
       };
+      /** @description Invalid typing item ID */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
       /** @description Internal Server Error */
       500: {
         headers: {
@@ -1114,6 +1128,13 @@ export interface operations {
         content: {
           "application/json": components["schemas"]["TypingResponse"];
         };
+      };
+      /** @description Invalid typing item ID */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
       };
       /** @description Typing item not found */
       404: {

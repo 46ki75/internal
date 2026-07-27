@@ -3,13 +3,22 @@ pub mod output;
 
 use crate::repository::{TypingRepository, TypingRepositoryError};
 use output::TypingEntity;
+use uuid::Uuid;
 
 #[derive(Debug, thiserror::Error)]
 pub enum TypingUseCaseError {
+    #[error("invalid typing item ID: {0}")]
+    InvalidId(String),
     #[error("typing item not found: {0}")]
     NotFound(String),
     #[error("repository error: {0}")]
     Repository(TypingRepositoryError),
+}
+
+fn validate_id(id: String) -> Result<String, TypingUseCaseError> {
+    Uuid::parse_str(&id)
+        .map(|id| id.to_string())
+        .map_err(|_| TypingUseCaseError::InvalidId(id))
 }
 
 impl From<TypingRepositoryError> for TypingUseCaseError {
@@ -49,7 +58,10 @@ impl TypingUseCase {
         text: String,
         description: String,
     ) -> Result<TypingEntity, TypingUseCaseError> {
-        let id = id.unwrap_or(uuid::Uuid::new_v4().to_string());
+        let id = match id {
+            Some(id) => validate_id(id)?,
+            None => Uuid::now_v7().to_string(),
+        };
 
         let record = self
             .typing_repository
@@ -65,6 +77,7 @@ impl TypingUseCase {
     }
 
     pub async fn delete_typing(&self, id: String) -> Result<TypingEntity, TypingUseCaseError> {
+        let id = validate_id(id)?;
         let record = self.typing_repository.delete_typing(id).await?;
 
         Ok(TypingEntity {
@@ -76,6 +89,7 @@ impl TypingUseCase {
     }
 
     pub async fn complete_typing(&self, id: String) -> Result<TypingEntity, TypingUseCaseError> {
+        let id = validate_id(id)?;
         let record = self.typing_repository.complete_typing(id).await?;
 
         Ok(TypingEntity {
@@ -93,9 +107,9 @@ mod tests {
     use crate::repository::output::TypingDto;
 
     /// A stub that echoes the `id` it was handed back into the returned record,
-    /// so tests can observe whether the use case generated a UUID or passed the
-    /// caller's id through. The default `TypingRepositoryStub` discards the id,
-    /// which hides that branch.
+    /// so tests can observe whether the use case generated or canonicalized an
+    /// ID. The default `TypingRepositoryStub` discards the ID, which hides that
+    /// branch.
     struct EchoIdStub;
 
     #[async_trait::async_trait]
@@ -161,7 +175,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn upsert_with_none_id_generates_uuid() {
+    async fn upsert_with_none_id_generates_uuid_v7() {
         let typing_use_case = TypingUseCase {
             typing_repository: std::sync::Arc::new(EchoIdStub),
         };
@@ -171,28 +185,49 @@ mod tests {
             .await
             .unwrap();
 
-        // The use case fills in a v4 UUID, which the echo stub returns verbatim.
-        assert!(uuid::Uuid::parse_str(&entity.id).is_ok());
+        let id = Uuid::parse_str(&entity.id).unwrap();
+        assert_eq!(id.get_version_num(), 7);
         assert_eq!(entity.text, "text");
         assert_eq!(entity.description, "description");
     }
 
     #[tokio::test]
-    async fn upsert_with_some_id_passes_it_through() {
+    async fn upsert_with_valid_id_canonicalizes_it() {
         let typing_use_case = TypingUseCase {
             typing_repository: std::sync::Arc::new(EchoIdStub),
         };
 
         let entity = typing_use_case
             .upsert_typing(
-                Some("my-id".to_string()),
+                Some("680008C4-D898-4202-8102-137CD9256595".to_string()),
                 "text".to_string(),
                 "description".to_string(),
             )
             .await
             .unwrap();
 
-        assert_eq!(entity.id, "my-id");
+        assert_eq!(entity.id, "680008c4-d898-4202-8102-137cd9256595");
+    }
+
+    #[tokio::test]
+    async fn upsert_with_invalid_id_is_rejected() {
+        let typing_use_case = TypingUseCase {
+            typing_repository: std::sync::Arc::new(EchoIdStub),
+        };
+
+        let error = typing_use_case
+            .upsert_typing(
+                Some("not-a-uuid".to_string()),
+                "text".to_string(),
+                "description".to_string(),
+            )
+            .await
+            .unwrap_err();
+
+        assert!(matches!(
+            error,
+            TypingUseCaseError::InvalidId(id) if id == "not-a-uuid"
+        ));
     }
 
     #[tokio::test]
@@ -202,11 +237,28 @@ mod tests {
         };
 
         let entity = typing_use_case
-            .delete_typing("id".to_string())
+            .delete_typing("680008c4-d898-4202-8102-137cd9256595".to_string())
             .await
             .unwrap();
 
         assert_eq!(entity.id, "680008c4-d898-4202-8102-137cd9256595");
+    }
+
+    #[tokio::test]
+    async fn delete_with_invalid_id_is_rejected() {
+        let typing_use_case = TypingUseCase {
+            typing_repository: std::sync::Arc::new(EchoIdStub),
+        };
+
+        let error = typing_use_case
+            .delete_typing("not-a-uuid".to_string())
+            .await
+            .unwrap_err();
+
+        assert!(matches!(
+            error,
+            TypingUseCaseError::InvalidId(id) if id == "not-a-uuid"
+        ));
     }
 
     #[tokio::test]
@@ -216,11 +268,28 @@ mod tests {
         };
 
         let entity = typing_use_case
-            .complete_typing("my-id".to_string())
+            .complete_typing("680008c4-d898-4202-8102-137cd9256595".to_string())
             .await
             .unwrap();
 
-        assert_eq!(entity.id, "my-id");
+        assert_eq!(entity.id, "680008c4-d898-4202-8102-137cd9256595");
         assert_eq!(entity.completion_count, 4);
+    }
+
+    #[tokio::test]
+    async fn completion_with_invalid_id_is_rejected() {
+        let typing_use_case = TypingUseCase {
+            typing_repository: std::sync::Arc::new(EchoIdStub),
+        };
+
+        let error = typing_use_case
+            .complete_typing("not-a-uuid".to_string())
+            .await
+            .unwrap_err();
+
+        assert!(matches!(
+            error,
+            TypingUseCaseError::InvalidId(id) if id == "not-a-uuid"
+        ));
     }
 }

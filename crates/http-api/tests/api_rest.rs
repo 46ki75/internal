@@ -208,10 +208,48 @@ async fn typing_upsert_returns_ok() {
 }
 
 #[tokio::test]
+async fn typing_upsert_rejects_invalid_id() {
+    let response = typing_test_router()
+        .oneshot(
+            Request::post("/api/v1/typing")
+                .header("content-type", "application/json")
+                .body(Body::from(
+                    r#"{"id":"not-a-uuid","text":"hello","description":"d"}"#,
+                ))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
+    assert_eq!(json["error"], "invalid typing item ID: not-a-uuid");
+}
+
+#[tokio::test]
+async fn typing_delete_rejects_invalid_id() {
+    let response = typing_test_router()
+        .oneshot(
+            Request::delete("/api/v1/typing")
+                .header("content-type", "application/json")
+                .body(Body::from(r#"{"id":"not-a-uuid"}"#))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
+    assert_eq!(json["error"], "invalid typing item ID: not-a-uuid");
+}
+
+#[tokio::test]
 async fn typing_completion_returns_incremented_count() {
     let response = typing_test_router()
         .oneshot(
-            Request::post("/api/v1/typing/typing-id/completion")
+            Request::post("/api/v1/typing/680008c4-d898-4202-8102-137cd9256595/completion")
                 .body(Body::empty())
                 .unwrap(),
         )
@@ -222,7 +260,7 @@ async fn typing_completion_returns_incremented_count() {
 
     let body = response.into_body().collect().await.unwrap().to_bytes();
     let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
-    assert_eq!(json["id"], "typing-id");
+    assert_eq!(json["id"], "680008c4-d898-4202-8102-137cd9256595");
     assert_eq!(json["completion_count"], 1);
 }
 
@@ -230,7 +268,7 @@ async fn typing_completion_returns_incremented_count() {
 async fn typing_completion_returns_not_found() {
     let response = typing_test_router()
         .oneshot(
-            Request::post("/api/v1/typing/missing/completion")
+            Request::post("/api/v1/typing/ffffffff-ffff-4fff-bfff-ffffffffffff/completion")
                 .body(Body::empty())
                 .unwrap(),
         )
@@ -238,6 +276,23 @@ async fn typing_completion_returns_not_found() {
         .unwrap();
 
     assert_eq!(response.status(), StatusCode::NOT_FOUND);
+}
+
+#[tokio::test]
+async fn typing_completion_rejects_invalid_id() {
+    let response = typing_test_router()
+        .oneshot(
+            Request::post("/api/v1/typing/not-a-uuid/completion")
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
+    assert_eq!(json["error"], "invalid typing item ID: not-a-uuid");
 }
 
 #[tokio::test]

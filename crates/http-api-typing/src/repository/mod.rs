@@ -242,7 +242,7 @@ impl TypingRepository for TypingRepositoryStub {
     }
 
     async fn complete_typing(&self, id: String) -> Result<TypingDto, TypingRepositoryError> {
-        if id == "missing" {
+        if id == "ffffffff-ffff-4fff-bfff-ffffffffffff" {
             return Err(TypingRepositoryError::NotFound(id));
         }
 

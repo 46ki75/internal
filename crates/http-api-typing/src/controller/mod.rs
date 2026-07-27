@@ -22,6 +22,7 @@ pub enum TypingControllerError {
 impl IntoResponse for TypingControllerError {
     fn into_response(self) -> axum::response::Response {
         let status = match &self {
+            Self::UseCase(TypingUseCaseError::InvalidId(_)) => StatusCode::BAD_REQUEST,
             Self::UseCase(TypingUseCaseError::NotFound(_)) => StatusCode::NOT_FOUND,
             Self::UseCase(_) => StatusCode::INTERNAL_SERVER_ERROR,
         };
@@ -64,6 +65,7 @@ pub async fn typing_list(
     ),
     responses(
         (status = 200, description = "Upsert typing", body = TypingResponse),
+        (status = 400, description = "Invalid typing item ID"),
         (status = 500, description = "Internal Server Error", body = String)
     )
 )]
@@ -90,6 +92,7 @@ pub async fn upsert_typing(
     ),
     responses(
         (status = 200, description = "Delete typing", body = TypingResponse),
+        (status = 400, description = "Invalid typing item ID"),
         (status = 500, description = "Internal Server Error", body = String)
     )
 )]
@@ -116,6 +119,7 @@ pub async fn delete_typing(
     ),
     responses(
         (status = 200, description = "Record typing completion", body = TypingResponse),
+        (status = 400, description = "Invalid typing item ID"),
         (status = 404, description = "Typing item not found", body = String),
         (status = 500, description = "Internal Server Error", body = String)
     )

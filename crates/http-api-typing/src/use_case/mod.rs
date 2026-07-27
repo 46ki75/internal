@@ -6,8 +6,19 @@ use output::TypingEntity;
 
 #[derive(Debug, thiserror::Error)]
 pub enum TypingUseCaseError {
+    #[error("typing item not found: {0}")]
+    NotFound(String),
     #[error("repository error: {0}")]
-    Repository(#[from] TypingRepositoryError),
+    Repository(TypingRepositoryError),
+}
+
+impl From<TypingRepositoryError> for TypingUseCaseError {
+    fn from(error: TypingRepositoryError) -> Self {
+        match error {
+            TypingRepositoryError::NotFound(id) => Self::NotFound(id),
+            error => Self::Repository(error),
+        }
+    }
 }
 
 pub struct TypingUseCase {
@@ -25,6 +36,7 @@ impl TypingUseCase {
                 id: record.id,
                 text: record.text,
                 description: record.description,
+                completion_count: record.completion_count,
             })
             .collect::<Vec<TypingEntity>>();
 
@@ -48,6 +60,7 @@ impl TypingUseCase {
             id: record.id,
             text: record.text,
             description: record.description,
+            completion_count: record.completion_count,
         })
     }
 
@@ -58,6 +71,18 @@ impl TypingUseCase {
             id: record.id,
             text: record.text,
             description: record.description,
+            completion_count: record.completion_count,
+        })
+    }
+
+    pub async fn complete_typing(&self, id: String) -> Result<TypingEntity, TypingUseCaseError> {
+        let record = self.typing_repository.complete_typing(id).await?;
+
+        Ok(TypingEntity {
+            id: record.id,
+            text: record.text,
+            description: record.description,
+            completion_count: record.completion_count,
         })
     }
 }
@@ -91,6 +116,7 @@ mod tests {
                 id,
                 text,
                 description,
+                completion_count: 0,
             })
         }
 
@@ -102,6 +128,19 @@ mod tests {
                 id,
                 text: String::new(),
                 description: String::new(),
+                completion_count: 0,
+            })
+        }
+
+        async fn complete_typing(
+            &self,
+            id: String,
+        ) -> Result<TypingDto, crate::repository::TypingRepositoryError> {
+            Ok(TypingDto {
+                id,
+                text: "text".to_string(),
+                description: "description".to_string(),
+                completion_count: 4,
             })
         }
     }
@@ -118,6 +157,7 @@ mod tests {
         assert_eq!(list[0].id, "93165a44-43c8-4790-84ad-08de54ec549a");
         assert_eq!(list[0].text, "text");
         assert_eq!(list[0].description, "description");
+        assert_eq!(list[0].completion_count, 2);
     }
 
     #[tokio::test]
@@ -167,5 +207,20 @@ mod tests {
             .unwrap();
 
         assert_eq!(entity.id, "680008c4-d898-4202-8102-137cd9256595");
+    }
+
+    #[tokio::test]
+    async fn complete_typing_maps_updated_count() {
+        let typing_use_case = TypingUseCase {
+            typing_repository: std::sync::Arc::new(EchoIdStub),
+        };
+
+        let entity = typing_use_case
+            .complete_typing("my-id".to_string())
+            .await
+            .unwrap();
+
+        assert_eq!(entity.id, "my-id");
+        assert_eq!(entity.completion_count, 4);
     }
 }

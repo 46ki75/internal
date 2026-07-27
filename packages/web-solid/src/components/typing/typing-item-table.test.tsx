@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import { render } from "@solidjs/testing-library";
+import { render, within } from "@solidjs/testing-library";
 import { createSignal, type ParentProps } from "solid-js";
 import { expect, it, vi } from "vitest";
 
@@ -16,8 +16,18 @@ vi.mock("@elmethis/solid", () => ({
 import { TypingItemTable, type TypingItem } from "./typing-item-table";
 
 const initialItems: TypingItem[] = [
-  { id: "short-words", description: "Short words", text: "cat" },
-  { id: "emoji", description: "Emoji", text: "👍a" },
+  {
+    id: "short-words",
+    description: "Short words",
+    text: "cat",
+    completion_count: 3,
+  },
+  {
+    id: "emoji",
+    description: "Emoji",
+    text: "👍a",
+    completion_count: 7,
+  },
 ];
 
 it("renders typing items and reacts to data changes", async () => {
@@ -27,15 +37,23 @@ it("renders typing items and reacts to data changes", async () => {
   expect(
     result.getByRole("table", { name: "Saved typing exercises" }),
   ).toBeInTheDocument();
-  expect(result.getAllByRole("columnheader")).toHaveLength(3);
+  expect(result.getAllByRole("columnheader")).toHaveLength(4);
   expect(result.getAllByRole("row")).toHaveLength(3);
   expect(result.getByText("short-words")).toBeInTheDocument();
-  expect(result.getByText("Emoji").closest("tr")).toHaveTextContent("2");
+  const emojiRow = result.getByText("Emoji").closest("tr");
+  expect(emojiRow).not.toBeNull();
+  expect(within(emojiRow!).getByText("2")).toBeInTheDocument();
+  expect(within(emojiRow!).getByText("7")).toBeInTheDocument();
   expect(result.getByText("2 items")).toBeInTheDocument();
 
   setItems([
     ...initialItems,
-    { id: "sentence", description: "Sentence", text: "Type this." },
+    {
+      id: "sentence",
+      description: "Sentence",
+      text: "Type this.",
+      completion_count: 0,
+    },
   ]);
   await Promise.resolve();
 

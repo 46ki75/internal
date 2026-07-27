@@ -196,6 +196,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/typing/{id}/completion": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations["complete_typing"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/writing-assessments": {
     parameters: {
       query?: never;
@@ -406,6 +422,8 @@ export interface components {
       id: string;
     };
     TypingResponse: {
+      /** Format: int64 */
+      completion_count: number;
       description: string;
       id: string;
       text: string;
@@ -1061,6 +1079,49 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["TypingResponse"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/plain": string;
+        };
+      };
+    };
+  };
+  complete_typing: {
+    parameters: {
+      query?: never;
+      header: {
+        Authorization: string;
+      };
+      path: {
+        /** @description Typing item ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Record typing completion */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["TypingResponse"];
+        };
+      };
+      /** @description Typing item not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/plain": string;
         };
       };
       /** @description Internal Server Error */

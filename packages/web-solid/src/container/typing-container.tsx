@@ -1,5 +1,5 @@
-import { createMemo, createSignal, Match, Switch } from "solid-js";
-import { createQuery } from "@tanstack/solid-query";
+import { createEffect, createSignal, Match, on, Show, Switch } from "solid-js";
+import { createQuery, useQueryClient } from "@tanstack/solid-query";
 
 import { TypingItemTable } from "~/components/typing/typing-item-table";
 import { Typing } from "~/components/typing/typing";
@@ -7,10 +7,20 @@ import { useAuth } from "~/context/auth-context";
 import { openApiClient } from "~/openapi/client";
 import { queryKeys } from "~/query-client";
 import styles from "./typing-container.module.css";
+import {
+  createTypingQueue,
+  createTypingRepository,
+  type TypingItem,
+} from "./typing-model";
 
 export const TypingContainer = () => {
   const auth = useAuth();
-  const [currentIndex, setCurrentIndex] = createSignal(0);
+  const queryClient = useQueryClient();
+  const repository = createTypingRepository();
+  const queue = createTypingQueue(repository);
+  const [completionError, setCompletionError] = createSignal<string | null>(
+    null,
+  );
 
   const exercisesQuery = createQuery(() => ({
     queryKey: queryKeys.typing,
@@ -38,15 +48,60 @@ export const TypingContainer = () => {
     },
   }));
 
-  const exercises = createMemo(() => exercisesQuery.data ?? []);
-  const currentExercise = createMemo(() => {
-    const items = exercises();
-    return items.length === 0 ? null : items[currentIndex() % items.length];
-  });
+  createEffect(
+    on(
+      () => exercisesQuery.data,
+      (fetchedItems) => {
+        if (!fetchedItems) return;
+
+        repository.replace(fetchedItems);
+        queue.refillIfEmpty();
+      },
+    ),
+  );
 
   const next = () => {
-    const length = exercises().length;
-    if (length > 0) setCurrentIndex((index) => (index + 1) % length);
+    setCompletionError(null);
+    queue.advance();
+  };
+
+  const complete = async (exercise: TypingItem) => {
+    setCompletionError(null);
+    queue.advance(exercise.id);
+
+    try {
+      await auth.refresh();
+      const accessToken = auth.accessToken();
+      if (!accessToken) throw new Error("Access token is not available");
+
+      const { data, error, response } = await openApiClient.POST(
+        "/api/v1/typing/{id}/completion",
+        {
+          params: {
+            header: { Authorization: `Bearer ${accessToken}` },
+            path: { id: exercise.id },
+          },
+        },
+      );
+      if (!data) {
+        throw new Error(
+          `Failed to record typing completion (${response.status}): ${JSON.stringify(error)}`,
+        );
+      }
+
+      repository.update(data);
+      queryClient.setQueryData<TypingItem[]>(queryKeys.typing, (current = []) =>
+        current.map((item) =>
+          item.id === data.id && item.completion_count < data.completion_count
+            ? data
+            : item,
+        ),
+      );
+    } catch (error) {
+      setCompletionError(
+        error instanceof Error ? error.message : String(error),
+      );
+    }
   };
 
   return (
@@ -62,22 +117,29 @@ export const TypingContainer = () => {
             </p>
           )}
         </Match>
-        <Match when={exercisesQuery.isPending}>
+        <Match when={exercisesQuery.isPending || !repository.initialized()}>
           <p class={styles.notice}>Loading typing exercises...</p>
         </Match>
-        <Match when={exercises().length === 0}>
+        <Match when={repository.items().length === 0}>
           <p class={styles.notice}>No typing exercises are available.</p>
         </Match>
-        <Match when={currentExercise()} keyed>
+        <Match when={queue.current()} keyed>
           {(exercise) => (
             <div class={styles.content}>
               <Typing
                 text={exercise.text}
                 description={exercise.description}
-                onComplete={exercises().length > 1 ? next : undefined}
-                onNext={exercises().length > 1 ? next : undefined}
+                onComplete={() => void complete(exercise)}
+                onNext={repository.items().length > 1 ? next : undefined}
               />
-              <TypingItemTable items={exercises()} />
+              <Show when={completionError()} keyed>
+                {(error) => (
+                  <p class={`${styles.notice} ${styles.error}`} role="alert">
+                    {error}
+                  </p>
+                )}
+              </Show>
+              <TypingItemTable items={repository.items()} />
             </div>
           )}
         </Match>

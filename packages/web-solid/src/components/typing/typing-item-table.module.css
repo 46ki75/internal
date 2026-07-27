@@ -17,6 +17,7 @@
 
 .count,
 .glyphs,
+.completionCount,
 .description code {
   font-family: var(--elmethis-font-family-monospace);
   font-variant-numeric: tabular-nums;
@@ -69,8 +70,13 @@
   width: 30%;
 }
 
-.table th:last-child {
+.table th:nth-last-child(2) {
   width: 4.5rem;
+  text-align: right;
+}
+
+.table th:last-child {
+  width: 7rem;
   text-align: right;
 }
 
@@ -104,7 +110,8 @@
   white-space: pre-wrap;
 }
 
-.glyphs {
+.glyphs,
+.completionCount {
   display: block;
   color: var(--elmethis-color-neutral-strong);
   text-align: right;

@@ -11,6 +11,7 @@ import { splitTypingCharacters } from "./create-typing-session";
 import styles from "./typing-item-table.module.css";
 
 export interface TypingItem {
+  completion_count: number;
   description: string;
   id: string;
   text: string;
@@ -42,6 +43,13 @@ const columns: ColumnDef<TypingItem>[] = [
     header: "Glyphs",
     cell: (info) => (
       <span class={styles.glyphs}>{info.getValue<number>()}</span>
+    ),
+  },
+  {
+    accessorKey: "completion_count",
+    header: "Completions",
+    cell: (info) => (
+      <span class={styles.completionCount}>{info.getValue<number>()}</span>
     ),
   },
 ];

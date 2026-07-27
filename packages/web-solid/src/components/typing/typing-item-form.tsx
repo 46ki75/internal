@@ -8,7 +8,7 @@ import {
 } from "solid-js";
 import {
   ElmButton,
-  ElmHeading,
+  ElmInlineText,
   ElmTextArea,
   ElmTextField,
 } from "@elmethis/solid";
@@ -88,9 +88,11 @@ export const TypingItemForm = (props: TypingItemFormProps) => {
   return (
     <section class={styles.section} aria-labelledby={titleId}>
       <header class={styles.header}>
-        <ElmHeading level={2} id={titleId}>
-          {props.item ? "Edit exercise" : "Save an exercise"}
-        </ElmHeading>
+        <h2 id={titleId}>
+          <ElmInlineText>
+            {props.item ? "Edit exercise" : "Save an exercise"}
+          </ElmInlineText>
+        </h2>
         <p>
           {props.item
             ? `Editing ${props.item.id}. Save to replace the existing item.`

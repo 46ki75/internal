@@ -1,9 +1,11 @@
 .typing {
+  height: calc(100dvh - 4.5rem);
   width: min(100%, 50rem);
   box-sizing: border-box;
   padding: 0.5rem;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 1rem;
   color: var(--elmethis-color-neutral);
   font-family: var(--elmethis-font-family-sans);

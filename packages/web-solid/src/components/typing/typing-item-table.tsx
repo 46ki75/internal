@@ -1,5 +1,5 @@
 import { createUniqueId, For, Show } from "solid-js";
-import { ElmHeading, ElmInlineText } from "@elmethis/solid";
+import { ElmInlineText } from "@elmethis/solid";
 import {
   createSolidTable,
   flexRender,
@@ -70,9 +70,9 @@ export const TypingItemTable = (props: TypingItemTableProps) => {
   return (
     <section class={styles.section} aria-labelledby={titleId}>
       <header class={styles.header}>
-        <ElmHeading level={2} id={titleId}>
-          Saved exercises
-        </ElmHeading>
+        <h2 id={titleId}>
+          <ElmInlineText>Saved exercises</ElmInlineText>
+        </h2>
         <ElmInlineText
           class={styles.count}
           size="0.75rem"

@@ -17,6 +17,7 @@ import {
   type TypingItem,
   upsertTypingItem,
 } from "./typing-model";
+import { ElmDotLoadingIcon } from "@elmethis/solid";
 
 export const TypingContainer = () => {
   const auth = useAuth();
@@ -153,7 +154,9 @@ export const TypingContainer = () => {
           )}
         </Match>
         <Match when={exercisesQuery.isPending || !repository.initialized()}>
-          <p class={styles.notice}>Loading typing exercises...</p>
+          <div class={styles.fallback}>
+            <ElmDotLoadingIcon />
+          </div>
         </Match>
         <Match when={repository.initialized()}>
           <div class={styles.content}>

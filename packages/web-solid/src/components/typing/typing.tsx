@@ -6,12 +6,7 @@ import {
   Show,
   type JSX,
 } from "solid-js";
-import {
-  ElmButton,
-  ElmHeading,
-  ElmInlineText,
-  ElmTextArea,
-} from "@elmethis/solid";
+import { ElmButton, ElmInlineText, ElmTextArea } from "@elmethis/solid";
 
 import {
   createTypingSession,
@@ -66,9 +61,9 @@ export const Typing = (props: TypingProps) => {
       aria-labelledby={`${inputId}-title`}
     >
       <header class={styles.header}>
-        <ElmHeading level={1} id={`${inputId}-title`}>
+        <ElmInlineText id={`${inputId}-title`}>
           {props.description || "Untitled exercise"}
-        </ElmHeading>
+        </ElmInlineText>
         <ElmInlineText
           class={styles.length}
           size="0.75rem"

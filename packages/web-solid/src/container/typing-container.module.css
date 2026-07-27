@@ -40,3 +40,11 @@
     padding-inline: 0;
   }
 }
+
+.fallback {
+  width: 100%;
+  height: calc(100dvh - 4.5rem);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -4,6 +4,7 @@ import {
   mdiCreation,
   mdiFaceMan,
   mdiHome,
+  mdiKeyboardOutline,
   mdiLightbulbOnOutline,
   mdiPaletteSwatch,
   mdiTag,
@@ -20,6 +21,7 @@ const links = [
   { d: mdiHome, href: "/", label: "Home" },
   { d: mdiTag, href: "/anki", label: "Anki" },
   { d: mdiLightbulbOnOutline, href: "/trivia", label: "Trivia" },
+  { d: mdiKeyboardOutline, href: "/typing", label: "Typing" },
   { d: mdiPaletteSwatch, href: "/swatch", label: "Swatches" },
   { d: mdiFaceMan, href: "/icon", label: "Icons" },
   {

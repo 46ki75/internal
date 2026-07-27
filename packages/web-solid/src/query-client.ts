@@ -18,6 +18,7 @@ export const queryKeys = {
   todos: ["todos"] as const,
   anki: ["anki"] as const,
   ankiBlock: (pageId: string) => ["anki", "block", pageId] as const,
+  typing: ["typing"] as const,
 };
 
 const shouldPersistQueryRoot = (root: string) => (query: Query) =>

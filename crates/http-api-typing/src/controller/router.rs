@@ -25,6 +25,7 @@ pub fn typing_router(state: Arc<TypingState>) -> (axum::Router, utoipa::openapi:
         .routes(routes!(crate::controller::typing_list))
         .routes(routes!(crate::controller::upsert_typing))
         .routes(routes!(crate::controller::delete_typing))
+        .routes(routes!(crate::controller::complete_typing))
         .with_state(state)
         .split_for_parts()
 }

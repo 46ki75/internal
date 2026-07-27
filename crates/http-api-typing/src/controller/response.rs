@@ -7,6 +7,7 @@ pub struct TypingResponse {
     pub id: String,
     pub text: String,
     pub description: String,
+    pub completion_count: u64,
 }
 
 impl From<TypingEntity> for TypingResponse {
@@ -15,6 +16,7 @@ impl From<TypingEntity> for TypingResponse {
             id: value.id,
             text: value.text,
             description: value.description,
+            completion_count: value.completion_count,
         }
     }
 }

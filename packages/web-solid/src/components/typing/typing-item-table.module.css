@@ -1,0 +1,147 @@
+.section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  color: var(--elmethis-color-neutral);
+  font-family: var(--elmethis-font-family-sans);
+}
+
+.header {
+  padding-inline: 0.5rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.count,
+.glyphs,
+.completionCount,
+.description code {
+  font-family: var(--elmethis-font-family-monospace);
+  font-variant-numeric: tabular-nums;
+}
+
+.frame {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 0.25rem;
+  background-color: var(--elmethis-color-surface-raised);
+  box-shadow: 0 0 0.125rem var(--elmethis-box-shadow-color);
+}
+
+.table {
+  width: 100%;
+  min-width: 42rem;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.table caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--elmethis-color-neutral-weak);
+}
+
+.table th {
+  color: var(--elmethis-color-neutral-weak);
+  background-color: var(--elmethis-color-surface-sunken);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.table th:first-child {
+  width: 30%;
+}
+
+.table th:nth-last-child(2) {
+  width: 4.5rem;
+  text-align: right;
+}
+
+.table th:last-child {
+  width: 7rem;
+  text-align: right;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.table tbody tr:hover td {
+  background-color: var(--elmethis-color-surface-sunken);
+}
+
+.table tbody tr.interactive {
+  cursor: pointer;
+}
+
+.table tbody tr.interactive:focus-visible {
+  outline: 2px solid var(--elmethis-color-primary);
+  outline-offset: -2px;
+}
+
+.table tbody tr.selected td {
+  background-color: oklch(from #937f69 l c h / 0.15);
+}
+
+.description {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  color: var(--elmethis-color-neutral-strong);
+}
+
+.description code {
+  color: var(--elmethis-color-neutral-weak);
+  font-size: 0.6875rem;
+  overflow-wrap: anywhere;
+}
+
+.text {
+  display: block;
+  color: var(--elmethis-color-neutral);
+  font-family: var(--elmethis-font-family-monospace);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.glyphs,
+.completionCount {
+  display: block;
+  color: var(--elmethis-color-neutral-strong);
+  text-align: right;
+}
+
+.empty {
+  padding-block: 2rem;
+  color: var(--elmethis-color-neutral-weak);
+  text-align: center !important;
+}
+
+@media (max-width: 36rem) {
+  .header {
+    padding-inline: 0.75rem;
+  }
+
+  .frame {
+    border-radius: 0;
+  }
+}

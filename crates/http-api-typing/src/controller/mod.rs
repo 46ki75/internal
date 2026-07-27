@@ -3,7 +3,11 @@ pub mod response;
 pub mod router;
 
 use self::response::TypingResponse;
-use axum::{Json, extract::State, response::IntoResponse};
+use axum::{
+    Json,
+    extract::{Path, State},
+    response::IntoResponse,
+};
 use http::StatusCode;
 use std::sync::Arc;
 
@@ -18,6 +22,8 @@ pub enum TypingControllerError {
 impl IntoResponse for TypingControllerError {
     fn into_response(self) -> axum::response::Response {
         let status = match &self {
+            Self::UseCase(TypingUseCaseError::InvalidId(_)) => StatusCode::BAD_REQUEST,
+            Self::UseCase(TypingUseCaseError::NotFound(_)) => StatusCode::NOT_FOUND,
             Self::UseCase(_) => StatusCode::INTERNAL_SERVER_ERROR,
         };
         http_api_core::error::render_error_response(status, &self)
@@ -59,6 +65,7 @@ pub async fn typing_list(
     ),
     responses(
         (status = 200, description = "Upsert typing", body = TypingResponse),
+        (status = 400, description = "Invalid typing item ID"),
         (status = 500, description = "Internal Server Error", body = String)
     )
 )]
@@ -85,6 +92,7 @@ pub async fn upsert_typing(
     ),
     responses(
         (status = 200, description = "Delete typing", body = TypingResponse),
+        (status = 400, description = "Invalid typing item ID"),
         (status = 500, description = "Internal Server Error", body = String)
     )
 )]
@@ -96,6 +104,33 @@ pub async fn delete_typing(
 
     let result = typing_use_case
         .delete_typing(request.id)
+        .await
+        .map(TypingResponse::from)?;
+
+    Ok(Json(result))
+}
+
+#[utoipa::path(
+    post,
+    path = "/api/v1/typing/{id}/completion",
+    params(
+        ("id" = String, Path, description = "Typing item ID"),
+        ("Authorization" = String, Header),
+    ),
+    responses(
+        (status = 200, description = "Record typing completion", body = TypingResponse),
+        (status = 400, description = "Invalid typing item ID"),
+        (status = 404, description = "Typing item not found", body = String),
+        (status = 500, description = "Internal Server Error", body = String)
+    )
+)]
+pub async fn complete_typing(
+    State(state): State<Arc<crate::controller::router::TypingState>>,
+    Path(id): Path<String>,
+) -> Result<Json<TypingResponse>, TypingControllerError> {
+    let result = state
+        .typing_use_case
+        .complete_typing(id)
         .await
         .map(TypingResponse::from)?;
 

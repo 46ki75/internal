@@ -1,6 +1,7 @@
 import { createMemo, createSignal, Match, Switch } from "solid-js";
 import { createQuery } from "@tanstack/solid-query";
 
+import { TypingItemTable } from "~/components/typing/typing-item-table";
 import { Typing } from "~/components/typing/typing";
 import { useAuth } from "~/context/auth-context";
 import { openApiClient } from "~/openapi/client";
@@ -69,12 +70,15 @@ export const TypingContainer = () => {
         </Match>
         <Match when={currentExercise()} keyed>
           {(exercise) => (
-            <Typing
-              text={exercise.text}
-              description={exercise.description}
-              onComplete={exercises().length > 1 ? next : undefined}
-              onNext={exercises().length > 1 ? next : undefined}
-            />
+            <div class={styles.content}>
+              <Typing
+                text={exercise.text}
+                description={exercise.description}
+                onComplete={exercises().length > 1 ? next : undefined}
+                onNext={exercises().length > 1 ? next : undefined}
+              />
+              <TypingItemTable items={exercises()} />
+            </div>
           )}
         </Match>
       </Switch>

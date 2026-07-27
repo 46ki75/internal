@@ -31,6 +31,14 @@ pub trait TypingRepository {
 
 pub struct TypingRepositoryImpl {}
 
+fn append_typing_page(
+    items: &mut Vec<TypingDto>,
+    page: aws_sdk_dynamodb::operation::query::QueryOutput,
+) -> Result<(), TypingRepositoryError> {
+    items.extend(TypingRecords::try_from(page)?.0);
+    Ok(())
+}
+
 #[async_trait::async_trait]
 impl TypingRepository for TypingRepositoryImpl {
     async fn typing_list(&self) -> Result<Vec<TypingDto>, TypingRepositoryError> {
@@ -50,12 +58,13 @@ impl TypingRepository for TypingRepositoryImpl {
             );
 
         tracing::debug!("Sending request to DynamoDB: typing_list");
-        let response = request
-            .send()
-            .await
-            .map_err(|e| TypingRepositoryError::DynamoDb(e.to_string()))?;
+        let mut pages = request.into_paginator().send();
+        let mut items = Vec::new();
 
-        let items = TypingRecords::try_from(response)?.0;
+        while let Some(page) = pages.next().await {
+            let page = page.map_err(|e| TypingRepositoryError::DynamoDb(e.to_string()))?;
+            append_typing_page(&mut items, page)?;
+        }
 
         Ok(items)
     }
@@ -176,5 +185,41 @@ impl TypingRepository for TypingRepositoryStub {
             text: "text".to_string(),
             description: "description".to_string(),
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use aws_sdk_dynamodb::{operation::query::QueryOutput, types::AttributeValue};
+    use std::collections::HashMap;
+
+    fn page(id: &str) -> QueryOutput {
+        QueryOutput::builder()
+            .items(HashMap::from([
+                ("SK".to_string(), AttributeValue::S(id.to_string())),
+                ("text".to_string(), AttributeValue::S(format!("text-{id}"))),
+                (
+                    "description".to_string(),
+                    AttributeValue::S(format!("description-{id}")),
+                ),
+            ]))
+            .build()
+    }
+
+    #[test]
+    fn appends_records_from_each_query_page() {
+        let mut records = Vec::new();
+
+        append_typing_page(&mut records, page("first")).unwrap();
+        append_typing_page(&mut records, page("second")).unwrap();
+
+        assert_eq!(
+            records
+                .into_iter()
+                .map(|record| record.id)
+                .collect::<Vec<_>>(),
+            ["first", "second"]
+        );
     }
 }

@@ -4,6 +4,7 @@ import {
   createTypingQueue,
   createTypingRepository,
   type TypingItem,
+  upsertTypingItem,
 } from "./typing-model";
 
 const typingItem = (id: string, completionCount: number): TypingItem => ({
@@ -72,5 +73,37 @@ describe("typing repository and queue", () => {
     repository.update(typingItem("first", 1));
 
     expect(repository.items()[0].completion_count).toBe(2);
+  });
+
+  it("inserts and replaces saved items without reducing completion counts", () => {
+    const initial = [typingItem("first", 3)];
+
+    const inserted = upsertTypingItem(initial, typingItem("second", 0));
+    const replaced = upsertTypingItem(inserted, {
+      ...typingItem("first", 1),
+      description: "Updated exercise",
+    });
+
+    expect(replaced).toEqual([
+      {
+        ...typingItem("first", 3),
+        description: "Updated exercise",
+      },
+      typingItem("second", 0),
+    ]);
+  });
+
+  it("reconciles saved changes into an item still in the queue", () => {
+    const repository = createTypingRepository();
+    const queue = createTypingQueue(repository);
+
+    repository.replace([typingItem("first", 2), typingItem("second", 3)]);
+    queue.refillIfEmpty();
+    queue.reconcile({
+      ...typingItem("first", 2),
+      text: "Updated practice text",
+    });
+
+    expect(queue.current()?.text).toBe("Updated practice text");
   });
 });

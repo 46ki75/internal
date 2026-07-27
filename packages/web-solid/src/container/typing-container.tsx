@@ -2,6 +2,10 @@ import { createEffect, createSignal, Match, on, Show, Switch } from "solid-js";
 import { createQuery, useQueryClient } from "@tanstack/solid-query";
 
 import { TypingItemTable } from "~/components/typing/typing-item-table";
+import {
+  TypingItemForm,
+  type TypingItemInput,
+} from "~/components/typing/typing-item-form";
 import { Typing } from "~/components/typing/typing";
 import { useAuth } from "~/context/auth-context";
 import { openApiClient } from "~/openapi/client";
@@ -11,6 +15,7 @@ import {
   createTypingQueue,
   createTypingRepository,
   type TypingItem,
+  upsertTypingItem,
 } from "./typing-model";
 
 export const TypingContainer = () => {
@@ -104,6 +109,34 @@ export const TypingContainer = () => {
     }
   };
 
+  const saveExercise = async (input: TypingItemInput) => {
+    await auth.refresh();
+    const accessToken = auth.accessToken();
+    if (!accessToken) throw new Error("Access token is not available");
+
+    const { data, error, response } = await openApiClient.POST(
+      "/api/v1/typing",
+      {
+        params: {
+          header: { Authorization: `Bearer ${accessToken}` },
+        },
+        body: input,
+      },
+    );
+    if (!data) {
+      throw new Error(
+        `Failed to save typing exercise (${response.status}): ${JSON.stringify(error)}`,
+      );
+    }
+
+    repository.upsert(data);
+    queue.reconcile(data);
+    queue.refillIfEmpty();
+    queryClient.setQueryData<TypingItem[]>(queryKeys.typing, (current = []) =>
+      upsertTypingItem(current, data),
+    );
+  };
+
   return (
     <div class={styles.container}>
       <Switch>
@@ -120,28 +153,39 @@ export const TypingContainer = () => {
         <Match when={exercisesQuery.isPending || !repository.initialized()}>
           <p class={styles.notice}>Loading typing exercises...</p>
         </Match>
-        <Match when={repository.items().length === 0}>
-          <p class={styles.notice}>No typing exercises are available.</p>
-        </Match>
-        <Match when={queue.current()} keyed>
-          {(exercise) => (
-            <div class={styles.content}>
-              <Typing
-                text={exercise.text}
-                description={exercise.description}
-                onComplete={() => void complete(exercise)}
-                onNext={repository.items().length > 1 ? next : undefined}
-              />
-              <Show when={completionError()} keyed>
-                {(error) => (
-                  <p class={`${styles.notice} ${styles.error}`} role="alert">
-                    {error}
-                  </p>
-                )}
-              </Show>
-              <TypingItemTable items={repository.items()} />
-            </div>
-          )}
+        <Match when={repository.initialized()}>
+          <div class={styles.content}>
+            <Show
+              when={queue.current()}
+              keyed
+              fallback={
+                <p class={styles.notice}>No typing exercises are available.</p>
+              }
+            >
+              {(exercise) => (
+                <>
+                  <Typing
+                    text={exercise.text}
+                    description={exercise.description}
+                    onComplete={() => void complete(exercise)}
+                    onNext={repository.items().length > 1 ? next : undefined}
+                  />
+                  <Show when={completionError()} keyed>
+                    {(error) => (
+                      <p
+                        class={`${styles.notice} ${styles.error}`}
+                        role="alert"
+                      >
+                        {error}
+                      </p>
+                    )}
+                  </Show>
+                </>
+              )}
+            </Show>
+            <TypingItemForm submit={saveExercise} />
+            <TypingItemTable items={repository.items()} />
+          </div>
         </Match>
       </Switch>
     </div>

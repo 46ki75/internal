@@ -9,8 +9,29 @@ export interface TypingRepository {
   initialized: Accessor<boolean>;
   items: Accessor<TypingItem[]>;
   replace: (items: TypingItem[]) => void;
+  upsert: (item: TypingItem) => void;
   update: (item: TypingItem) => void;
 }
+
+export const upsertTypingItem = (
+  items: TypingItem[],
+  updatedItem: TypingItem,
+): TypingItem[] => {
+  const existingItem = items.find((item) => item.id === updatedItem.id);
+  if (!existingItem) return [...items, { ...updatedItem }];
+
+  return items.map((item) =>
+    item.id === updatedItem.id
+      ? {
+          ...updatedItem,
+          completion_count: Math.max(
+            item.completion_count,
+            updatedItem.completion_count,
+          ),
+        }
+      : item,
+  );
+};
 
 export const createTypingRepository = (): TypingRepository => {
   const [items, setItems] = createSignal<TypingItem[]>([]);
@@ -24,6 +45,9 @@ export const createTypingRepository = (): TypingRepository => {
     replace: (nextItems) => {
       setItems(nextItems.map((item) => ({ ...item })));
       setInitialized(true);
+    },
+    upsert: (updatedItem) => {
+      setItems((current) => upsertTypingItem(current, updatedItem));
     },
     update: (updatedItem) => {
       setItems((current) =>
@@ -59,10 +83,19 @@ export const createTypingQueue = (repository: TypingRepository) => {
     });
   };
 
+  const reconcile = (updatedItem: TypingItem) => {
+    setItems((current) =>
+      current.some((item) => item.id === updatedItem.id)
+        ? upsertTypingItem(current, updatedItem)
+        : current,
+    );
+  };
+
   return {
     advance,
     current: () => items()[0] ?? null,
     items,
+    reconcile,
     refillIfEmpty,
   };
 };

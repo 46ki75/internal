@@ -1,4 +1,11 @@
-import { createEffect, createUniqueId, on, Show, type JSX } from "solid-js";
+import {
+  createEffect,
+  createUniqueId,
+  on,
+  onMount,
+  Show,
+  type JSX,
+} from "solid-js";
 import {
   ElmButton,
   ElmHeading,
@@ -33,6 +40,8 @@ export const Typing = (props: TypingProps) => {
     text: () => props.text,
     onComplete: (result) => props.onComplete?.(result),
   });
+
+  onMount(() => inputRef.focus());
 
   const reset = () => {
     session.reset();

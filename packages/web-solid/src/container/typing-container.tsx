@@ -72,6 +72,7 @@ export const TypingContainer = () => {
             <Typing
               text={exercise.text}
               description={exercise.description}
+              onComplete={exercises().length > 1 ? next : undefined}
               onNext={exercises().length > 1 ? next : undefined}
             />
           )}

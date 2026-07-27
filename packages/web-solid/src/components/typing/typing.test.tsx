@@ -2,7 +2,7 @@
 
 import { render } from "@solidjs/testing-library";
 import userEvent from "@testing-library/user-event";
-import type { JSX, ParentProps } from "solid-js";
+import { createSignal, Show, type JSX, type ParentProps } from "solid-js";
 import { expect, it, vi } from "vitest";
 
 vi.mock("@elmethis/solid", () => ({
@@ -103,4 +103,39 @@ it("uses graphemes consistently without a UTF-16 input limit", async () => {
   await user.type(input, "x");
 
   expect(input).toHaveValue("👍a");
+});
+
+it("supports uninterrupted automatic advancement", async () => {
+  const user = userEvent.setup();
+  const exercises = [
+    { description: "First exercise", text: "cat" },
+    { description: "Second exercise", text: "dog" },
+  ];
+
+  const Sequence = () => {
+    const [currentIndex, setCurrentIndex] = createSignal(0);
+    const currentExercise = () => exercises[currentIndex()];
+
+    return (
+      <Show when={currentExercise()} keyed>
+        {(exercise) => (
+          <Typing
+            text={exercise.text}
+            description={exercise.description}
+            onComplete={() => setCurrentIndex((index) => index + 1)}
+          />
+        )}
+      </Show>
+    );
+  };
+
+  const result = render(() => <Sequence />);
+
+  await user.type(result.getByRole("textbox", { name: "Your typing" }), "cat");
+
+  expect(
+    result.getByRole("heading", { name: "Second exercise" }),
+  ).toBeInTheDocument();
+  expect(result.getByRole("textbox", { name: "Your typing" })).toHaveValue("");
+  expect(result.getByRole("textbox", { name: "Your typing" })).toHaveFocus();
 });

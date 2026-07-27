@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 
 import { render, within } from "@solidjs/testing-library";
+import userEvent from "@testing-library/user-event";
 import { createSignal, type ParentProps } from "solid-js";
 import { expect, it, vi } from "vitest";
 
@@ -31,8 +32,12 @@ const initialItems: TypingItem[] = [
 ];
 
 it("renders typing items and reacts to data changes", async () => {
+  const user = userEvent.setup();
+  const onSelect = vi.fn();
   const [items, setItems] = createSignal(initialItems);
-  const result = render(() => <TypingItemTable items={items()} />);
+  const result = render(() => (
+    <TypingItemTable items={items()} selectedId="emoji" onSelect={onSelect} />
+  ));
 
   expect(
     result.getByRole("table", { name: "Saved typing exercises" }),
@@ -44,7 +49,15 @@ it("renders typing items and reacts to data changes", async () => {
   expect(emojiRow).not.toBeNull();
   expect(within(emojiRow!).getByText("2")).toBeInTheDocument();
   expect(within(emojiRow!).getByText("7")).toBeInTheDocument();
+  expect(emojiRow).toHaveAttribute("aria-selected", "true");
   expect(result.getByText("2 items")).toBeInTheDocument();
+
+  await user.click(emojiRow!);
+  expect(onSelect).toHaveBeenLastCalledWith(initialItems[1]);
+
+  emojiRow!.focus();
+  await user.keyboard("{Enter}");
+  expect(onSelect).toHaveBeenCalledTimes(2);
 
   setItems([
     ...initialItems,

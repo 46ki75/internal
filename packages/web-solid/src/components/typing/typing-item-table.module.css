@@ -88,6 +88,19 @@
   background-color: var(--elmethis-color-surface-sunken);
 }
 
+.table tbody tr.interactive {
+  cursor: pointer;
+}
+
+.table tbody tr.interactive:focus-visible {
+  outline: 2px solid var(--elmethis-color-primary);
+  outline-offset: -2px;
+}
+
+.table tbody tr.selected td {
+  background-color: oklch(from #937f69 l c h / 0.15);
+}
+
 .description {
   display: flex;
   flex-direction: column;

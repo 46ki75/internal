@@ -2,7 +2,7 @@
 
 import { render, waitFor } from "@solidjs/testing-library";
 import userEvent from "@testing-library/user-event";
-import type { JSX, ParentProps } from "solid-js";
+import { createSignal, type JSX, type ParentProps } from "solid-js";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@elmethis/solid", () => ({
@@ -11,7 +11,14 @@ vi.mock("@elmethis/solid", () => ({
       JSX.ButtonHTMLAttributes<HTMLButtonElement> & { isLoading?: boolean }
     >,
   ) => (
-    <button type={props.type} disabled={props.disabled}>
+    <button
+      type={props.type}
+      disabled={props.disabled}
+      onClick={(event) => {
+        if (typeof props.onClick === "function") props.onClick(event);
+        else if (props.onClick) props.onClick[0](props.onClick[1], event);
+      }}
+    >
       {props.children}
     </button>
   ),
@@ -127,5 +134,48 @@ describe("TypingItemForm", () => {
     expect(result.getByRole("textbox", { name: "Practice text" })).toHaveValue(
       "Keep this",
     );
+  });
+
+  it("loads a selected item and clears it when editing is cancelled", async () => {
+    const user = userEvent.setup();
+    const submit = vi.fn().mockResolvedValue(undefined);
+    const [item, setItem] = createSignal<
+      { id: string; description: string; text: string } | undefined
+    >();
+    const result = render(() => (
+      <TypingItemForm
+        item={item()}
+        onCancel={() => setItem(undefined)}
+        submit={submit}
+      />
+    ));
+
+    setItem({
+      id: "short-words",
+      description: "Short words",
+      text: "cat dog",
+    });
+
+    await waitFor(() =>
+      expect(
+        result.getByRole("textbox", { name: "ID (optional)" }),
+      ).toHaveValue("short-words"),
+    );
+    expect(result.getByRole("textbox", { name: "Description" })).toHaveValue(
+      "Short words",
+    );
+    expect(result.getByRole("textbox", { name: "Practice text" })).toHaveValue(
+      "cat dog",
+    );
+    expect(result.getByRole("button", { name: "Save changes" })).toBeEnabled();
+
+    await user.click(result.getByRole("button", { name: "Cancel edit" }));
+
+    expect(result.getByRole("textbox", { name: "ID (optional)" })).toHaveValue(
+      "",
+    );
+    expect(
+      result.getByRole("button", { name: "Save exercise" }),
+    ).toBeDisabled();
   });
 });

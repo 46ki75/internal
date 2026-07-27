@@ -1,4 +1,11 @@
-import { createSignal, createUniqueId, Show, type JSX } from "solid-js";
+import {
+  createEffect,
+  createSignal,
+  createUniqueId,
+  on,
+  Show,
+  type JSX,
+} from "solid-js";
 import {
   ElmButton,
   ElmHeading,
@@ -16,6 +23,8 @@ export interface TypingItemInput {
 }
 
 export interface TypingItemFormProps {
+  item?: TypingItemInput;
+  onCancel?: () => void;
   submit: (input: TypingItemInput) => Promise<void>;
 }
 
@@ -24,15 +33,13 @@ const required =
   ({ value }: { value: string }) =>
     value.trim() === "" ? `${label} is required` : undefined;
 
+const emptyValues = () => ({ id: "", description: "", text: "" });
+
 export const TypingItemForm = (props: TypingItemFormProps) => {
   const titleId = createUniqueId();
   const [submissionError, setSubmissionError] = createSignal<string>();
   const form = createForm(() => ({
-    defaultValues: {
-      id: "",
-      description: "",
-      text: "",
-    },
+    defaultValues: emptyValues(),
     onSubmit: async ({ value }) => {
       setSubmissionError(undefined);
 
@@ -43,7 +50,7 @@ export const TypingItemForm = (props: TypingItemFormProps) => {
           description: value.description.trim(),
           text: value.text,
         });
-        form.reset();
+        form.reset(emptyValues());
       } catch (cause) {
         setSubmissionError(
           cause instanceof Error ? cause.message : String(cause),
@@ -51,6 +58,24 @@ export const TypingItemForm = (props: TypingItemFormProps) => {
       }
     },
   }));
+
+  createEffect(
+    on(
+      () => props.item,
+      (item) => {
+        setSubmissionError(undefined);
+        form.reset(
+          item
+            ? {
+                id: item.id ?? "",
+                description: item.description,
+                text: item.text,
+              }
+            : emptyValues(),
+        );
+      },
+    ),
+  );
 
   const handleSubmit: JSX.EventHandler<HTMLFormElement, SubmitEvent> = (
     event,
@@ -64,10 +89,12 @@ export const TypingItemForm = (props: TypingItemFormProps) => {
     <section class={styles.section} aria-labelledby={titleId}>
       <header class={styles.header}>
         <ElmHeading level={2} id={titleId}>
-          Save an exercise
+          {props.item ? "Edit exercise" : "Save an exercise"}
         </ElmHeading>
         <p>
-          Leave the ID empty to create an item, or provide one to replace it.
+          {props.item
+            ? `Editing ${props.item.id}. Save to replace the existing item.`
+            : "Leave the ID empty to create an item, or provide one to replace it."}
         </p>
       </header>
 
@@ -165,6 +192,13 @@ export const TypingItemForm = (props: TypingItemFormProps) => {
               </p>
             )}
           </Show>
+          <Show when={props.item && props.onCancel} keyed>
+            {(onCancel) => (
+              <ElmButton type="button" onClick={onCancel}>
+                Cancel edit
+              </ElmButton>
+            )}
+          </Show>
           <form.Subscribe
             selector={(state) => ({
               canSubmit: state.canSubmit,
@@ -183,7 +217,7 @@ export const TypingItemForm = (props: TypingItemFormProps) => {
                   state().text.trim() === ""
                 }
               >
-                Save exercise
+                {props.item ? "Save changes" : "Save exercise"}
               </ElmButton>
             )}
           />

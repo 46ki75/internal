@@ -23,6 +23,7 @@ export const TypingContainer = () => {
   const queryClient = useQueryClient();
   const repository = createTypingRepository();
   const queue = createTypingQueue(repository);
+  const [selectedExercise, setSelectedExercise] = createSignal<TypingItem>();
   const [completionError, setCompletionError] = createSignal<string | null>(
     null,
   );
@@ -135,6 +136,7 @@ export const TypingContainer = () => {
     queryClient.setQueryData<TypingItem[]>(queryKeys.typing, (current = []) =>
       upsertTypingItem(current, data),
     );
+    setSelectedExercise(undefined);
   };
 
   return (
@@ -183,8 +185,16 @@ export const TypingContainer = () => {
                 </>
               )}
             </Show>
-            <TypingItemForm submit={saveExercise} />
-            <TypingItemTable items={repository.items()} />
+            <TypingItemForm
+              item={selectedExercise()}
+              onCancel={() => setSelectedExercise(undefined)}
+              submit={saveExercise}
+            />
+            <TypingItemTable
+              items={repository.items()}
+              selectedId={selectedExercise()?.id}
+              onSelect={setSelectedExercise}
+            />
           </div>
         </Match>
       </Switch>

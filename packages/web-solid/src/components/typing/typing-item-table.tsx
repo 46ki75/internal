@@ -19,6 +19,8 @@ export interface TypingItem {
 
 export interface TypingItemTableProps {
   items: TypingItem[];
+  onSelect?: (item: TypingItem) => void;
+  selectedId?: string;
 }
 
 const columns: ColumnDef<TypingItem>[] = [
@@ -115,20 +117,45 @@ export const TypingItemTable = (props: TypingItemTableProps) => {
               }
             >
               <For each={table.getRowModel().rows}>
-                {(row) => (
-                  <tr>
-                    <For each={row.getVisibleCells()}>
-                      {(cell) => (
-                        <td>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </td>
-                      )}
-                    </For>
-                  </tr>
-                )}
+                {(row) => {
+                  const select = () => props.onSelect?.(row.original);
+
+                  return (
+                    <tr
+                      classList={{
+                        [styles.interactive]: Boolean(props.onSelect),
+                        [styles.selected]: props.selectedId === row.original.id,
+                      }}
+                      tabIndex={props.onSelect ? 0 : undefined}
+                      aria-selected={
+                        props.onSelect
+                          ? props.selectedId === row.original.id
+                          : undefined
+                      }
+                      onClick={select}
+                      onKeyDown={(event) => {
+                        if (
+                          props.onSelect &&
+                          (event.key === "Enter" || event.key === " ")
+                        ) {
+                          event.preventDefault();
+                          select();
+                        }
+                      }}
+                    >
+                      <For each={row.getVisibleCells()}>
+                        {(cell) => (
+                          <td>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </td>
+                        )}
+                      </For>
+                    </tr>
+                  );
+                }}
               </For>
             </Show>
           </tbody>

@@ -32,6 +32,7 @@ resource "aws_iam_policy" "lambda_policy_http_api" {
           "dynamodb:Query",
           "dynamodb:GetItem",
           "dynamodb:PutItem",
+          "dynamodb:UpdateItem",
           "dynamodb:DeleteItem",
           "ssm:GetParameter",
           "ssm:GetParameters",

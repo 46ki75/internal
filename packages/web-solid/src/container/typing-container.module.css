@@ -4,7 +4,7 @@
   width: 100%;
   min-height: calc(100vh - 5rem);
   box-sizing: border-box;
-  padding: clamp(0.5rem, 4vw, 2.5rem) 0.5rem 6rem;
+  padding: 1rem 0.5rem 6rem;
 }
 
 .notice {
@@ -13,15 +13,17 @@
   box-sizing: border-box;
   margin: 0;
   padding: 1rem;
-  color: light-dark(#526074, #b0bac9);
-  border-left: 0.25rem solid light-dark(#176b87, #73c8e0);
-  background: var(--elmethis-color-surface-raised);
-  font-family: "Fira Sans", sans-serif;
+  color: var(--elmethis-color-neutral);
+  border-left: 0.25rem solid var(--elmethis-color-primary);
+  border-radius: 0.25rem;
+  background-color: var(--elmethis-color-surface-raised);
+  box-shadow: 0 0 0.125rem var(--elmethis-box-shadow-color);
 }
 
 .error {
-  color: light-dark(#9f3047, #ff91a1);
-  border-left-color: currentColor;
+  color: var(--elmethis-color-accent-error);
+  border-left-color: var(--elmethis-color-accent-error);
+  background-color: var(--elmethis-color-accent-error-surface);
 }
 
 @media (max-width: 36rem) {

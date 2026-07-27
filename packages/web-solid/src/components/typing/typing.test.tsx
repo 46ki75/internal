@@ -2,7 +2,52 @@
 
 import { render } from "@solidjs/testing-library";
 import userEvent from "@testing-library/user-event";
+import type { JSX, ParentProps } from "solid-js";
 import { expect, it, vi } from "vitest";
+
+vi.mock("@elmethis/solid", () => ({
+  ElmButton: (
+    props: ParentProps<{
+      onClick?: JSX.EventHandler<HTMLButtonElement, MouseEvent>;
+      primary?: boolean;
+      type?: "button" | "submit" | "reset";
+    }>,
+  ) => (
+    <button type={props.type} onClick={(event) => props.onClick?.(event)}>
+      {props.children}
+    </button>
+  ),
+  ElmHeading: (props: ParentProps<{ id?: string; level: number }>) => (
+    <h1 id={props.id}>{props.children}</h1>
+  ),
+  ElmInlineText: (
+    props: ParentProps<{ class?: string; color?: string; size?: string }>,
+  ) => <span class={props.class}>{props.children}</span>,
+  ElmTextArea: (
+    props: JSX.TextareaHTMLAttributes<HTMLTextAreaElement> & {
+      label: string;
+      ref?: (element: HTMLTextAreaElement) => void;
+    },
+  ) => (
+    <label>
+      {props.label}
+      <textarea
+        ref={props.ref}
+        id={props.id}
+        rows={props.rows}
+        aria-label={props["aria-label"]}
+        aria-describedby={props["aria-describedby"]}
+        autocomplete={props.autocomplete}
+        autocapitalize={props.autocapitalize}
+        spellcheck={props.spellcheck}
+        onInput={(event) => {
+          if (typeof props.onInput === "function") props.onInput(event);
+          else if (props.onInput) props.onInput[0](props.onInput[1], event);
+        }}
+      />
+    </label>
+  ),
+}));
 
 import { Typing } from "./typing";
 

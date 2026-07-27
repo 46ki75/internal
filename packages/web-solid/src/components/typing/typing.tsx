@@ -1,4 +1,10 @@
-import { createUniqueId, Show, type JSX } from "solid-js";
+import { createEffect, createUniqueId, on, Show, type JSX } from "solid-js";
+import {
+  ElmButton,
+  ElmHeading,
+  ElmInlineText,
+  ElmTextArea,
+} from "@elmethis/solid";
 
 import {
   createTypingSession,
@@ -30,8 +36,19 @@ export const Typing = (props: TypingProps) => {
 
   const reset = () => {
     session.reset();
+    inputRef.value = "";
     inputRef.focus();
   };
+
+  createEffect(
+    on(
+      () => props.text,
+      () => {
+        inputRef.value = "";
+      },
+      { defer: true },
+    ),
+  );
 
   return (
     <section
@@ -40,15 +57,16 @@ export const Typing = (props: TypingProps) => {
       aria-labelledby={`${inputId}-title`}
     >
       <header class={styles.header}>
-        <div>
-          <p class={styles.eyebrow}>Typing desk</p>
-          <h1 id={`${inputId}-title`}>
-            {props.description || "Untitled exercise"}
-          </h1>
-        </div>
-        <span class={styles.length}>
+        <ElmHeading level={1} id={`${inputId}-title`}>
+          {props.description || "Untitled exercise"}
+        </ElmHeading>
+        <ElmInlineText
+          class={styles.length}
+          size="0.75rem"
+          color="var(--elmethis-color-neutral-weak)"
+        >
           {splitTypingCharacters(props.text).length} glyphs
-        </span>
+        </ElmInlineText>
       </header>
 
       <TypingPrompt characters={session.characters()} />
@@ -59,26 +77,24 @@ export const Typing = (props: TypingProps) => {
         wordsPerMinute={session.wordsPerMinute()}
       />
 
-      <div class={styles.entry}>
-        <label for={inputId}>Your typing</label>
-        <p id={instructionsId}>
-          Mistakes stay visible. Finish the line, then reset or move on.
-        </p>
-        <textarea
-          ref={inputRef}
-          id={inputId}
-          rows={3}
-          value={session.value()}
-          aria-describedby={instructionsId}
-          autocomplete="off"
-          autocapitalize="off"
-          spellcheck={false}
-          onInput={(event) => {
-            session.setValue(event.currentTarget.value);
-            event.currentTarget.value = session.value();
-          }}
-        />
-      </div>
+      <p id={instructionsId} class={styles.instructions}>
+        Correct each mistake to finish the exercise.
+      </p>
+      <ElmTextArea
+        ref={(element) => (inputRef = element)}
+        id={inputId}
+        label="Your typing"
+        aria-label="Your typing"
+        aria-describedby={instructionsId}
+        rows={3}
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck={false}
+        onInput={(event) => {
+          session.setValue(event.currentTarget.value);
+          event.currentTarget.value = session.value();
+        }}
+      />
 
       <Show when={session.status() === "complete"}>
         <p class={styles.complete} role="status">
@@ -88,14 +104,14 @@ export const Typing = (props: TypingProps) => {
       </Show>
 
       <div class={styles.controls}>
-        <button type="button" class={styles.secondary} onClick={reset}>
+        <ElmButton type="button" onClick={reset}>
           Reset line
-        </button>
+        </ElmButton>
         <Show when={props.onNext} keyed>
           {(onNext) => (
-            <button type="button" class={styles.primary} onClick={onNext}>
+            <ElmButton type="button" primary onClick={onNext}>
               Next exercise
-            </button>
+            </ElmButton>
           )}
         </Show>
       </div>

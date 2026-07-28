@@ -61,9 +61,11 @@ export const Typing = (props: TypingProps) => {
       aria-labelledby={`${inputId}-title`}
     >
       <header class={styles.header}>
-        <ElmInlineText id={`${inputId}-title`}>
-          {props.description || "Untitled exercise"}
-        </ElmInlineText>
+        <h1 id={`${inputId}-title`}>
+          <ElmInlineText>
+            {props.description || "Untitled exercise"}
+          </ElmInlineText>
+        </h1>
         <ElmInlineText
           class={styles.length}
           size="0.75rem"

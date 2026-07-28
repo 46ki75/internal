@@ -22,9 +22,7 @@ vi.mock("@elmethis/solid", () => ({
       {props.children}
     </button>
   ),
-  ElmHeading: (props: ParentProps<{ id?: string; level: number }>) => (
-    <h2 id={props.id}>{props.children}</h2>
-  ),
+  ElmInlineText: (props: ParentProps) => <span>{props.children}</span>,
   ElmTextArea: (
     props: JSX.TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string },
   ) => (

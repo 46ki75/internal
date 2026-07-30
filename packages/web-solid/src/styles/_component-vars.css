@@ -1,0 +1,4 @@
+/* Stylelint allowlist for custom properties supplied by component props. */
+:root {
+  --color: initial;
+}

@@ -1,0 +1,66 @@
+{
+  "skill_name": "development-standards",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Fix a bug in this repository's parser: whitespace-only project names are currently accepted, but they must be rejected like empty names. Work through the fix end-to-end and run the relevant tests.",
+      "expected_output": "The agent adds and runs a focused regression test that reproduces the whitespace-only-name bug before changing the parser, confirms that the test fails for the expected reason, implements the smallest fix, reruns the test successfully, and keeps the test in the suite.",
+      "files": [],
+      "assertions": [
+        "Adds the automated regression test before changing the parser implementation.",
+        "Runs the new test before the fix and confirms that it fails because whitespace-only names are accepted, not because of an unrelated setup error.",
+        "Changes the parser only after demonstrating the failing test, then reruns the same test and confirms that it passes.",
+        "Keeps the regression test in the test suite after the fix."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Fix the release pipeline bug where an invalid manifest causes the script to delete the existing dist directory before validation fails. The last known-good artifacts must survive invalid input.",
+      "expected_output": "The agent treats pipeline configuration and scripts as part of the implementation: it first adds and runs a failing regression test proving that invalid input deletes the existing output, then changes the pipeline and confirms that the same test passes while preserving the prior artifacts.",
+      "files": [],
+      "assertions": [
+        "Adds a regression test for validate-before-mutate behavior before changing the pipeline script or configuration responsible for the defect.",
+        "Runs the new test and confirms the expected destructive behavior before implementing the fix.",
+        "Does not interpret 'test first' as applying only to production source code.",
+        "Reruns the same test after the fix and confirms that invalid input preserves the last known-good output."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Investigate why checkout totals sometimes differ by one cent, but do not change any files or implement a fix yet. I only want a diagnosis and a proposed next step.",
+      "expected_output": "The agent investigates without modifying files. It may propose a focused failing regression test as the first implementation step, but it does not claim that a test must be written or run during this diagnosis-only request.",
+      "files": [],
+      "assertions": [
+        "Does not modify implementation or test files during the investigation-only request.",
+        "Distinguishes diagnosis from implementing a bug fix.",
+        "Proposes writing and confirming a failing regression test before any later implementation change."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Set up ESLint for a new pnpm TypeScript package that uses Vitest. Apply our development standard, include the package scripts, and explain any warning-level policy.",
+      "expected_output": "The agent creates one composable flat ESLint configuration with typed project-service linting, the complete org strict baseline and linter options, and the Vitest recommended preset scoped to test files. It exposes ESLint as a package-level leaf command and integrates that leaf through the globally owned quality-gate policy rather than redefining gate composition in the ESLint config. It keeps the baseline unsafe-boundary and typed-test migration rules visible as warnings and declares every imported lint plugin in the package that owns the config.",
+      "files": [],
+      "assertions": [
+        "Uses @eslint/js recommended and typescript-eslint recommendedTypeChecked with parserOptions.projectService enabled and tsconfigRootDir set.",
+        "Applies the complete strictRules and strictLinterOptions baseline rather than selecting only convenient rules or weakening errors.",
+        "Extends @vitest/eslint-plugin's recommended flat config only for Vitest test globs, applies the typed-test await-thenable warning, and composes it with the baseline in one valid flat-config export.",
+        "Declares ESLint, @eslint/js, typescript-eslint, and @vitest/eslint-plugin as development dependencies in the package that imports them.",
+        "Exposes eslint . as a package-level lint leaf, follows the global quality-gate and Node package-script policies for composition, and explains that warning-level rules are visible migration debt rather than permission for new findings."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Audit this TypeScript monorepo's ESLint setup against our development standard. It uses recommendedTypeChecked in the app package, but scripts and tests are not linted, Vitest has no plugin, three unsafe rules are disabled globally, and CI only checks one of four packages. Do not edit files yet.",
+      "expected_output": "The agent reports the coverage and enforcement gaps without editing files: maintained TypeScript scripts and tests are outside lint scope, Vitest recommended rules are absent, required warning-level migration rules were disabled instead of kept visible, and CI is not authoritative for every package. It proposes a shared strict config and a package-by-package check path while preserving the distinction between errors and migration warnings.",
+      "files": [],
+      "assertions": [
+        "Does not modify files during the audit-only request.",
+        "Identifies source-only lint scope as a gap when maintained scripts and tests are built or executed.",
+        "Identifies the missing Vitest recommended preset and requires it to be scoped to test files.",
+        "Rejects globally disabling baseline unsafe-boundary warnings merely to obtain clean output.",
+        "Identifies incomplete package CI coverage and recommends one shared baseline consumed by every independently linted package."
+      ]
+    }
+  ]
+}

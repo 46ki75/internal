@@ -15,8 +15,11 @@ vi.mock("@elmethis/solid", () => ({
       type={props.type}
       disabled={props.disabled}
       onClick={(event) => {
-        if (typeof props.onClick === "function") props.onClick(event);
-        else if (props.onClick) props.onClick[0](props.onClick[1], event);
+        if (typeof props.onClick === "function") {
+          props.onClick(event);
+        } else if (props.onClick) {
+          props.onClick[0](props.onClick[1], event);
+        }
       }}
     >
       {props.children}
@@ -35,12 +38,18 @@ vi.mock("@elmethis/solid", () => ({
         required={props.required}
         aria-invalid={props["aria-invalid"]}
         onBlur={(event) => {
-          if (typeof props.onBlur === "function") props.onBlur(event);
-          else if (props.onBlur) props.onBlur[0](props.onBlur[1], event);
+          if (typeof props.onBlur === "function") {
+            props.onBlur(event);
+          } else if (props.onBlur) {
+            props.onBlur[0](props.onBlur[1], event);
+          }
         }}
         onInput={(event) => {
-          if (typeof props.onInput === "function") props.onInput(event);
-          else if (props.onInput) props.onInput[0](props.onInput[1], event);
+          if (typeof props.onInput === "function") {
+            props.onInput(event);
+          } else if (props.onInput) {
+            props.onInput[0](props.onInput[1], event);
+          }
         }}
       />
     </label>
@@ -57,12 +66,18 @@ vi.mock("@elmethis/solid", () => ({
         placeholder={props.placeholder}
         aria-invalid={props["aria-invalid"]}
         onBlur={(event) => {
-          if (typeof props.onBlur === "function") props.onBlur(event);
-          else if (props.onBlur) props.onBlur[0](props.onBlur[1], event);
+          if (typeof props.onBlur === "function") {
+            props.onBlur(event);
+          } else if (props.onBlur) {
+            props.onBlur[0](props.onBlur[1], event);
+          }
         }}
         onInput={(event) => {
-          if (typeof props.onInput === "function") props.onInput(event);
-          else if (props.onInput) props.onInput[0](props.onInput[1], event);
+          if (typeof props.onInput === "function") {
+            props.onInput(event);
+          } else if (props.onInput) {
+            props.onInput[0](props.onInput[1], event);
+          }
         }}
       />
     </label>

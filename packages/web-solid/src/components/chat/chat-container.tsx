@@ -21,7 +21,9 @@ export const ChatContainer = (props: ChatContainerProps) => {
   const authenticatedFetch: HttpAgentFetchFn = async (url, requestInit) => {
     await auth.refresh();
     const accessToken = auth.accessToken();
-    if (!accessToken) throw new Error("Access token is not available");
+    if (!accessToken) {
+      throw new Error("Access token is not available");
+    }
 
     const headers = new Headers(requestInit.headers);
     headers.set("Authorization", `Bearer ${accessToken}`);

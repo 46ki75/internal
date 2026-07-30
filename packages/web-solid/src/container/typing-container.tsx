@@ -35,7 +35,9 @@ export const TypingContainer = () => {
     queryFn: async ({ signal }) => {
       await auth.refresh();
       const accessToken = auth.accessToken();
-      if (!accessToken) throw new Error("Access token is not available");
+      if (!accessToken) {
+        throw new Error("Access token is not available");
+      }
 
       const { data, error, response } = await openApiClient.GET(
         "/api/v1/typing",
@@ -59,7 +61,9 @@ export const TypingContainer = () => {
     on(
       () => exercisesQuery.data,
       (fetchedItems) => {
-        if (!fetchedItems) return;
+        if (!fetchedItems) {
+          return;
+        }
 
         repository.replace(fetchedItems);
         queue.refillIfEmpty();
@@ -79,7 +83,9 @@ export const TypingContainer = () => {
     try {
       await auth.refresh();
       const accessToken = auth.accessToken();
-      if (!accessToken) throw new Error("Access token is not available");
+      if (!accessToken) {
+        throw new Error("Access token is not available");
+      }
 
       const { data, error, response } = await openApiClient.POST(
         "/api/v1/typing/{id}/completion",
@@ -114,7 +120,9 @@ export const TypingContainer = () => {
   const saveExercise = async (input: TypingItemInput) => {
     await auth.refresh();
     const accessToken = auth.accessToken();
-    if (!accessToken) throw new Error("Access token is not available");
+    if (!accessToken) {
+      throw new Error("Access token is not available");
+    }
 
     const { data, error, response } = await openApiClient.POST(
       "/api/v1/typing",

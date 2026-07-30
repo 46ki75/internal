@@ -39,11 +39,10 @@ export const TodoForm = (props: TodoFormProps) => {
   const [isLoading, setIsLoading] = createSignal(false);
   const [error, setError] = createSignal<string | null>(null);
 
-  const handleSubmit: JSX.EventHandler<HTMLFormElement, SubmitEvent> = async (
-    event,
-  ) => {
-    event.preventDefault();
-    if (isLoading()) return;
+  const submit = async () => {
+    if (isLoading()) {
+      return;
+    }
     setIsLoading(true);
     setError(null);
 
@@ -65,6 +64,13 @@ export const TodoForm = (props: TodoFormProps) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSubmit: JSX.EventHandler<HTMLFormElement, SubmitEvent> = (
+    event,
+  ) => {
+    event.preventDefault();
+    void submit();
   };
 
   return (

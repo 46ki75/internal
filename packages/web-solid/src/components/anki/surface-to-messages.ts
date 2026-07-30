@@ -7,7 +7,9 @@ interface A2uiSurface {
 }
 
 export function surfaceToMessages(raw: unknown, surfaceId: string): object[] {
-  if (!raw || typeof raw !== "object") return [];
+  if (!raw || typeof raw !== "object") {
+    return [];
+  }
   const surface = raw as A2uiSurface;
   const components = surface.components ?? {};
 

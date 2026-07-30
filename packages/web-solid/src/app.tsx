@@ -101,7 +101,9 @@ const QueryProvider = (props: ParentProps) => {
     void Promise.allSettled(
       persistenceOptions.map(persistQueryClientRestore),
     ).then(() => {
-      if (disposed) return;
+      if (disposed) {
+        return;
+      }
       unsubscribes = persistenceOptions.map(persistQueryClientSubscribe);
       setIsRestoring(false);
     });

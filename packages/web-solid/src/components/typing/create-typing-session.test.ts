@@ -95,8 +95,7 @@ describe("createTypingSession", () => {
       totalCharacters: 5,
       wordsPerMinute: 1,
     });
-    expect(onComplete).toHaveBeenCalledOnce();
-    expect(onComplete).toHaveBeenCalledWith(session.result());
+    expect(onComplete).toHaveBeenCalledExactlyOnceWith(session.result());
   });
 
   it("resets when the target text changes", async () => {

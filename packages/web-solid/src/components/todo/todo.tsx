@@ -20,7 +20,9 @@ export interface DeadlineProps {
 
 export const Deadline = (props: DeadlineProps) => {
   const duration = createMemo(() => {
-    if (!props.deadline) return null;
+    if (!props.deadline) {
+      return null;
+    }
     const today = Temporal.Now.plainDateISO();
     const durationInDays = today
       .until(Temporal.PlainDate.from(props.deadline))
@@ -110,7 +112,7 @@ export const Todo = (props: TodoProps) => {
           padding: "0",
           "background-color": props.is_done ? undefined : "transparent",
         }}
-        onClick={() => props.onClick(props.id, !props.is_done)}
+        onClick={() => void props.onClick(props.id, !props.is_done)}
       />
 
       <ElmInlineIcon src={NotionIcon} class={styles["todo-item-notion-icon"]} />

@@ -20,7 +20,9 @@ export default function AnkiRoute(props: IndexProps) {
 
   const card = createMemo<AnkiCard | null>(() => {
     const item = currentAnki();
-    if (!item) return null;
+    if (!item) {
+      return null;
+    }
     return {
       pageId: item.metadata.page_id,
       url: item.metadata.url,
@@ -43,7 +45,9 @@ export default function AnkiRoute(props: IndexProps) {
 
   const open = () => {
     const url = currentAnki()?.metadata.url;
-    if (!url) return;
+    if (!url) {
+      return;
+    }
     const a = document.createElement("a");
     a.href = url;
     a.target = "_blank";
@@ -53,7 +57,9 @@ export default function AnkiRoute(props: IndexProps) {
 
   const rate = (rating: number) => {
     const pageId = currentAnki()?.metadata.page_id;
-    if (pageId) return anki.updateByRating(pageId, rating);
+    if (pageId) {
+      void anki.updateByRating(pageId, rating);
+    }
   };
 
   return (

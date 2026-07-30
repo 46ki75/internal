@@ -28,7 +28,7 @@
     "start": "vinxi dev --open",
     "storybook": "storybook dev -p 11071 --no-open",
     "test": "vitest run",
-    "check": "pnpm run lint && pnpm run build.types && pnpm run test && pnpm run fmt.check"
+    "check": "concurrently -g \"pnpm:lint\" \"pnpm:build.types\" \"pnpm:test\" \"pnpm:fmt.check\""
   },
   "dependencies": {
     "@ag-ui/client": "0.0.57",
@@ -61,6 +61,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "20.19.0",
+    "concurrently": "^10.0.4",
     "eslint": "9.32.0",
     "eslint-plugin-solid": "^0.14.5",
     "globals": "16.4.0",

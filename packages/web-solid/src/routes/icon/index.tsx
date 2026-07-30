@@ -49,8 +49,12 @@ export default function IconRoute(props: IndexProps) {
           signal: controller.signal,
         });
 
-        if (!data) throw new Error("No data returned from API");
-        if (controller.signal.aborted) return;
+        if (!data) {
+          throw new Error("No data returned from API");
+        }
+        if (controller.signal.aborted) {
+          return;
+        }
 
         setFuse(new Fuse(data, { keys: ["name"] }));
 
@@ -69,7 +73,9 @@ export default function IconRoute(props: IndexProps) {
           );
         }
       } finally {
-        if (!controller.signal.aborted) setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     })();
 
@@ -78,7 +84,9 @@ export default function IconRoute(props: IndexProps) {
 
   const searchResults = createMemo(() => {
     const keyword = searchKeyword().trim();
-    if (!keyword) return [];
+    if (!keyword) {
+      return [];
+    }
     return (
       fuse()
         ?.search(keyword)

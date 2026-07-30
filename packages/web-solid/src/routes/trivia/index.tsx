@@ -79,7 +79,9 @@ export default function Index(props: IndexProps) {
   const accessToken = async () => {
     await auth.refresh();
     const token = auth.accessToken();
-    if (!token) throw new Error("Access token is not available");
+    if (!token) {
+      throw new Error("Access token is not available");
+    }
     return token;
   };
 
@@ -105,7 +107,9 @@ export default function Index(props: IndexProps) {
           setStore("data", (existing) => [...existing, ...items]);
         } else {
           setStore("data", items);
-          if (items.length > 0) setStore("currentIndex", 0);
+          if (items.length > 0) {
+            setStore("currentIndex", 0);
+          }
         }
       }
     } catch (error) {
@@ -117,7 +121,9 @@ export default function Index(props: IndexProps) {
         );
       }
     } finally {
-      if (!signal?.aborted) setStore("loading", false);
+      if (!signal?.aborted) {
+        setStore("loading", false);
+      }
     }
   };
 
@@ -125,15 +131,18 @@ export default function Index(props: IndexProps) {
     const index = store.data.findIndex(
       (item) => item.metadata.page_id === pageId,
     );
-    if (index < 0 || store.data[index].block) return;
+    if (index < 0 || store.data[index].block) {
+      return;
+    }
 
     const existingRequest = blockRequests.get(pageId);
     if (
       store.data[index].loading &&
       existingRequest &&
       !existingRequest.aborted
-    )
+    ) {
       return;
+    }
 
     blockRequests.set(pageId, signal);
     setStore("data", index, "loading", true);
@@ -150,7 +159,9 @@ export default function Index(props: IndexProps) {
         },
       );
 
-      if (data) setStore("data", index, "block", data);
+      if (data) {
+        setStore("data", index, "block", data);
+      }
     } catch (error) {
       if (!(error instanceof Error && error.name === "AbortError")) {
         setStore(
@@ -171,7 +182,9 @@ export default function Index(props: IndexProps) {
     const index = store.data.findIndex(
       (item) => item.metadata.page_id === pageId,
     );
-    if (index < 0 || store.viewed.includes(pageId)) return;
+    if (index < 0 || store.viewed.includes(pageId)) {
+      return;
+    }
     setStore("viewed", (viewed) => [...viewed, pageId]);
 
     try {
@@ -195,8 +208,12 @@ export default function Index(props: IndexProps) {
 
   const next = async () => {
     const index = store.currentIndex;
-    if (index == null) return;
-    if (index >= store.data.length - 1) await fetchList(true);
+    if (index == null) {
+      return;
+    }
+    if (index >= store.data.length - 1) {
+      await fetchList(true);
+    }
     setStore("currentIndex", index + 1);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -212,15 +229,21 @@ export default function Index(props: IndexProps) {
   // effect's dependencies.
   createEffect(() => {
     const index = store.currentIndex;
-    if (index == null) return;
+    if (index == null) {
+      return;
+    }
 
     const currentPageId = store.data[index]?.metadata.page_id;
     const nextPageId = store.data[index + 1]?.metadata.page_id;
     const controller = new AbortController();
 
     untrack(() => {
-      if (currentPageId) void fetchBlock(currentPageId, controller.signal);
-      if (nextPageId) void fetchBlock(nextPageId, controller.signal);
+      if (currentPageId) {
+        void fetchBlock(currentPageId, controller.signal);
+      }
+      if (nextPageId) {
+        void fetchBlock(nextPageId, controller.signal);
+      }
     });
 
     const timer = currentPageId
@@ -229,7 +252,9 @@ export default function Index(props: IndexProps) {
 
     onCleanup(() => {
       controller.abort();
-      if (timer !== undefined) clearTimeout(timer);
+      if (timer !== undefined) {
+        clearTimeout(timer);
+      }
     });
   });
 

@@ -65,7 +65,10 @@ export const AuthProvider = (props: ParentProps) => {
   };
 
   const refresh = async () => {
-    if (refreshInFlight) return refreshInFlight;
+    if (refreshInFlight) {
+      await refreshInFlight;
+      return;
+    }
 
     refreshInFlight = (async () => {
       setErrors([]);
@@ -75,7 +78,9 @@ export const AuthProvider = (props: ParentProps) => {
         const token = session.tokens?.accessToken.toString() ?? null;
         setAccessToken(token);
         setSessionState(token ? "login" : "logout");
-        if (!token) clearQueryCache();
+        if (!token) {
+          clearQueryCache();
+        }
       } catch (error) {
         clearQueryCache();
         setAccessToken(null);
@@ -97,7 +102,9 @@ export const AuthProvider = (props: ParentProps) => {
     try {
       configure();
       const result = await cognitoSignIn({ username, password });
-      if (result.isSignedIn) await refresh();
+      if (result.isSignedIn) {
+        await refresh();
+      }
     } catch (error) {
       clearQueryCache();
       setAccessToken(null);
@@ -119,15 +126,17 @@ export const AuthProvider = (props: ParentProps) => {
     }
   };
 
-  onMount(async () => {
-    configure();
-    await refresh();
-    try {
-      const user = await getCurrentUser();
-      setSessionState(user.username && user.userId ? "login" : "logout");
-    } catch {
-      setSessionState("logout");
-    }
+  onMount(() => {
+    void (async () => {
+      configure();
+      await refresh();
+      try {
+        const user = await getCurrentUser();
+        setSessionState(user.username && user.userId ? "login" : "logout");
+      } catch {
+        setSessionState("logout");
+      }
+    })();
   });
 
   return (
@@ -149,6 +158,8 @@ export const AuthProvider = (props: ParentProps) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within AuthProvider");
+  if (!context) {
+    throw new Error("useAuth must be used within AuthProvider");
+  }
   return context;
 };

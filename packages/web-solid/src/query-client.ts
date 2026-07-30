@@ -29,7 +29,9 @@ export const shouldPersistTodoQuery = shouldPersistQueryRoot("todos");
 
 export const migrateQueryCacheStorage = (storage: Storage) => {
   const serializedCache = storage.getItem(LEGACY_QUERY_CACHE_STORAGE_KEY);
-  if (!serializedCache) return;
+  if (!serializedCache) {
+    return;
+  }
 
   try {
     const persistedClient = JSON.parse(serializedCache) as {
@@ -38,13 +40,17 @@ export const migrateQueryCacheStorage = (storage: Storage) => {
       };
     };
     const queries = persistedClient.clientState?.queries;
-    if (!Array.isArray(queries)) return;
+    if (!Array.isArray(queries)) {
+      return;
+    }
 
     for (const [root, key] of [
       ["bookmarks", BOOKMARK_QUERY_CACHE_STORAGE_KEY],
       ["todos", TODO_QUERY_CACHE_STORAGE_KEY],
     ] as const) {
-      if (storage.getItem(key)) continue;
+      if (storage.getItem(key)) {
+        continue;
+      }
       storage.setItem(
         key,
         JSON.stringify({

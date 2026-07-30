@@ -25,8 +25,11 @@ export const BookmarkList = (props: BookmarkListProps) => {
     ];
     onCleanup(() =>
       controllers.forEach((controller) => {
-        if (controller.destroy) controller.destroy();
-        else controller.disable();
+        if (controller.destroy) {
+          controller.destroy();
+        } else {
+          controller.disable();
+        }
       }),
     );
   });
@@ -39,11 +42,15 @@ export const BookmarkList = (props: BookmarkListProps) => {
     >();
 
     for (const bookmark of props.bookmarks) {
-      if (bookmark.favorite) favorites.push(bookmark);
+      if (bookmark.favorite) {
+        favorites.push(bookmark);
+      }
       const group = tags.get(bookmark.tag.id);
-      if (group) group.bookmarks.push(bookmark);
-      else
+      if (group) {
+        group.bookmarks.push(bookmark);
+      } else {
         tags.set(bookmark.tag.id, { tag: bookmark.tag, bookmarks: [bookmark] });
+      }
     }
 
     return { favorites, tags: [...tags.values()] };
@@ -62,21 +69,28 @@ export const BookmarkList = (props: BookmarkListProps) => {
 
   const searchResults = createMemo(() => {
     const keyword = searchKeyword().trim();
-    if (keyword === "") return props.bookmarks.slice(0, 5);
+    if (keyword === "") {
+      return props.bookmarks.slice(0, 5);
+    }
     return fuse()
       .search(keyword, { limit: 5 })
       .map((result) => result.item);
   });
 
   const openBookmark = (bookmark: BookmarkProps) => {
-    if (bookmark.onOpen) bookmark.onOpen(bookmark.url);
-    else window.open(bookmark.url, "_blank", "noopener,noreferrer");
+    if (bookmark.onOpen) {
+      bookmark.onOpen(bookmark.url);
+    } else {
+      window.open(bookmark.url, "_blank", "noopener,noreferrer");
+    }
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Enter") {
       const first = searchResults()[0];
-      if (first) openBookmark(first);
+      if (first) {
+        openBookmark(first);
+      }
       setSearchKeyword("");
     }
   };

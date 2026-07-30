@@ -18,7 +18,9 @@ export const upsertTypingItem = (
   updatedItem: TypingItem,
 ): TypingItem[] => {
   const existingItem = items.find((item) => item.id === updatedItem.id);
-  if (!existingItem) return [...items, { ...updatedItem }];
+  if (!existingItem) {
+    return [...items, { ...updatedItem }];
+  }
 
   return items.map((item) =>
     item.id === updatedItem.id
@@ -75,8 +77,12 @@ export const createTypingQueue = (repository: TypingRepository) => {
 
   const advance = (expectedId?: string) => {
     setItems((current) => {
-      if (current.length === 0) return orderedCopy();
-      if (expectedId && current[0].id !== expectedId) return current;
+      if (current.length === 0) {
+        return orderedCopy();
+      }
+      if (expectedId && current[0].id !== expectedId) {
+        return current;
+      }
 
       const remaining = current.slice(1);
       return remaining.length === 0 ? orderedCopy() : remaining;

@@ -41,8 +41,11 @@ vi.mock("@elmethis/solid", () => ({
         autocapitalize={props.autocapitalize}
         spellcheck={props.spellcheck}
         onInput={(event) => {
-          if (typeof props.onInput === "function") props.onInput(event);
-          else if (props.onInput) props.onInput[0](props.onInput[1], event);
+          if (typeof props.onInput === "function") {
+            props.onInput(event);
+          } else if (props.onInput) {
+            props.onInput[0](props.onInput[1], event);
+          }
         }}
       />
     </label>

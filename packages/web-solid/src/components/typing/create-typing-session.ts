@@ -84,7 +84,9 @@ export const createTypingSession = (
   const status = createMemo<TypingStatus>(() => {
     const input = inputCharacters();
     const target = targetCharacters();
-    if (startedAt() == null || target.length === 0) return "idle";
+    if (startedAt() == null || target.length === 0) {
+      return "idle";
+    }
     if (
       input.length === target.length &&
       input.every((character, index) => character === target[index])
@@ -96,7 +98,9 @@ export const createTypingSession = (
 
   const elapsedMs = createMemo(() => {
     const start = startedAt();
-    if (start == null) return 0;
+    if (start == null) {
+      return 0;
+    }
     return Math.max(0, (completedAt() ?? lastInputAt() ?? start) - start);
   });
 
@@ -108,7 +112,9 @@ export const createTypingSession = (
 
   const wordsPerMinute = createMemo(() => {
     const minutes = elapsedMs() / 60_000;
-    if (minutes === 0) return 0;
+    if (minutes === 0) {
+      return 0;
+    }
     return Math.round(correctCharacters() / 5 / minutes);
   });
 
@@ -157,7 +163,9 @@ export const createTypingSession = (
     const normalizedValue = splitTypingCharacters(nextValue)
       .slice(0, targetCharacters().length)
       .join("");
-    if (normalizedValue === value()) return;
+    if (normalizedValue === value()) {
+      return;
+    }
 
     const timestamp = now();
     const previousInput = inputCharacters();
@@ -200,7 +208,9 @@ export const createTypingSession = (
     }
 
     const start = startedAt() ?? timestamp;
-    if (startedAt() == null) setStartedAt(start);
+    if (startedAt() == null) {
+      setStartedAt(start);
+    }
     setLastInputAt(timestamp);
     setValueSignal(normalizedValue);
 

@@ -35,7 +35,9 @@ export const BookmarkContainer = () => {
     queryFn: async ({ signal }) => {
       await auth.refresh();
       const accessToken = auth.accessToken();
-      if (!accessToken) throw new Error("Access token is not available");
+      if (!accessToken) {
+        throw new Error("Access token is not available");
+      }
 
       const { data, error, response } = await openApiClient.GET(
         "/api/v1/bookmark",
@@ -86,7 +88,9 @@ export const BookmarkContainer = () => {
             body: { name: name(), url: url() },
           });
 
-          if (!data) throw new Error("No data returned from API");
+          if (!data) {
+            throw new Error("No data returned from API");
+          }
 
           queryClient.setQueryData<Bookmark[]>(
             queryKeys.bookmarks,
@@ -133,7 +137,7 @@ export const BookmarkContainer = () => {
 
       <ElmButton
         block
-        onClick={handleCreateBookmark}
+        onClick={() => void handleCreateBookmark()}
         isLoading={createBookmarkLoading()}
       >
         <span>Create Bookmark</span>

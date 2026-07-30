@@ -68,7 +68,9 @@ export const AnkiReviewer = (props: AnkiReviewerProps) => {
 
   createEffect((previousPageId) => {
     const pageId = props.card?.pageId;
-    if (pageId !== previousPageId) setIsShowingAnswer(false);
+    if (pageId !== previousPageId) {
+      setIsShowingAnswer(false);
+    }
     return pageId;
   });
 
@@ -80,9 +82,13 @@ export const AnkiReviewer = (props: AnkiReviewerProps) => {
         return;
       }
 
-      if (!isShowingAnswer()) return;
+      if (!isShowingAnswer()) {
+        return;
+      }
       const match = RATINGS.find((rating) => rating.key === event.key);
-      if (match) rate(match.rating);
+      if (match) {
+        rate(match.rating);
+      }
     };
 
     document.addEventListener("keydown", handler);
@@ -97,10 +103,10 @@ export const AnkiReviewer = (props: AnkiReviewerProps) => {
         isReviewRequired={props.card?.isReviewRequired}
         createLoading={props.createLoading}
         reviewLoading={props.reviewLoading}
-        onEdit={() => props.onEdit()}
-        onCreate={() => props.onCreate()}
-        onReview={() => props.onReview()}
-        onRefresh={() => props.onRefresh()}
+        onEdit={() => void props.onEdit()}
+        onCreate={() => void props.onCreate()}
+        onReview={() => void props.onReview()}
+        onRefresh={() => void props.onRefresh()}
       />
 
       <AnkiHeader

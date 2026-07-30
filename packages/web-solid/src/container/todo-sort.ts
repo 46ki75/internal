@@ -18,13 +18,21 @@ const severityOrder: Record<Severity, number> = {
 
 export const sortTodos = (todos: readonly ToDo[], sort: TodoSort): ToDo[] => {
   const isDoneSort = (a: ToDo, b: ToDo) => {
-    if (a.is_done === b.is_done) return 0;
+    if (a.is_done === b.is_done) {
+      return 0;
+    }
     return a.is_done ? 1 : -1;
   };
   const deadlineSort = (a: ToDo, b: ToDo) => {
-    if (!a.deadline && !b.deadline) return 0;
-    if (!a.deadline) return 1;
-    if (!b.deadline) return -1;
+    if (!a.deadline && !b.deadline) {
+      return 0;
+    }
+    if (!a.deadline) {
+      return 1;
+    }
+    if (!b.deadline) {
+      return -1;
+    }
 
     return Temporal.PlainDate.from(a.deadline)
       .since(Temporal.PlainDate.from(b.deadline))

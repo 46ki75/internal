@@ -45,7 +45,9 @@ export const TodoContainer = (props: TodoContainerProps) => {
     queryFn: async ({ signal }) => {
       await auth.refresh();
       const accessToken = auth.accessToken();
-      if (accessToken == null) throw new Error("Access token is null");
+      if (accessToken == null) {
+        throw new Error("Access token is null");
+      }
 
       const { data, error, response } = await openApiClient.GET(
         "/api/v1/to-do",
@@ -74,19 +76,26 @@ export const TodoContainer = (props: TodoContainerProps) => {
     const animationController = autoAnimate(todoItemContainerRef);
 
     onCleanup(() => {
-      if (animationController.destroy) animationController.destroy();
-      else animationController.disable();
+      if (animationController.destroy) {
+        animationController.destroy();
+      } else {
+        animationController.disable();
+      }
     });
   });
 
   const handleUpdate = async (id: string, isDone: boolean) => {
-    if (updatingIds().includes(id)) return;
+    if (updatingIds().includes(id)) {
+      return;
+    }
     setUpdatingIds((current) => [...current, id]);
 
     try {
       await auth.refresh();
       const accessToken = auth.accessToken();
-      if (accessToken == null) return;
+      if (accessToken == null) {
+        return;
+      }
 
       const { data } = await openApiClient.PUT("/api/v1/to-do", {
         params: { header: { Authorization: `Bearer ${accessToken}` } },
@@ -114,7 +123,9 @@ export const TodoContainer = (props: TodoContainerProps) => {
   }) => {
     await auth.refresh();
     const accessToken = auth.accessToken();
-    if (accessToken == null) throw new Error("Access token is null");
+    if (accessToken == null) {
+      throw new Error("Access token is null");
+    }
 
     const { data } = await openApiClient.POST("/api/v1/to-do", {
       params: {

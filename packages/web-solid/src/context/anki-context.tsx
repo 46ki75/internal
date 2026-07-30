@@ -61,7 +61,9 @@ export const AnkiProvider = (props: ParentProps) => {
   });
 
   const setError = (prefix: string, error: unknown) => {
-    if (error instanceof Error && error.name === "AbortError") return;
+    if (error instanceof Error && error.name === "AbortError") {
+      return;
+    }
     setState(
       "error",
       `${prefix}${error instanceof Error ? error.message : String(error)}`,
@@ -99,9 +101,15 @@ export const AnkiProvider = (props: ParentProps) => {
     const index = state.ankiList.data.findIndex(
       (item) => item.metadata.page_id === pageId,
     );
-    if (!pageId || index < 0) return;
-    if (state.ankiList.data[index].loading) return;
-    if (state.ankiList.data[index].block && !force) return;
+    if (!pageId || index < 0) {
+      return;
+    }
+    if (state.ankiList.data[index].loading) {
+      return;
+    }
+    if (state.ankiList.data[index].block && !force) {
+      return;
+    }
 
     setState("ankiList", "data", index, "loading", true);
     try {
@@ -125,7 +133,7 @@ export const AnkiProvider = (props: ParentProps) => {
               `Failed to fetch Anki block (${response.status}): ${JSON.stringify(error)}`,
             );
           }
-          return data as AnkiBlock;
+          return data;
         },
       });
       setState("ankiList", "data", index, "block", data);
@@ -140,7 +148,9 @@ export const AnkiProvider = (props: ParentProps) => {
     const index = state.ankiList.data.findIndex(
       (item) => item.metadata.page_id === pageId,
     );
-    if (index < 0) return;
+    if (index < 0) {
+      return;
+    }
 
     try {
       await auth.refresh();
@@ -216,9 +226,13 @@ export const AnkiProvider = (props: ParentProps) => {
           },
         })
         .then(({ error }) => {
-          if (error) setError("Failed to persist Anki update. ", error);
+          if (error) {
+            setError("Failed to persist Anki update. ", error);
+          }
         })
-        .catch((error) => setError("Failed to persist Anki update. ", error));
+        .catch((error: unknown) =>
+          setError("Failed to persist Anki update. ", error),
+        );
       setState(
         "ankiList",
         "currentIndex",
@@ -239,7 +253,9 @@ export const AnkiProvider = (props: ParentProps) => {
         },
         body: {},
       });
-      if (!data) throw new Error("No data returned from API");
+      if (!data) {
+        throw new Error("No data returned from API");
+      }
       window.open(
         data.url.replace(/^https?:\/\//, "notionrs://"),
         "_blank",
@@ -254,7 +270,9 @@ export const AnkiProvider = (props: ParentProps) => {
 
   const review = async () => {
     const index = state.ankiList.currentIndex;
-    if (index == null || !state.ankiList.data[index]) return;
+    if (index == null || !state.ankiList.data[index]) {
+      return;
+    }
     setState("review", "loading", true);
     try {
       await auth.refresh();
@@ -266,7 +284,9 @@ export const AnkiProvider = (props: ParentProps) => {
         },
         body: { is_review_required: !current.metadata.is_review_required },
       });
-      if (!data) throw new Error("No data returned from API");
+      if (!data) {
+        throw new Error("No data returned from API");
+      }
       setState(
         "ankiList",
         "data",
@@ -291,14 +311,18 @@ export const AnkiProvider = (props: ParentProps) => {
 
   createEffect(() => {
     setState("ankiList", "loading", ankiListQuery.isFetching);
-    if (!auth.accessToken()) return;
+    if (!auth.accessToken()) {
+      return;
+    }
     const queryError = ankiListQuery.error;
     if (queryError) {
       setError("Failed to fetch Anki list. ", queryError);
       return;
     }
     const data = ankiListQuery.data;
-    if (!data) return;
+    if (!data) {
+      return;
+    }
 
     const previousItems = untrack(() => state.ankiList.data);
     const previousByPageId = new Map(
@@ -323,12 +347,16 @@ export const AnkiProvider = (props: ParentProps) => {
 
   createEffect(() => {
     const currentIndex = state.ankiList.currentIndex;
-    if (typeof window === "undefined" || currentIndex == null) return;
+    if (typeof window === "undefined" || currentIndex == null) {
+      return;
+    }
     const pageIds = [currentIndex, currentIndex + 1, currentIndex + 2]
       .map((index) => state.ankiList.data[index]?.metadata.page_id)
       .filter((pageId): pageId is string => pageId != null);
     untrack(() => {
-      for (const pageId of pageIds) void fetchBlock(pageId);
+      for (const pageId of pageIds) {
+        void fetchBlock(pageId);
+      }
     });
   });
 
@@ -343,6 +371,8 @@ export const AnkiProvider = (props: ParentProps) => {
 
 export const useAnki = () => {
   const context = useContext(AnkiContext);
-  if (!context) throw new Error("useAnki must be used within AnkiProvider");
+  if (!context) {
+    throw new Error("useAnki must be used within AnkiProvider");
+  }
   return context;
 };

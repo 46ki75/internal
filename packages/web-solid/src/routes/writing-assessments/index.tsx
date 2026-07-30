@@ -45,7 +45,9 @@ const formatCreatedAt = (value: string) => {
 };
 
 const score = (value: number): Score => {
-  if (value >= 1 && value <= 5) return value as Score;
+  if (value >= 1 && value <= 5) {
+    return value as Score;
+  }
   return 1;
 };
 
@@ -79,7 +81,9 @@ export default function WritingAssessmentsRoute(
   const accessToken = async () => {
     await auth.refresh();
     const token = auth.accessToken();
-    if (!token) throw new Error("Sign in to use writing assessments");
+    if (!token) {
+      throw new Error("Sign in to use writing assessments");
+    }
     return token;
   };
 
@@ -111,18 +115,19 @@ export default function WritingAssessmentsRoute(
           setError(cause instanceof Error ? cause.message : String(cause));
         }
       } finally {
-        if (!controller.signal.aborted) setIsLoading(false);
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
       }
     })();
 
     onCleanup(() => controller.abort());
   });
 
-  const submit: JSX.EventHandler<HTMLFormElement, SubmitEvent> = async (
-    event,
-  ) => {
-    event.preventDefault();
-    if (isSubmitting() || text().trim() === "") return;
+  const submitAssessment = async () => {
+    if (isSubmitting() || text().trim() === "") {
+      return;
+    }
 
     setIsSubmitting(true);
     setError(undefined);
@@ -157,8 +162,15 @@ export default function WritingAssessmentsRoute(
     }
   };
 
+  const submit: JSX.EventHandler<HTMLFormElement, SubmitEvent> = (event) => {
+    event.preventDefault();
+    void submitAssessment();
+  };
+
   const remove = async (assessment: Assessment) => {
-    if (deletingId()) return false;
+    if (deletingId()) {
+      return false;
+    }
 
     setDeletingId(assessment.id);
     setDeleteError(undefined);
@@ -181,7 +193,9 @@ export default function WritingAssessmentsRoute(
       setAssessments((items) =>
         items.filter((item) => item.id !== assessment.id),
       );
-      if (selectedId() === assessment.id) setSelectedId(undefined);
+      if (selectedId() === assessment.id) {
+        setSelectedId(undefined);
+      }
       return true;
     } catch (cause) {
       setDeleteError(cause instanceof Error ? cause.message : String(cause));
@@ -205,7 +219,9 @@ export default function WritingAssessmentsRoute(
 
   const confirmRemoval = async () => {
     const assessment = pendingDelete();
-    if (!assessment || !(await remove(assessment))) return;
+    if (!assessment || !(await remove(assessment))) {
+      return;
+    }
     cancelRemoval();
   };
 

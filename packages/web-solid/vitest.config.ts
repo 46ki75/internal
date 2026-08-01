@@ -10,7 +10,28 @@ export default defineConfig({
     },
   },
   test: {
+    // Vite plugins resolve the root environment before Vitest selects a project.
     environment: "happy-dom",
-    setupFiles: ["./src/test/setup.ts"],
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "unit",
+          environment: "happy-dom",
+          include: ["src/**/*.{test,spec}.{ts,tsx}"],
+          exclude: ["src/**/*.integration.{test,spec}.{ts,tsx}"],
+          setupFiles: ["./src/test/setup.unit.ts"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "integration",
+          environment: "happy-dom",
+          include: ["src/**/*.integration.{test,spec}.{ts,tsx}"],
+          setupFiles: ["./src/test/setup.integration.ts"],
+        },
+      },
+    ],
   },
 });

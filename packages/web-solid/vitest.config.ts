@@ -1,4 +1,5 @@
 import { fileURLToPath } from "node:url";
+import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 import solid from "vite-plugin-solid";
 
@@ -19,17 +20,31 @@ export default defineConfig({
           name: "unit",
           environment: "happy-dom",
           include: ["src/**/*.{test,spec}.{ts,tsx}"],
-          exclude: ["src/**/*.integration.{test,spec}.{ts,tsx}"],
+          exclude: ["src/**/*.contract.{test,spec}.{ts,tsx}"],
           setupFiles: ["./src/test/setup.unit.ts"],
         },
       },
       {
         extends: true,
         test: {
-          name: "integration",
+          name: "contract",
           environment: "happy-dom",
-          include: ["src/**/*.integration.{test,spec}.{ts,tsx}"],
-          setupFiles: ["./src/test/setup.integration.ts"],
+          include: ["src/**/*.contract.{test,spec}.{ts,tsx}"],
+          setupFiles: ["./src/test/setup.contract.ts"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "browser",
+          include: ["tests/browser/**/*.{test,spec}.{ts,tsx}"],
+          setupFiles: ["./src/test/setup.browser.ts"],
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright(),
+            instances: [{ browser: "chromium" }],
+          },
         },
       },
     ],

@@ -46,6 +46,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+        working-directory: packages/web-solid
+
       - name: Check
         run: pnpm run check
         working-directory: packages/web-solid

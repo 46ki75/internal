@@ -9,7 +9,12 @@ Run commands from this directory:
 
 ```sh
 pnpm dev                  # SolidStart dev server on :11070
-pnpm test                 # Vitest component and model tests
+pnpm test                 # All hermetic test tiers
+pnpm test.unit            # Happy DOM component and model tests
+pnpm test.contract        # HTTP contracts intercepted with MSW
+pnpm test.browser         # Chromium component integration tests
+pnpm test.e2e             # Opt-in deployed application smoke test
+pnpm test.live            # Opt-in deployed API smoke test
 pnpm build.types          # TypeScript check
 pnpm lint                 # ESLint with Solid rules
 pnpm fmt / pnpm fmt.check # Prettier
@@ -32,6 +37,34 @@ Set `VITE_STAGE_NAME` to `dev`, `stg`, or `prod` to select another stage.
 Authenticated data remains client-side because SSR is disabled.
 Browser integrations are initialized in `onMount` and cleaned up with
 `onCleanup`.
+
+## Testing
+
+Unit tests are colocated with their source as `*.test.ts(x)`. Transport
+contracts use `*.contract.test.ts` and run with MSW configured to reject
+unhandled requests. Browser tests live under `tests/browser/` and exercise real
+components in headless Chromium. `pnpm test` runs all three hermetic tiers.
+Install Chromium once before running the browser tier locally:
+
+```sh
+pnpm exec playwright install chromium
+```
+
+The opt-in live smoke test calls the deployed authenticated API and is excluded
+from `pnpm test`. Supply a short-lived Cognito access token explicitly:
+
+```sh
+LIVE_API_BASE_URL=https://api.dev-internal.46ki75.com \
+LIVE_API_ACCESS_TOKEN=... \
+pnpm test.live
+```
+
+The end-to-end smoke test verifies that the deployed application can load a
+routed page. It is also excluded from the default suite:
+
+```sh
+E2E_BASE_URL=https://dev-internal.46ki75.com pnpm test.e2e
+```
 
 ## OpenAPI
 

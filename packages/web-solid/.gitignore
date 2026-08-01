@@ -23,6 +23,11 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Test artifacts
+/.vitest-attachments
+/playwright-report
+/test-results
+
 # Editor
 .vscode/*
 !.vscode/launch.json

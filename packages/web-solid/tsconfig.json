@@ -27,5 +27,5 @@
       }
     ]
   },
-  "include": ["src", ".storybook", "./*.d.ts", "./*.config.ts"]
+  "include": ["src", "tests", ".storybook", "./*.d.ts", "./*.config.ts"]
 }

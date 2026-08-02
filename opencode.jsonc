@@ -1,16 +1,18 @@
 {
-    "$schema": "https://opencode.ai/config.json",
-    "references": {
-        "elmethis": {
-            "repository": "46ki75/elmethis",
-            "branch": "main",
-            "description": "React, Vue, Solid, and Qwik components and hooks library",
-        },
+  "$schema": "https://opencode.ai/config.json",
+  "references": {
+    "elmethis": {
+      "repository": "46ki75/elmethis",
+      "branch": "main",
+      "description": "React, Vue, Solid, and Qwik components and hooks library",
     },
-    "mcp": {
-      "AWS Knowledge": {
-        "type": "remote",
-        "url": "https://knowledge-mcp.global.api.aws"
-      }
-    },
+  },
+  "mcp": {
+    "AWS Knowledge": {
+      "type": "remote",
+      "url": "https://knowledge-mcp.global.api.aws"
+    }
+  },
+  "lsp": true,
+  "formatter": true
 }

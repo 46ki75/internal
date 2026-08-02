@@ -13,6 +13,7 @@ import {
 import { Show, type ParentProps } from "solid-js";
 
 import { Header } from "~/components/common/header";
+import { LoadingIndicator } from "~/components/common/loading-indicator";
 import { Signin } from "~/components/common/signin";
 import { useAuth } from "~/context/auth-context";
 import styles from "~/routes/root-layout.module.css";
@@ -50,6 +51,7 @@ export const AppShell = (props: ParentProps) => {
         onSignOut={() => void auth.signOut()}
         onSignIn={show}
       />
+      <LoadingIndicator />
       <main class={styles["layout-slot"]}>{props.children}</main>
       <Modal>
         <Signin

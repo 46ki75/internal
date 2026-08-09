@@ -264,7 +264,7 @@ export default function Index(props: IndexProps) {
       <Meta name="description" content="Browse internal trivia" />
       <div class={`${styles.trivia} ${props.class ?? ""}`} style={props.style}>
         <div class={styles["trivia-header"]}>
-          <ElmMdiIcon d={mdiLightbulbOnOutline} color="#cdb57b" />
+          <ElmMdiIcon path={mdiLightbulbOnOutline} color="#cdb57b" />
           <ElmInlineText>{current()?.metadata.title ?? "Trivia"}</ElmInlineText>
         </div>
 
@@ -275,13 +275,13 @@ export default function Index(props: IndexProps) {
                 <div class={styles["trivia-block-container"]}>
                   <div class={styles["block-header"]}>
                     <div class={styles["block-header-left"]}>
-                      <ElmMdiIcon d={mdiLightbulbOnOutline} />
+                      <ElmMdiIcon path={mdiLightbulbOnOutline} />
                       <ElmInlineText>
                         {item.metadata.title ?? "Untitled"}
                       </ElmInlineText>
                     </div>
                     <div class={styles["block-header-left"]}>
-                      <ElmMdiIcon d={mdiEye} color="#868e9c" />
+                      <ElmMdiIcon path={mdiEye} color="#868e9c" />
                       <ElmInlineText>{item.metadata.view_count}</ElmInlineText>
                     </div>
                   </div>
@@ -314,7 +314,7 @@ export default function Index(props: IndexProps) {
             isLoading={store.loading}
             onClick={() => void next()}
           >
-            <ElmMdiIcon d={mdiArrowRightThick} />
+            <ElmMdiIcon path={mdiArrowRightThick} />
             <span>Next</span>
           </ElmButton>
         </div>

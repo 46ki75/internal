@@ -63,7 +63,7 @@ export const WritingAssessmentsFeedback = (
             [styles["high"]]: local.severity === "high",
           })}
         >
-          <ElmMdiIcon d={SEVERITY_ICON_MAP[local.severity]} size="1.25rem" />
+          <ElmMdiIcon path={SEVERITY_ICON_MAP[local.severity]} size="1.25rem" />
           {local.severity}
         </div>
 

@@ -113,7 +113,7 @@ export const TodoForm = (props: TodoFormProps) => {
           isLoading={isLoading()}
           disabled={title().trim() === ""}
         >
-          <ElmMdiIcon d={mdiSend} />
+          <ElmMdiIcon path={mdiSend} />
         </ElmButton>
       </form>
 

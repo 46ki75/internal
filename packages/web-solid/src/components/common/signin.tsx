@@ -68,7 +68,7 @@ export const Signin = (props: SigninProps) => {
         isLoading={props.isLoading}
         disabled={props.isDisabled}
       >
-        <ElmMdiIcon d={mdiSend} />
+        <ElmMdiIcon path={mdiSend} />
         Sign In
       </ElmButton>
       <Show when={innerError()}>

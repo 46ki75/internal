@@ -107,7 +107,7 @@ export const BookmarkList = (props: BookmarkListProps) => {
           onClick={() => props.onRefresh?.()}
         >
           <ElmMdiIcon
-            d={mdiRefresh}
+            path={mdiRefresh}
             size="1.5rem"
             classList={{ [styles.loading]: props.isRefreshing }}
             color={props.isRefreshing ? "#cdb57b" : undefined}
@@ -152,7 +152,10 @@ export const BookmarkList = (props: BookmarkListProps) => {
           {(group) => (
             <div class={styles["tag-section"]}>
               <div class={styles["tag"]} style={{ "--color": group.tag.color }}>
-                <ElmMdiIcon d={mdiTag} color="oklch(from white l c h / 0.75)" />
+                <ElmMdiIcon
+                  path={mdiTag}
+                  color="oklch(from white l c h / 0.75)"
+                />
                 {group.tag.name}
               </div>
               <div class={styles["bookmark-container"]}>

@@ -117,7 +117,7 @@ export const Todo = (props: TodoProps) => {
 
       <ElmInlineIcon src={NotionIcon} class={styles["todo-item-notion-icon"]} />
       <ElmMdiIcon
-        d={mdiRefresh}
+        path={mdiRefresh}
         size="1.5rem"
         color={props.is_recurring ? "#59b57c" : "gray"}
         class={styles["todo-item-recurring-icon"]}
@@ -130,7 +130,7 @@ export const Todo = (props: TodoProps) => {
       />
 
       <ElmMdiIcon
-        d={mdiCalendar}
+        path={mdiCalendar}
         size="1.25rem"
         style={{
           opacity: props.deadline ? 1 : 0.25,

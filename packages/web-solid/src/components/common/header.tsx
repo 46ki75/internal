@@ -31,12 +31,12 @@ export const Header = (props: HeaderProps) => (
             when={link.native}
             fallback={
               <A class={styles.link} href={link.href} aria-label={link.label}>
-                <ElmMdiIcon d={link.d} size="1.75rem" color="#937f69" />
+                <ElmMdiIcon path={link.d} size="1.75rem" color="#937f69" />
               </A>
             }
           >
             <a class={styles.link} href={link.href} aria-label={link.label}>
-              <ElmMdiIcon d={link.d} size="1.75rem" color="#937f69" />
+              <ElmMdiIcon path={link.d} size="1.75rem" color="#937f69" />
             </a>
           </Show>
         )}
@@ -58,10 +58,10 @@ export const Header = (props: HeaderProps) => (
             <ElmSquareLoadingIcon size="1.75rem" />
           </Match>
           <Match when={props.state === "login"}>
-            <ElmMdiIcon d={mdiLogout} size="1.75rem" color="#be5252" />
+            <ElmMdiIcon path={mdiLogout} size="1.75rem" color="#be5252" />
           </Match>
           <Match when={props.state === "logout"}>
-            <ElmMdiIcon d={mdiLogin} size="1.75rem" color="#6987b8" />
+            <ElmMdiIcon path={mdiLogin} size="1.75rem" color="#6987b8" />
           </Match>
         </Switch>
       </button>

@@ -239,7 +239,7 @@ export default function WritingAssessmentsRoute(
       >
         <header class={styles["page-header"]}>
           <div class={styles["page-title"]}>
-            <ElmMdiIcon d={mdiTextBoxCheckOutline} size="2rem" />
+            <ElmMdiIcon path={mdiTextBoxCheckOutline} size="2rem" />
             <h1>
               <ElmInlineText>Writing Assessments</ElmInlineText>
             </h1>
@@ -278,7 +278,7 @@ export default function WritingAssessmentsRoute(
                 isLoading={isSubmitting()}
                 disabled={text().trim() === ""}
               >
-                <ElmMdiIcon d={mdiSend} />
+                <ElmMdiIcon path={mdiSend} />
                 <span>Assess writing</span>
               </ElmButton>
             </form>
@@ -296,7 +296,7 @@ export default function WritingAssessmentsRoute(
               keyed
               fallback={
                 <div class={styles.empty}>
-                  <ElmMdiIcon d={mdiTextBoxCheckOutline} size="2.5rem" />
+                  <ElmMdiIcon path={mdiTextBoxCheckOutline} size="2.5rem" />
                   <ElmInlineText>
                     {isLoading()
                       ? "Loading assessments..."
@@ -323,7 +323,7 @@ export default function WritingAssessmentsRoute(
                       isLoading={deletingId() === assessment.id}
                       onClick={() => requestRemoval(assessment)}
                     >
-                      <ElmMdiIcon d={mdiDeleteOutline} />
+                      <ElmMdiIcon path={mdiDeleteOutline} />
                     </ElmButton>
                   </div>
 
@@ -348,7 +348,7 @@ export default function WritingAssessmentsRoute(
 
           <aside class={styles.history}>
             <div class={styles["history-heading"]}>
-              <ElmMdiIcon d={mdiHistory} />
+              <ElmMdiIcon path={mdiHistory} />
               <h2>
                 <ElmInlineText>History</ElmInlineText>
               </h2>
@@ -429,7 +429,7 @@ export default function WritingAssessmentsRoute(
               isLoading={Boolean(deletingId())}
               onClick={() => void confirmRemoval()}
             >
-              <ElmMdiIcon d={mdiDeleteOutline} />
+              <ElmMdiIcon path={mdiDeleteOutline} />
               <span>Delete</span>
             </ElmButton>
           </div>

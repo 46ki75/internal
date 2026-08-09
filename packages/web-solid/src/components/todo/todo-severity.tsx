@@ -55,7 +55,7 @@ export const TodoSeverity = (props: TodoSeverityProps) => {
       class={`${styles["todo-severity"]} ${MAP[props.severity].className} ${props.class ?? ""}`}
       style={props.style}
     >
-      <ElmMdiIcon d={MAP[props.severity].d} class={styles.icon} />
+      <ElmMdiIcon path={MAP[props.severity].d} class={styles.icon} />
       <span class={styles.text}>{props.severity}</span>
     </span>
   );

@@ -36,7 +36,7 @@ export const Bookmark = (props: BookmarkProps) => {
         aria-label={`Edit ${props.label}`}
         onClick={handleEdit}
       >
-        <ElmMdiIcon d={mdiTagEdit} />
+        <ElmMdiIcon path={mdiTagEdit} />
       </a>
       <a
         class={styles["bookmark-link"]}
@@ -47,7 +47,7 @@ export const Bookmark = (props: BookmarkProps) => {
       >
         <span class={styles["favorite-icon"]}>
           <ElmMdiIcon
-            d={mdiStar}
+            path={mdiStar}
             color={props.favorite ? "#d4bf8d" : "transparent"}
           />
         </span>
@@ -55,7 +55,7 @@ export const Bookmark = (props: BookmarkProps) => {
           when={props.icon}
           keyed
           fallback={
-            <ElmMdiIcon class={styles.favicon} size="32px" d={mdiEarth} />
+            <ElmMdiIcon class={styles.favicon} size="32px" path={mdiEarth} />
           }
         >
           {(icon) => (

@@ -157,7 +157,7 @@ export const TodoContainer = (props: TodoContainerProps) => {
           classList={{ [styles.selected]: sort() === "deadline" }}
           onClick={() => setSort("deadline")}
         >
-          <ElmMdiIcon d={mdiSortCalendarAscending} />
+          <ElmMdiIcon path={mdiSortCalendarAscending} />
           <ElmInlineText>Deadline</ElmInlineText>
         </div>
 
@@ -166,7 +166,7 @@ export const TodoContainer = (props: TodoContainerProps) => {
           classList={{ [styles.selected]: sort() === "severity" }}
           onClick={() => setSort("severity")}
         >
-          <ElmMdiIcon d={mdiAlert} />
+          <ElmMdiIcon path={mdiAlert} />
           <ElmInlineText>Severity</ElmInlineText>
         </div>
 
@@ -178,7 +178,7 @@ export const TodoContainer = (props: TodoContainerProps) => {
           onClick={() => void todosQuery.refetch()}
         >
           <ElmMdiIcon
-            d={mdiSync}
+            path={mdiSync}
             size="1.5rem"
             class={`${styles["sync-icon"]} ${todosQuery.isFetching ? styles.loading : ""}`}
             color={todosQuery.isFetching ? "#cdb57b" : undefined}

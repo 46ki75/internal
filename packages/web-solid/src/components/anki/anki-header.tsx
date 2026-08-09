@@ -20,9 +20,9 @@ export const AnkiHeader = (props: AnkiHeaderProps) => (
     class={`${styles["anki-header"]} ${props.class ?? ""}`}
     style={props.style}
   >
-    <ElmMdiIcon d={mdiSchool} color="#6987b8" />
+    <ElmMdiIcon path={mdiSchool} color="#6987b8" />
     <ElmInlineText>Should Learn: {props.shouldLearnCount}</ElmInlineText>
-    <ElmMdiIcon d={mdiTrayFull} color="#6987b8" />
+    <ElmMdiIcon path={mdiTrayFull} color="#6987b8" />
     <ElmInlineText>Queue: {props.queueCount}</ElmInlineText>
   </div>
 );

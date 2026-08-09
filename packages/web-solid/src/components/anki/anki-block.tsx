@@ -22,7 +22,7 @@ export interface AnkiBlockProps {
 export const AnkiBlock = (props: AnkiBlockProps) => (
   <div class={styles["anki-block-container"]}>
     <div class={styles["block-header"]}>
-      <ElmMdiIcon d={props.icon} />
+      <ElmMdiIcon path={props.icon} />
       <ElmInlineText>{props.label}</ElmInlineText>
     </div>
     <div class={styles["block-renderer"]}>

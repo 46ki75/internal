@@ -44,7 +44,7 @@ export const AnkiControls = (props: AnkiControlsProps) => {
         isLoading={!props.hasCard}
         onClick={() => props.onEdit()}
       >
-        <ElmMdiIcon d={mdiBookEdit} />
+        <ElmMdiIcon path={mdiBookEdit} />
         <span>Edit</span>
       </ElmButton>
       <ElmButton
@@ -52,7 +52,7 @@ export const AnkiControls = (props: AnkiControlsProps) => {
         isLoading={props.createLoading}
         onClick={() => props.onCreate()}
       >
-        <ElmMdiIcon d={mdiCreation} />
+        <ElmMdiIcon path={mdiCreation} />
         <span>New</span>
       </ElmButton>
       <ElmButton
@@ -62,7 +62,7 @@ export const AnkiControls = (props: AnkiControlsProps) => {
         onClick={() => props.onReview()}
       >
         <ElmMdiIcon
-          d={props.isReviewRequired ? mdiAlertDecagram : mdiCircleSmall}
+          path={props.isReviewRequired ? mdiAlertDecagram : mdiCircleSmall}
         />
       </ElmButton>
       <ElmButton
@@ -71,7 +71,7 @@ export const AnkiControls = (props: AnkiControlsProps) => {
         isLoading={!props.hasCard || props.cardLoading}
         onClick={() => props.onRefresh()}
       >
-        <ElmMdiIcon d={mdiRefresh} />
+        <ElmMdiIcon path={mdiRefresh} />
       </ElmButton>
     </div>
   );

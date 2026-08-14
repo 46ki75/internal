@@ -137,7 +137,7 @@ it("supports uninterrupted automatic advancement", async () => {
   await user.type(result.getByRole("textbox", { name: "Your typing" }), "cat");
 
   expect(
-    result.getByRole("heading", { name: "Second exercise" }),
+    result.getByRole("region", { name: "Second exercise" }),
   ).toBeInTheDocument();
   expect(result.getByRole("textbox", { name: "Your typing" })).toHaveValue("");
   expect(result.getByRole("textbox", { name: "Your typing" })).toHaveFocus();

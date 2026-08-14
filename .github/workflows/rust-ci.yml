@@ -127,7 +127,7 @@ jobs:
       # Activates once CODECOV_TOKEN is set in repo secrets; until then it
       # no-ops without failing the job (fail_ci_if_error: false).
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: lcov.info

@@ -53,7 +53,7 @@ impl WritingAssessmentUseCase {
         let generated = generation.assessment;
         let score = validate_generated(&generated)?;
         if score != generated.score {
-            tracing::warn!(
+            tracing::info!(
                 generated_score = generated.score,
                 derived_score = score,
                 "corrected generated writing assessment score"
@@ -193,7 +193,15 @@ fn score_from_observations(observations: &[&domain::GeneratedFeedback]) -> u8 {
 
 #[cfg(test)]
 mod tests {
-    use std::sync::Mutex;
+    use std::sync::{
+        Mutex,
+        atomic::{AtomicUsize, Ordering},
+    };
+
+    use tracing::{
+        Event, Metadata, Subscriber,
+        span::{Attributes, Id, Record},
+    };
 
     use super::*;
     use crate::{
@@ -295,11 +303,37 @@ mod tests {
             _japanese_context: Option<&str>,
         ) -> Result<GenerationResult, GeneratorError> {
             Ok(GenerationResult {
-                assessment: generated(4, vec![observation(Severity::Medium)]),
+                assessment: generated(4, vec![observation(Severity::Low)]),
                 model: "stub-model".into(),
                 reasoning_effort: ReasoningEffort::Medium,
             })
         }
+    }
+
+    struct WarningCounter(AtomicUsize);
+
+    impl Subscriber for WarningCounter {
+        fn enabled(&self, _metadata: &Metadata<'_>) -> bool {
+            true
+        }
+
+        fn new_span(&self, _span: &Attributes<'_>) -> Id {
+            Id::from_u64(1)
+        }
+
+        fn record(&self, _span: &Id, _values: &Record<'_>) {}
+
+        fn record_follows_from(&self, _span: &Id, _follows: &Id) {}
+
+        fn event(&self, event: &Event<'_>) {
+            if *event.metadata().level() == tracing::Level::WARN {
+                self.0.fetch_add(1, Ordering::Relaxed);
+            }
+        }
+
+        fn enter(&self, _span: &Id) {}
+
+        fn exit(&self, _span: &Id) {}
     }
 
     #[derive(Default)]
@@ -348,6 +382,21 @@ mod tests {
         assert_eq!(result.reasoning_effort, Some(ReasoningEffort::Medium));
         assert_eq!(result.schema_version, 2);
         assert_eq!(persistence.saved.lock().unwrap().as_ref(), Some(&result));
+    }
+
+    #[tokio::test]
+    async fn corrected_score_does_not_emit_a_warning() {
+        let warning_counter = Arc::new(WarningCounter(AtomicUsize::new(0)));
+        let _subscriber = tracing::subscriber::set_default(warning_counter.clone());
+        let use_case = WritingAssessmentUseCase {
+            generator: Arc::new(GeneratorStub),
+            persistence: Arc::new(PersistenceStub::default()),
+        };
+
+        let result = use_case.create("Original".into(), None).await.unwrap();
+
+        assert_eq!(result.score, 5);
+        assert_eq!(warning_counter.0.load(Ordering::Relaxed), 0);
     }
 
     #[tokio::test]

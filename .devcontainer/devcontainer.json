@@ -36,7 +36,7 @@
     "ghcr.io/devcontainers-extra/features/starship": {},
     "ghcr.io/devcontainers/features/rust": {},
     "ghcr.io/devcontainers/features/node": {
-      "version": "22"
+      "version": "24"
     },
     "ghcr.io/devcontainers/features/terraform": {},
     "ghcr.io/devcontainers/features/aws-cli": {},

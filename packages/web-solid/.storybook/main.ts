@@ -7,7 +7,11 @@ const config = {
   addons: ["@storybook/addon-docs", "@storybook/addon-a11y"],
   framework: {
     name: "storybook-solidjs-vite",
-    options: {},
+    options: {
+      builder: {
+        viteConfigPath: ".storybook/vite.config.ts",
+      },
+    },
   },
   viteFinal: async (baseConfig) =>
     mergeConfig(baseConfig, {

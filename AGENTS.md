@@ -56,8 +56,8 @@ No `Justfile`. Use `cargo lambda build --release` / `cargo lambda deploy` direct
 ### `packages/web-solid` (SolidStart frontend)
 
 ```sh
-pnpm dev                  # VITE_STAGE_NAME=dev vinxi dev on :11070
-pnpm build                # SolidStart/Vinxi CSR bundle into .output/public
+pnpm dev                  # VITE_STAGE_NAME=dev Vite dev server on :11070
+pnpm build                # SolidStart v2/Vite CSR bundle into .output/public
 pnpm build.types          # tsc --noEmit (typecheck only)
 pnpm lint                 # eslint src/**/*.ts*
 pnpm fmt / pnpm fmt.check # prettier
@@ -150,7 +150,7 @@ Feature crates read their per-feature SSM keys inline via `http_api_core::cache:
 - `src/container/` — stateful feature containers that compose testable components and talk to the API.
 - `src/context/` — Solid contexts (`auth-context.tsx` wraps Cognito via `aws-amplify`; `anki-context.tsx` owns Anki state and actions).
 - `src/openapi/schema.ts` — generated from `http-api`'s OpenAPI; do not edit by hand. Consumed via `openapi-fetch`.
-- SSR is disabled. The static Nitro preset emits a browser-rendered app into `.output/public/`, which is
+- SSR is disabled. Nitro prerenders a browser-rendered app into `.output/public/`, which is
   uploaded to S3 and served via CloudFront. Extensionless paths are rewritten to `/index.html`; hashed
   assets live under `_build/`.
 - For theme-dependent CSS colors and images, use native `light-dark()` values instead of

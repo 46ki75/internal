@@ -1,4 +1,5 @@
 import { solidStart } from "@solidjs/start/config";
+import { fromNodeMiddleware } from "nitro/h3";
 import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 
@@ -21,33 +22,32 @@ export default defineConfig({
   server: {
     headers: { "Cache-Control": "public, max-age=0" },
     port: 11070,
-    proxy: {
-      "/api": {
+  },
+  nitro: {
+    // Nitro handles extensionless requests before Vite's server.proxy middleware.
+    devProxy: {
+      "/api/**": {
         target: endpoint,
         changeOrigin: true,
       },
       "/invocations": {
         target: endpoint,
         changeOrigin: true,
-        configure(proxy: {
-          on: (
-            event: "proxyReq",
-            listener: (request: {
-              removeHeader: (name: string) => void;
-            }) => void,
-          ) => void;
-        }) {
-          proxy.on("proxyReq", (proxyRequest) => {
-            proxyRequest.removeHeader("cookie");
-            proxyRequest.removeHeader("sec-fetch-site");
-            proxyRequest.removeHeader("sec-fetch-mode");
-            proxyRequest.removeHeader("sec-fetch-dest");
-          });
-        },
       },
     },
-  },
-  nitro: {
+    devHandlers: [
+      {
+        route: "/invocations",
+        middleware: true,
+        handler: fromNodeMiddleware((request, _response, next) => {
+          delete request.headers.cookie;
+          delete request.headers["sec-fetch-site"];
+          delete request.headers["sec-fetch-mode"];
+          delete request.headers["sec-fetch-dest"];
+          next();
+        }),
+      },
+    ],
     // The CSR build does not need Nitro's raw WASM path, which Vite cannot bundle for Shiki in SSR.
     wasm: false,
     prerender: {

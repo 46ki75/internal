@@ -38,7 +38,7 @@
     "@js-temporal/polyfill": "^0.5.1",
     "@mdi/js": "^7.4.47",
     "@solidjs/meta": "^0.29.4",
-    "@solidjs/router": "^0.16.2",
+    "@solidjs/router": "^1.0.0",
     "@solidjs/start": "^2.0.4",
     "@tanstack/query-sync-storage-persister": "^5.101.4",
     "@tanstack/solid-form": "^1.33.2",

@@ -39,11 +39,11 @@ importers:
         specifier: ^0.29.4
         version: 0.29.4(solid-js@1.9.15)
       '@solidjs/router':
-        specifier: ^0.16.2
-        version: 0.16.2(solid-js@1.9.15)
+        specifier: ^1.0.0
+        version: 1.0.0(solid-js@1.9.15)
       '@solidjs/start':
         specifier: ^2.0.4
-        version: 2.0.4(@solidjs/router@0.16.2(solid-js@1.9.15))(@testing-library/jest-dom@6.9.1)(crossws@0.4.12(srvx@0.11.22))(vite@8.2.2(@types/node@24.13.3)(esbuild@0.28.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0))
+        version: 2.0.4(@solidjs/router@1.0.0(solid-js@1.9.15))(@testing-library/jest-dom@6.9.1)(crossws@0.4.12(srvx@0.11.22))(vite@8.2.2(@types/node@24.13.3)(esbuild@0.28.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0))
       '@tanstack/query-sync-storage-persister':
         specifier: ^5.101.4
         version: 5.101.4
@@ -86,7 +86,7 @@ importers:
         version: 9.39.4
       '@solidjs/testing-library':
         specifier: ^0.8.10
-        version: 0.8.10(@solidjs/router@0.16.2(solid-js@1.9.15))(solid-js@1.9.15)
+        version: 0.8.10(@solidjs/router@1.0.0(solid-js@1.9.15))(solid-js@1.9.15)
       '@storybook/addon-a11y':
         specifier: ^10.5.10
         version: 10.5.10(storybook@10.5.10(@types/react@19.2.14)(prettier@3.6.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))
@@ -1777,8 +1777,8 @@ packages:
     peerDependencies:
       solid-js: '>=1.8.4'
 
-  '@solidjs/router@0.16.2':
-    resolution: {integrity: sha512-pncbV4SGUwGGlELlDWc3B4KDVB0Kt+7+7ct+GTN7D8CgetGSJMzl8RzyAFz+/TtSuFFzp9IzrjrACHUpGzxsKQ==}
+  '@solidjs/router@1.0.0':
+    resolution: {integrity: sha512-cCSk1hvgCowiMa9bzzYWHiLu1U4E22+DfJe6/rOwAyECKrxc3jrd5QnoW3sDDJtW+e077cz/M67bPl3DqOBw1Q==}
     peerDependencies:
       solid-js: ^1.8.6
 
@@ -6783,11 +6783,11 @@ snapshots:
     dependencies:
       solid-js: 1.9.15
 
-  '@solidjs/router@0.16.2(solid-js@1.9.15)':
+  '@solidjs/router@1.0.0(solid-js@1.9.15)':
     dependencies:
       solid-js: 1.9.15
 
-  '@solidjs/start@2.0.4(@solidjs/router@0.16.2(solid-js@1.9.15))(@testing-library/jest-dom@6.9.1)(crossws@0.4.12(srvx@0.11.22))(vite@8.2.2(@types/node@24.13.3)(esbuild@0.28.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0))':
+  '@solidjs/start@2.0.4(@solidjs/router@1.0.0(solid-js@1.9.15))(@testing-library/jest-dom@6.9.1)(crossws@0.4.12(srvx@0.11.22))(vite@8.2.2(@types/node@24.13.3)(esbuild@0.28.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0))':
     dependencies:
       '@babel/core': 7.29.7
       '@babel/traverse': 7.29.7
@@ -6816,19 +6816,19 @@ snapshots:
       vite: 8.2.2(@types/node@24.13.3)(esbuild@0.28.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0)
       vite-plugin-solid: 2.11.13(@testing-library/jest-dom@6.9.1)(solid-js@1.9.15)(vite@8.2.2(@types/node@24.13.3)(esbuild@0.28.1)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0))
     optionalDependencies:
-      '@solidjs/router': 0.16.2(solid-js@1.9.15)
+      '@solidjs/router': 1.0.0(solid-js@1.9.15)
     transitivePeerDependencies:
       - '@testing-library/jest-dom'
       - crossws
       - ocache
       - supports-color
 
-  '@solidjs/testing-library@0.8.10(@solidjs/router@0.16.2(solid-js@1.9.15))(solid-js@1.9.15)':
+  '@solidjs/testing-library@0.8.10(@solidjs/router@1.0.0(solid-js@1.9.15))(solid-js@1.9.15)':
     dependencies:
       '@testing-library/dom': 10.4.1
       solid-js: 1.9.15
     optionalDependencies:
-      '@solidjs/router': 0.16.2(solid-js@1.9.15)
+      '@solidjs/router': 1.0.0(solid-js@1.9.15)
 
   '@storybook/addon-a11y@10.5.10(storybook@10.5.10(@types/react@19.2.14)(prettier@3.6.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))':
     dependencies:

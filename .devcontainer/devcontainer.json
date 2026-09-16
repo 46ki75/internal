@@ -1,5 +1,6 @@
 {
   "name": "Dev Container",
+  "remoteUser": "vscode",
   "build": {
     "dockerfile": "Dockerfile"
   },
@@ -27,26 +28,15 @@
       ]
     }
   },
-  "forwardPorts": [
-    20000,
-    9000
-  ],
+  "forwardPorts": [20000, 9000],
   "features": {
     "ghcr.io/devcontainers/features/github-cli": {},
     "ghcr.io/devcontainers-extra/features/starship": {},
-    "ghcr.io/devcontainers/features/rust": {},
-    "ghcr.io/devcontainers/features/node": {
-      "version": "24"
-    },
-    "ghcr.io/devcontainers/features/terraform": {},
-    "ghcr.io/devcontainers/features/aws-cli": {},
-    "ghcr.io/devcontainers-extra/features/zig": {},
-    "./features/cargo-toolchain": {},
     "ghcr.io/devcontainers/features/docker-outside-of-docker": {
       "moby": false
     }
   },
-  "postCreateCommand": "echo 'eval \"$(starship init bash)\"' >> ~/.bashrc",
+  "postCreateCommand": "mise trust mise.toml && mise install node pnpm python uv terraform awscli zig cargo-lambda cargo-llvm-cov && mise run setup && echo 'eval \"$(starship init bash)\"' >> ~/.bashrc",
   "remoteEnv": {
     "AWS_PROFILE": "internal"
   },

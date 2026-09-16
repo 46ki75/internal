@@ -1,0 +1,272 @@
+min_version = "2026.9.9"
+
+[tools]
+node = "24.21.0"
+python = "3.12.14"
+uv = "0.12.15"
+terraform = "1.16.2"
+awscli = "2.36.46"
+zig = "0.16.0"
+# Linux autodetection also matches Python wheels; select standalone CLI archives.
+cargo-lambda = { version = "1.9.2", matching = "cargo-lambda-v" }
+cargo-llvm-cov = "0.9.1"
+
+[tool_alias]
+cargo-lambda = "github:cargo-lambda/cargo-lambda"
+cargo-llvm-cov = "github:taiki-e/cargo-llvm-cov"
+
+[tool_config]
+locked = true
+
+[task_config]
+shell = "bash -euo pipefail -c"
+
+[env]
+UV_PYTHON = { value = "{{ tools.python.path }}", tools = true }
+UV_PYTHON_DOWNLOADS = "never"
+
+[settings]
+idiomatic_version_file_enable_tools = ["pnpm"]
+# Rust belongs to rustup; package.json owns pnpm, including its checksum.
+disable_tools = ["rust", "npm:pnpm"]
+auto_install = false
+lockfile_platforms = ["macos-arm64", "linux-x64", "linux-arm64"]
+
+[tasks.setup]
+description = "Prepare Rust, locked Node/Python dependencies, and Git hooks"
+run = [{ task = "setup:rust" }, { task = "setup:node" }, { task = "setup:python" }]
+
+[tasks."setup:rust"]
+description = "Install the toolchain, components, and targets from rust-toolchain.toml"
+run = "rustup toolchain install --no-self-update"
+
+[tasks."setup:node"]
+description = "Install locked pnpm workspace dependencies and Git hooks"
+run = "pnpm install --frozen-lockfile"
+
+[tasks."setup:python"]
+description = "Sync every Python workspace package and dependency group"
+run = "uv sync --locked --all-packages --all-groups"
+
+[tasks.fmt]
+description = "Format tracked files; accepts repeated --file arguments"
+raw_args = true
+run = "pnpm exec lefthook run fmt --no-auto-install"
+
+[tasks.fmt-check]
+description = "Check the same file scope as fmt"
+raw_args = true
+run = "pnpm exec lefthook run fmt-check --no-auto-install"
+
+[tasks.lint]
+description = "Lint tracked files; accepts repeated --file arguments"
+raw_args = true
+run = "pnpm exec lefthook run lint --no-auto-install"
+
+[tasks.check]
+description = "Run project-wide lint, formatting, and TypeScript/Python type checks"
+run = "pnpm exec lefthook run check --no-auto-install"
+
+[tasks.test]
+description = "Run Rust, frontend, and AgentCore hermetic tests"
+depends = ["rust:test", "web:test", "ag-ui-server:test"]
+
+[tasks."rust:fmt-check"]
+description = "Check Rust workspace formatting"
+run = "cargo fmt --all -- --check"
+
+[tasks."rust:lint"]
+description = "Deny Clippy warnings across workspace crates and targets"
+run = "cargo clippy --locked --workspace --all-targets -- -D warnings"
+
+[tasks."rust:test"]
+description = "Run hermetic Rust workspace tests (ignored live tests are skipped)"
+run = "cargo test --locked --workspace"
+
+[tasks."rust:test:live"]
+description = "Run ignored live Rust tests (requires network and AWS credentials)"
+alias = "test-live"
+run = "cargo test --locked --workspace -- --ignored"
+
+[tasks."rust:test:cov"]
+description = "Instrument hermetic Rust tests without emitting a report"
+alias = "test-cov"
+run = "cargo llvm-cov --locked --no-report --workspace"
+
+[tasks."rust:coverage"]
+description = "Show partially covered files and missing Rust line numbers"
+alias = "coverage"
+depends = ["rust:test:cov"]
+# awk succeeds for empty filtered output; pipefail retains reporter failures.
+run = '''cargo llvm-cov report --show-missing-lines --color=always 2>&1 | awk '!/ 100.00%/' '''
+
+[tasks."rust:coverage:html"]
+description = "Open the Rust HTML coverage report"
+alias = "coverage-html"
+depends = ["rust:test:cov"]
+run = "cargo llvm-cov report --html --open"
+
+[tasks."rust:coverage:ci"]
+description = "Write workspace lcov.info for CI"
+alias = "coverage-ci"
+depends = ["rust:test:cov"]
+run = "cargo llvm-cov report --lcov --output-path lcov.info"
+
+[tasks."rust:coverage:summary"]
+description = "Summarize the existing Rust coverage run"
+run = "cargo llvm-cov report --summary-only"
+
+[tasks."rust:ci"]
+description = "Run the Rust PR gate in sequence"
+alias = "ci"
+run = [{ task = "rust:fmt-check" }, { task = "rust:lint" }, { task = "rust:test" }]
+
+[tasks."rust:ci:live"]
+description = "Run the Rust PR gate, then ignored live tests"
+alias = "ci-live"
+run = [{ task = "rust:ci" }, { task = "rust:test:live" }]
+
+[tasks."http-api:dev"]
+description = "Watch the HTTP API with development configuration and debug logs"
+dir = "crates/http-api"
+run = "STAGE_NAME=dev RUST_LOG=warn,http_api=debug,http_api_core=debug,http_api_anki=debug,http_api_bookmark=debug,http_api_icon=debug,http_api_image=debug,http_api_to_do=debug,http_api_trivia=debug,http_api_typing=debug,http_api_writing_assessment=debug cargo lambda watch --package http-api"
+
+[tasks."http-api:build"]
+description = "Build the arm64 HTTP API Lambda"
+dir = "crates/http-api"
+run = "cargo lambda build --arm64 --release"
+
+[tasks."http-api:deploy"]
+description = "Build and deploy the HTTP API Lambda"
+dir = "crates/http-api"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = [{ task = "http-api:build" }, 'cargo lambda deploy --binary-name http-api "${usage_stage?}-46ki75-internal-lambda-function-http-api"']
+
+[tasks."http-api:test"]
+description = "Run HTTP API library tests"
+dir = "crates/http-api"
+run = "cargo test --locked -p http-api --lib"
+
+[tasks."http-api:test:cov"]
+description = "Instrument HTTP API library tests without emitting a report"
+dir = "crates/http-api"
+run = "cargo llvm-cov --locked --no-report -p http-api --lib"
+
+[tasks."http-api:coverage"]
+description = "Show partially covered HTTP API files and missing line numbers"
+dir = "crates/http-api"
+depends = ["http-api:test:cov"]
+run = '''cargo llvm-cov report --show-missing-lines --color=always 2>&1 | awk '!/ 100.00%/' '''
+
+[tasks."http-api:coverage:html"]
+description = "Open HTTP API HTML coverage"
+dir = "crates/http-api"
+depends = ["http-api:test:cov"]
+run = "cargo llvm-cov report --html --open"
+
+[tasks."http-api:coverage:ci"]
+description = "Write HTTP API lcov.info in the crate directory"
+dir = "crates/http-api"
+depends = ["http-api:test:cov"]
+run = "cargo llvm-cov report --lcov --output-path lcov.info"
+
+[tasks."logs-reporter:dev"]
+description = "Watch the logs reporter with development debug logs"
+dir = "crates/logs-reporter"
+run = "STAGE_NAME=dev RUST_LOG=logs_reporter=debug cargo lambda watch --package logs-reporter"
+
+[tasks."logs-reporter:build"]
+description = "Build the arm64 logs reporter Lambda"
+dir = "crates/logs-reporter"
+run = "cargo lambda build --arm64 --release"
+
+[tasks."logs-reporter:deploy"]
+description = "Build and deploy the logs reporter Lambda"
+dir = "crates/logs-reporter"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = [{ task = "logs-reporter:build" }, 'cargo lambda deploy --binary-name logs-reporter "${usage_stage?}-46ki75-internal-lambda-function-reporter"']
+
+[tasks."logs-reporter:test"]
+description = "Run logs reporter binary tests"
+dir = "crates/logs-reporter"
+run = "cargo test --locked --bins"
+
+[tasks."ag-ui-server:test"]
+description = "Run AgentCore tests with mocked SSM and Claude SDK"
+run = "uv run --locked --no-sync --package ag-ui-server pytest python/ag-ui-server/tests"
+
+[tasks."ag-ui-server:dev"]
+description = "Run AgentCore locally (requires configured SSM OAuth token and AWS credentials)"
+run = "uv run --locked --no-sync --package ag-ui-server python -m ag_ui_server.server"
+
+[tasks."ag-ui-server:build"]
+description = "Build and PUSH the arm64 AgentCore image to ECR"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+arg "[tag]" default="" help="Image tag; defaults to the current timestamp"
+'''
+run = 'STAGE_NAME="${usage_stage?}" TAG="${usage_tag:-$(date +%Y%m%d-%H%M%S)}" ./python/ag-ui-server/build.sh'
+
+[tasks."ag-ui-server:deploy"]
+description = "Build/push AgentCore, select its Terraform workspace, and apply interactively"
+raw = true
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+arg "[tag]" default="" help="Image tag; defaults to the current timestamp"
+'''
+run = [
+  { task = "ag-ui-server:build", args = ["{{ usage.stage }}", "{{ usage.tag }}"] },
+  'terraform -chdir=terraform workspace select "${usage_stage?}"',
+  "terraform -chdir=terraform apply",
+]
+
+[tasks."web:dev"]
+description = "Start the frontend on port 11070"
+dir = "packages/web-solid"
+run = "pnpm run dev"
+
+[tasks."web:build"]
+description = "Build the SolidStart frontend"
+dir = "packages/web-solid"
+run = "pnpm run build"
+
+[tasks."web:check"]
+description = "Run the existing frontend formatting, lint, type, and test gate"
+dir = "packages/web-solid"
+run = "pnpm run check"
+
+[tasks."web:ci"]
+description = "Check the frontend, then build its production bundle"
+run = [{ task = "web:check" }, { task = "web:build" }]
+
+[tasks."web:test"]
+description = "Run frontend unit tests"
+dir = "packages/web-solid"
+run = "pnpm run test"
+
+[tasks."web:storybook"]
+description = "Start Storybook on port 11071"
+dir = "packages/web-solid"
+run = "pnpm run storybook"
+
+[tasks."web:generate-openapi"]
+description = "Regenerate the frontend OpenAPI client from the running local API"
+dir = "packages/web-solid"
+run = "pnpm run generate:openapi"
+
+[tasks."web:deploy"]
+description = "Build, upload the frontend, and invalidate CloudFront"
+dir = "packages/web-solid"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = '''
+export VITE_STAGE_NAME="${usage_stage?}"
+pnpm run build
+./scripts/deploy-s3.sh
+./scripts/invalidate.sh
+'''

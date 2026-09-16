@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Claude Code Stop hook: run lefthook's `check` command over the files changed
-# in the working tree. On failure, block the stop and feed the output back so
+# Claude Code Stop hook: run `lint` and `fmt-check` over changed files.
+# The aggregate `check` is project-wide. On failure, block the stop so
 # Claude fixes the issues. `stop_hook_active` guards against an infinite loop:
 # the second time we're invoked (because we blocked once), we just allow stop.
 set -uo pipefail
@@ -13,29 +13,35 @@ proj="${CLAUDE_PROJECT_DIR:-$PWD}"
 cd "$proj" || exit 0
 
 # Changed (added/modified, not deleted) + untracked files vs HEAD.
-mapfile -t files < <(
+args=()
+while IFS= read -r -d '' file; do
+  args+=(--file "$file")
+done < <(
   {
-    git diff --name-only --diff-filter=d HEAD
-    git ls-files --others --exclude-standard
-  } 2>/dev/null | sort -u
+    git diff --name-only --diff-filter=d -z HEAD
+    git ls-files --others --exclude-standard -z
+  } 2>/dev/null
 )
 
-args=()
-for f in "${files[@]}"; do
-  [ -n "$f" ] && args+=(--file "$f")
-done
 [ ${#args[@]} -eq 0 ] && exit 0
 
 # `output: false` in lefthook.yml keeps this quiet on success and limits a
 # failure to just the failing command's output (no banner/summary/ANSI).
-raw=$(NO_COLOR=1 pnpm exec lefthook run check "${args[@]}" 2>&1)
+raw=$(
+  exec 2>&1
+  status=0
+  for hook in lint fmt-check; do
+    NO_COLOR=1 mise run --quiet "$hook" "${args[@]}" || status=$?
+  done
+  exit "$status"
+)
 status=$?
 [ "$status" -eq 0 ] && exit 0
 
 # Strip any ANSI a tool emitted on its own; never block with an empty reason.
 raw=$(printf '%s' "$raw" | sed -E 's/\x1b\[[0-9;]*m//g')
-[ -n "${raw//[$' \t\n']/}" ] || raw="lefthook run check exited $status"
+[ -n "${raw//[$' \t\n']/}" ] || raw="lefthook lint/fmt-check exited $status"
 
 jq -n --arg r "$raw" \
-  '{decision: "block", reason: ("`lefthook run check` failed — fix these before stopping:\n\n" + $r)}'
+  '{decision: "block", reason: ("Lefthook lint/fmt-check failed — fix these before stopping:\n\n" + $r)}'
 exit 0

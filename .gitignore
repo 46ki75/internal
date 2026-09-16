@@ -16,3 +16,6 @@ storybook-static/
 # Rust
 target/
 lcov.info
+mise.local.toml
+mise.local.lock
+.mise/locks/mise.local/

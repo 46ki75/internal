@@ -48,7 +48,7 @@
     "aws-amplify": "^6.16.2",
     "clsx": "^2.1.1",
     "es-toolkit": "^1.46.1",
-    "fuse.js": "^7.1.0",
+    "fuse.js": "^7.5.0",
     "nitro": "3.0.260610-beta",
     "openapi-fetch": "^0.17.0",
     "solid-js": "^1.9.15"

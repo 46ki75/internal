@@ -78,6 +78,6 @@
     "typescript-plugin-css-modules": "latest",
     "vite": "8.2.2",
     "vite-plugin-solid": "^2.11.10",
-    "vitest": "^5.0.0"
+    "vitest": "^5.0.1"
   }
 }

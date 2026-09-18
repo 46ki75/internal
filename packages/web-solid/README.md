@@ -21,6 +21,14 @@ pnpm build                # Build the production CSR bundle
 `pnpm dev` proxies `/api` and `/invocations` to the dev CloudFront domain.
 Set `VITE_STAGE_NAME` to `dev`, `stg`, or `prod` to select another stage.
 
+### TypeScript tooling
+
+`@typescript/native` aliases TypeScript 7 and provides `tsc` for type checks.
+The `typescript` dependency aliases `@typescript/typescript6`, which provides
+the compiler API needed by ESLint, OpenAPI generation, and editor plugins.
+Keep both aliases: TypeScript 7.0 does not expose the JavaScript compiler API.
+See Microsoft's [side-by-side setup](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/#running-side-by-side-with-typescript-6.0).
+
 ## Structure
 
 - `src/routes/` contains SolidStart file routes and page composition.

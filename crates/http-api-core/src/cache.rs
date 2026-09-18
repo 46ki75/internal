@@ -108,7 +108,7 @@ pub async fn get_or_init_reqwest_client() -> Result<&'static reqwest::Client, cr
         .await
 }
 
-#[cached::proc_macro::cached(result = true)]
+#[cached::proc_macro::cached]
 pub async fn get_parameter(parameter_name: String) -> Result<String, crate::error::Error> {
     let sdk_config = aws_config::load_defaults(BehaviorVersion::latest()).await;
     let ssm_client = aws_sdk_ssm::Client::new(&sdk_config);

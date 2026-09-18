@@ -4,7 +4,7 @@ version = "0.1.0"
 edition.workspace = true
 
 [dependencies]
-fast_html2md = "0.0.61"
+fast_html2md = "0.0.63"
 feed-rs = "2.3.1"
 
 lambda_runtime.workspace = true

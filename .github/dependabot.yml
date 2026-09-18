@@ -38,6 +38,8 @@ updates:
           - "aws-sdk*"
       notionrs-updates:
         patterns:
+          # n2a2ui exposes notionrs types in its public API.
+          - "n2a2ui"
           - "notionrs"
           - "notionrs*"
       utoipa-updates:

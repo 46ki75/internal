@@ -186,7 +186,12 @@ export const TodoContainer = (props: TodoContainerProps) => {
         </button>
       </div>
 
-      <div ref={todoItemContainerRef} class={styles["todo-item-container"]}>
+      <div
+        ref={(element) => {
+          todoItemContainerRef = element;
+        }}
+        class={styles["todo-item-container"]}
+      >
         <Show when={todos().length > 0} fallback={<ElmBlockFallback />}>
           <For each={sortedTodos()}>
             {(item) => (

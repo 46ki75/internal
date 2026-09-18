@@ -1,12 +1,6 @@
 {
   "version": 1,
   "skills": {
-    "development-standards": {
-      "source": "46ki75/yaarr",
-      "sourceType": "github",
-      "skillPath": "skills/development-standards/SKILL.md",
-      "computedHash": "753c43e6a2c1cea18cbe74959e1a516a63af5673ae619e8c9193d3cd9e2c68af"
-    },
     "elmethis": {
       "source": "46ki75/elmethis",
       "sourceType": "github",

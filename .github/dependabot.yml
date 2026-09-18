@@ -8,6 +8,12 @@ updates:
     assignees:
       - "46ki75"
     groups:
+      eslint:
+        # The preset's core rules and Solid plugin must support the runtime.
+        patterns:
+          - "eslint"
+          - "@eslint/js"
+          - "eslint-plugin-solid"
       aws-sdk:
         patterns:
           - "@aws-sdk/*"

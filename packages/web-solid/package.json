@@ -60,7 +60,7 @@
     "@storybook/addon-docs": "^10.5.10",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/user-event": "^14.6.1",
-    "@types/node": "24.13.3",
+    "@types/node": "26.6.1",
     "@typescript/native": "npm:typescript@7.0.2",
     "@vitest/eslint-plugin": "^1.6.24",
     "concurrently": "^10.0.5",

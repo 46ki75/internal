@@ -8,6 +8,10 @@ updates:
     assignees:
       - "46ki75"
     groups:
+      tanstack-query:
+        # QueryClient's private fields require a single query-core version.
+        patterns:
+          - "@tanstack/*query*"
       eslint:
         # The preset's core rules and Solid plugin must support the runtime.
         patterns:

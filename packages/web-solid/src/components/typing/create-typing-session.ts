@@ -8,10 +8,7 @@ import {
 
 export type TypingStatus = "idle" | "typing" | "complete";
 export type TypingCharacterState =
-  | "pending"
-  | "current"
-  | "correct"
-  | "incorrect";
+  "pending" | "current" | "correct" | "incorrect";
 
 export interface TypingCharacter {
   index: number;

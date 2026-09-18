@@ -8,6 +8,10 @@ updates:
     assignees:
       - "46ki75"
     groups:
+      tanstack-query:
+        # QueryClient's private fields require a single query-core version.
+        patterns:
+          - "@tanstack/*query*"
       aws-sdk:
         patterns:
           - "@aws-sdk/*"

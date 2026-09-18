@@ -18,5 +18,6 @@ esac
 cd "$proj" || exit 0
 
 # lefthook scopes to jobs whose glob matches; a non-matching file is a no-op.
-NO_COLOR=1 pnpm exec lefthook run fmt --file "$file" >/dev/null 2>&1 || true
+file="${file#"$proj"/}"
+NO_COLOR=1 mise run --quiet fmt --file "$file" >/dev/null 2>&1 || true
 exit 0

@@ -18,14 +18,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install pinned Rust toolchain
-        run: rustup show active-toolchain || rustup toolchain install
+      - uses: jdx/mise-action@v4
+        with:
+          version: "2026.9.9"
+
+      - name: Install native Rust toolchain
+        run: mise run setup:rust
 
       - uses: Swatinem/rust-cache@v2
 
-      - uses: taiki-e/install-action@v2
-        with:
-          tool: just
-
-      - name: just ci-live
-        run: just ci-live
+      - name: Rust gate and live tests
+        run: mise run rust:ci:live

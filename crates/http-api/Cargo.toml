@@ -40,7 +40,7 @@ utoipa.workspace = true
 
 lambda_http = "1.0.2"
 tracing-subscriber.workspace = true
-tower-http = { version = "0.6.8", features = [
+tower-http = { version = "0.7.1", features = [
     "compression-gzip",
     "compression-br",
 ] }

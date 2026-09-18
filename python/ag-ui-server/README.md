@@ -23,24 +23,24 @@ platform edge (inbound auth), so the container never validates the token itself.
 
 ## Modules
 
-| Module           | Responsibility                                                                              |
-| ---------------- | ------------------------------------------------------------------------------------------- |
-| `config.py`      | Read runtime configuration from environment variables.                                      |
-| `model_auth.py`  | Fetch the subscription OAuth token from SSM; export `CLAUDE_CODE_OAUTH_TOKEN` for the SDK.  |
-| `agent.py`       | Build the `ClaudeAgentOptions` (model, system prompt, AWS Knowledge MCP, hidden builtins).  |
-| `prompt.py`      | Render a `RunAgentInput` (full message history) into one prompt for `query()`.              |
-| `agui_bridge.py` | Translate the SDK message/stream events into AG-UI events.                                  |
-| `server.py`      | FastAPI app: `POST /invocations` (AG-UI SSE) and `GET /ping` (health).                      |
+| Module           | Responsibility                                                                             |
+| ---------------- | ------------------------------------------------------------------------------------------ |
+| `config.py`      | Read runtime configuration from environment variables.                                     |
+| `model_auth.py`  | Fetch the subscription OAuth token from SSM; export `CLAUDE_CODE_OAUTH_TOKEN` for the SDK. |
+| `agent.py`       | Build the `ClaudeAgentOptions` (model, system prompt, AWS Knowledge MCP, hidden builtins). |
+| `prompt.py`      | Render a `RunAgentInput` (full message history) into one prompt for `query()`.             |
+| `agui_bridge.py` | Translate the SDK message/stream events into AG-UI events.                                 |
+| `server.py`      | FastAPI app: `POST /invocations` (AG-UI SSE) and `GET /ping` (health).                     |
 
 ## Environment variables (set by Terraform on the runtime)
 
-| Variable                         | Meaning                                                                        |
-| -------------------------------- | ------------------------------------------------------------------------------ |
-| `CLAUDE_CODE_OAUTH_TOKEN_PARAM`  | **Required.** SSM SecureString holding the `claude setup-token` OAuth token.   |
-| `CLAUDE_CODE_OAUTH_TOKEN_REGION` | Region the SSM SecureString lives in (default `ap-northeast-1`).               |
-| `MODEL_ID`                       | Claude model the agent reasons with (default `claude-sonnet-4-6`).             |
-| `MCP_URL`                        | AWS Knowledge MCP endpoint (default `https://knowledge-mcp.global.api.aws`).   |
-| `MAX_TURNS`                      | Max agentic turns per invocation (default `20`).                               |
+| Variable                         | Meaning                                                                      |
+| -------------------------------- | ---------------------------------------------------------------------------- |
+| `CLAUDE_CODE_OAUTH_TOKEN_PARAM`  | **Required.** SSM SecureString holding the `claude setup-token` OAuth token. |
+| `CLAUDE_CODE_OAUTH_TOKEN_REGION` | Region the SSM SecureString lives in (default `ap-northeast-1`).             |
+| `MODEL_ID`                       | Claude model the agent reasons with (default `claude-sonnet-4-6`).           |
+| `MCP_URL`                        | AWS Knowledge MCP endpoint (default `https://knowledge-mcp.global.api.aws`). |
+| `MAX_TURNS`                      | Max agentic turns per invocation (default `20`).                             |
 
 ## Model auth (subscription)
 
@@ -69,8 +69,8 @@ auth precedence, so `model_auth.py` clears any `ANTHROPIC_*` first.)
 The lockfile and venv live at the workspace root. From the repo root:
 
 ```bash
-uv sync --package ag-ui-server --group dev
-uv run --package ag-ui-server pytest python/ag-ui-server/tests
+mise run setup:python
+mise run ag-ui-server:test
 ```
 
 Tests are hermetic — they mock SSM and the SDK `query()`, so no AWS credentials
@@ -80,14 +80,14 @@ Run locally (needs the OAuth token reachable in SSM and AWS credentials):
 
 ```bash
 CLAUDE_CODE_OAUTH_TOKEN_PARAM=/dev/46ki75/internal/claude-code/secret \
-  uv run --package ag-ui-server python -m ag_ui_server.server
+  mise run ag-ui-server:dev
 ```
 
 ## Build & deploy
 
 ```bash
-STAGE_NAME=dev python/ag-ui-server/build.sh          # build arm64 + push :latest to dev/ag-ui-server
-STAGE_NAME=dev TAG=v2 python/ag-ui-server/build.sh   # push a fresh tag for a new runtime version
+mise run ag-ui-server:build dev v2   # push :v2 and :latest to dev/ag-ui-server
+mise run ag-ui-server:deploy dev    # push a timestamp tag, then apply Terraform interactively
 ```
 
 `build.sh` exports a pinned `requirements.txt` from the workspace lock, logs in

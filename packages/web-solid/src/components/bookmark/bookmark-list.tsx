@@ -124,7 +124,9 @@ export const BookmarkList = (props: BookmarkListProps) => {
       />
 
       <div
-        ref={bookmarkContainer}
+        ref={(element) => {
+          bookmarkContainer = element;
+        }}
         class={`${styles["bookmark-container"]} ${styles["bookmark-container-search-results"]}`}
       >
         <For each={searchResults()}>
@@ -147,7 +149,12 @@ export const BookmarkList = (props: BookmarkListProps) => {
         </For>
       </div>
 
-      <div ref={bookmarkListContainer} class={styles["tags-container"]}>
+      <div
+        ref={(element) => {
+          bookmarkListContainer = element;
+        }}
+        class={styles["tags-container"]}
+      >
         <For each={grouped().tags}>
           {(group) => (
             <div class={styles["tag-section"]}>

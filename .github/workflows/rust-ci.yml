@@ -11,7 +11,9 @@ on:
       - "Cargo.toml"
       - "Cargo.lock"
       - "rust-toolchain.toml"
-      - "Justfile"
+      - "mise.toml"
+      - "mise.lock"
+      - ".mise/locks/**"
       - ".github/workflows/rust-ci.yml"
   pull_request:
     branches: [main]
@@ -20,7 +22,9 @@ on:
       - "Cargo.toml"
       - "Cargo.lock"
       - "rust-toolchain.toml"
-      - "Justfile"
+      - "mise.toml"
+      - "mise.lock"
+      - ".mise/locks/**"
       - ".github/workflows/rust-ci.yml"
 
 # Cancel superseded runs on the same ref.
@@ -36,17 +40,15 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # Installs the toolchain + components (rustfmt, clippy) pinned in
-      # rust-toolchain.toml, so CI runs against the declared version.
-      - name: Install pinned Rust toolchain
-        run: rustup show active-toolchain || rustup toolchain install
-
-      - uses: taiki-e/install-action@v2
+      - uses: jdx/mise-action@v4
         with:
-          tool: just
+          version: "2026.9.9"
 
-      - name: just fmt-check
-        run: just fmt-check
+      - name: Install native Rust toolchain
+        run: mise run setup:rust
+
+      - name: Check Rust formatting
+        run: mise run rust:fmt-check
 
   clippy:
     name: Clippy
@@ -54,17 +56,17 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install pinned Rust toolchain
-        run: rustup show active-toolchain || rustup toolchain install
+      - uses: jdx/mise-action@v4
+        with:
+          version: "2026.9.9"
+
+      - name: Install native Rust toolchain
+        run: mise run setup:rust
 
       - uses: Swatinem/rust-cache@v2
 
-      - uses: taiki-e/install-action@v2
-        with:
-          tool: just
-
-      - name: just lint
-        run: just lint
+      - name: Clippy
+        run: mise run rust:lint
 
   test:
     name: Test
@@ -72,17 +74,17 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install pinned Rust toolchain
-        run: rustup show active-toolchain || rustup toolchain install
+      - uses: jdx/mise-action@v4
+        with:
+          version: "2026.9.9"
+
+      - name: Install native Rust toolchain
+        run: mise run setup:rust
 
       - uses: Swatinem/rust-cache@v2
 
-      - uses: taiki-e/install-action@v2
-        with:
-          tool: just
-
-      - name: just test
-        run: just test
+      - name: Hermetic Rust tests
+        run: mise run rust:test
 
   # Report-only: surfaces hermetic-test coverage but never gates the merge
   # (coverage is a guardrail, not a target).
@@ -92,29 +94,24 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install pinned Rust toolchain
-        run: rustup show active-toolchain || rustup toolchain install
+      - uses: jdx/mise-action@v4
+        with:
+          version: "2026.9.9"
 
-      # cargo-llvm-cov needs the instrumentation tools; rust-toolchain.toml
-      # uses the minimal profile, so add the component explicitly.
-      - name: Add llvm-tools
-        run: rustup component add llvm-tools-preview
+      - name: Install native Rust toolchain and LLVM tools
+        run: mise run setup:rust
 
       - uses: Swatinem/rust-cache@v2
 
-      - uses: taiki-e/install-action@v2
-        with:
-          tool: just,cargo-llvm-cov
-
       - name: Generate coverage
-        run: just coverage-ci
+        run: mise run rust:coverage:ci
 
       - name: Write coverage summary
         run: |
           {
             echo '### Coverage (hermetic tests)'
             echo '```'
-            cargo llvm-cov report --summary-only
+            mise run --quiet rust:coverage:summary
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 

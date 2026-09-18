@@ -21,57 +21,75 @@ Domains: `{stage-}internal.46ki75.com` (web) and `api.{stage-}internal.46ki75.co
 
 ## Common commands
 
+Read [README.md](README.md) for mise setup and the task catalog before making
+changes. Root `mise.toml` is the task entry point; use namespaced component tasks
+from any directory. Exact tool versions are managed by mise, while rustup reads
+`rust-toolchain.toml` natively. These rules supersede older Just examples in the
+bundled development-standards skill.
+
 ### Git hooks (lefthook)
 
-`lefthook.yml` defines a `pre-commit` hook that auto-formats staged files and re-stages the fixes (`stage_fixed`):
-`cargo fmt --all` for Rust, Prettier for `packages/web-solid/src`, and `markdownlint-cli2 --fix` for Markdown.
-Hooks install on `pnpm install` (root `prepare` → `lefthook install`). Heavier gates (clippy, tests, typecheck)
-stay in CI. Run manually with `pnpm exec lefthook run pre-commit`; bypass once with
-`git commit --no-verify`.
+`lefthook.yml` directly configures the native project tools:
+
+- `mise run fmt` formats tracked files with Cargo/rustfmt, Ruff, Prettier, Terraform, and the existing Markdown fixer.
+- `mise run fmt-check` checks the same scope without modifying source files.
+- `mise run lint` runs Clippy, Ruff, ESLint, Stylelint, and markdownlint without fixes.
+- `mise run check` runs both read-only hooks over all tracked files, plus TypeScript and Python type checking. Tests remain separate.
+
+The first three commands accept repeated `--file <repo-relative-path>` options, including explicit untracked files, or `--all-files`.
+`check` is always project-wide; nested hooks do not inherit outer file arguments. Selecting one Rust file still triggers workspace-wide Cargo formatting or Clippy.
+Use the full gate after changes to shared configuration or dependencies. Generated OpenAPI code and the web package's ignored spec files are excluded from formatting.
+Markdown retains `markdownlint-cli2 --fix`; unfixable Markdown rules can fail formatting, and its read-only check participates in both `lint` and `fmt-check`.
+
+Use `mise run setup` to install locked Node and Python workspace dependencies and native Rust components.
+Mise supplies Terraform and binds uv to its Python; hook commands use the existing locked uv environment without syncing it.
+The `pre-commit` hook auto-formats staged Rust, web, and Markdown files and re-stages fixes (`stage_fixed`).
+Hooks install on `pnpm install` (root `prepare` → `lefthook install`). Run manually with
+`mise exec -- pnpm exec lefthook run pre-commit`; bypass once with `git commit --no-verify`.
 
 ### `crates/http-api` (main API Lambda)
 
-The `http-api` binary assembles the per-feature router crates into one Axum app. Per-crate recipes use [`just`](https://github.com/casey/just):
+The `http-api` binary assembles the per-feature router crates into one Axum app:
 
 ```sh
-just dev                  # cargo lambda watch with STAGE_NAME=dev, debug logs
-just build                # cargo lambda build --arm64 --release
-just deploy <STAGE_NAME>  # cargo lambda deploy to <STAGE_NAME>-46ki75-internal-lambda-function-http-api
+mise run http-api:dev             # watch with STAGE_NAME=dev and debug logs
+mise run http-api:build           # cargo lambda build --arm64 --release
+mise run http-api:deploy <stage>  # build and deploy the stage's API Lambda
 ```
 
-Workspace-wide gates live in the **root `Justfile`**: `just fmt-check`, `just lint`
-(`clippy --workspace -D warnings`), `just test` (`cargo test --workspace`), and `just ci` (all three).
+Workspace-wide Rust gates live in **root `mise.toml`**: `mise run rust:fmt-check`,
+`mise run rust:lint`, `mise run rust:test`, and `mise run rust:ci` (all three).
 Run a single test with `cargo test -p <crate> <test_name>` — most feature tests live in their own
 `http-api-<feature>` crate, not the binary. When `cargo lambda watch` is running, the local URL is
 `http://localhost:9000/lambda-url/http-api/...`.
 
 ### `crates/logs-reporter` (CloudWatch Logs → SNS)
 
-Same per-crate `just` recipes as `http-api`; deploys to `<STAGE_NAME>-46ki75-internal-lambda-function-reporter`.
+Use `mise run logs-reporter:dev`, `logs-reporter:build`, `logs-reporter:test`, or
+`logs-reporter:deploy <stage>`; deployment targets `<stage>-46ki75-internal-lambda-function-reporter`.
 
 ### `crates/feed`
 
-No `Justfile`. Use `cargo lambda build --release` / `cargo lambda deploy` directly.
+Use `mise exec -- cargo lambda build --release` / `mise exec -- cargo lambda deploy`
+from the crate directory.
 
 ### `packages/web-solid` (SolidStart frontend)
 
 ```sh
-pnpm dev                  # VITE_STAGE_NAME=dev Vite dev server on :11070
-pnpm build                # SolidStart v2/Vite CSR bundle into .output/public
-pnpm build.types          # tsc --noEmit (typecheck only)
-pnpm lint                 # eslint src/**/*.ts*
-pnpm fmt / pnpm fmt.check # prettier
-pnpm test                 # Vitest component and model tests
-pnpm storybook            # dev on :11071
-pnpm deploy.{dev|stg|prod}  # build → s3 sync → CloudFront invalidate
-pnpm generate:openapi     # regenerate src/openapi/schema.ts from a running http-api
+mise run web:dev               # VITE_STAGE_NAME=dev Vite dev server on :11070
+mise run web:build             # SolidStart v2/Vite CSR bundle into .output/public
+mise run web:check             # lint, types, formatting, and tests
+mise run web:test              # Vitest component and model tests
+mise run web:storybook         # dev on :11071
+mise run web:deploy <stage>    # build → s3 sync → CloudFront invalidate
+mise run web:generate-openapi  # regenerate schema.ts from a running http-api
 ```
 
-`generate:openapi` requires `crates/http-api` running locally (`just dev` in that crate). It hits
+`web:generate-openapi` requires `crates/http-api` running locally (`mise run http-api:dev`). It hits
 `http://localhost:9000/lambda-url/http-api/api-gateway/api/v1/openapi.json`. Re-run whenever the Rust API
 surface changes.
 
-`pnpm deploy.*` runs `scripts/deploy-s3.sh` (S3 sync to `<stage>-46ki75-internal-s3-bucket-web`) then `scripts/invalidate.sh` (looks up the CloudFront distribution by alias domain).
+`web:deploy` runs `scripts/deploy-s3.sh` (S3 sync to `<stage>-46ki75-internal-s3-bucket-web`) then `scripts/invalidate.sh` (looks up the CloudFront distribution by alias domain).
 
 ### `python/ag-ui-server` (Claude Agent SDK over AG-UI, deployed to Bedrock AgentCore)
 
@@ -80,9 +98,10 @@ A FastAPI app (uv workspace member) that runs a [Claude Agent SDK][casdk] agent 
 (`@ag-ui/client` `HttpAgent`) still uses the same AG-UI contract.
 
 ```sh
-uv sync --package ag-ui-server --group dev
-uv run --package ag-ui-server pytest python/ag-ui-server/tests   # hermetic (mocks SSM + the SDK)
-STAGE_NAME=dev python/ag-ui-server/build.sh                      # build arm64 + push to <stage>/ag-ui-server ECR
+mise run setup:python
+mise run ag-ui-server:test             # hermetic (mocks SSM + the SDK)
+mise run ag-ui-server:build dev        # build arm64 + push to dev/ag-ui-server ECR
+mise run ag-ui-server:deploy dev       # build/push, then interactive Terraform apply
 ```
 
 Serves the AgentCore `AGUI` contract: `POST /invocations` (AG-UI `RunAgentInput` → AG-UI SSE) and
@@ -168,5 +187,5 @@ Feature crates read their per-feature SSM keys inline via `http_api_core::cache:
 Rust crates use `tracing` + `tracing-subscriber`. `RUST_LOG` controls level;
 `RUST_LOG_FORMAT=json|pretty` switches between human-readable (default) and JSON (used in deployed Lambdas).
 Each `http-api` feature logs under its own `http_api_<feature>` target (plus `http_api_core`), so `RUST_LOG`
-filters must list them all — see the `http-api` `Justfile` and `terraform/lambda.tf`.
+filters must list them all — see `http-api:dev` in `mise.toml` and `terraform/lambda.tf`.
 `logs-reporter` subscribes to CloudWatch Logs and forwards filtered events to SNS for email alerting.

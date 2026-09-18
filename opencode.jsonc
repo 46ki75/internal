@@ -10,9 +10,17 @@
   "mcp": {
     "AWS Knowledge": {
       "type": "remote",
-      "url": "https://knowledge-mcp.global.api.aws"
-    }
+      "url": "https://knowledge-mcp.global.api.aws",
+    },
+    "playwright": {
+      "enabled": true,
+      "type": "local",
+      "command": [
+        "pnpx",
+        "@playwright/mcp@latest"
+      ],
+    },
   },
   "lsp": true,
-  "formatter": true
+  "formatter": true,
 }

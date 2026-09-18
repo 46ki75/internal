@@ -22,7 +22,7 @@ chrono = "0.4.43"
 futures = "0.3.31"
 http = "1.4.0"
 lambda_runtime = "1.0.1"
-n2a2ui = "0.4.0"
+n2a2ui = "0.7.0"
 notionrs = { version = "0.32.0", features = ["rustls"] }
 notionrs_types = "0.24.0"
 regex = "1.12.3"

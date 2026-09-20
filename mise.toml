@@ -76,8 +76,8 @@ description = "Check Rust workspace formatting"
 run = "cargo fmt --all -- --check"
 
 [tasks."rust:lint"]
-description = "Deny Clippy warnings across workspace crates and targets"
-run = "cargo clippy --locked --workspace --all-targets -- -D warnings"
+description = "Deny Clippy warnings across workspace crates, targets, and features"
+run = "cargo clippy --locked --workspace --all-targets --all-features -- -D warnings"
 
 [tasks."rust:test"]
 description = "Run hermetic Rust workspace tests (ignored live tests are skipped)"

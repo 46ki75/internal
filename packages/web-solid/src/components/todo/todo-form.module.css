@@ -4,17 +4,12 @@
   .todo-form-kit {
     display: grid;
     gap: 0.25rem;
-
-    grid-template-columns: auto auto 1fr auto;
-    grid-template-rows: auto;
-    grid-template-areas: "severity-select deadline-input title-input submit-button";
+    grid-template: "severity-select deadline-input title-input submit-button" auto / auto auto 1fr auto;
 
     @container (width < 650px) {
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: auto auto;
-      grid-template-areas:
-        "severity-select deadline-input submit-button"
-        "title-input title-input title-input";
+      grid-template:
+        "severity-select deadline-input submit-button" auto
+        "title-input title-input title-input" auto / 1fr 1fr 1fr;
     }
 
     .severity-select {
@@ -24,8 +19,10 @@
     .deadline-input {
       grid-area: deadline-input;
       all: unset;
-      background-color: rgba(255, 255, 255, 0.8);
-      box-shadow: 0 0 0.125rem rgba(0, 0, 0, 0.15);
+      background-color: oklch(
+        from var(--elmethis-color-surface-raised) l c h / 80%
+      );
+      box-shadow: var(--elmethis-box-shadow-medium);
       border-style: solid;
       border-width: 1px;
       border-color: transparent;
@@ -34,8 +31,7 @@
       cursor: pointer;
 
       &:focus-within {
-        --highlight-color: #bfa056;
-        border-color: var(--highlight-color);
+        border-color: var(--elmethis-color-primary);
       }
     }
 

@@ -1,7 +1,5 @@
 import { Show, splitProps, type JSX } from "solid-js";
-import { clsx } from "clsx";
 
-import styles from "./writing-assesments.module.css";
 import { WritingAssessmentResult } from "./writing-assessment-result";
 import { WritingAssessmentsScore } from "./writing-assessments-score";
 
@@ -26,28 +24,43 @@ export const WritingAssesments = (props: WritingAssesmentsProps) => {
   ]);
 
   return (
-    <div class={clsx(styles["writing-assesments"], local.class)} {...others}>
+    <div class={local.class} {...others}>
       <WritingAssessmentsScore score={local.score} label={true} />
 
       <Show when={local.japanese_context}>
-        <WritingAssessmentResult heading="Japanese Context" underline={false}>
+        <WritingAssessmentResult
+          plaintext={props.japanese_context ?? ""}
+          heading="Japanese Context"
+          underline={false}
+        >
           {local.japanese_context}
         </WritingAssessmentResult>
       </Show>
 
-      <WritingAssessmentResult heading="Original Sentence" color="#ae6e6e">
+      <WritingAssessmentResult
+        plaintext={props.original_text}
+        heading="Original Sentence"
+        color="#ae6e6e"
+      >
         {local.original_text}
       </WritingAssessmentResult>
 
-      <WritingAssessmentResult heading="Revised Sentence" color="#659878">
+      <WritingAssessmentResult
+        plaintext={props.revised_text}
+        heading="Revised Sentence"
+        color="#659878"
+      >
         {local.revised_text}
       </WritingAssessmentResult>
 
-      <WritingAssessmentResult heading="Justification">
+      <WritingAssessmentResult
+        plaintext={props.justification}
+        heading="justification"
+      >
         {local.justification}
       </WritingAssessmentResult>
 
-      <WritingAssessmentResult heading="Register">
+      <WritingAssessmentResult plaintext={props.register} heading="register">
         {local.register}
       </WritingAssessmentResult>
     </div>

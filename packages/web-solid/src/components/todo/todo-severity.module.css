@@ -7,14 +7,14 @@
   width: 5rem;
   user-select: none;
   opacity: 0.8;
-  color: white;
+  color: var(--elmethis-color-neutral);
   border-radius: 0.25rem;
   text-transform: uppercase;
   text-align: center;
   font-family: var(--font-mono);
 
   .icon {
-    color: currentColor;
+    color: currentcolor;
   }
 
   .text {

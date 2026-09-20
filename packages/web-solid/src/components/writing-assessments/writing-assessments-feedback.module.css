@@ -1,5 +1,5 @@
 .writing-assessments-feedback {
-  border: 1px solid oklch(from gray l c h / 0.25);
+  border: 1px solid oklch(from var(--elmethis-color-neutral) l c h / 25%);
   background-color: var(--elmethis-color-surface-raised);
 
   .header {

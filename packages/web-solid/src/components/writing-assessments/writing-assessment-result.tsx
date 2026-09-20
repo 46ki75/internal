@@ -1,11 +1,12 @@
 import type { JSX } from "solid-js";
 
-import { ElmInlineText } from "@elmethis/solid";
+import { ElmCopyIcon, ElmInlineText } from "@elmethis/solid";
 
 import styles from "./writing-assessment-result.module.css";
 
 type WritingAssessmentResultProps = {
   children: JSX.Element;
+  plaintext: string;
   color?: string;
   heading: string;
   underline?: boolean;
@@ -22,6 +23,7 @@ export const WritingAssessmentResult = (
     </div>
 
     <div class={styles["result"]}>
+      <ElmCopyIcon content={props.plaintext} />
       <ElmInlineText color={props.color}>{props.children}</ElmInlineText>
     </div>
   </>

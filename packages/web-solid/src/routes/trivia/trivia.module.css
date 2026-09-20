@@ -1,10 +1,9 @@
 .trivia {
   width: clamp(400px, 100%, 800px);
   min-height: 100vh;
-  margin: 0.5rem auto 8rem auto;
+  margin: 0.5rem auto 8rem;
   box-sizing: border-box;
   padding: 0.25rem;
-
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -18,13 +17,14 @@
   }
 
   .trivia-block-container {
-    border: 1px solid oklch(from gray l c h / 0.25);
+    border: 1px solid oklch(from var(--elmethis-color-neutral) l c h / 25%);
     border-radius: 0.25rem;
     background-color: var(--elmethis-color-surface-raised);
-    box-shadow: 0 0 2px oklch(from black l c h / 0.05);
+    box-shadow: var(--elmethis-box-shadow-medium);
 
     .block-header {
-      border-bottom: 1px solid oklch(from gray l c h / 0.25);
+      border-bottom: 1px solid
+        oklch(from var(--elmethis-color-neutral) l c h / 25%);
       box-sizing: border-box;
       padding: 0.5rem;
       display: flex;

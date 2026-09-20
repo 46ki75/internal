@@ -144,7 +144,7 @@ export const TypingItemForm = (props: TypingItemFormProps) => {
                   field().state.meta.errors.length > 0
                 }
               >
-                <p class={styles.fieldError} role="alert">
+                <p class={styles["field-error"]} role="alert">
                   {field().state.meta.errors.join(", ")}
                 </p>
               </Show>
@@ -178,7 +178,7 @@ export const TypingItemForm = (props: TypingItemFormProps) => {
                   field().state.meta.errors.length > 0
                 }
               >
-                <p class={styles.fieldError} role="alert">
+                <p class={styles["field-error"]} role="alert">
                   {field().state.meta.errors.join(", ")}
                 </p>
               </Show>
@@ -189,7 +189,7 @@ export const TypingItemForm = (props: TypingItemFormProps) => {
         <div class={styles.footer}>
           <Show when={submissionError()} keyed>
             {(message) => (
-              <p class={styles.submissionError} role="alert">
+              <p class={styles["submission-error"]} role="alert">
                 {message}
               </p>
             )}

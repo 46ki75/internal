@@ -17,7 +17,7 @@
 
 .count,
 .glyphs,
-.completionCount,
+.completion-count,
 .description code {
   font-family: var(--elmethis-font-family-monospace);
   font-variant-numeric: tabular-nums;
@@ -28,7 +28,7 @@
   overflow-x: auto;
   border-radius: 0.25rem;
   background-color: var(--elmethis-color-surface-raised);
-  box-shadow: 0 0 0.125rem var(--elmethis-box-shadow-color);
+  box-shadow: var(--elmethis-box-shadow-medium);
 }
 
 .table {
@@ -44,7 +44,7 @@
   height: 1px;
   padding: 0;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
 }
@@ -98,7 +98,7 @@
 }
 
 .table tbody tr.selected td {
-  background-color: oklch(from #937f69 l c h / 0.15);
+  background-color: var(--elmethis-color-primary-hover);
 }
 
 .description {
@@ -124,7 +124,7 @@
 }
 
 .glyphs,
-.completionCount {
+.completion-count {
   display: block;
   color: var(--elmethis-color-neutral-strong);
   text-align: right;
@@ -136,7 +136,7 @@
   text-align: center !important;
 }
 
-@media (max-width: 36rem) {
+@media (width <= 36rem) {
   .header {
     padding-inline: 0.75rem;
   }

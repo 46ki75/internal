@@ -19,7 +19,7 @@
 
 .page-title {
   gap: 0.75rem;
-  color: #937f69;
+  color: var(--elmethis-color-primary);
 }
 
 .page-title h1,
@@ -45,10 +45,10 @@
 .assessment,
 .history {
   box-sizing: border-box;
-  border: 1px solid oklch(from gray l c h / 0.25);
+  border: 1px solid oklch(from var(--elmethis-color-neutral) l c h / 25%);
   border-radius: 0.375rem;
   background-color: oklch(
-    from var(--elmethis-color-surface-raised) l c h / 0.5
+    from var(--elmethis-color-surface-raised) l c h / 50%
   );
 }
 
@@ -92,7 +92,7 @@
   justify-content: space-between;
   gap: 1rem;
   padding-block-end: 0.75rem;
-  border-bottom: 1px solid oklch(from gray l c h / 0.2);
+  border-bottom: 1px solid oklch(from var(--elmethis-color-neutral) l c h / 20%);
 }
 
 .history {
@@ -135,8 +135,8 @@
 
 .history-item:hover,
 .history-item.selected {
-  border-color: oklch(from #937f69 l c h / 0.4);
-  background-color: oklch(from #937f69 l c h / 0.1);
+  border-color: oklch(from var(--elmethis-color-primary) l c h / 40%);
+  background-color: oklch(from var(--elmethis-color-primary) l c h / 10%);
 }
 
 .history-preview {
@@ -164,7 +164,7 @@
   display: grid;
   gap: 1rem;
   padding: 1.25rem;
-  color: var(--elmethis-color-on-surface);
+  color: var(--elmethis-color-neutral-strong);
   background-color: var(--elmethis-color-surface-raised);
 }
 
@@ -179,7 +179,7 @@
   padding: 0.75rem;
   border-left: 3px solid var(--elmethis-color-neutral-weak);
   color: var(--elmethis-color-neutral-weak);
-  background-color: oklch(from gray l c h / 0.08);
+  background-color: oklch(from var(--elmethis-color-neutral) l c h / 8%);
 }
 
 .delete-error {

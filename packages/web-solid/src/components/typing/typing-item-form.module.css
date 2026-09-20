@@ -5,7 +5,7 @@
   color: var(--elmethis-color-neutral);
   border-radius: 0.25rem;
   background-color: var(--elmethis-color-surface-raised);
-  box-shadow: 0 0 0.125rem var(--elmethis-box-shadow-color);
+  box-shadow: var(--elmethis-box-shadow-medium);
   font-family: var(--elmethis-font-family-sans);
 }
 
@@ -34,8 +34,8 @@
   grid-column: 1 / -1;
 }
 
-.fieldError,
-.submissionError {
+.field-error,
+.submission-error {
   margin: 0.375rem 0 0;
   color: var(--elmethis-color-accent-error);
   font-size: 0.75rem;
@@ -49,12 +49,12 @@
   gap: 1rem;
 }
 
-.submissionError {
+.submission-error {
   margin: 0;
   margin-right: auto;
 }
 
-@media (max-width: 36rem) {
+@media (width <= 36rem) {
   .section {
     padding-inline: 0.75rem;
   }

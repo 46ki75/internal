@@ -10,9 +10,9 @@ Run commands from this directory:
 ```sh
 pnpm dev                  # SolidStart dev server on :11070
 pnpm test                 # Vitest component and model tests
-pnpm build.types          # TypeScript check
+pnpm build:types          # TypeScript check
 pnpm lint                 # ESLint with Solid rules
-pnpm fmt / pnpm fmt.check # Prettier
+pnpm fmt / pnpm fmt:check # Prettier
 pnpm storybook            # Storybook on :11071
 pnpm build-storybook      # Static Storybook build
 pnpm build                # Build the production CSR bundle
@@ -57,9 +57,9 @@ pnpm generate:openapi
 copied into the same output.
 
 ```sh
-pnpm deploy.dev
-pnpm deploy.stg
-pnpm deploy.prod
+pnpm deploy:dev
+pnpm deploy:stg
+pnpm deploy:prod
 ```
 
 Deployment syncs `.output/public` to the stage S3 bucket and invalidates the

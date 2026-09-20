@@ -88,9 +88,7 @@ class DynamoDBSessionStore(SessionStore):
 
     # --- required methods -------------------------------------------------
 
-    async def append(
-        self, key: SessionKey, entries: list[SessionStoreEntry]
-    ) -> None:
+    async def append(self, key: SessionKey, entries: list[SessionStoreEntry]) -> None:
         await run_sync(self._append_sync, key, entries)
 
     async def load(self, key: SessionKey) -> list[SessionStoreEntry] | None:
@@ -117,9 +115,7 @@ class DynamoDBSessionStore(SessionStore):
 
     # --- synchronous implementations (run in a worker thread) -------------
 
-    def _append_sync(
-        self, key: SessionKey, entries: list[SessionStoreEntry]
-    ) -> None:
+    def _append_sync(self, key: SessionKey, entries: list[SessionStoreEntry]) -> None:
         pk = self._pk(key)
         subpath = key.get("subpath") or ""
         cache_key = f"{pk}{_SEP}{subpath}"

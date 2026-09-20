@@ -8,9 +8,8 @@ body {
   padding: 0;
   font-family: var(--font-sans);
   overflow-x: hidden;
-
   transition: background-color 300ms;
-  background-color: light-dark(#efecea, #393e46);
+  background-color: var(--elmethis-color-surface-base);
   background-image: light-dark(
     url("./assets/hexagon-pattern.svg?no-inline"),
     url("./assets/hexagon-pattern-dark.svg?no-inline")

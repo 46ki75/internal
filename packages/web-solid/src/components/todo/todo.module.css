@@ -3,24 +3,21 @@
   position: relative;
   overflow: hidden;
   align-items: center;
-  gap: 0.25rem 0.25rem;
+  gap: 0.25rem;
   width: 100%;
-  border-left: 2px solid oklch(from gray l c h / 0.25);
+  border-left: 2px solid oklch(from var(--elmethis-color-neutral) l c h / 25%);
   box-sizing: border-box;
   padding: 0.25rem 0 0.25rem 0.5rem;
-  grid-template-columns: 2rem 1.5rem 1.5rem 5rem 1.5rem 1fr 2rem;
-  grid-template-rows: auto auto;
-  grid-template-areas:
-    "checkbox notion-icon recurring-icon severity deadline-icon deadline"
-    "checkbox text text text text text";
-
+  grid-template:
+    "checkbox notion-icon recurring-icon severity deadline-icon deadline" auto
+    "checkbox text text text text text" auto / 2rem 1.5rem 1.5rem 5rem 1.5rem 1fr 2rem;
   transition:
     opacity 200ms,
     background-color 200ms;
 
   &.is-done {
     opacity: 0.5;
-    background-color: oklch(from gray l c h / 0.125);
+    background-color: oklch(from var(--elmethis-color-neutral) l c h / 12.5%);
   }
 
   &.loading {
@@ -31,18 +28,18 @@
     grid-area: checkbox;
     position: relative;
     cursor: pointer;
-    border: 2px solid oklch(from gray l c h / 0.5);
+    border: 2px solid oklch(from var(--elmethis-color-neutral) l c h / 50%);
     border-radius: 0.25rem;
     height: 1.25rem;
     width: 1.25rem;
     transition: background-color 100ms;
 
     &:hover {
-      background-color: oklch(from gray l c h / 0.5);
+      background-color: oklch(from var(--elmethis-color-neutral) l c h / 50%);
     }
 
     &.is-done {
-      background-color: oklch(from gray l c h / 0.5);
+      background-color: oklch(from var(--elmethis-color-neutral) l c h / 50%);
 
       &:hover {
         background-color: transparent;
@@ -84,7 +81,7 @@
     grid-area: text;
     display: block;
     width: 100%;
-    color: #6987b8;
+    color: var(--elmethis-color-accent-link);
     user-select: none;
     cursor: pointer;
     border-radius: 0.25rem;
@@ -95,7 +92,9 @@
       transform 100ms;
 
     &:hover {
-      background-color: oklch(from #6987b8 l c h / 0.2);
+      background-color: oklch(
+        from var(--elmethis-color-accent-link) l c h / 20%
+      );
     }
 
     &:active {
@@ -110,7 +109,7 @@
     left: 0;
     height: 2px;
     width: 100%;
-    background-color: #6987b8;
+    background-color: var(--elmethis-color-accent-link);
     animation: loading-bar 1s linear infinite;
   }
 }
@@ -119,6 +118,7 @@
   0% {
     transform: translateX(-100%);
   }
+
   100% {
     transform: translateX(100%);
   }

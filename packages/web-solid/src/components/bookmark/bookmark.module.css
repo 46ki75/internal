@@ -5,19 +5,17 @@
 
 .bookmark {
   view-transition-class: bookmark-transition;
-
   box-sizing: border-box;
   padding: 0.25rem;
   width: 4rem;
   height: 5.5rem;
-  border: solid 1px oklch(from gray l c h / 0.25);
+  border: solid 1px oklch(from var(--elmethis-color-neutral) l c h / 25%);
   border-radius: 0.125rem;
-
   position: relative;
   cursor: pointer;
   transition: background-color 200ms;
   overflow: hidden;
-  background-color: var(--elmethis-color-surface);
+  background-color: var(--elmethis-color-surface-base);
 
   &.bookmark-focus {
     background-color: var(--elmethis-color-surface-sunken);
@@ -48,14 +46,11 @@
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-areas:
-      "edit-icon spacer favorite-icon"
-      "favicon favicon favicon"
-      "bookmark-name bookmark-name bookmark-name";
-    grid-template-rows: 1rem 1fr 1rem;
-    grid-template-columns: 1rem 1fr 1rem;
-    align-items: center;
-    justify-items: center;
+    grid-template:
+      "edit-icon spacer favorite-icon" 1rem
+      "favicon favicon favicon" 1fr
+      "bookmark-name bookmark-name bookmark-name" 1rem / 1rem 1fr 1rem;
+    place-items: center;
     color: inherit;
     text-decoration: none;
   }

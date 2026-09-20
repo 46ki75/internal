@@ -2,6 +2,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -53,23 +54,22 @@
       padding: 0.25rem;
       border-radius: 0.25rem;
       background-color: var(--color);
-      color: oklch(from white l c h / 0.75);
+      color: oklch(from var(--elmethis-primitive-color-gold-100) l c h / 75%);
       user-select: none;
     }
   }
 
   .bookmark-container {
     display: flex;
-    flex-direction: row;
+    flex-flow: row wrap;
     gap: 0.25rem;
-    flex-wrap: wrap;
 
     &.bookmark-container-search-results {
       height: 5.5rem;
     }
 
     &.bookmark-container-favorite {
-      border: solid 1px #cdb57b;
+      border: solid 1px var(--elmethis-color-accent-warning);
       border-radius: 0.25rem;
       box-sizing: border-box;
       padding: 0.25rem;

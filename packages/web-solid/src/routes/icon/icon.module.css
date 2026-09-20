@@ -29,6 +29,6 @@
     height: 1px;
     width: 100%;
     flex: 1;
-    background-color: oklch(from gray l c h / 0.25);
+    background-color: oklch(from var(--elmethis-color-neutral) l c h / 25%);
   }
 }

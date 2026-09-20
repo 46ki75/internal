@@ -51,7 +51,7 @@ const columns: ColumnDef<TypingItem>[] = [
     accessorKey: "completion_count",
     header: "Completions",
     cell: (info) => (
-      <span class={styles.completionCount}>{info.getValue<number>()}</span>
+      <span class={styles["completion-count"]}>{info.getValue<number>()}</span>
     ),
   },
 ];

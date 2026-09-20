@@ -64,4 +64,16 @@ arguments, including explicit untracked files, or `--all-files`. `check` is alwa
 project-wide. Selecting one Rust file still invokes the workspace-wide Cargo
 formatter/linter. Existing Lefthook exclusions and staged-file handling apply.
 
+## Continuous integration
+
+`.github/workflows/ci.yml` runs on every pull request targeting `main` and every
+push to `main`, including documentation and tooling-only changes. It runs the
+same `mise run check` as local development, plus Rust and Python hermetic tests,
+frontend tests, and the production frontend build in separate jobs.
+
+The `Required checks` job succeeds only when all four mandatory jobs succeed;
+failed, canceled, or skipped dependencies fail the aggregate. The default-branch
+ruleset should require this GitHub Actions status before merging. Rust coverage
+is reported separately, and credential-dependent Rust live tests remain manual.
+
 See the shared [mise standard](https://github.com/46ki75/engineering-standard/blob/main/skills/engineering-standard/references/mise/README.md).

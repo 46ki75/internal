@@ -10,6 +10,8 @@ node_modules/
 .pnpm-store/
 dist/
 .output/
+.nitro/
+coverage/
 .vinxi/
 storybook-static/
 

@@ -47,55 +47,6 @@ pub async fn get_or_init_cognito_idp() -> &'static aws_sdk_cognitoidentityprovid
         .await
 }
 
-/// Fetches the Notion API key from SSM Parameter Store.
-pub async fn get_or_init_notion_api_key() -> Result<String, crate::error::Error> {
-    let stage_name = get_or_init_stage_name().await?;
-    get_parameter(format!("/{stage_name}/46ki75/internal/notion/secret")).await
-}
-
-static NOTIONRS_CLIENT: tokio::sync::OnceCell<notionrs::Client> =
-    tokio::sync::OnceCell::const_new();
-
-/// Fetches the NotionRs Client from cache or initializes it if not already loaded.
-pub async fn get_or_init_notionrs_client() -> Result<&'static notionrs::Client, crate::error::Error>
-{
-    NOTIONRS_CLIENT
-        .get_or_try_init(|| async {
-            let secret = get_or_init_notion_api_key().await?;
-
-            let client = notionrs::Client::new(secret.as_str());
-
-            Ok(client)
-        })
-        .await
-}
-
-static N2A2UI_CLIENT: tokio::sync::OnceCell<n2a2ui::client::Client> =
-    tokio::sync::OnceCell::const_new();
-
-/// Fetches the n2a2ui Client from cache or initializes it if not already loaded.
-pub async fn get_or_init_n2a2ui_client()
--> Result<&'static n2a2ui::client::Client, crate::error::Error> {
-    N2A2UI_CLIENT
-        .get_or_try_init(|| async {
-            let secret = get_or_init_notion_api_key().await?;
-
-            let notionrs_client = notionrs::Client::new(secret.as_str());
-
-            let client = n2a2ui::client::Client {
-                notionrs_client,
-                reqwest_client: reqwest::Client::new(),
-                enable_unsupported_block: true,
-                enable_fetch_image_meta: true,
-                enable_fetch_bookmark_meta: true,
-                enable_html_embed: false,
-            };
-
-            Ok(client)
-        })
-        .await
-}
-
 static REQWEST_CLIENT: tokio::sync::OnceCell<reqwest::Client> = tokio::sync::OnceCell::const_new();
 
 pub async fn get_or_init_reqwest_client() -> Result<&'static reqwest::Client, crate::error::Error> {

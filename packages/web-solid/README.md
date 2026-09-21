@@ -35,7 +35,7 @@ See Microsoft's [side-by-side setup](https://devblogs.microsoft.com/typescript/a
 - `src/components/` contains prop-driven, Storybook-testable UI units.
 - `src/container/` owns browser state, API calls, and feature orchestration.
 - `src/context/` owns persistent auth and Anki state shared across routes.
-- `src/openapi/schema.ts` is generated from the Rust API and must not be edited.
+- `src/openapi/schema.ts` is generated from the composed Rust/Nitro API and must not be edited.
 
 Authenticated data remains client-side because SSR is disabled.
 Browser integrations are initialized in `onMount` and cleaned up with
@@ -43,11 +43,15 @@ Browser integrations are initialized in `onMount` and cleaned up with
 
 ## OpenAPI
 
-Start `crates/http-api` locally, then regenerate the client types:
+Regenerate the client types without a running server or AWS credentials:
 
 ```sh
 pnpm generate:openapi
 ```
+
+This runs the Rust `export_openapi` example, which includes the committed Nitro
+fragment. After changing Nitro contracts, run `mise run nitro-api:generate-openapi`
+first.
 
 ## Deployment
 

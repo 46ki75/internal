@@ -7,12 +7,6 @@ pub use http_api_core::{cache, error, layer};
 
 // Feature crates re-exported under their original module names so `crate::<feat>`
 // (and `http_api::<feat>::…` in tests) keep resolving as features move out.
-pub use http_api_anki as anki;
-pub use http_api_bookmark as bookmark;
-pub use http_api_icon as icon;
-pub use http_api_image as image;
-pub use http_api_to_do as to_do;
-pub use http_api_trivia as trivia;
 pub use http_api_typing as typing;
 pub use http_api_writing_assessment as writing_assessment;
 

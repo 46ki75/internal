@@ -3,8 +3,8 @@ pub enum Error {
     #[error("SSM Parameter error: {0}")]
     SsmParameter(String),
 
-    #[error("Notion property not found: {0}")]
-    NotionPropertyNotFound(String),
+    #[error("OpenAPI conflict: {0}")]
+    OpenApiConflict(String),
 
     #[error("serde error: {0}")]
     SerdeJson(#[from] serde_json::Error),

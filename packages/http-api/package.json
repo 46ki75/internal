@@ -1,0 +1,45 @@
+{
+  "name": "@46ki75/internal-http-api",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "nitro dev --port 11072",
+    "build": "nitro build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "fmt": "prettier --write .",
+    "fmt:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:lambda": "pnpm build && vitest run --config vitest.lambda.config.ts",
+    "test:live": "vitest run --config vitest.live.config.ts",
+    "generate:openapi": "node scripts/openapi.ts",
+    "check:openapi": "node scripts/openapi.ts --check"
+  },
+  "dependencies": {
+    "@aws-sdk/client-ssm": "3.1136.0",
+    "@notionhq/client": "5.26.0",
+    "cheerio": "1.1.2",
+    "h3": "1.15.11",
+    "n2a2ui": "0.8.0",
+    "zod": "3.25.76",
+    "zod-to-json-schema": "3.25.2"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "3.1136.0",
+    "@eslint/js": "10.0.1",
+    "@types/aws-lambda": "^8.10.0",
+    "@types/node": "24.13.3",
+    "@typescript/native": "npm:typescript@7.0.2",
+    "eslint": "10.10.0",
+    "globals": "17.12.0",
+    "nitropack": "2.13.4",
+    "prettier": "3.9.6",
+    "typescript": "npm:@typescript/typescript6@6.0.2",
+    "typescript-eslint": "8.70.0",
+    "vitest": "5.0.1"
+  }
+}

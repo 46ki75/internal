@@ -23,42 +23,18 @@ static ROUTER: tokio::sync::OnceCell<axum::Router> = tokio::sync::OnceCell::cons
 pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error> {
     ROUTER
         .get_or_try_init(|| async {
-            let (anki_router, anki_api) =
-                crate::anki::controller::router::init_anki_router().await?;
-            let (bookmark_router, bookmark_api) =
-                crate::bookmark::controller::router::init_bookmark_router().await?;
-            let (icon_router, icon_api) =
-                crate::icon::controller::router::init_icon_router().await?;
-            let (image_router, image_api) =
-                crate::image::controller::router::init_image_router().await?;
-            let (to_do_router, to_do_api) =
-                crate::to_do::controller::router::init_to_do_router().await?;
-            let (trivia_router, trivia_api) =
-                crate::trivia::controller::router::init_trivia_router().await?;
             let (typing_router, typing_api) =
                 crate::typing::controller::router::init_typing_router().await?;
             let (writing_assessment_router, writing_assessment_api) =
                 crate::writing_assessment::controller::router::init_writing_assessment_router()
                     .await?;
 
-            let merged_api = ApiDoc::openapi()
-                .merge_from(anki_api)
-                .merge_from(bookmark_api)
-                .merge_from(icon_api)
-                .merge_from(image_api)
-                .merge_from(to_do_api)
-                .merge_from(trivia_api)
+            let rust_api = ApiDoc::openapi()
                 .merge_from(typing_api)
                 .merge_from(writing_assessment_api);
+            let merged_api = compose_openapi(serde_json::to_value(rust_api)?)?;
 
-            let combined_router = anki_router
-                .merge(bookmark_router)
-                .merge(icon_router)
-                .merge(image_router)
-                .merge(to_do_router)
-                .merge(trivia_router)
-                .merge(typing_router)
-                .merge(writing_assessment_router);
+            let combined_router = typing_router.merge(writing_assessment_router);
 
             let scalar_api = merged_api.clone();
             let app = Router::new()
@@ -89,4 +65,60 @@ pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error>
             Ok(app)
         })
         .await
+}
+
+fn compose_openapi(mut rust: serde_json::Value) -> Result<serde_json::Value, crate::error::Error> {
+    // Preserve Nitro's JSON Schema verbatim: Utoipa's schema types do not accept
+    // every construct emitted by Zod. Scalar can serve the composed JSON directly.
+    let notion: serde_json::Value =
+        serde_json::from_str(include_str!("../../../packages/http-api/openapi.json"))?;
+    merge_unique(&mut rust["paths"], &notion["paths"])?;
+    if rust["components"].is_null() {
+        rust["components"] = serde_json::json!({});
+    }
+    if let Some(components) = notion["components"].as_object() {
+        for (kind, entries) in components {
+            merge_unique(&mut rust["components"][kind], entries)?;
+        }
+    }
+    Ok(rust)
+}
+
+fn merge_unique(
+    target: &mut serde_json::Value,
+    source: &serde_json::Value,
+) -> Result<(), crate::error::Error> {
+    if target.is_null() {
+        *target = serde_json::json!({});
+    }
+    let target = target
+        .as_object_mut()
+        .ok_or_else(|| crate::error::Error::OpenApiConflict("expected an object".into()))?;
+    if let Some(source) = source.as_object() {
+        for (name, value) in source {
+            if target.insert(name.clone(), value.clone()).is_some() {
+                return Err(crate::error::Error::OpenApiConflict(name.clone()));
+            }
+        }
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn composition_rejects_duplicate_paths_and_schemas() {
+        let combined = compose_openapi(serde_json::to_value(ApiDoc::openapi()).unwrap()).unwrap();
+        assert!(combined["paths"].get("/api/v1/trivia").is_some());
+        assert_eq!(
+            combined["components"]["schemas"]["AnkiResponse"]["properties"]["title"]["type"],
+            serde_json::json!(["string", "null"])
+        );
+        assert!(compose_openapi(combined.clone()).is_err());
+        let mut schemas_only = combined;
+        schemas_only["paths"] = serde_json::json!({});
+        assert!(compose_openapi(schemas_only).is_err());
+    }
 }

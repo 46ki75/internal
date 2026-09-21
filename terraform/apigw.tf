@@ -27,8 +27,7 @@ resource "aws_apigatewayv2_stage" "backend" {
   auto_deploy = true
 
 
-  route_settings {
-    route_key              = aws_apigatewayv2_route.backend.route_key
+  default_route_settings {
     throttling_burst_limit = 100000
     throttling_rate_limit  = 100000
   }

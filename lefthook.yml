@@ -40,6 +40,15 @@ fmt:
         - "terraform/**/*.tf"
       run: terraform fmt {files}
 
+    - &nitro-format
+      name: nitro-prettier
+      root: "packages/http-api/"
+      glob:
+        - "packages/http-api/*.{ts,js,json}"
+        - "packages/http-api/**/*.{ts,js,json}"
+      exclude: "packages/http-api/openapi.json"
+      run: pnpm exec prettier --write {files}
+
     # Preserve this project's markdownlint fixer policy. Its read-only command
     # checks both formatting and rules that cannot be automatically fixed.
     - &markdown-format
@@ -67,6 +76,8 @@ fmt-check:
       run: pnpm exec prettier --check {files}
     - <<: *terraform-format
       run: terraform fmt -check {files}
+    - <<: *nitro-format
+      run: pnpm exec prettier --check {files}
     - &markdown-check
       <<: *markdown-format
       run: pnpm exec markdownlint-cli2 {files}
@@ -108,6 +119,13 @@ lint:
         - "packages/web-solid/.storybook/**/*.css"
       run: pnpm exec stylelint {files}
 
+    - name: nitro-eslint
+      root: "packages/http-api/"
+      glob:
+        - "packages/http-api/*.{ts,js}"
+        - "packages/http-api/**/*.{ts,js}"
+      run: pnpm exec eslint {files}
+
     - *markdown-check
 
 check:
@@ -123,6 +141,12 @@ check:
       run: pnpm exec tsc --noEmit --incremental false
     - name: python-types
       run: uv run --locked --no-sync pyright python
+    - name: nitro-types
+      root: "packages/http-api/"
+      run: pnpm typecheck
+    - name: nitro-openapi
+      root: "packages/http-api/"
+      run: pnpm check:openapi
 
 # Installed by the root prepare script. Expensive gates are available through
 # `check`; tests remain in the existing project/CI test commands.
@@ -135,6 +159,9 @@ pre-commit:
     - <<: *rust-format
       stage_fixed: true
     - <<: *web-format
+      run: pnpm exec prettier --write {staged_files}
+      stage_fixed: true
+    - <<: *nitro-format
       run: pnpm exec prettier --write {staged_files}
       stage_fixed: true
     - <<: *markdown-format

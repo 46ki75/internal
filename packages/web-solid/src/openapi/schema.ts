@@ -4,1282 +4,1593 @@
  */
 
 export interface paths {
-  "/api/v1/anki": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/v1/anki": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listAnki"];
+        put?: never;
+        post: operations["createAnki"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["anki_list"];
-    put?: never;
-    post: operations["create_anki"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/anki/block/{page_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/v1/anki/block/{page_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ankiBlocks"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["block_list"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/anki/{page_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/v1/anki/{page_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAnki"];
+        put: operations["updateAnki"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["anki"];
-    put: operations["update_anki"];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/bookmark": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/v1/bookmark": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listBookmarks"];
+        put?: never;
+        post: operations["createBookmark"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["bookmark_list"];
-    put?: never;
-    post: operations["create_bookmark"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/icon": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/v1/icon": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listIcons"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["list_icons"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/image": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/v1/image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listImages"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["fetch_images"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/image/tag": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/v1/image/tag": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listImageTags"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["fetch_image_tags"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/to-do": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/v1/to-do": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listToDos"];
+        put: operations["updateToDo"];
+        post: operations["createToDo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["to_do_list"];
-    put: operations["update_to_do"];
-    post: operations["create_to_do"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/trivia": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/v1/trivia": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listTrivia"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["trivia_list"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/trivia/block/{page_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/v1/trivia/block/{page_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["triviaBlocks"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["trivia_block_list"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/trivia/{page_id}/view": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/v1/trivia/{page_id}/view": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["incrementView"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post: operations["increment_view"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/typing": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/v1/typing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["typing_list"];
+        put?: never;
+        post: operations["upsert_typing"];
+        delete: operations["delete_typing"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["typing_list"];
-    put?: never;
-    post: operations["upsert_typing"];
-    delete: operations["delete_typing"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/typing/{id}/completion": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/v1/typing/{id}/completion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["complete_typing"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    post: operations["complete_typing"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/writing-assessments": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/v1/writing-assessments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_writing_assessments"];
+        put?: never;
+        post: operations["create_writing_assessment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["list_writing_assessments"];
-    put?: never;
-    post: operations["create_writing_assessment"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/writing-assessments/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/v1/writing-assessments/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_writing_assessment"];
+        put?: never;
+        post?: never;
+        delete: operations["delete_writing_assessment"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["get_writing_assessment"];
-    put?: never;
-    post?: never;
-    delete: operations["delete_writing_assessment"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    AnkiBlockResponse: {
-      back: unknown;
-      explanation: unknown;
-      front: unknown;
+    schemas: {
+        AnkiBlockResponse: {
+            back: {
+                components: {
+                    [key: string]: {
+                        component: string;
+                        id: string;
+                    } & {
+                        [key: string]: unknown;
+                    };
+                };
+                root: string;
+            };
+            explanation: {
+                components: {
+                    [key: string]: {
+                        component: string;
+                        id: string;
+                    } & {
+                        [key: string]: unknown;
+                    };
+                };
+                root: string;
+            };
+            front: {
+                components: {
+                    [key: string]: {
+                        component: string;
+                        id: string;
+                    } & {
+                        [key: string]: unknown;
+                    };
+                };
+                root: string;
+            };
+        };
+        AnkiResponse: {
+            created_at: string;
+            description?: string | null;
+            ease_factor: number;
+            is_review_required: boolean;
+            next_review_at: string;
+            page_id: string;
+            repetition_count: number;
+            tags: {
+                color: string;
+                id: string;
+                name: string;
+            }[];
+            title?: string | null;
+            updated_at: string;
+            url: string;
+        };
+        AnkiTagResponse: {
+            color: string;
+            id: string;
+            name: string;
+        };
+        Assessment: {
+            created_at: string;
+            feedback: components["schemas"]["Feedback"][];
+            id: string;
+            japanese_context?: string | null;
+            justification: string;
+            label: components["schemas"]["AssessmentLabel"];
+            model: string;
+            original_text: string;
+            reasoning_effort?: null | components["schemas"]["ReasoningEffort"];
+            register: string;
+            revised_text?: string | null;
+            /** Format: int32 */
+            schema_version: number;
+            /** Format: int32 */
+            score: number;
+        };
+        /** @enum {string} */
+        AssessmentLabel: "hard_to_follow" | "awkward" | "clear_but_non_native" | "near_native" | "native_like";
+        BookmarkResponse: {
+            favicon?: string | null;
+            favorite: boolean;
+            id: string;
+            name?: string | null;
+            notion_url: string;
+            nsfw: boolean;
+            tag?: {
+                color: string;
+                id: string;
+                name: string;
+            } | null;
+            url?: string | null;
+        };
+        BookmarkTagReponse: {
+            color: string;
+            id: string;
+            name: string;
+        };
+        CreateAnkiRequest: {
+            title?: string | null;
+        };
+        CreateBookmarkRequestBody: {
+            name: string;
+            /** Format: uri */
+            url: string;
+        };
+        CreateToDoRequest: {
+            deadline?: string | null;
+            description?: string | null;
+            severity?: ("UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR") | null;
+            title: string;
+        };
+        CreateWritingAssessmentRequest: {
+            japanese_context?: string | null;
+            text: string;
+        };
+        Feedback: {
+            id: string;
+            layer?: null | components["schemas"]["FeedbackLayer"];
+            original: string;
+            pattern?: string | null;
+            reason: string;
+            revised: string;
+            severity: components["schemas"]["Severity"];
+            type: components["schemas"]["FeedbackType"];
+        };
+        /** @enum {string} */
+        FeedbackLayer: "idiom" | "style";
+        /** @enum {string} */
+        FeedbackType: "error" | "intent_check" | "observation";
+        FetchImagesResponse: {
+            images: {
+                images: string[];
+                name: string;
+                notable_tags: string[];
+                sources: {
+                    color: string;
+                    id: string;
+                    name: string;
+                }[];
+                tags: string[];
+                title: string;
+                uploaded_at?: string | null;
+                url?: string | null;
+            }[];
+            next_cursor?: string | null;
+        };
+        IconResponse: {
+            content_type?: string | null;
+            id: string;
+            name: string;
+            url: string;
+        };
+        ImageResponse: {
+            images: string[];
+            name: string;
+            notable_tags: string[];
+            sources: {
+                color: string;
+                id: string;
+                name: string;
+            }[];
+            tags: string[];
+            title: string;
+            uploaded_at?: string | null;
+            url?: string | null;
+        };
+        ImageSourceResponse: {
+            color: string;
+            id: string;
+            name: string;
+        };
+        ImageTagResponse: {
+            tag_name: string;
+            tag_type: string;
+            url: string;
+        };
+        /** @enum {string} */
+        ReasoningEffort: "none" | "minimal" | "low" | "medium" | "high" | "xhigh" | "max";
+        /** @enum {string} */
+        Severity: "low" | "medium" | "high";
+        ToDoResponse: {
+            created_at?: string | null;
+            deadline?: string | null;
+            description?: string | null;
+            id: string;
+            is_archived: boolean;
+            is_done: boolean;
+            is_recurring: boolean;
+            /** @enum {string} */
+            severity: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
+            source: string;
+            title: string;
+            updated_at?: string | null;
+            url: string;
+        };
+        /** @enum {string} */
+        ToDoSeverityRequest: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
+        /** @enum {string} */
+        ToDoSeverityResponse: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
+        TriviaBlockResponse: {
+            surface: {
+                components: {
+                    [key: string]: {
+                        component: string;
+                        id: string;
+                    } & {
+                        [key: string]: unknown;
+                    };
+                };
+                root: string;
+            };
+        };
+        TriviaResponse: {
+            created_at: string;
+            page_id: string;
+            title?: string | null;
+            updated_at: string;
+            url: string;
+            view_count: number;
+        };
+        TypingDeleteRequest: {
+            id: string;
+        };
+        TypingResponse: {
+            /** Format: int64 */
+            completion_count: number;
+            description: string;
+            id: string;
+            text: string;
+        };
+        TypingUpsertRequest: {
+            description: string;
+            id?: string | null;
+            text: string;
+        };
+        UpdateAnkiRequest: {
+            ease_factor?: number | null;
+            in_trash?: boolean | null;
+            is_review_required?: boolean | null;
+            next_review_at?: string | null;
+            repetition_count?: number | null;
+        };
+        UpdateToDoInput: {
+            id: string;
+            is_done: boolean;
+        };
     };
-    AnkiResponse: {
-      created_at: string;
-      description?: string | null;
-      /** Format: double */
-      ease_factor: number;
-      is_review_required: boolean;
-      next_review_at: string;
-      page_id: string;
-      /** Format: int32 */
-      repetition_count: number;
-      tags: components["schemas"]["AnkiTagResponse"][];
-      title?: string | null;
-      updated_at: string;
-      url: string;
-    };
-    AnkiTagResponse: {
-      color: string;
-      id: string;
-      name: string;
-    };
-    Assessment: {
-      created_at: string;
-      feedback: components["schemas"]["Feedback"][];
-      id: string;
-      japanese_context?: string | null;
-      justification: string;
-      label: components["schemas"]["AssessmentLabel"];
-      model: string;
-      original_text: string;
-      reasoning_effort?: null | components["schemas"]["ReasoningEffort"];
-      register: string;
-      revised_text?: string | null;
-      /** Format: int32 */
-      schema_version: number;
-      /** Format: int32 */
-      score: number;
-    };
-    /** @enum {string} */
-    AssessmentLabel:
-      | "hard_to_follow"
-      | "awkward"
-      | "clear_but_non_native"
-      | "near_native"
-      | "native_like";
-    BookmarkResponse: {
-      favicon?: string | null;
-      favorite: boolean;
-      id: string;
-      name?: string | null;
-      notion_url: string;
-      nsfw: boolean;
-      tag?: null | components["schemas"]["BookmarkTagReponse"];
-      url?: string | null;
-    };
-    BookmarkTagReponse: {
-      color: string;
-      id: string;
-      name: string;
-    };
-    CreateAnkiRequest: {
-      title?: string | null;
-    };
-    CreateBookmarkRequestBody: {
-      name: string;
-      url: string;
-    };
-    CreateToDoRequest: {
-      /** Format: date */
-      deadline?: string | null;
-      description?: string | null;
-      severity?: null | components["schemas"]["ToDoSeverityRequest"];
-      title: string;
-    };
-    CreateWritingAssessmentRequest: {
-      japanese_context?: string | null;
-      text: string;
-    };
-    Feedback: {
-      id: string;
-      layer?: null | components["schemas"]["FeedbackLayer"];
-      original: string;
-      pattern?: string | null;
-      reason: string;
-      revised: string;
-      severity: components["schemas"]["Severity"];
-      type: components["schemas"]["FeedbackType"];
-    };
-    /** @enum {string} */
-    FeedbackLayer: "idiom" | "style";
-    /** @enum {string} */
-    FeedbackType: "error" | "intent_check" | "observation";
-    FetchImagesResponse: {
-      images: components["schemas"]["ImageResponse"][];
-      next_cursor?: string | null;
-    };
-    IconResponse: {
-      content_type?: string | null;
-      id: string;
-      name: string;
-      url: string;
-    };
-    ImageResponse: {
-      images: string[];
-      name: string;
-      notable_tags: string[];
-      sources: components["schemas"]["ImageSourceResponse"][];
-      tags: string[];
-      title: string;
-      uploaded_at?: string | null;
-      url?: string | null;
-    };
-    ImageSourceResponse: {
-      color: string;
-      id: string;
-      name: string;
-    };
-    ImageTagResponse: {
-      tag_name: string;
-      tag_type: string;
-      url: string;
-    };
-    /** @enum {string} */
-    ReasoningEffort:
-      | "none"
-      | "minimal"
-      | "low"
-      | "medium"
-      | "high"
-      | "xhigh"
-      | "max";
-    /** @enum {string} */
-    Severity: "low" | "medium" | "high";
-    ToDoResponse: {
-      /** Format: date */
-      created_at?: string | null;
-      /** Format: date */
-      deadline?: string | null;
-      description?: string | null;
-      id: string;
-      is_archived: boolean;
-      is_done: boolean;
-      is_recurring: boolean;
-      severity: components["schemas"]["ToDoSeverityResponse"];
-      source: string;
-      title: string;
-      /** Format: date */
-      updated_at?: string | null;
-      url: string;
-    };
-    /** @enum {string} */
-    ToDoSeverityRequest: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
-    /** @enum {string} */
-    ToDoSeverityResponse: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
-    TriviaBlockResponse: {
-      surface: unknown;
-    };
-    TriviaResponse: {
-      created_at: string;
-      page_id: string;
-      title?: string | null;
-      updated_at: string;
-      url: string;
-      /** Format: int32 */
-      view_count: number;
-    };
-    TypingDeleteRequest: {
-      id: string;
-    };
-    TypingResponse: {
-      /** Format: int64 */
-      completion_count: number;
-      description: string;
-      id: string;
-      text: string;
-    };
-    TypingUpsertRequest: {
-      description: string;
-      id?: string | null;
-      text: string;
-    };
-    UpdateAnkiRequest: {
-      /** Format: double */
-      ease_factor?: number | null;
-      in_trash?: boolean | null;
-      is_review_required?: boolean | null;
-      next_review_at?: string | null;
-      /** Format: int32 */
-      repetition_count?: number | null;
-    };
-    UpdateToDoInput: {
-      id: string;
-      is_done: boolean;
-    };
-  };
-  responses: never;
-  parameters: never;
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  anki_list: {
-    parameters: {
-      query?: {
-        page_size?: number;
-        next_cursor?: string;
-      };
-      header: {
-        Authorization: string;
-      };
-      path?: never;
-      cookie?: never;
+    listAnki: {
+        parameters: {
+            query?: {
+                page_size?: number;
+                next_cursor?: unknown | string;
+            };
+            header: {
+                Authorization: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        created_at: string;
+                        description?: string | null;
+                        ease_factor: number;
+                        is_review_required: boolean;
+                        next_review_at: string;
+                        page_id: string;
+                        repetition_count: number;
+                        tags: {
+                            color: string;
+                            id: string;
+                            name: string;
+                        }[];
+                        title?: string | null;
+                        updated_at: string;
+                        url: string;
+                    }[];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                    };
+                };
+            };
+        };
     };
-    requestBody?: never;
-    responses: {
-      /** @description Anki */
-      200: {
-        headers: {
-          [name: string]: unknown;
+    createAnki: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path?: never;
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["AnkiResponse"][];
+        requestBody: {
+            content: {
+                "application/json": {
+                    title?: string | null;
+                };
+            };
         };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
+        responses: {
+            /** @description Success */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        created_at: string;
+                        description?: string | null;
+                        ease_factor: number;
+                        is_review_required: boolean;
+                        next_review_at: string;
+                        page_id: string;
+                        repetition_count: number;
+                        tags: {
+                            color: string;
+                            id: string;
+                            name: string;
+                        }[];
+                        title?: string | null;
+                        updated_at: string;
+                        url: string;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                    };
+                };
+            };
         };
-        content: {
-          "text/plain": string;
-        };
-      };
     };
-  };
-  create_anki: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path?: never;
-      cookie?: never;
+    ankiBlocks: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path: {
+                page_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        back: {
+                            components: {
+                                [key: string]: {
+                                    component: string;
+                                    id: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                            };
+                            root: string;
+                        };
+                        explanation: {
+                            components: {
+                                [key: string]: {
+                                    component: string;
+                                    id: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                            };
+                            root: string;
+                        };
+                        front: {
+                            components: {
+                                [key: string]: {
+                                    component: string;
+                                    id: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                            };
+                            root: string;
+                        };
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                    };
+                };
+            };
+        };
     };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["CreateAnkiRequest"];
-      };
+    getAnki: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path: {
+                page_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        created_at: string;
+                        description?: string | null;
+                        ease_factor: number;
+                        is_review_required: boolean;
+                        next_review_at: string;
+                        page_id: string;
+                        repetition_count: number;
+                        tags: {
+                            color: string;
+                            id: string;
+                            name: string;
+                        }[];
+                        title?: string | null;
+                        updated_at: string;
+                        url: string;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                    };
+                };
+            };
+        };
     };
-    responses: {
-      /** @description Anki */
-      201: {
-        headers: {
-          [name: string]: unknown;
+    updateAnki: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path: {
+                page_id: string;
+            };
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["AnkiResponse"];
+        requestBody: {
+            content: {
+                "application/json": {
+                    ease_factor?: number | null;
+                    in_trash?: boolean | null;
+                    is_review_required?: boolean | null;
+                    next_review_at?: string | null;
+                    repetition_count?: number | null;
+                };
+            };
         };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        created_at: string;
+                        description?: string | null;
+                        ease_factor: number;
+                        is_review_required: boolean;
+                        next_review_at: string;
+                        page_id: string;
+                        repetition_count: number;
+                        tags: {
+                            color: string;
+                            id: string;
+                            name: string;
+                        }[];
+                        title?: string | null;
+                        updated_at: string;
+                        url: string;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                    };
+                };
+            };
         };
-        content: {
-          "text/plain": string;
-        };
-      };
     };
-  };
-  block_list: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path: {
-        /** @description UUIDv4 */
-        page_id: string;
-      };
-      cookie?: never;
+    listBookmarks: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        favicon?: string | null;
+                        favorite: boolean;
+                        id: string;
+                        name?: string | null;
+                        notion_url: string;
+                        nsfw: boolean;
+                        tag?: {
+                            color: string;
+                            id: string;
+                            name: string;
+                        } | null;
+                        url?: string | null;
+                    }[];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                    };
+                };
+            };
+        };
     };
-    requestBody?: never;
-    responses: {
-      /** @description Anki */
-      200: {
-        headers: {
-          [name: string]: unknown;
+    createBookmark: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path?: never;
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["AnkiBlockResponse"];
+        requestBody: {
+            content: {
+                "application/json": {
+                    name: string;
+                    /** Format: uri */
+                    url: string;
+                };
+            };
         };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
+        responses: {
+            /** @description Success */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        favicon?: string | null;
+                        favorite: boolean;
+                        id: string;
+                        name?: string | null;
+                        notion_url: string;
+                        nsfw: boolean;
+                        tag?: {
+                            color: string;
+                            id: string;
+                            name: string;
+                        } | null;
+                        url?: string | null;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                    };
+                };
+            };
         };
-        content: {
-          "text/plain": string;
-        };
-      };
     };
-  };
-  anki: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path: {
-        /** @description UUIDv4 */
-        page_id: string;
-      };
-      cookie?: never;
+    listIcons: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        content_type?: string | null;
+                        id: string;
+                        name: string;
+                        url: string;
+                    }[];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                    };
+                };
+            };
+        };
     };
-    requestBody?: never;
-    responses: {
-      /** @description Anki */
-      200: {
-        headers: {
-          [name: string]: unknown;
+    listImages: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path?: never;
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["AnkiResponse"];
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        images: {
+                            images: string[];
+                            name: string;
+                            notable_tags: string[];
+                            sources: {
+                                color: string;
+                                id: string;
+                                name: string;
+                            }[];
+                            tags: string[];
+                            title: string;
+                            uploaded_at?: string | null;
+                            url?: string | null;
+                        }[];
+                        next_cursor?: string | null;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                    };
+                };
+            };
         };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "text/plain": string;
-        };
-      };
     };
-  };
-  update_anki: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path: {
-        /** @description UUIDv4 */
-        page_id: string;
-      };
-      cookie?: never;
+    listImageTags: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        tag_name: string;
+                        tag_type: string;
+                        url: string;
+                    }[];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                    };
+                };
+            };
+        };
     };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["UpdateAnkiRequest"];
-      };
+    listToDos: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        created_at?: string | null;
+                        deadline?: string | null;
+                        description?: string | null;
+                        id: string;
+                        is_archived: boolean;
+                        is_done: boolean;
+                        is_recurring: boolean;
+                        /** @enum {string} */
+                        severity: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
+                        source: string;
+                        title: string;
+                        updated_at?: string | null;
+                        url: string;
+                    }[];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                    };
+                };
+            };
+        };
     };
-    responses: {
-      /** @description Anki */
-      200: {
-        headers: {
-          [name: string]: unknown;
+    updateToDo: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path?: never;
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["AnkiResponse"];
+        requestBody: {
+            content: {
+                "application/json": {
+                    id: string;
+                    is_done: boolean;
+                };
+            };
         };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        created_at?: string | null;
+                        deadline?: string | null;
+                        description?: string | null;
+                        id: string;
+                        is_archived: boolean;
+                        is_done: boolean;
+                        is_recurring: boolean;
+                        /** @enum {string} */
+                        severity: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
+                        source: string;
+                        title: string;
+                        updated_at?: string | null;
+                        url: string;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                    };
+                };
+            };
         };
-        content: {
-          "text/plain": string;
-        };
-      };
     };
-  };
-  bookmark_list: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path?: never;
-      cookie?: never;
+    createToDo: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    deadline?: string | null;
+                    description?: string | null;
+                    severity?: ("UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR") | null;
+                    title: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Success */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        created_at?: string | null;
+                        deadline?: string | null;
+                        description?: string | null;
+                        id: string;
+                        is_archived: boolean;
+                        is_done: boolean;
+                        is_recurring: boolean;
+                        /** @enum {string} */
+                        severity: "UNKNOWN" | "DEBUG" | "INFO" | "WARN" | "ERROR";
+                        source: string;
+                        title: string;
+                        updated_at?: string | null;
+                        url: string;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                    };
+                };
+            };
+        };
     };
-    requestBody?: never;
-    responses: {
-      /** @description Bookmarks */
-      200: {
-        headers: {
-          [name: string]: unknown;
+    listTrivia: {
+        parameters: {
+            query?: {
+                page_size?: number;
+                next_cursor?: unknown | string;
+            };
+            header: {
+                Authorization: string;
+            };
+            path?: never;
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["BookmarkResponse"][];
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        created_at: string;
+                        page_id: string;
+                        title?: string | null;
+                        updated_at: string;
+                        url: string;
+                        view_count: number;
+                    }[];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                    };
+                };
+            };
         };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "text/plain": string;
-        };
-      };
     };
-  };
-  create_bookmark: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path?: never;
-      cookie?: never;
+    triviaBlocks: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path: {
+                page_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        surface: {
+                            components: {
+                                [key: string]: {
+                                    component: string;
+                                    id: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                            };
+                            root: string;
+                        };
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                    };
+                };
+            };
+        };
     };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["CreateBookmarkRequestBody"];
-      };
+    incrementView: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path: {
+                page_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Success */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        created_at: string;
+                        page_id: string;
+                        title?: string | null;
+                        updated_at: string;
+                        url: string;
+                        view_count: number;
+                    };
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: string;
+                    };
+                };
+            };
+        };
     };
-    responses: {
-      /** @description Bookmark */
-      200: {
-        headers: {
-          [name: string]: unknown;
+    typing_list: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path?: never;
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["BookmarkResponse"];
+        requestBody?: never;
+        responses: {
+            /** @description Typing list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypingResponse"][];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/plain": string;
+                };
+            };
         };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "text/plain": string;
-        };
-      };
     };
-  };
-  list_icons: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path?: never;
-      cookie?: never;
+    upsert_typing: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TypingUpsertRequest"];
+            };
+        };
+        responses: {
+            /** @description Upsert typing */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypingResponse"];
+                };
+            };
+            /** @description Invalid typing item ID */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/plain": string;
+                };
+            };
+        };
     };
-    requestBody?: never;
-    responses: {
-      /** @description Icon */
-      200: {
-        headers: {
-          [name: string]: unknown;
+    delete_typing: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path?: never;
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["IconResponse"][];
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TypingDeleteRequest"];
+            };
         };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
+        responses: {
+            /** @description Delete typing */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypingResponse"];
+                };
+            };
+            /** @description Invalid typing item ID */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/plain": string;
+                };
+            };
         };
-        content: {
-          "text/plain": string;
-        };
-      };
     };
-  };
-  fetch_images: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path?: never;
-      cookie?: never;
+    complete_typing: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path: {
+                /** @description Typing item ID */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Record typing completion */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TypingResponse"];
+                };
+            };
+            /** @description Invalid typing item ID */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Typing item not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/plain": string;
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/plain": string;
+                };
+            };
+        };
     };
-    requestBody?: never;
-    responses: {
-      /** @description Images */
-      200: {
-        headers: {
-          [name: string]: unknown;
+    list_writing_assessments: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path?: never;
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["FetchImagesResponse"];
+        requestBody?: never;
+        responses: {
+            /** @description Writing assessments */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Assessment"][];
+                };
+            };
         };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "text/plain": string;
-        };
-      };
     };
-  };
-  fetch_image_tags: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path?: never;
-      cookie?: never;
+    create_writing_assessment: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateWritingAssessmentRequest"];
+            };
+        };
+        responses: {
+            /** @description Writing assessment created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Assessment"];
+                };
+            };
+            /** @description Text is blank */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Generator failure */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
     };
-    requestBody?: never;
-    responses: {
-      /** @description Image tags */
-      200: {
-        headers: {
-          [name: string]: unknown;
+    get_writing_assessment: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path: {
+                /** @description Writing assessment ID */
+                id: string;
+            };
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["ImageTagResponse"][];
+        requestBody?: never;
+        responses: {
+            /** @description Writing assessment */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Assessment"];
+                };
+            };
+            /** @description Writing assessment not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "text/plain": string;
-        };
-      };
     };
-  };
-  to_do_list: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path?: never;
-      cookie?: never;
+    delete_writing_assessment: {
+        parameters: {
+            query?: never;
+            header: {
+                Authorization: string;
+            };
+            path: {
+                /** @description Writing assessment ID */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted writing assessment */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Assessment"];
+                };
+            };
+            /** @description Writing assessment not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
     };
-    requestBody?: never;
-    responses: {
-      /** @description Bookmark */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ToDoResponse"][];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "text/plain": string;
-        };
-      };
-    };
-  };
-  update_to_do: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["UpdateToDoInput"];
-      };
-    };
-    responses: {
-      /** @description Bookmark */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ToDoResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "text/plain": string;
-        };
-      };
-    };
-  };
-  create_to_do: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["CreateToDoRequest"];
-      };
-    };
-    responses: {
-      /** @description Bookmark */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ToDoResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "text/plain": string;
-        };
-      };
-    };
-  };
-  trivia_list: {
-    parameters: {
-      query?: {
-        page_size?: number;
-      };
-      header: {
-        Authorization: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Trivia */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["TriviaResponse"][];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "text/plain": string;
-        };
-      };
-    };
-  };
-  trivia_block_list: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path: {
-        /** @description UUIDv4 */
-        page_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Trivia */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["TriviaBlockResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "text/plain": string;
-        };
-      };
-    };
-  };
-  increment_view: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path: {
-        /** @description UUIDv4 */
-        page_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Trivia */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["TriviaResponse"];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "text/plain": string;
-        };
-      };
-    };
-  };
-  typing_list: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Typing list */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["TypingResponse"][];
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "text/plain": string;
-        };
-      };
-    };
-  };
-  upsert_typing: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["TypingUpsertRequest"];
-      };
-    };
-    responses: {
-      /** @description Upsert typing */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["TypingResponse"];
-        };
-      };
-      /** @description Invalid typing item ID */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "text/plain": string;
-        };
-      };
-    };
-  };
-  delete_typing: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["TypingDeleteRequest"];
-      };
-    };
-    responses: {
-      /** @description Delete typing */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["TypingResponse"];
-        };
-      };
-      /** @description Invalid typing item ID */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "text/plain": string;
-        };
-      };
-    };
-  };
-  complete_typing: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path: {
-        /** @description Typing item ID */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Record typing completion */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["TypingResponse"];
-        };
-      };
-      /** @description Invalid typing item ID */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Typing item not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "text/plain": string;
-        };
-      };
-      /** @description Internal Server Error */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "text/plain": string;
-        };
-      };
-    };
-  };
-  list_writing_assessments: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Writing assessments */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Assessment"][];
-        };
-      };
-    };
-  };
-  create_writing_assessment: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["CreateWritingAssessmentRequest"];
-      };
-    };
-    responses: {
-      /** @description Writing assessment created */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Assessment"];
-        };
-      };
-      /** @description Text is blank */
-      400: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Generator failure */
-      502: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  get_writing_assessment: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path: {
-        /** @description Writing assessment ID */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Writing assessment */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Assessment"];
-        };
-      };
-      /** @description Writing assessment not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  delete_writing_assessment: {
-    parameters: {
-      query?: never;
-      header: {
-        Authorization: string;
-      };
-      path: {
-        /** @description Writing assessment ID */
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Deleted writing assessment */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Assessment"];
-        };
-      };
-      /** @description Writing assessment not found */
-      404: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
 }

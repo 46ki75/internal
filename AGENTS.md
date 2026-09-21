@@ -9,7 +9,7 @@ Polyglot monorepo with three independent workspaces and shared Terraform:
 - `crates/*` — Rust workspace (`Cargo.toml` at root). Lambda binaries: `http-api`, `feed`, `logs-reporter`.
   The rest are libraries — `http-api-core` (shared error/cache/auth) and one `http-api-<feature>` crate per
   REST router — assembled by the `http-api` binary.
-- `packages/*` — pnpm workspace (`pnpm-workspace.yaml`).
+- `packages/*` — pnpm workspace (`pnpm-workspace.yaml`): SolidStart frontend and Nitro HTTP API.
 - `python/*` — uv workspace (`pyproject.toml` at root). `python/fetch` runs as a containerized Lambda; `python/ag-ui-server` runs as a containerized Bedrock AgentCore runtime.
 - `terraform/` — single Terraform stack that provisions all `dev`/`stg`/`prod` infra (CloudFront, API Gateway,
   Lambda, Cognito, DynamoDB, SNS, Route53). State lives in the shared S3 bucket
@@ -73,6 +73,31 @@ Use `mise run logs-reporter:dev`, `logs-reporter:build`, `logs-reporter:test`, o
 Use `mise exec -- cargo lambda build --release` / `mise exec -- cargo lambda deploy`
 from the crate directory.
 
+### `packages/http-api` (Notion HTTP API Lambda)
+
+Standalone Nitro 2 (`nitropack`) with Node.js 24, the official `@notionhq/client`,
+and npm `n2a2ui`. Owns Anki, Trivia, Bookmark, To-do, Icon, and Image endpoints.
+Read [its README](packages/http-api/README.md) for configuration and deployment.
+
+```sh
+mise run nitro-api:dev               # STAGE_NAME=dev, :11072/api-gateway/api/...
+mise run nitro-api:test              # hermetic Vitest tests
+mise run nitro-api:test:lambda       # built AWS Lambda adapter tests
+mise run nitro-api:test:live         # dev only; creates and cleans up test records
+mise run nitro-api:check             # formatting, lint, types, OpenAPI freshness
+mise run nitro-api:bootstrap dev     # one-time versioned artifact bucket setup
+mise run nitro-api:publish dev       # package → upload checksummed S3 object version
+mise run nitro-api:deploy dev        # select workspace → publish → interactive apply
+mise run nitro-api:generate-openapi  # regenerate committed OpenAPI fragment
+```
+
+API Gateway uses exact collection and greedy child routes per feature with the
+existing JWT authorizer. Nitro's `/api-gateway` base URL matches the named stage
+prefix observed in Lambda events; public URLs start with `/api/`. Apply Nitro's
+routes before deploying the Rust binary that removes the migrated handlers.
+Terraform resolves the published S3 artifact to its immutable version and checksum;
+after initial bootstrap/publication, shared stack plans need no local Nitro build.
+
 ### `packages/web-solid` (SolidStart frontend)
 
 ```sh
@@ -82,12 +107,13 @@ mise run web:check             # lint, types, formatting, and tests
 mise run web:test              # Vitest component and model tests
 mise run web:storybook         # dev on :11071
 mise run web:deploy <stage>    # build → s3 sync → CloudFront invalidate
-mise run web:generate-openapi  # regenerate schema.ts from a running http-api
+mise run web:generate-openapi  # regenerate schema.ts from the composed API document
 ```
 
-`web:generate-openapi` requires `crates/http-api` running locally (`mise run http-api:dev`). It hits
-`http://localhost:9000/lambda-url/http-api/api-gateway/api/v1/openapi.json`. Re-run whenever the Rust API
-surface changes.
+`web:generate-openapi` runs the Rust `export_openapi` example without a server or
+credentials. The document includes `packages/http-api/openapi.json`, generated
+from Nitro's runtime contracts. Regenerate the fragment first when those contracts
+change, then regenerate the frontend client.
 
 `web:deploy` runs `scripts/deploy-s3.sh` (S3 sync to `<stage>-46ki75-internal-s3-bucket-web`) then `scripts/invalidate.sh` (looks up the CloudFront distribution by alias domain).
 
@@ -131,23 +157,24 @@ The REST API is split across the workspace and assembled into one Lambda binary:
 
 - **`http-api`** — the binary. `src/router.rs::init_router` builds the Axum app; `src/execute.rs` adapts
   `lambda_http::Request` ↔ Axum. `src/lib.rs` re-exports each feature crate under its short name
-  (`pub use http_api_bookmark as bookmark;`) so `crate::<feature>::…` paths — and
+  (`pub use http_api_typing as typing;`) so `crate::<feature>::…` paths — and
   `http_api::<feature>::…` in `tests/` — keep resolving.
 - **`http-api-core`** — shared infrastructure, the only intra-workspace dependency of the feature crates:
-  `error::Error` (crate-wide error + `render_error_response`), `cache` (memoized AWS/Notion clients and
+  `error::Error` (crate-wide error + `render_error_response`), `cache` (memoized AWS clients and
   `get_parameter` SSM reads via the `cached` crate), and `layer` (Axum middleware).
-- **`http-api-<feature>`** — one library crate per REST router (`anki`, `bookmark`, `icon`, `image`, `to-do`,
-  `trivia`, `typing`). Independent of each other (no feature→feature deps), each with a strict layered
+- **`http-api-<feature>`** — one library crate per Rust REST router (`typing`, `writing-assessment`).
+  Independent of each other (no feature→feature deps), each with a strict layered
   layout:
 
 ```text
 crates/http-api-<feature>/src/
   controller/   REST handlers + utoipa-axum router (controller/router.rs::init_<feature>_router)
   use_case/     business logic (no I/O, depends on repository trait)
-  repository/   I/O (Notion, DynamoDB, AWS SDKs); concrete `*RepositoryImpl`
+  repository/   I/O (DynamoDB, AWS SDKs, OpenRouter); concrete implementations
 ```
 
-`src/router.rs::init_router` merges each feature's REST `OpenApiRouter`, mounts Scalar at
+`src/router.rs::init_router` merges the Rust routers and composes their OpenAPI with
+Nitro's generated document, rejecting duplicate paths and schema names. It mounts Scalar at
 `/api-gateway/api/v1/scalar`, exposes OpenAPI JSON at `/api-gateway/api/v1/openapi.json`, registers
 `/api-gateway/api/health`, and wraps everything in gzip/br compression. The whole router is cached in a
 `OnceCell` so Lambda cold starts only build it once.
@@ -157,9 +184,10 @@ To add a feature: create an `http-api-<feature>` crate (depend on `http-api-core
 `crates/http-api/Cargo.toml`, a `pub use http_api_<feature> as <feature>;` in `src/lib.rs`, and a
 `.merge(...)` in `src/router.rs::init_router`.
 
-Feature crates read their per-feature SSM keys inline via `http_api_core::cache::get_parameter`
-(no per-feature wrapper). External integrations: `notionrs` / `n2a2ui` (Notion content → A2UI), AWS SDKs
-(DynamoDB, SSM, Cognito), and `html-meta-scraper` (bookmarks).
+Rust feature crates read their SSM keys via `http_api_core::cache::get_parameter`.
+Notion integration lives in `packages/http-api`: thin file routes call feature
+services; `server/lib/notion.ts` owns SDK access; `server/contracts.ts` supplies
+validation, response types, and OpenAPI. SSM initialization is cached and retryable.
 
 ### `packages/web-solid` — SolidStart CSR
 
@@ -180,7 +208,8 @@ Feature crates read their per-feature SSM keys inline via `http_api_core::cache:
 - Cognito user pool is the single auth surface. The login password and Notion/GitHub/DeepL secrets are stored
   as Parameter Store entries listed in `terraform/README.md` — these are **not** managed by Terraform and
   must exist before deploy.
-- Lambda env vars are populated from Parameter Store at Terraform apply time; runtime code reads them via `std::env::var`.
+- Lambda runtimes receive `STAGE_NAME` from Terraform and read their stage-scoped
+  SSM parameters at runtime. Nitro caches successful reads per execution environment.
 
 ### Logging
 

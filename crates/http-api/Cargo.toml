@@ -19,12 +19,6 @@ workspace = true
 
 [dependencies]
 http-api-core = { path = "../http-api-core" }
-http-api-anki = { path = "../http-api-anki" }
-http-api-bookmark = { path = "../http-api-bookmark" }
-http-api-icon = { path = "../http-api-icon" }
-http-api-image = { path = "../http-api-image" }
-http-api-to-do = { path = "../http-api-to-do" }
-http-api-trivia = { path = "../http-api-trivia" }
 http-api-typing = { path = "../http-api-typing" }
 http-api-writing-assessment = { path = "../http-api-writing-assessment" }
 

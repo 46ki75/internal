@@ -1,5 +1,15 @@
 # Terraform
 
+## Nitro deployment artifacts
+
+Before the first Nitro publication in each workspace, run
+`mise run nitro-api:bootstrap <stage>` to create its private, versioned artifact
+bucket, then `mise run nitro-api:publish <stage>`. Subsequent Terraform plans resolve
+the published ZIP's S3 version ID and SHA-256 checksum remotely, so a clean checkout
+can plan/apply the shared stack without building Nitro. See the
+[Nitro deployment guide](../packages/http-api/README.md#deployment) for the complete
+workflow.
+
 ## ドメイン設計
 
 ### CloudFront (メインドメイン)

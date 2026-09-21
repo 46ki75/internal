@@ -68,8 +68,8 @@ description = "Run project-wide lint, formatting, and TypeScript/Python type che
 run = "pnpm exec lefthook run check --no-auto-install"
 
 [tasks.test]
-description = "Run Rust, frontend, and AgentCore hermetic tests"
-depends = ["rust:test", "web:test", "ag-ui-server:test"]
+description = "Run Rust, Nitro, frontend, and AgentCore hermetic tests"
+depends = ["rust:test", "nitro-api:test", "web:test", "ag-ui-server:test"]
 
 [tasks."rust:fmt-check"]
 description = "Check Rust workspace formatting"
@@ -129,7 +129,7 @@ run = [{ task = "rust:ci" }, { task = "rust:test:live" }]
 [tasks."http-api:dev"]
 description = "Watch the HTTP API with development configuration and debug logs"
 dir = "crates/http-api"
-run = "STAGE_NAME=dev RUST_LOG=warn,http_api=debug,http_api_core=debug,http_api_anki=debug,http_api_bookmark=debug,http_api_icon=debug,http_api_image=debug,http_api_to_do=debug,http_api_trivia=debug,http_api_typing=debug,http_api_writing_assessment=debug cargo lambda watch --package http-api"
+run = "STAGE_NAME=dev RUST_LOG=warn,http_api=debug,http_api_core=debug,http_api_typing=debug,http_api_writing_assessment=debug cargo lambda watch --package http-api"
 
 [tasks."http-api:build"]
 description = "Build the arm64 HTTP API Lambda"
@@ -171,6 +171,71 @@ description = "Write HTTP API lcov.info in the crate directory"
 dir = "crates/http-api"
 depends = ["http-api:test:cov"]
 run = "cargo llvm-cov report --lcov --output-path lcov.info"
+
+[tasks."nitro-api:dev"]
+description = "Run the Notion HTTP API on port 11072 using dev configuration"
+dir = "packages/http-api"
+run = "STAGE_NAME=dev pnpm dev"
+
+[tasks."nitro-api:build"]
+description = "Build the Nitro AWS Lambda handler"
+dir = "packages/http-api"
+run = "pnpm build"
+
+[tasks."nitro-api:package"]
+description = "Build and zip the complete Nitro Lambda output"
+run = "bash packages/http-api/scripts/package.sh"
+
+[tasks."nitro-api:bootstrap"]
+description = "Create the stage's versioned Nitro artifact bucket before its first publication"
+raw = true
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = [
+  'terraform -chdir=terraform workspace select "${usage_stage?}"',
+  "terraform -chdir=terraform apply -target=aws_s3_bucket.nitro_api_artifacts -target=aws_s3_bucket_versioning.nitro_api_artifacts -target=aws_s3_bucket_public_access_block.nitro_api_artifacts -target=aws_s3_bucket_server_side_encryption_configuration.nitro_api_artifacts",
+]
+
+[tasks."nitro-api:publish"]
+description = "Package Nitro and upload a checksummed version to the stage's artifact bucket"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = ["bash packages/http-api/scripts/package.sh", 'bash packages/http-api/scripts/upload.sh "${usage_stage?}"']
+
+[tasks."nitro-api:deploy"]
+description = "Publish Nitro, select the Terraform workspace, and apply interactively"
+raw = true
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = 'bash packages/http-api/scripts/deploy.sh "${usage_stage?}"'
+
+[tasks."nitro-api:test"]
+description = "Run hermetic Notion API Vitest tests"
+dir = "packages/http-api"
+run = "pnpm test"
+
+[tasks."nitro-api:test:lambda"]
+description = "Build and test the Lambda artifact with API Gateway events"
+dir = "packages/http-api"
+run = "pnpm test:lambda"
+
+[tasks."nitro-api:test:live"]
+description = "Test the deployed dev API with temporary Cognito and Notion fixtures"
+dir = "packages/http-api"
+run = "STAGE_NAME=dev pnpm test:live"
+
+[tasks."nitro-api:check"]
+description = "Check Nitro formatting, lint, types, and generated OpenAPI"
+dir = "packages/http-api"
+run = ["pnpm fmt:check", "pnpm lint", "pnpm typecheck", "pnpm check:openapi"]
+
+[tasks."nitro-api:generate-openapi"]
+description = "Generate the Notion HTTP API OpenAPI document"
+dir = "packages/http-api"
+run = "pnpm generate:openapi"
 
 [tasks."logs-reporter:dev"]
 description = "Watch the logs reporter with development debug logs"
@@ -254,7 +319,7 @@ dir = "packages/web-solid"
 run = "pnpm run storybook"
 
 [tasks."web:generate-openapi"]
-description = "Regenerate the frontend OpenAPI client from the running local API"
+description = "Regenerate the frontend client from the composed Rust and Nitro OpenAPI"
 dir = "packages/web-solid"
 run = "pnpm run generate:openapi"
 

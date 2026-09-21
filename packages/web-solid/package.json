@@ -19,7 +19,7 @@
     "dev:debug": "VITE_STAGE_NAME=dev node --inspect-brk ./node_modules/vite/bin/vite.js dev",
     "fmt": "prettier --write ./src",
     "fmt:check": "prettier --check ./src",
-    "generate:openapi": "openapi-typescript http://localhost:9000/lambda-url/http-api/api-gateway/api/v1/openapi.json -o src/openapi/schema.ts",
+    "generate:openapi": "bash -o pipefail -c 'cargo run --locked --quiet -p http-api --example export_openapi | openapi-typescript -o src/openapi/schema.ts'",
     "lint": "eslint \"{src,.storybook}/**/*.{ts,tsx}\"",
     "lint:css": "stylelint \"{src,.storybook}/**/*.css\"",
     "postdeploy": "./scripts/invalidate.sh",

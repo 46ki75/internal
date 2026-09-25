@@ -110,17 +110,17 @@ importers:
         specifier: ^2.0.4
         version: 2.0.4(@solidjs/router@1.0.0(solid-js@1.9.15))(@testing-library/jest-dom@7.0.1(@testing-library/dom@10.4.1)(vitest@5.0.1(@types/node@24.13.3)(happy-dom@20.11.0)(vite@8.3.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0))))(crossws@0.4.12(srvx@0.11.22))(vite@8.3.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(less@4.6.4)(sass@1.97.3)(stylus@0.62.0)(terser@5.46.0)(yaml@2.9.0))
       '@tanstack/query-sync-storage-persister':
-        specifier: 5.103.1
-        version: 5.103.1
+        specifier: 5.103.2
+        version: 5.103.2
       '@tanstack/solid-form':
         specifier: ^1.33.5
         version: 1.33.5(solid-js@1.9.15)
       '@tanstack/solid-query':
-        specifier: 5.103.1
-        version: 5.103.1(solid-js@1.9.15)
+        specifier: 5.103.2
+        version: 5.103.2(solid-js@1.9.15)
       '@tanstack/solid-query-persist-client':
-        specifier: 5.103.1
-        version: 5.103.1(@tanstack/solid-query@5.103.1(solid-js@1.9.15))(solid-js@1.9.15)
+        specifier: 5.103.2
+        version: 5.103.2(@tanstack/solid-query@5.103.2(solid-js@1.9.15))(solid-js@1.9.15)
       '@tanstack/solid-table':
         specifier: ^8.21.3
         version: 8.21.3(solid-js@1.9.15)
@@ -1944,28 +1944,28 @@ packages:
     resolution: {integrity: sha512-y/xtNPNt/YeyoVxE/JCx+T7yjEzpezmbb+toK8DDD1P4m7Kzs5YR956+7OKexG3f8aXgC3rLZl7b1V+yNUSy5w==}
     engines: {node: '>=18'}
 
-  '@tanstack/query-core@5.103.1':
-    resolution: {integrity: sha512-rms8HqTGp6zA00dM+cUQ2eBcgzNJefuu5CAMB37i/6MiGT1zulPOytCFu2a0qjLqVR2n1jENPj9woqFQNuCzWA==}
+  '@tanstack/query-core@5.103.2':
+    resolution: {integrity: sha512-I8DkFXls5jXLqtm8+QpOhEmG07hIblhSZFzafg9wHsMSEvMzULy9hK17wU1T/ahfhMbtITJhbxutwwCoihkR7A==}
 
-  '@tanstack/query-persist-client-core@5.103.1':
-    resolution: {integrity: sha512-ybirgB/kkFeMDk97W1ZTH09Wy5zageg6bC1LkxKFUCRFRbsGD+nm9+WVFVllce34O6aKWR3XDBBk2G04bpJYYg==}
+  '@tanstack/query-persist-client-core@5.103.2':
+    resolution: {integrity: sha512-yd//zcQILITjto5G1Rq0lTCd1AgXgwdmeCgqh3sTIqIdALPj8Ry7ilELfzEltMvHcoB612TLxPnF/6Yy9HoJ8Q==}
 
-  '@tanstack/query-sync-storage-persister@5.103.1':
-    resolution: {integrity: sha512-NnLrTEkaJikyFdJzXFklrXzaljuv4rxLXdulsdZM6huzX/B4ftoi415Qajs34CXECoowqCM5WcrMMSuyGUSM9g==}
+  '@tanstack/query-sync-storage-persister@5.103.2':
+    resolution: {integrity: sha512-yEtvbKDA9bhmSJklRjbt1R6wx3oJ1s4NDTJQcYbsIzHMGwWq6hq6xlGj6zzGRClLr4LdWdbQHTOnhaXDL6mXxQ==}
 
   '@tanstack/solid-form@1.33.5':
     resolution: {integrity: sha512-azYHYzNwop64bedJRKgjCpi5w9cHu7cNz+dAdSXzaqy9M6JO+GlKNQn54VFhCLYJo45sgNjcdrnz4eyTmgzJ/w==}
     peerDependencies:
       solid-js: '>=1.9.9'
 
-  '@tanstack/solid-query-persist-client@5.103.1':
-    resolution: {integrity: sha512-hM4reeAuxyKxzRMYpQ7iVvTcn2w5FoGGUcGQjb03vpQLHcV3yoEioD9grob6H1/kRGGZNjo4NxBDxIQm2Uferw==}
+  '@tanstack/solid-query-persist-client@5.103.2':
+    resolution: {integrity: sha512-XI/VIvn27G9uvTEJDp35UfFT6kKqd1apSjizjj/2qB2TNam+0nLdlrQ2uSy9PzGwoOKavqxEiRMXtITi6G2ziQ==}
     peerDependencies:
-      '@tanstack/solid-query': ^5.103.1
+      '@tanstack/solid-query': ^5.103.2
       solid-js: ^1.6.0
 
-  '@tanstack/solid-query@5.103.1':
-    resolution: {integrity: sha512-QqVhd9ujRC84G+W5ZU0E5u021ZVlUiq5nLcAfzHfc3TBbzo9/hkqbv1RmBzuBHUB/5L388Jg6CJZrHawgy1HJw==}
+  '@tanstack/solid-query@5.103.2':
+    resolution: {integrity: sha512-CMYKaBb850rD+UZdw4NePxl/Wq/m4ePwV5MPlqhw1cr7TFogNkMU6HaFFSb70FISBuPFdK7einccoN3UDZyhpg==}
     peerDependencies:
       solid-js: ^1.6.0
 
@@ -7378,16 +7378,16 @@ snapshots:
 
   '@tanstack/pacer-lite@0.1.1': {}
 
-  '@tanstack/query-core@5.103.1': {}
+  '@tanstack/query-core@5.103.2': {}
 
-  '@tanstack/query-persist-client-core@5.103.1':
+  '@tanstack/query-persist-client-core@5.103.2':
     dependencies:
-      '@tanstack/query-core': 5.103.1
+      '@tanstack/query-core': 5.103.2
 
-  '@tanstack/query-sync-storage-persister@5.103.1':
+  '@tanstack/query-sync-storage-persister@5.103.2':
     dependencies:
-      '@tanstack/query-core': 5.103.1
-      '@tanstack/query-persist-client-core': 5.103.1
+      '@tanstack/query-core': 5.103.2
+      '@tanstack/query-persist-client-core': 5.103.2
 
   '@tanstack/solid-form@1.33.5(solid-js@1.9.15)':
     dependencies:
@@ -7395,15 +7395,15 @@ snapshots:
       '@tanstack/solid-store': 0.11.1(solid-js@1.9.15)
       solid-js: 1.9.15
 
-  '@tanstack/solid-query-persist-client@5.103.1(@tanstack/solid-query@5.103.1(solid-js@1.9.15))(solid-js@1.9.15)':
+  '@tanstack/solid-query-persist-client@5.103.2(@tanstack/solid-query@5.103.2(solid-js@1.9.15))(solid-js@1.9.15)':
     dependencies:
-      '@tanstack/query-persist-client-core': 5.103.1
-      '@tanstack/solid-query': 5.103.1(solid-js@1.9.15)
+      '@tanstack/query-persist-client-core': 5.103.2
+      '@tanstack/solid-query': 5.103.2(solid-js@1.9.15)
       solid-js: 1.9.15
 
-  '@tanstack/solid-query@5.103.1(solid-js@1.9.15)':
+  '@tanstack/solid-query@5.103.2(solid-js@1.9.15)':
     dependencies:
-      '@tanstack/query-core': 5.103.1
+      '@tanstack/query-core': 5.103.2
       solid-js: 1.9.15
 
   '@tanstack/solid-store@0.11.1(solid-js@1.9.15)':

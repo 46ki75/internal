@@ -44,7 +44,7 @@
     "@tanstack/solid-form": "^1.33.5",
     "@tanstack/solid-query": "5.103.2",
     "@tanstack/solid-query-persist-client": "5.103.2",
-    "@tanstack/solid-table": "^8.21.3",
+    "@tanstack/solid-table": "^9.2.4",
     "aws-amplify": "^6.20.0",
     "clsx": "^2.1.1",
     "es-toolkit": "^1.52.0",

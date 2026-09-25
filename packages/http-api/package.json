@@ -22,7 +22,7 @@
   "dependencies": {
     "@aws-sdk/client-ssm": "3.1137.0",
     "@notionhq/client": "5.26.0",
-    "cheerio": "1.1.2",
+    "cheerio": "1.2.0",
     "h3": "1.15.11",
     "n2a2ui": "0.8.0",
     "zod": "3.25.76",

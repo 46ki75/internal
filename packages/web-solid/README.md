@@ -8,17 +8,19 @@ Client-rendered [SolidStart](https://docs.solidjs.com/solid-start) frontend for
 Run commands from this directory:
 
 ```sh
-pnpm dev                  # SolidStart dev server on :11070
-pnpm test                 # Vitest component and model tests
-pnpm build:types          # TypeScript check
-pnpm lint                 # ESLint with Solid rules
-pnpm fmt / pnpm fmt:check # Prettier
-pnpm storybook            # Storybook on :11071
-pnpm build-storybook      # Static Storybook build
-pnpm build                # Build the production CSR bundle
+mise run --silent //:setup:node  # Install locked workspace dependencies
+mise run --silent :dev          # SolidStart dev server on :11070
+mise run --silent :test         # Vitest component and model tests
+mise run --silent :typecheck    # TypeScript check
+mise run --silent :lint         # ESLint and Stylelint
+mise run --silent :fmt          # Prettier
+mise run --silent :storybook    # Storybook on :11071
+mise run --silent :storybook:build # Static Storybook build
+mise run --silent :build        # Build the production CSR bundle
+mise run --silent :check        # Complete package quality gate and build
 ```
 
-`pnpm dev` proxies `/api` and `/invocations` to the dev CloudFront domain.
+`:dev` proxies `/api` and `/invocations` to the dev CloudFront domain.
 Set `VITE_STAGE_NAME` to `dev`, `stg`, or `prod` to select another stage.
 
 ### TypeScript tooling
@@ -46,24 +48,24 @@ Browser integrations are initialized in `onMount` and cleaned up with
 Regenerate the client types without a running server or AWS credentials:
 
 ```sh
-pnpm generate:openapi
+mise run --silent :generate-openapi
 ```
 
 This runs the Rust `export_openapi` example, which includes the committed Nitro
-fragment. After changing Nitro contracts, run `mise run nitro-api:generate-openapi`
-first.
+fragment. After changing Nitro contracts, run
+`mise run --silent //packages/http-api:generate-openapi` first.
 
 ## Deployment
 
-`pnpm build` emits the application shell and client assets into
+`:build` emits the application shell and client assets into
 `.output/public`. CloudFront rewrites extensionless browser routes to
 `/index.html`. Files from `public/`, including `practical_test_en.html`, are
 copied into the same output.
 
 ```sh
-pnpm deploy:dev
-pnpm deploy:stg
-pnpm deploy:prod
+mise run --silent :deploy dev
+mise run --silent :deploy stg
+mise run --silent :deploy prod
 ```
 
 Deployment syncs `.output/public` to the stage S3 bucket and invalidates the

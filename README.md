@@ -13,7 +13,7 @@ Install [mise](https://mise.jdx.dev/installing-mise.html) 2026.9.9 or newer and
 ```sh
 mise trust mise.toml
 mise install node pnpm python uv terraform awscli zig cargo-lambda cargo-llvm-cov
-mise run setup
+mise run --silent setup
 ```
 
 Exact tool versions live in `mise.toml`; pnpm's exact version and checksum come
@@ -32,57 +32,60 @@ their own Python requirements separately from the development interpreter.
 
 ## Tasks
 
-`mise tasks ls` lists all commands. Tasks work from the root or any subdirectory
-without shell activation. Mise must also be on PATH for editor and Git hooks.
+`mise tasks ls --all` lists the root and package-owned tasks. Use
+`mise run --silent <task>` for routine local work and rerun a failure without
+`--silent` for complete diagnostics. From the repository root, descendant tasks
+use absolute names such as `//packages/web-solid:check`; from within a configured
+workspace, use the shorter `:check` form. Mise must also be on PATH for editor and
+Git hooks.
 
-| Command                                      | Purpose                                                     |
-| -------------------------------------------- | ----------------------------------------------------------- |
-| `mise run fmt`                               | Format tracked files through Lefthook                       |
-| `mise run fmt-check`                         | Check the same formatter scope                              |
-| `mise run lint`                              | Run native linters without fixes                            |
-| `mise run check`                             | Project-wide lint, formatting, and TypeScript/Python types  |
-| `mise run test`                              | Rust, Nitro, frontend, and AgentCore hermetic tests         |
-| `mise run rust:ci`                           | Rust formatting, Clippy, and hermetic tests                 |
-| `mise run rust:coverage:ci`                  | Generate workspace `lcov.info`                              |
-| `mise run http-api:dev`                      | Watch the API with development debug logs                   |
-| `mise run http-api:deploy <stage>`           | Build and deploy the arm64 API                              |
-| `mise run nitro-api:dev`                     | Run the Notion HTTP API on port 11072                       |
-| `mise run nitro-api:test`                    | Run hermetic backend Vitest tests                           |
-| `mise run nitro-api:test:lambda`             | Test the built Lambda handler                               |
-| `mise run nitro-api:test:live`               | Verify the deployed dev API with temporary test records     |
-| `mise run nitro-api:bootstrap <stage>`       | Create the versioned artifact bucket before its first use   |
-| `mise run nitro-api:publish <stage>`         | Package Nitro and publish a checksummed S3 object version   |
-| `mise run nitro-api:deploy <stage>`          | Publish Nitro and apply Terraform in the selected workspace |
-| `mise run logs-reporter:deploy <stage>`      | Build and deploy the reporter                               |
-| `mise run web:dev`                           | Start the frontend on port 11070                            |
-| `mise run web:ci`                            | Run frontend checks/tests, then build                       |
-| `mise run web:deploy <stage>`                | Build, upload, and invalidate the frontend                  |
-| `mise run ag-ui-server:test`                 | Run tests with mocked SSM and Claude SDK                    |
-| `mise run ag-ui-server:build <stage> [tag]`  | Build and **push** an arm64 ECR image                       |
-| `mise run ag-ui-server:deploy <stage> [tag]` | Push an image, then apply Terraform interactively           |
+| Command                                                        | Purpose                                                     |
+| -------------------------------------------------------------- | ----------------------------------------------------------- |
+| `mise run --silent fmt`                                        | Format tracked files through Lefthook                       |
+| `mise run --silent fmt-check`                                  | Check the same formatter scope                              |
+| `mise run --silent lint`                                       | Run native linters without fixes                            |
+| `mise run --silent check:quick`                                | Run the fast static feedback gate                           |
+| `mise run --silent check`                                      | Run the complete project-wide CI quality gate               |
+| `mise run --silent test`                                       | Run all ordinary hermetic tests                             |
+| `mise run --silent //crates:check`                             | Run Rust formatting, Clippy, and hermetic tests             |
+| `mise run --silent //crates:coverage:ci`                       | Generate workspace `lcov.info`                              |
+| `mise run --silent //crates:http-api:dev`                      | Watch the API with development debug logs                   |
+| `mise run --silent //crates:http-api:deploy <stage>`           | Build and deploy the arm64 API                              |
+| `mise run --silent //packages/http-api:dev`                    | Run the Notion HTTP API on port 11072                       |
+| `mise run --silent //packages/http-api:test:live`              | Verify the deployed dev API with temporary test records     |
+| `mise run --silent //packages/http-api:bootstrap <stage>`      | Create the versioned artifact bucket before its first use   |
+| `mise run --silent //packages/http-api:publish <stage>`        | Package Nitro and publish a checksummed S3 object version   |
+| `mise run --silent //packages/http-api:deploy <stage>`         | Publish Nitro and apply Terraform in the selected workspace |
+| `mise run --silent //crates:logs-reporter:deploy <stage>`      | Build and deploy the reporter                               |
+| `mise run --silent //packages/web-solid:dev`                   | Start the frontend on port 11070                            |
+| `mise run --silent //packages/web-solid:check`                 | Check, test, and build the frontend                         |
+| `mise run --silent //packages/web-solid:deploy <stage>`        | Build, upload, and invalidate the frontend                  |
+| `mise run --silent //python:ag-ui-server:build <stage> [tag]`  | Build and **push** an arm64 ECR image                       |
+| `mise run --silent //python:ag-ui-server:deploy <stage> [tag]` | Push an image, then apply Terraform interactively           |
 
 Stages are `dev`, `stg`, or `prod`; omitted image tags use a timestamp. Existing
 AWS profile/credential setup is required for deployment and live operations.
-`rust:test:live` and `rust:ci:live` remain explicit, credential-dependent tasks.
-Coverage tasks share Cargo's instrumentation state; run one coverage scope at a time.
+`//crates:test:live`, `//crates:check:live`, and package `test:live` tasks remain
+explicit and credential-dependent. Coverage tasks share Cargo's instrumentation
+state; run one coverage scope at a time.
 
 The Notion-backed endpoints live in [packages/http-api](packages/http-api/README.md).
 Apply the Nitro routes before deploying the Rust API during an environment's first
-migration. `mise run web:generate-openapi` regenerates the frontend client from the
-composed Rust/Nitro document without a running server.
+migration. `mise run --silent //packages/web-solid:generate-openapi` regenerates
+the frontend client from the composed Rust/Nitro document without a running server.
 
 `fmt`, `fmt-check`, and `lint` accept repeated `--file <repo-relative-path>`
-arguments, including explicit untracked files, or `--all-files`. `check` is always
-project-wide. Selecting one Rust file still invokes the workspace-wide Cargo
-formatter/linter. Existing Lefthook exclusions and staged-file handling apply.
+arguments, including explicit untracked files, or `--all-files`. `check:quick`,
+`test`, and `check` are always project-wide. Selecting one Rust file still invokes
+the workspace-wide Cargo formatter/linter. Existing Lefthook exclusions and
+staged-file handling apply.
 
 ## Continuous integration
 
 `.github/workflows/ci.yml` runs on every pull request targeting `main` and every
-push to `main`, including documentation and tooling-only changes. It runs the
-same `mise run check` as local development, plus Rust and Python hermetic tests,
-Nitro tests and Lambda artifact verification, frontend tests, and the production
-frontend build in separate jobs.
+push to `main`, including documentation and tooling-only changes. Separate jobs
+run `check:quick` and each package-owned `check` leaf from the root `check` graph;
+together they implement the same complete gate while preserving CI parallelism.
 
 The `Required checks` job succeeds only when all five mandatory jobs succeed;
 failed, canceled, or skipped dependencies fail the aggregate. The default-branch

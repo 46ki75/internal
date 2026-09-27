@@ -1,0 +1,85 @@
+[task_config]
+shell = "bash -euo pipefail -c"
+
+[tasks.fmt]
+description = "Format the Nitro API source"
+run = "pnpm fmt"
+
+[tasks.fmt-check]
+description = "Check Nitro API formatting"
+run = "pnpm fmt:check"
+
+[tasks.lint]
+description = "Lint the Nitro API source"
+run = "pnpm lint"
+
+[tasks.typecheck]
+description = "Type-check the Nitro API"
+run = "pnpm typecheck"
+
+[tasks."check:openapi"]
+description = "Check that the generated Nitro OpenAPI document is current"
+run = "pnpm check:openapi"
+
+[tasks.test]
+description = "Run hermetic Nitro API tests"
+run = "pnpm test"
+
+[tasks."test:lambda"]
+description = "Build and test the Lambda artifact with API Gateway events"
+run = "pnpm test:lambda"
+
+[tasks."test:live"]
+description = "Test the deployed dev API with temporary Cognito and Notion fixtures"
+run = "STAGE_NAME=dev pnpm test:live"
+
+[tasks."check:source"]
+description = "Check Nitro formatting, lint, types, OpenAPI, and hermetic tests"
+depends = [":fmt-check", ":lint", ":typecheck", ":check:openapi", ":test"]
+
+[tasks.check]
+description = "Run the complete Nitro API quality gate"
+depends = [":check:source"]
+run = { task = ":test:lambda" }
+
+[tasks.dev]
+description = "Run the Notion HTTP API on port 11072 using dev configuration"
+run = "STAGE_NAME=dev pnpm dev"
+
+[tasks.build]
+description = "Build the Nitro AWS Lambda handler"
+run = "pnpm build"
+
+[tasks.package]
+description = "Build and zip the complete Nitro Lambda output"
+run = "bash scripts/package.sh"
+
+[tasks.bootstrap]
+description = "Create the stage's versioned Nitro artifact bucket before its first publication"
+raw = true
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = [
+  'terraform -chdir=../../terraform workspace select "${usage_stage?}"',
+  "terraform -chdir=../../terraform apply -target=aws_s3_bucket.nitro_api_artifacts -target=aws_s3_bucket_versioning.nitro_api_artifacts -target=aws_s3_bucket_public_access_block.nitro_api_artifacts -target=aws_s3_bucket_server_side_encryption_configuration.nitro_api_artifacts",
+]
+
+[tasks.publish]
+description = "Package Nitro and upload a checksummed version to the stage's artifact bucket"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = ["bash scripts/package.sh", 'bash scripts/upload.sh "${usage_stage?}"']
+
+[tasks.deploy]
+description = "Publish Nitro, select the Terraform workspace, and apply interactively"
+raw = true
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = 'bash scripts/deploy.sh "${usage_stage?}"'
+
+[tasks.generate-openapi]
+description = "Generate the Notion HTTP API OpenAPI document"
+run = "pnpm generate:openapi"

@@ -69,8 +69,8 @@ auth precedence, so `model_auth.py` clears any `ANTHROPIC_*` first.)
 The lockfile and venv live at the workspace root. From the repo root:
 
 ```bash
-mise run setup:python
-mise run ag-ui-server:test
+mise run --silent setup:python
+mise run --silent //python:test
 ```
 
 Tests are hermetic — they mock SSM and the SDK `query()`, so no AWS credentials
@@ -80,14 +80,14 @@ Run locally (needs the OAuth token reachable in SSM and AWS credentials):
 
 ```bash
 CLAUDE_CODE_OAUTH_TOKEN_PARAM=/dev/46ki75/internal/claude-code/secret \
-  mise run ag-ui-server:dev
+  mise run --silent //python:ag-ui-server:dev
 ```
 
 ## Build & deploy
 
 ```bash
-mise run ag-ui-server:build dev v2   # push :v2 and :latest to dev/ag-ui-server
-mise run ag-ui-server:deploy dev    # push a timestamp tag, then apply Terraform interactively
+mise run --silent //python:ag-ui-server:build dev v2 # Push :v2 and :latest to dev/ag-ui-server
+mise run --silent //python:ag-ui-server:deploy dev   # Push a timestamp tag, then apply Terraform
 ```
 
 `build.sh` exports a pinned `requirements.txt` from the workspace lock, logs in

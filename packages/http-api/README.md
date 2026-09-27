@@ -8,11 +8,11 @@ Uses the official `@notionhq/client` SDK with Notion API `2026-03-11` and npm
 ## Development
 
 ```sh
-mise run setup:node
-mise run nitro-api:dev
-mise run nitro-api:test
-mise run nitro-api:test:lambda
-mise run nitro-api:check
+mise run --silent //:setup:node
+mise run --silent :dev
+mise run --silent :test
+mise run --silent :test:lambda
+mise run --silent :check
 ```
 
 The development server listens on port 11072 with `STAGE_NAME=dev`; local URLs
@@ -41,7 +41,7 @@ behavior, request validation, and each HTTP contract. The Lambda suite imports
 the built `.output/server/index.mjs` and exercises API Gateway v2 events.
 
 ```sh
-mise run nitro-api:test:live
+mise run --silent :test:live
 ```
 
 Live tests require AWS credentials and run only against `dev`. They create a
@@ -54,8 +54,8 @@ Tokens and integration secrets are kept in memory.
 ## Deployment
 
 ```sh
-mise run nitro-api:bootstrap dev # Once per environment, before its first publication
-mise run nitro-api:deploy dev
+mise run --silent :bootstrap dev # Once per environment, before its first publication
+mise run --silent :deploy dev
 ```
 
 Packaging writes `.output/lambda.zip` containing `server/` and its traced runtime
@@ -65,14 +65,14 @@ the ZIP, and uploads it to
 before running interactive apply; inspect its plan for other stack changes.
 
 The Terraform-managed artifact bucket is private, encrypted, and versioned.
-`nitro-api:bootstrap` creates only that bucket and its configuration, allowing the
+`:bootstrap` creates only that bucket and its configuration, allowing the
 first upload before the Lambda is planned. Uploads use a single-part PUT with an
 S3-validated SHA-256 checksum. Terraform resolves the latest published object to
 its immutable version ID and checksum at plan time, uses handler
 `server/index.handler`, publishes a Lambda version, and updates the `stable` alias.
 Previous S3 versions are retained.
 
-Use `mise run nitro-api:publish <stage>` to build and upload before reviewing a
+Use `mise run --silent :publish <stage>` to build and upload before reviewing a
 separate Terraform plan/apply. Publication makes that version the desired artifact
 for subsequent plans in that workspace. Once an artifact is published, all shared
 Terraform workflows work from a clean checkout without a local Nitro ZIP. The
@@ -88,10 +88,10 @@ through the same API Gateway origin.
 ## OpenAPI
 
 ```sh
-mise run nitro-api:generate-openapi
+mise run --silent :generate-openapi
 ```
 
 Commit the generated `openapi.json`. The Rust API composes this document with its
 own routes at `/api/v1/openapi.json`, rejecting duplicate paths or schema names.
 `check:openapi` detects stale generated output. Regenerate the frontend client with
-`mise run web:generate-openapi` after API contract changes.
+`mise run --silent //packages/web-solid:generate-openapi` after API contract changes.

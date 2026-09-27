@@ -13,7 +13,7 @@ JS
 )"
 
 if [[ "$(aws s3api get-bucket-versioning --region ap-northeast-1 --bucket "$bucket" --query Status --output text)" != "Enabled" ]]; then
-  echo "Run mise run nitro-api:bootstrap $stage to enable artifact versioning before publishing." >&2
+  echo "Run mise run --silent //packages/http-api:bootstrap $stage to enable artifact versioning before publishing." >&2
   exit 1
 fi
 

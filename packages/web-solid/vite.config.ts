@@ -19,6 +19,11 @@ export default defineConfig({
     }),
     nitro(),
   ],
+  build: {
+    // Older CSS targets make Lightning CSS replace light-dark() with an OS
+    // media query, which ignores runtime color-scheme changes.
+    cssTarget: ["chrome123", "firefox120", "safari17.5"],
+  },
   server: {
     headers: { "Cache-Control": "public, max-age=0" },
     port: 11070,

@@ -20,6 +20,11 @@ const config = {
           "~": fileURLToPath(new URL("../src", import.meta.url)),
         },
       },
+      build: {
+        // Older CSS targets make Lightning CSS replace light-dark() with an OS
+        // media query, which ignores runtime color-scheme changes.
+        cssTarget: ["chrome123", "firefox120", "safari17.5"],
+      },
     }),
 } satisfies StorybookConfig;
 

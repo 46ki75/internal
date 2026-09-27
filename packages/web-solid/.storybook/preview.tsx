@@ -6,6 +6,8 @@ import {
 } from "storybook-solidjs-vite";
 
 import "@elmethis/solid/style.css";
+// Override the package's pre-minified fallback with native switchable tokens.
+import "@elmethis/core/tokens.css";
 import "../src/global.css";
 import "./sb.css";
 

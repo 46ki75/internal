@@ -8,8 +8,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build",
-    "build-storybook": "storybook build",
+    "build": "vite build && node scripts/verify-theme-css.mjs .output/public",
+    "build-storybook": "storybook build && node scripts/verify-theme-css.mjs storybook-static",
     "build:types": "tsc --incremental --noEmit",
     "deploy": "./scripts/deploy-s3.sh",
     "deploy:dev": "VITE_STAGE_NAME=dev pnpm run deploy",

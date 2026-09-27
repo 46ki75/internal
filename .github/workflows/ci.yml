@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   check:
-    name: Lint, formatting, and types
+    name: Fast static validation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -30,11 +30,11 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
-      - name: Run the repository-wide check
-        run: mise run check
+      - name: Run the quick repository-wide check
+        run: mise run check:quick
 
   rust-test:
-    name: Rust tests
+    name: Rust check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -48,8 +48,8 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
-      - name: Hermetic Rust tests
-        run: mise run rust:test
+      - name: Rust quality gate
+        run: mise run //crates:check
 
   web:
     name: Web tests and build
@@ -64,11 +64,8 @@ jobs:
       - name: Install Node dependencies
         run: mise run setup:node
 
-      - name: Frontend tests
-        run: mise run web:test
-
-      - name: Production frontend build
-        run: mise run web:build
+      - name: Frontend quality gate
+        run: mise run //packages/web-solid:check
 
   nitro:
     name: Nitro tests and Lambda build
@@ -80,12 +77,8 @@ jobs:
           version: "2026.9.9"
       - name: Install Node dependencies
         run: mise run setup:node
-      - name: Backend checks
-        run: mise run nitro-api:check
-      - name: Hermetic backend tests
-        run: mise run nitro-api:test
-      - name: Lambda artifact tests
-        run: mise run nitro-api:test:lambda
+      - name: Nitro API quality gate
+        run: mise run //packages/http-api:check
 
   python:
     name: Python tests
@@ -100,8 +93,8 @@ jobs:
       - name: Install Python dependencies
         run: mise run setup:python
 
-      - name: Hermetic Python tests
-        run: mise run ag-ui-server:test
+      - name: Python quality gate
+        run: mise run //python:check
 
   required:
     name: Required checks
@@ -132,14 +125,14 @@ jobs:
       - uses: Swatinem/rust-cache@v2
 
       - name: Generate coverage
-        run: mise run rust:coverage:ci
+        run: mise run //crates:coverage:ci
 
       - name: Write coverage summary
         run: |
           {
             echo '### Coverage (hermetic tests)'
             echo '```'
-            mise run --quiet rust:coverage:summary
+            mise run --quiet //crates:coverage:summary
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 

@@ -91,7 +91,9 @@ const output = JSON.stringify(document, null, 2) + "\n";
 const file = new URL("../openapi.json", import.meta.url);
 if (process.argv.includes("--check")) {
   if ((await readFile(file, "utf8")) !== output)
-    throw new Error("Run mise run nitro-api:generate-openapi");
+    throw new Error(
+      "Run mise run --silent //packages/http-api:generate-openapi",
+    );
 } else {
   await writeFile(file, output);
 }

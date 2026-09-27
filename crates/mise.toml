@@ -1,0 +1,123 @@
+[task_config]
+shell = "bash -euo pipefail -c"
+
+[tasks.fmt]
+description = "Format the Rust workspace"
+run = "cargo fmt --all"
+
+[tasks.fmt-check]
+description = "Check Rust workspace formatting"
+run = "cargo fmt --all -- --check"
+
+[tasks.lint]
+description = "Deny Clippy warnings across workspace crates, targets, and features"
+run = "cargo clippy --locked --workspace --all-targets --all-features -- -D warnings"
+
+[tasks.test]
+description = "Run hermetic Rust workspace tests; ignored live tests are skipped"
+run = "cargo test --locked --workspace"
+
+[tasks.check]
+description = "Run the complete Rust workspace quality gate"
+depends = [":fmt-check", ":lint", ":test"]
+
+[tasks."test:live"]
+description = "Run ignored live Rust tests; requires network and AWS credentials"
+run = "cargo test --locked --workspace -- --ignored"
+
+[tasks."test:cov"]
+description = "Instrument hermetic Rust tests without emitting a report"
+run = "cargo llvm-cov --locked --no-report --workspace"
+
+[tasks.coverage]
+description = "Show partially covered files and missing Rust line numbers"
+depends = [":test:cov"]
+# awk succeeds for empty filtered output; pipefail retains reporter failures.
+run = '''cargo llvm-cov report --show-missing-lines --color=always 2>&1 | awk '!/ 100.00%/' '''
+
+[tasks."coverage:html"]
+description = "Open the Rust HTML coverage report"
+depends = [":test:cov"]
+run = "cargo llvm-cov report --html --open"
+
+[tasks."coverage:ci"]
+description = "Write workspace lcov.info at the repository root for CI"
+depends = [":test:cov"]
+run = "cargo llvm-cov report --lcov --output-path ../lcov.info"
+
+[tasks."coverage:summary"]
+description = "Summarize the existing Rust coverage run"
+run = "cargo llvm-cov report --summary-only"
+
+[tasks."check:live"]
+description = "Run the Rust quality gate, then ignored live tests"
+run = [{ task = ":check" }, { task = ":test:live" }]
+
+[tasks."http-api:dev"]
+description = "Watch the HTTP API with development configuration and debug logs"
+dir = "http-api"
+run = "STAGE_NAME=dev RUST_LOG=warn,http_api=debug,http_api_core=debug,http_api_typing=debug,http_api_writing_assessment=debug cargo lambda watch --package http-api"
+
+[tasks."http-api:build"]
+description = "Build the arm64 HTTP API Lambda"
+dir = "http-api"
+run = "cargo lambda build --arm64 --release"
+
+[tasks."http-api:deploy"]
+description = "Build and deploy the HTTP API Lambda"
+dir = "http-api"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = [{ task = ":http-api:build" }, 'cargo lambda deploy --binary-name http-api "${usage_stage?}-46ki75-internal-lambda-function-http-api"']
+
+[tasks."http-api:test"]
+description = "Run HTTP API library tests"
+dir = "http-api"
+run = "cargo test --locked -p http-api --lib"
+
+[tasks."http-api:test:cov"]
+description = "Instrument HTTP API library tests without emitting a report"
+dir = "http-api"
+run = "cargo llvm-cov --locked --no-report -p http-api --lib"
+
+[tasks."http-api:coverage"]
+description = "Show partially covered HTTP API files and missing line numbers"
+dir = "http-api"
+depends = [":http-api:test:cov"]
+run = '''cargo llvm-cov report --show-missing-lines --color=always 2>&1 | awk '!/ 100.00%/' '''
+
+[tasks."http-api:coverage:html"]
+description = "Open HTTP API HTML coverage"
+dir = "http-api"
+depends = [":http-api:test:cov"]
+run = "cargo llvm-cov report --html --open"
+
+[tasks."http-api:coverage:ci"]
+description = "Write HTTP API lcov.info in the crate directory"
+dir = "http-api"
+depends = [":http-api:test:cov"]
+run = "cargo llvm-cov report --lcov --output-path lcov.info"
+
+[tasks."logs-reporter:dev"]
+description = "Watch the logs reporter with development debug logs"
+dir = "logs-reporter"
+run = "STAGE_NAME=dev RUST_LOG=logs_reporter=debug cargo lambda watch --package logs-reporter"
+
+[tasks."logs-reporter:build"]
+description = "Build the arm64 logs reporter Lambda"
+dir = "logs-reporter"
+run = "cargo lambda build --arm64 --release"
+
+[tasks."logs-reporter:deploy"]
+description = "Build and deploy the logs reporter Lambda"
+dir = "logs-reporter"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = [{ task = ":logs-reporter:build" }, 'cargo lambda deploy --binary-name logs-reporter "${usage_stage?}-46ki75-internal-lambda-function-reporter"']
+
+[tasks."logs-reporter:test"]
+description = "Run logs reporter binary tests"
+dir = "logs-reporter"
+run = "cargo test --locked --bins"

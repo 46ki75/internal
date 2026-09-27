@@ -124,7 +124,7 @@ describe("versioned Nitro deployment", () => {
     "stops before publication when versioning is %s",
     async (status) => {
       env.VERSIONING = status;
-      expect(() => deploy()).toThrow("nitro-api:bootstrap dev");
+      expect(() => deploy()).toThrow("//packages/http-api:bootstrap dev");
       expect(
         (await calls()).some((call) => call.args.includes("put-object")),
       ).toBe(false);

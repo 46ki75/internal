@@ -1,0 +1,51 @@
+[task_config]
+shell = "bash -euo pipefail -c"
+
+[tasks.fmt]
+description = "Format the Python workspace"
+run = "uv run --locked --no-sync ruff format ."
+
+[tasks.fmt-check]
+description = "Check Python workspace formatting"
+run = "uv run --locked --no-sync ruff format --check ."
+
+[tasks.lint]
+description = "Lint the Python workspace"
+run = "uv run --locked --no-sync ruff check ."
+
+[tasks.typecheck]
+description = "Type-check the Python workspace"
+run = "uv run --locked --no-sync pyright ."
+
+[tasks.test]
+description = "Run ordinary hermetic Python tests"
+run = "uv run --locked --no-sync --package ag-ui-server pytest ag-ui-server/tests"
+
+[tasks.check]
+description = "Run the complete Python workspace quality gate"
+depends = [":fmt-check", ":lint", ":typecheck", ":test"]
+
+[tasks."ag-ui-server:dev"]
+description = "Run AgentCore locally; requires configured SSM OAuth token and AWS credentials"
+run = "uv run --locked --no-sync --package ag-ui-server python -m ag_ui_server.server"
+
+[tasks."ag-ui-server:build"]
+description = "Build and PUSH the arm64 AgentCore image to ECR"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+arg "[tag]" default="" help="Image tag; defaults to the current timestamp"
+'''
+run = 'STAGE_NAME="${usage_stage?}" TAG="${usage_tag:-$(date +%Y%m%d-%H%M%S)}" ./ag-ui-server/build.sh'
+
+[tasks."ag-ui-server:deploy"]
+description = "Build/push AgentCore, select its Terraform workspace, and apply interactively"
+raw = true
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+arg "[tag]" default="" help="Image tag; defaults to the current timestamp"
+'''
+run = [
+  { task = ":ag-ui-server:build", args = ["{{ usage.stage }}", "{{ usage.tag }}"] },
+  'terraform -chdir=../terraform workspace select "${usage_stage?}"',
+  "terraform -chdir=../terraform apply",
+]

@@ -28,4 +28,4 @@ jobs:
       - uses: Swatinem/rust-cache@v2
 
       - name: Rust gate and live tests
-        run: mise run rust:ci:live
+        run: mise run //crates:check:live

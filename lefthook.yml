@@ -128,7 +128,7 @@ lint:
 
     - *markdown-check
 
-check:
+check-quick:
   parallel: true
   jobs:
     # Child processes have their own file selection; these are full-repo gates.
@@ -148,8 +148,18 @@ check:
       root: "packages/http-api/"
       run: pnpm check:openapi
 
-# Installed by the root prepare script. Expensive gates are available through
-# `check`; tests remain in the existing project/CI test commands.
+# The complete mise check delegates package validation to package-owned tasks;
+# this hook covers the remaining root-owned file types without repeating them.
+check-repository:
+  files: git ls-files
+  parallel: true
+  jobs:
+    - <<: *terraform-format
+      run: terraform fmt -check {files}
+    - *markdown-check
+
+# Installed by the root prepare script. Fast and complete gates are available
+# through `check:quick` and `check`; ordinary tests are also exposed by `test`.
 pre-commit:
   parallel: true
   skip:

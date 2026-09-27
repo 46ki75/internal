@@ -110,11 +110,11 @@ resource "aws_lambda_function" "nitro_api" {
   lifecycle {
     precondition {
       condition     = !contains(["", "null"], coalesce(data.aws_s3_object.nitro_api.version_id, "null"))
-      error_message = "Nitro requires a versioned artifact. Run mise run nitro-api:bootstrap <stage>, then nitro-api:publish <stage>."
+      error_message = "Nitro requires a versioned artifact. Run mise run --silent //packages/http-api:bootstrap <stage>, then mise run --silent //packages/http-api:publish <stage>."
     }
     precondition {
       condition     = can(regex("^[A-Za-z0-9+/]{43}=$", data.aws_s3_object.nitro_api.checksum_sha256))
-      error_message = "Publish Nitro with mise run nitro-api:publish <stage> to supply a full-object SHA-256 checksum."
+      error_message = "Publish Nitro with mise run --silent //packages/http-api:publish <stage> to supply a full-object SHA-256 checksum."
     }
   }
 

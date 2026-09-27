@@ -1,0 +1,71 @@
+[task_config]
+shell = "bash -euo pipefail -c"
+
+[tasks.fmt]
+description = "Format the frontend source"
+run = "pnpm fmt"
+
+[tasks.fmt-check]
+description = "Check frontend formatting"
+run = "pnpm fmt:check"
+
+[tasks."lint:ts"]
+description = "Lint frontend TypeScript and TSX"
+run = "pnpm lint"
+
+[tasks."lint:css"]
+description = "Lint frontend CSS"
+run = "pnpm lint:css"
+
+[tasks.lint]
+description = "Run all frontend linters"
+depends = [":lint:ts", ":lint:css"]
+
+[tasks.typecheck]
+description = "Type-check the frontend"
+run = "pnpm build:types"
+
+[tasks.test]
+description = "Run frontend component and model tests"
+run = "pnpm test"
+
+[tasks."check:source"]
+description = "Check frontend formatting, lint, types, and tests"
+depends = [":fmt-check", ":lint", ":typecheck", ":test"]
+
+[tasks.check]
+description = "Run the complete frontend quality gate, including its production build"
+depends = [":check:source"]
+run = { task = ":build" }
+
+[tasks.dev]
+description = "Start the frontend on port 11070"
+run = "pnpm dev"
+
+[tasks.build]
+description = "Build the SolidStart frontend"
+run = "pnpm build"
+
+[tasks.storybook]
+description = "Start Storybook on port 11071"
+run = "pnpm storybook"
+
+[tasks."storybook:build"]
+description = "Build static Storybook"
+run = "pnpm build-storybook"
+
+[tasks.generate-openapi]
+description = "Regenerate the frontend client from the composed Rust and Nitro OpenAPI"
+run = "pnpm generate:openapi"
+
+[tasks.deploy]
+description = "Build, upload the frontend, and invalidate CloudFront"
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = '''
+export VITE_STAGE_NAME="${usage_stage?}"
+pnpm build
+./scripts/deploy-s3.sh
+./scripts/invalidate.sh
+'''

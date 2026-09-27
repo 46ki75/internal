@@ -14,6 +14,8 @@ import { createSignal, onCleanup, onMount, type ParentProps } from "solid-js";
 import { isServer } from "solid-js/web";
 
 import "@elmethis/solid/style.css";
+// Override the package's pre-minified fallback with native switchable tokens.
+import "@elmethis/core/tokens.css";
 import "./global.css";
 
 import { AppShell } from "~/container/app-shell";

@@ -69,7 +69,7 @@ auth precedence, so `model_auth.py` clears any `ANTHROPIC_*` first.)
 The lockfile and venv live at the workspace root. From the repo root:
 
 ```bash
-mise run --silent setup:python
+mise run --silent //:setup:python
 mise run --silent //python:test
 ```
 

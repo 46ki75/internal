@@ -31,23 +31,24 @@ bundled development-standards skill.
 
 Root `mise.toml` owns tools, setup, repository-wide hooks, and aggregate tasks.
 `crates/mise.toml`, `packages/*/mise.toml`, and `python/mise.toml` own workspace tasks.
-Use `mise run --silent <task>` locally and rerun failures without `--silent`.
-From the root, address package tasks as `//path:task`; within their workspace, use `:task`.
+Use absolute root names such as `mise run --silent //:check` for repository-wide tasks,
+so they work from any directory, and rerun failures without `--silent`. From the root,
+address package tasks as `//path:task`; within their workspace, use `:task`.
 
 `lefthook.yml` directly configures the native project tools:
 
-- `mise run --silent fmt` formats tracked files with Cargo/rustfmt, Ruff, Prettier, Terraform, and the existing Markdown fixer.
-- `mise run --silent fmt-check` checks the same scope without modifying source files.
-- `mise run --silent lint` runs Clippy, Ruff, ESLint, Stylelint, and markdownlint without fixes.
-- `mise run --silent check:quick` runs the fast repository-wide static gate.
-- `mise run --silent check` runs the complete CI gate through package-owned checks, tests, and required builds.
+- `mise run --silent //:fmt` formats tracked files with Cargo/rustfmt, Ruff, Prettier, Terraform, and the existing Markdown fixer.
+- `mise run --silent //:fmt-check` checks the same scope without modifying source files.
+- `mise run --silent //:lint` runs Clippy, Ruff, ESLint, Stylelint, and markdownlint without fixes.
+- `mise run --silent //:check:quick` runs the fast repository-wide static gate.
+- `mise run --silent //:check` runs the complete CI gate through package-owned checks, tests, and required builds.
 
 The first three commands accept repeated `--file <repo-relative-path>` options, including explicit untracked files, or `--all-files`.
-`check:quick`, `test`, and `check` are always project-wide; nested hooks do not inherit outer file arguments. Selecting one Rust file still triggers workspace-wide Cargo formatting or Clippy.
+`//:check:quick`, `//:test`, and `//:check` are always project-wide; nested hooks do not inherit outer file arguments. Selecting one Rust file still triggers workspace-wide Cargo formatting or Clippy.
 Use the complete gate after changes to shared configuration or dependencies. Generated OpenAPI code and the web package's ignored spec files are excluded from formatting.
 Markdown retains `markdownlint-cli2 --fix`; unfixable Markdown rules can fail formatting, and its read-only check participates in both `lint` and `fmt-check`.
 
-Use `mise run --silent setup` to install locked Node and Python workspace dependencies and native Rust components.
+Use `mise run --silent //:setup` to install locked Node and Python workspace dependencies and native Rust components.
 Mise supplies Terraform and binds uv to its Python; hook commands use the existing locked uv environment without syncing it.
 The `pre-commit` hook auto-formats staged Rust, web, and Markdown files and re-stages fixes (`stage_fixed`).
 Hooks install on `pnpm install` (root `prepare` → `lefthook install`). Run manually with
@@ -133,7 +134,7 @@ A FastAPI app (uv workspace member) that runs a [Claude Agent SDK][casdk] agent 
 (`@ag-ui/client` `HttpAgent`) still uses the same AG-UI contract.
 
 ```sh
-mise run --silent setup:python
+mise run --silent //:setup:python
 mise run --silent //python:test                       # hermetic (mocks SSM + the SDK)
 mise run --silent //python:ag-ui-server:build dev    # build arm64 + push to dev/ag-ui-server ECR
 mise run --silent //python:ag-ui-server:deploy dev   # build/push, then interactive Terraform apply

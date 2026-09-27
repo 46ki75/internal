@@ -13,7 +13,7 @@ Install [mise](https://mise.jdx.dev/installing-mise.html) 2026.9.9 or newer and
 ```sh
 mise trust mise.toml
 mise install node pnpm python uv terraform awscli zig cargo-lambda cargo-llvm-cov
-mise run --silent setup
+mise run --silent //:setup
 ```
 
 Exact tool versions live in `mise.toml`; pnpm's exact version and checksum come
@@ -32,21 +32,21 @@ their own Python requirements separately from the development interpreter.
 
 ## Tasks
 
-`mise tasks ls --all` lists the root and package-owned tasks. Use
-`mise run --silent <task>` for routine local work and rerun a failure without
-`--silent` for complete diagnostics. From the repository root, descendant tasks
-use absolute names such as `//packages/web-solid:check`; from within a configured
-workspace, use the shorter `:check` form. Mise must also be on PATH for editor and
-Git hooks.
+`mise tasks ls --all` lists the root and package-owned tasks. Use absolute root
+names such as `mise run --silent //:check` for repository-wide tasks so they work
+from any directory, and rerun a failure without `--silent` for complete diagnostics.
+From the repository root, descendant tasks use names such as
+`//packages/web-solid:check`; from within a configured workspace, use the shorter
+`:check` form. Mise must also be on PATH for editor and Git hooks.
 
 | Command                                                        | Purpose                                                     |
 | -------------------------------------------------------------- | ----------------------------------------------------------- |
-| `mise run --silent fmt`                                        | Format tracked files through Lefthook                       |
-| `mise run --silent fmt-check`                                  | Check the same formatter scope                              |
-| `mise run --silent lint`                                       | Run native linters without fixes                            |
-| `mise run --silent check:quick`                                | Run the fast static feedback gate                           |
-| `mise run --silent check`                                      | Run the complete project-wide CI quality gate               |
-| `mise run --silent test`                                       | Run all ordinary hermetic tests                             |
+| `mise run --silent //:fmt`                                     | Format tracked files through Lefthook                       |
+| `mise run --silent //:fmt-check`                               | Check the same formatter scope                              |
+| `mise run --silent //:lint`                                    | Run native linters without fixes                            |
+| `mise run --silent //:check:quick`                             | Run the fast static feedback gate                           |
+| `mise run --silent //:check`                                   | Run the complete project-wide CI quality gate               |
+| `mise run --silent //:test`                                    | Run all ordinary hermetic tests                             |
 | `mise run --silent //crates:check`                             | Run Rust formatting, Clippy, and hermetic tests             |
 | `mise run --silent //crates:coverage:ci`                       | Generate workspace `lcov.info`                              |
 | `mise run --silent //crates:http-api:dev`                      | Watch the API with development debug logs                   |
@@ -74,9 +74,10 @@ Apply the Nitro routes before deploying the Rust API during an environment's fir
 migration. `mise run --silent //packages/web-solid:generate-openapi` regenerates
 the frontend client from the composed Rust/Nitro document without a running server.
 
-`fmt`, `fmt-check`, and `lint` accept repeated `--file <repo-relative-path>`
-arguments, including explicit untracked files, or `--all-files`. `check:quick`,
-`test`, and `check` are always project-wide. Selecting one Rust file still invokes
+`//:fmt`, `//:fmt-check`, and `//:lint` accept repeated
+`--file <repo-relative-path>` arguments, including explicit untracked files, or
+`--all-files`. `//:check:quick`, `//:test`, and `//:check` are always project-wide.
+Selecting one Rust file still invokes
 the workspace-wide Cargo formatter/linter. Existing Lefthook exclusions and
 staged-file handling apply.
 

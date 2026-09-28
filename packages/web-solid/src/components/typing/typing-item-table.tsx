@@ -1,9 +1,8 @@
 import { createUniqueId, For, Show } from "solid-js";
 import { ElmInlineText } from "@elmethis/solid";
 import {
-  createSolidTable,
-  flexRender,
-  getCoreRowModel,
+  createTable,
+  tableFeatures,
   type ColumnDef,
 } from "@tanstack/solid-table";
 
@@ -23,7 +22,9 @@ export interface TypingItemTableProps {
   selectedId?: string;
 }
 
-const columns: ColumnDef<TypingItem>[] = [
+const features = tableFeatures({});
+
+const columns: ColumnDef<typeof features, TypingItem>[] = [
   {
     accessorKey: "description",
     header: "Description",
@@ -58,12 +59,12 @@ const columns: ColumnDef<TypingItem>[] = [
 
 export const TypingItemTable = (props: TypingItemTableProps) => {
   const titleId = createUniqueId();
-  const table = createSolidTable({
+  const table = createTable({
+    features,
     get data() {
       return props.items;
     },
     columns,
-    getCoreRowModel: getCoreRowModel(),
     getRowId: (item) => item.id,
   });
 
@@ -93,10 +94,7 @@ export const TypingItemTable = (props: TypingItemTableProps) => {
                     {(header) => (
                       <th scope="col" colSpan={header.colSpan}>
                         <Show when={!header.isPlaceholder}>
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          <table.FlexRender header={header} />
                         </Show>
                       </th>
                     )}
@@ -143,13 +141,10 @@ export const TypingItemTable = (props: TypingItemTableProps) => {
                         }
                       }}
                     >
-                      <For each={row.getVisibleCells()}>
+                      <For each={row.getAllCells()}>
                         {(cell) => (
                           <td>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
-                            )}
+                            <table.FlexRender cell={cell} />
                           </td>
                         )}
                       </For>

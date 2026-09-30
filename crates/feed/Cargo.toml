@@ -5,7 +5,7 @@ edition.workspace = true
 
 [dependencies]
 fast_html2md = "0.0.63"
-feed-rs = "2.3.1"
+feed-rs = "3.0.0"
 
 lambda_runtime.workspace = true
 reqwest = "0.13.3"

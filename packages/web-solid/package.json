@@ -69,7 +69,7 @@
     "globals": "17.12.0",
     "happy-dom": "^20.14.5",
     "openapi-typescript": "^7.13.0",
-    "prettier": "3.9.6",
+    "prettier": "3.9.9",
     "storybook": "^10.5.10",
     "storybook-solidjs-vite": "^10.7.2",
     "stylelint": "^17.15.0",

@@ -70,7 +70,7 @@
     "happy-dom": "^20.14.5",
     "openapi-typescript": "^7.13.0",
     "prettier": "3.9.6",
-    "storybook": "^10.5.10",
+    "storybook": "^10.6.1",
     "storybook-solidjs-vite": "^10.7.2",
     "stylelint": "^17.15.0",
     "typescript": "npm:@typescript/typescript6@6.0.2",

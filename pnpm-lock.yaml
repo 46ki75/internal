@@ -25,8 +25,8 @@ importers:
         specifier: 3.1146.0
         version: 3.1146.0
       '@notionhq/client':
-        specifier: 5.26.0
-        version: 5.26.0
+        specifier: 5.27.0
+        version: 5.27.0
       cheerio:
         specifier: 1.2.0
         version: 1.2.0
@@ -1070,8 +1070,8 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
-  '@notionhq/client@5.26.0':
-    resolution: {integrity: sha512-Oc3438nQ5YmZkVO7YJG8fcTYl0V46CirdCvO33azZ9f7ZfD2rsHE4fUVANJiBB9Xf1sqpCs82nd8oKPxeXLmMg==}
+  '@notionhq/client@5.27.0':
+    resolution: {integrity: sha512-JnkLtAzSDrEnvtZ8dQ5L4KO+xyL5g01xK5qmKTmhJ5KFY8LWsMyFG033vHCj0mFcsz9thAMjfcAQz/SWxiexag==}
     engines: {node: '>=18'}
 
   '@oxc-parser/binding-android-arm-eabi@0.127.0':
@@ -6967,7 +6967,7 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.20.3
 
-  '@notionhq/client@5.26.0': {}
+  '@notionhq/client@5.27.0': {}
 
   '@oxc-parser/binding-android-arm-eabi@0.127.0':
     optional: true
@@ -10159,7 +10159,7 @@ snapshots:
     dependencies:
       '@a2ui/web_core': 0.10.5
       '@elmethis/core': 0.24.0(@a2ui/web_core@0.10.5)(zod@3.25.76)
-      '@notionhq/client': 5.26.0
+      '@notionhq/client': 5.27.0
       cheerio: 1.2.0
       image-size: 2.0.4
       zod: 3.25.76

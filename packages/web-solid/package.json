@@ -72,7 +72,7 @@
     "prettier": "3.9.9",
     "storybook": "^10.6.1",
     "storybook-solidjs-vite": "^10.7.2",
-    "stylelint": "^17.15.0",
+    "stylelint": "^17.16.0",
     "typescript": "npm:@typescript/typescript6@6.0.2",
     "typescript-eslint": "8.70.1",
     "typescript-plugin-css-modules": "latest",

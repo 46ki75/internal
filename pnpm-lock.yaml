@@ -122,8 +122,8 @@ importers:
         specifier: 5.104.1
         version: 5.104.1(@tanstack/solid-query@5.104.1(solid-js@1.9.15))(solid-js@1.9.15)
       '@tanstack/solid-table':
-        specifier: ^9.2.4
-        version: 9.2.4(solid-js@1.9.15)
+        specifier: ^9.2.6
+        version: 9.2.6(solid-js@1.9.15)
       aws-amplify:
         specifier: ^6.20.0
         version: 6.20.0
@@ -2144,8 +2144,8 @@ packages:
     peerDependencies:
       solid-js: ^1.6.0
 
-  '@tanstack/solid-table@9.2.4':
-    resolution: {integrity: sha512-fPveX8c3TJp63Bt9hQkrgd2Lm7Cfsm6/s6lh1Vmp2jcX90+RP+UHr3VO8/GPtVOSSroik9ZVSzC3Gobi17SqSA==}
+  '@tanstack/solid-table@9.2.6':
+    resolution: {integrity: sha512-IMGDclPCNts8steF/y1TT4nw5rXM7ZpwaenxIzSIdYmrruGtnpfTWbrE9YytoRZqfC7WZmsUkHZTEp0hvKpObA==}
     engines: {node: '>=20'}
     peerDependencies:
       solid-js: '>=1.3'
@@ -2153,8 +2153,11 @@ packages:
   '@tanstack/store@0.11.1':
     resolution: {integrity: sha512-mzTOBhypOuDJAy/D8n2MfUZ1HFkXnmSETviRyhqEC8LUE7/IZQExOTxMANj3KjTofYTkFNpBY67qaVrT41YccA==}
 
-  '@tanstack/table-core@9.2.4':
-    resolution: {integrity: sha512-GwdDyGGr6UXAtubF14yAwcXvdaogqfsQgIk89Suebjxob/Rjq2xvfmXsjDF1rQmKmhHsJm9TOY7myxv3i6geJw==}
+  '@tanstack/store@0.11.2':
+    resolution: {integrity: sha512-sJ4mjol8uQsHV0gOJzzjwXfh2Fwm+Sz0+8deqiTm4jGbMdjzNSW+xZCFm0kUa870uhd8yi+DpKnZb5Kc4apa0Q==}
+
+  '@tanstack/table-core@9.2.6':
+    resolution: {integrity: sha512-t5LaLx8gDCgzjvwtZo5xtLklJP11D9zaKOW8q6jOCyuQYhkqpTK1heqMfgTQwDlhl0dU8f1X66Xurbj3jpCUSw==}
     engines: {node: '>=20'}
 
   '@testing-library/dom@10.4.1':
@@ -7769,7 +7772,7 @@ snapshots:
     dependencies:
       '@tanstack/devtools-event-client': 0.4.4
       '@tanstack/pacer-lite': 0.1.1
-      '@tanstack/store': 0.11.1
+      '@tanstack/store': 0.11.2
 
   '@tanstack/pacer-lite@0.1.1': {}
 
@@ -7806,17 +7809,19 @@ snapshots:
       '@tanstack/store': 0.11.1
       solid-js: 1.9.15
 
-  '@tanstack/solid-table@9.2.4(solid-js@1.9.15)':
+  '@tanstack/solid-table@9.2.6(solid-js@1.9.15)':
     dependencies:
-      '@tanstack/store': 0.11.1
-      '@tanstack/table-core': 9.2.4
+      '@tanstack/store': 0.11.2
+      '@tanstack/table-core': 9.2.6
       solid-js: 1.9.15
 
   '@tanstack/store@0.11.1': {}
 
-  '@tanstack/table-core@9.2.4':
+  '@tanstack/store@0.11.2': {}
+
+  '@tanstack/table-core@9.2.6':
     dependencies:
-      '@tanstack/store': 0.11.1
+      '@tanstack/store': 0.11.2
 
   '@testing-library/dom@10.4.1':
     dependencies:

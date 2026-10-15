@@ -153,8 +153,8 @@ importers:
         specifier: ^0.8.10
         version: 0.8.10(@solidjs/router@1.0.0(solid-js@1.9.15))(solid-js@1.9.15)
       '@storybook/addon-a11y':
-        specifier: ^10.6.0
-        version: 10.6.0(storybook@10.6.2(@types/react@19.2.14)(prettier@3.9.9)(react@19.3.1))
+        specifier: ^10.6.2
+        version: 10.6.2(storybook@10.6.2(@types/react@19.2.14)(prettier@3.9.9)(react@19.3.1))
       '@storybook/addon-docs':
         specifier: ^10.6.2
         version: 10.6.2(@types/react@19.2.14)(storybook@10.6.2(@types/react@19.2.14)(prettier@3.9.9)(react@19.3.1))
@@ -2060,10 +2060,10 @@ packages:
   '@speed-highlight/core@1.2.24':
     resolution: {integrity: sha512-qeW2e1l78afw8VhRPfPQ1Gjj+KU5XFQ/OFV5ti6eTa9bruO7mJyZtA4vw0ofqmA3tKCkROE9xLk3VZoeRc98nw==}
 
-  '@storybook/addon-a11y@10.6.0':
-    resolution: {integrity: sha512-Z/CZor/F8H74/+IoeLroEQXQoVxvmjVtUgATJ95KPBolHxMaHLXLsYU0wosIiiORxmfRCnpen5pQl1n4+pBWQw==}
+  '@storybook/addon-a11y@10.6.2':
+    resolution: {integrity: sha512-zleS+btwrTRcUf3opbZntKsEt6PTqAtxsek08tx5jh5fRvd6wWmtnwW3uaBcypfIKnheTB3KGljJwFX+Mc+Umg==}
     peerDependencies:
-      storybook: ^10.6.0
+      storybook: ^10.6.2
 
   '@storybook/addon-docs@10.6.2':
     resolution: {integrity: sha512-f7Rv/rzX1sk4lUDTeoIRkXWcWvNwLv7vBnfpFGb3f88MliB+M4ZekGKNiKtrmi44uLFt52gzwwPzj2eGDu0DQQ==}
@@ -2729,8 +2729,8 @@ packages:
   aws-amplify@6.22.1:
     resolution: {integrity: sha512-ypUG61Q+kKuGybFqvdaVBPK+lXQfzuQTVUvvWF58mN0qikqkmAUxxWWwr/qM4F1NNZBZJoVPKp7Fr1wN/9VSGg==}
 
-  axe-core@4.13.0:
-    resolution: {integrity: sha512-UzGt8zg7Ny8djbYMhxl2zuEevVa7r2gJjYY5Lwr1xM7+XU2nd6CkIWFTVcCIbAP63vSz71NaVyyuSk9lHKcy0A==}
+  axe-core@4.14.0:
+    resolution: {integrity: sha512-9WTZxEjsZ7b13TH8JPmbV2z8CHbl80/2hm3XPEG4JgNdQLK81IBRXmSxHfMAOkSqQeRxT/0dwNDz2GOm3zzpcQ==}
     engines: {node: '>=4'}
 
   b4a@1.9.0:
@@ -7734,10 +7734,10 @@ snapshots:
 
   '@speed-highlight/core@1.2.24': {}
 
-  '@storybook/addon-a11y@10.6.0(storybook@10.6.2(@types/react@19.2.14)(prettier@3.9.9)(react@19.3.1))':
+  '@storybook/addon-a11y@10.6.2(storybook@10.6.2(@types/react@19.2.14)(prettier@3.9.9)(react@19.3.1))':
     dependencies:
       '@storybook/global': 5.0.0
-      axe-core: 4.13.0
+      axe-core: 4.14.0
       storybook: 10.6.2(@types/react@19.2.14)(prettier@3.9.9)(react@19.3.1)
 
   '@storybook/addon-docs@10.6.2(@types/react@19.2.14)(storybook@10.6.2(@types/react@19.2.14)(prettier@3.9.9)(react@19.3.1))':
@@ -8451,7 +8451,7 @@ snapshots:
     transitivePeerDependencies:
       - '@aws-amplify/react-native'
 
-  axe-core@4.13.0: {}
+  axe-core@4.14.0: {}
 
   b4a@1.9.0: {}
 

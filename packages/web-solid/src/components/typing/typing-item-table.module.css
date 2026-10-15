@@ -16,9 +16,7 @@
 }
 
 .count,
-.glyphs,
-.completion-count,
-.description code {
+.glyphs {
   font-family: var(--elmethis-font-family-monospace);
   font-variant-numeric: tabular-nums;
 }
@@ -33,7 +31,7 @@
 
 .table {
   width: 100%;
-  min-width: 42rem;
+  min-width: 20rem;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -66,15 +64,6 @@
   text-transform: uppercase;
 }
 
-.table th:first-child {
-  width: 30%;
-}
-
-.table th:nth-last-child(2) {
-  width: 4.5rem;
-  text-align: right;
-}
-
 .table th:last-child {
   width: 7rem;
   text-align: right;
@@ -88,32 +77,6 @@
   background-color: var(--elmethis-color-surface-sunken);
 }
 
-.table tbody tr.interactive {
-  cursor: pointer;
-}
-
-.table tbody tr.interactive:focus-visible {
-  outline: 2px solid var(--elmethis-color-primary);
-  outline-offset: -2px;
-}
-
-.table tbody tr.selected td {
-  background-color: var(--elmethis-color-primary-hover);
-}
-
-.description {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  color: var(--elmethis-color-neutral-strong);
-}
-
-.description code {
-  color: var(--elmethis-color-neutral-weak);
-  font-size: 0.6875rem;
-  overflow-wrap: anywhere;
-}
-
 .text {
   display: block;
   color: var(--elmethis-color-neutral);
@@ -123,8 +86,7 @@
   white-space: pre-wrap;
 }
 
-.glyphs,
-.completion-count {
+.glyphs {
   display: block;
   color: var(--elmethis-color-neutral-strong);
   text-align: right;

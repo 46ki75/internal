@@ -19,7 +19,6 @@ workspace = true
 
 [dependencies]
 http-api-core = { path = "../http-api-core" }
-http-api-typing = { path = "../http-api-typing" }
 http-api-writing-assessment = { path = "../http-api-writing-assessment" }
 
 # Router assembly + Lambda glue. Feature-specific deps now live in each

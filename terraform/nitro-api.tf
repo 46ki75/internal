@@ -1,9 +1,9 @@
 variable "nitro_api_features" {
   description = "Features routed to Nitro; override during a staged migration."
   type        = set(string)
-  default     = ["anki", "bookmark", "icon", "image", "to-do", "trivia"]
+  default     = ["anki", "bookmark", "icon", "image", "to-do", "trivia", "typing"]
   validation {
-    condition     = alltrue([for feature in var.nitro_api_features : contains(["anki", "bookmark", "icon", "image", "to-do", "trivia"], feature)])
+    condition     = alltrue([for feature in var.nitro_api_features : contains(["anki", "bookmark", "icon", "image", "to-do", "trivia", "typing"], feature)])
     error_message = "Unknown Nitro API feature."
   }
 }

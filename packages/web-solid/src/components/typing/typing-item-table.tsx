@@ -6,35 +6,19 @@ import {
   type ColumnDef,
 } from "@tanstack/solid-table";
 
+import type { components } from "~/openapi/schema";
 import { splitTypingCharacters } from "./create-typing-session";
 import styles from "./typing-item-table.module.css";
 
-export interface TypingItem {
-  completion_count: number;
-  description: string;
-  id: string;
-  text: string;
-}
+export type TypingItem = components["schemas"]["TypingResponse"];
 
 export interface TypingItemTableProps {
   items: TypingItem[];
-  onSelect?: (item: TypingItem) => void;
-  selectedId?: string;
 }
 
 const features = tableFeatures({});
 
 const columns: ColumnDef<typeof features, TypingItem>[] = [
-  {
-    accessorKey: "description",
-    header: "Description",
-    cell: (info) => (
-      <div class={styles.description}>
-        <span>{info.getValue<string>()}</span>
-        <code>{info.row.original.id}</code>
-      </div>
-    ),
-  },
   {
     accessorKey: "text",
     header: "Practice text",
@@ -46,13 +30,6 @@ const columns: ColumnDef<typeof features, TypingItem>[] = [
     header: "Glyphs",
     cell: (info) => (
       <span class={styles.glyphs}>{info.getValue<number>()}</span>
-    ),
-  },
-  {
-    accessorKey: "completion_count",
-    header: "Completions",
-    cell: (info) => (
-      <span class={styles["completion-count"]}>{info.getValue<number>()}</span>
     ),
   },
 ];
@@ -115,42 +92,17 @@ export const TypingItemTable = (props: TypingItemTableProps) => {
               }
             >
               <For each={table.getRowModel().rows}>
-                {(row) => {
-                  const select = () => props.onSelect?.(row.original);
-
-                  return (
-                    <tr
-                      classList={{
-                        [styles.interactive]: Boolean(props.onSelect),
-                        [styles.selected]: props.selectedId === row.original.id,
-                      }}
-                      tabIndex={props.onSelect ? 0 : undefined}
-                      aria-selected={
-                        props.onSelect
-                          ? props.selectedId === row.original.id
-                          : undefined
-                      }
-                      onClick={select}
-                      onKeyDown={(event) => {
-                        if (
-                          props.onSelect &&
-                          (event.key === "Enter" || event.key === " ")
-                        ) {
-                          event.preventDefault();
-                          select();
-                        }
-                      }}
-                    >
-                      <For each={row.getAllCells()}>
-                        {(cell) => (
-                          <td>
-                            <table.FlexRender cell={cell} />
-                          </td>
-                        )}
-                      </For>
-                    </tr>
-                  );
-                }}
+                {(row) => (
+                  <tr>
+                    <For each={row.getAllCells()}>
+                      {(cell) => (
+                        <td>
+                          <table.FlexRender cell={cell} />
+                        </td>
+                      )}
+                    </For>
+                  </tr>
+                )}
               </For>
             </Show>
           </tbody>

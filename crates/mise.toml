@@ -56,7 +56,7 @@ run = [{ task = ":check" }, { task = ":test:live" }]
 [tasks."http-api:dev"]
 description = "Watch the HTTP API with development configuration and debug logs"
 dir = "http-api"
-run = "STAGE_NAME=dev RUST_LOG=warn,http_api=debug,http_api_core=debug,http_api_typing=debug,http_api_writing_assessment=debug cargo lambda watch --package http-api"
+run = "STAGE_NAME=dev RUST_LOG=warn,http_api=debug,http_api_core=debug,http_api_writing_assessment=debug cargo lambda watch --package http-api"
 
 [tasks."http-api:build"]
 description = "Build the arm64 HTTP API Lambda"

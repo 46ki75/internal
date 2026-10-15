@@ -23,22 +23,16 @@ static ROUTER: tokio::sync::OnceCell<axum::Router> = tokio::sync::OnceCell::cons
 pub async fn init_router() -> Result<&'static axum::Router, crate::error::Error> {
     ROUTER
         .get_or_try_init(|| async {
-            let (typing_router, typing_api) =
-                crate::typing::controller::router::init_typing_router().await?;
             let (writing_assessment_router, writing_assessment_api) =
                 crate::writing_assessment::controller::router::init_writing_assessment_router()
                     .await?;
 
-            let rust_api = ApiDoc::openapi()
-                .merge_from(typing_api)
-                .merge_from(writing_assessment_api);
+            let rust_api = ApiDoc::openapi().merge_from(writing_assessment_api);
             let merged_api = compose_openapi(serde_json::to_value(rust_api)?)?;
-
-            let combined_router = typing_router.merge(writing_assessment_router);
 
             let scalar_api = merged_api.clone();
             let app = Router::new()
-                .nest("/api-gateway", combined_router)
+                .nest("/api-gateway", writing_assessment_router)
                 .route(
                     "/api-gateway/api/v1/openapi.json",
                     axum::routing::get(move || {

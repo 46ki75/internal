@@ -63,7 +63,7 @@ export const Typing = (props: TypingProps) => {
       <header class={styles.header}>
         <span id={`${inputId}-title`}>
           <ElmInlineText size="1.25rem">
-            {props.description || "Untitled exercise"}
+            {props.description || "Typing practice"}
           </ElmInlineText>
         </span>
         <ElmInlineText

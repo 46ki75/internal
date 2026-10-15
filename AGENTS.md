@@ -8,7 +8,7 @@ Polyglot monorepo with three independent workspaces and shared Terraform:
 
 - `crates/*` — Rust workspace (`Cargo.toml` at root). Lambda binaries: `http-api`, `feed`, `logs-reporter`.
   The rest are libraries — `http-api-core` (shared error/cache/auth) and one `http-api-<feature>` crate per
-  REST router — assembled by the `http-api` binary.
+  Rust REST router — assembled by the `http-api` binary.
 - `packages/*` — pnpm workspace (`pnpm-workspace.yaml`): SolidStart frontend and Nitro HTTP API.
 - `python/*` — uv workspace (`pyproject.toml` at root). `python/fetch` runs as a containerized Lambda; `python/ag-ui-server` runs as a containerized Bedrock AgentCore runtime.
 - `terraform/` — single Terraform stack that provisions all `dev`/`stg`/`prod` infra (CloudFront, API Gateway,
@@ -86,7 +86,7 @@ from the crate directory.
 ### `packages/http-api` (Notion HTTP API Lambda)
 
 Standalone Nitro 2 (`nitropack`) with Node.js 24, the official `@notionhq/client`,
-and npm `n2a2ui`. Owns Anki, Trivia, Bookmark, To-do, Icon, and Image endpoints.
+and npm `n2a2ui`. Owns Anki, Trivia, Bookmark, To-do, Icon, Image, and read-only Typing endpoints.
 Read [its README](packages/http-api/README.md) for configuration and deployment.
 
 ```sh
@@ -167,12 +167,12 @@ The REST API is split across the workspace and assembled into one Lambda binary:
 
 - **`http-api`** — the binary. `src/router.rs::init_router` builds the Axum app; `src/execute.rs` adapts
   `lambda_http::Request` ↔ Axum. `src/lib.rs` re-exports each feature crate under its short name
-  (`pub use http_api_typing as typing;`) so `crate::<feature>::…` paths — and
+  (`pub use http_api_writing_assessment as writing_assessment;`) so `crate::<feature>::…` paths — and
   `http_api::<feature>::…` in `tests/` — keep resolving.
 - **`http-api-core`** — shared infrastructure, the only intra-workspace dependency of the feature crates:
   `error::Error` (crate-wide error + `render_error_response`), `cache` (memoized AWS clients and
   `get_parameter` SSM reads via the `cached` crate), and `layer` (Axum middleware).
-- **`http-api-<feature>`** — one library crate per Rust REST router (`typing`, `writing-assessment`).
+- **`http-api-<feature>`** — one library crate per Rust REST router (currently `writing-assessment`).
   Independent of each other (no feature→feature deps), each with a strict layered
   layout:
 
@@ -198,6 +198,8 @@ Rust feature crates read their SSM keys via `http_api_core::cache::get_parameter
 Notion integration lives in `packages/http-api`: thin file routes call feature
 services; `server/lib/notion.ts` owns SDK access; `server/contracts.ts` supplies
 validation, response types, and OpenAPI. SSM initialization is cached and retryable.
+Typing reads every page from its Notion data source's `Text` title column; the frontend
+shuffles the full list for each practice cycle. Editing and completion counts are not supported.
 
 ### `packages/web-solid` — SolidStart CSR
 

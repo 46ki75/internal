@@ -57,6 +57,8 @@ export const ankiPage = () =>
     },
     isReviewRequired: { type: "checkbox", checkbox: false },
   });
+export const typingPage = () =>
+  page({ Text: { type: "title", title: rich("Practice text") } });
 export const triviaPage = () =>
   page({
     Name: { type: "title", title: rich("Trivia") },

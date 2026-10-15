@@ -39,7 +39,7 @@
     "@mdi/js": "^7.4.47",
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^1.0.0",
-    "@solidjs/start": "^2.0.5",
+    "@solidjs/start": "^2.0.6",
     "@tanstack/query-sync-storage-persister": "5.104.1",
     "@tanstack/solid-form": "^1.33.5",
     "@tanstack/solid-query": "5.104.1",

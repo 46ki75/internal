@@ -6,11 +6,36 @@ import {
   type TypingItem,
 } from "./typing-model";
 
-const typingItem = (id: string): TypingItem => ({ id, text: id });
+const typingItem = (id: string): TypingItem => ({
+  id,
+  text: id,
+  url: `https://www.notion.so/${id}`,
+});
 
 afterEach(() => vi.restoreAllMocks());
 
 describe("typing repository and shuffled queue", () => {
+  it.each([
+    ["It’s the dog’s toy.", "It's the dog's toy."],
+    ["‘Hello,’ she said.", "'Hello,' she said."],
+    ["  “Don't change this.”\n👍  ", "  “Don't change this.”\n👍  "],
+    ["", ""],
+  ])(
+    "normalizes curly apostrophes in %j without changing the source",
+    (text, expected) => {
+      const repository = createTypingRepository();
+      const queue = createTypingQueue(repository);
+      const fetchedItem = { ...typingItem("sentence"), text };
+
+      repository.replace([fetchedItem]);
+      queue.refillIfEmpty();
+
+      expect(repository.items()).toEqual([{ ...fetchedItem, text: expected }]);
+      expect(queue.current()).toEqual({ ...fetchedItem, text: expected });
+      expect(fetchedItem.text).toBe(text);
+    },
+  );
+
   it("shuffles a copy of all fetched exercises without changing the source", () => {
     vi.spyOn(Math, "random").mockReturnValue(0);
     const repository = createTypingRepository();

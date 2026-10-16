@@ -33,11 +33,12 @@ unsupported blocks, image metadata, and bookmark metadata, matching the previous
 Rust implementation. Anki splits surfaces at H1 markers `front`, `back`, and
 `explanation`. Every returned surface has root ID `root`.
 
-Typing exposes only `GET /api/v1/typing`, returning `{ id, text }[]` from every
-page in the data source. `Text` must be a title property; its rich-text fragments
-are joined without trimming. The frontend shuffles the full list for each
-practice cycle. Manage entries in Notion's UI; there are no editing or completion
-count endpoints.
+`GET /api/v1/typing` returns `{ id, text, url }[]` from every page in the typing
+data source. `Text` must be a title property; its rich-text fragments are joined
+without trimming. `url` is the sentence page's URL supplied by Notion. The
+frontend shuffles the full list for each practice cycle and links to the current
+sentence's Notion page instead of displaying a saved-exercises table. Manage
+entries in Notion's UI; there are no editing or completion count endpoints.
 
 ## Tests
 

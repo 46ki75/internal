@@ -6,6 +6,7 @@ export function typingEntity(page: PageObjectResponse) {
   return {
     id: page.id,
     text: richText(property(page, "Text", "title").title),
+    url: page.url,
   };
 }
 

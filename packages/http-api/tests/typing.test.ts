@@ -21,7 +21,11 @@ describe("read-only Notion typing", () => {
     const items = await new TypingService(repository).list();
 
     expect(items).toHaveLength(101);
-    expect(items[100]).toEqual({ id: "page-100", text: "Last exercise" });
+    expect(items[100]).toEqual({
+      id: "page-100",
+      text: "Last exercise",
+      url: "https://www.notion.so/page-100",
+    });
     expect(transport).toHaveBeenCalledTimes(2);
     expect(
       String(transport.mock.calls[0][0]).endsWith("/data_sources/typing/query"),
@@ -45,7 +49,11 @@ describe("read-only Notion typing", () => {
           },
         }),
       ),
-    ).toEqual({ id: "page-1", text: "  Type 👍.\n" });
+    ).toEqual({
+      id: "page-1",
+      text: "  Type 👍.\n",
+      url: "https://www.notion.so/page-1",
+    });
   });
 
   it("supports empty data sources and titles", async () => {
@@ -54,6 +62,7 @@ describe("read-only Notion typing", () => {
     expect(typingEntity(typingPage("empty", ""))).toEqual({
       id: "empty",
       text: "",
+      url: "https://www.notion.so/empty",
     });
   });
 
@@ -64,6 +73,16 @@ describe("read-only Notion typing", () => {
         page({ Text: { type: "rich_text", rich_text: rich("Wrong type") } }),
       ),
     ).toThrow("Text");
+  });
+
+  it("preserves the sentence page URL supplied by Notion", () => {
+    const row = typingPage("sentence", "Practice this sentence.");
+    row.url = "https://app.notion.com/p/original-sentence-url";
+    expect(typingEntity(row)).toEqual({
+      id: "sentence",
+      text: "Practice this sentence.",
+      url: row.url,
+    });
   });
 
   it("resolves the stage-scoped typing data source parameter", async () => {

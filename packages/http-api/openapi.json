@@ -38,11 +38,16 @@
                       },
                       "text": {
                         "type": "string"
+                      },
+                      "url": {
+                        "type": "string",
+                        "format": "uri"
                       }
                     },
                     "required": [
                       "id",
-                      "text"
+                      "text",
+                      "url"
                     ],
                     "additionalProperties": false
                   }
@@ -2167,11 +2172,16 @@
           },
           "text": {
             "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
           }
         },
         "required": [
           "id",
-          "text"
+          "text",
+          "url"
         ],
         "additionalProperties": false
       },

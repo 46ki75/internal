@@ -13,7 +13,19 @@
   display: flex;
   align-items: center;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 1.5rem;
+}
+
+.page-link {
+  color: var(--elmethis-color-primary);
+  font-family: var(--elmethis-font-family-sans);
+  font-size: 0.875rem;
+  text-underline-offset: 0.2em;
+}
+
+.page-link:focus-visible {
+  outline: 2px solid var(--elmethis-color-primary);
+  outline-offset: 0.25rem;
 }
 
 .notice {

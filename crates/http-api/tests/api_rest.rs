@@ -232,11 +232,15 @@ async fn openapi_typing_is_read_only() {
     assert_eq!(response["items"]["type"], "object");
     assert_eq!(
         response["items"]["properties"],
-        serde_json::json!({ "id": { "type": "string" }, "text": { "type": "string" } })
+        serde_json::json!({
+            "id": { "type": "string" },
+            "text": { "type": "string" },
+            "url": { "type": "string", "format": "uri" }
+        })
     );
     assert_eq!(
         response["items"]["required"],
-        serde_json::json!(["id", "text"])
+        serde_json::json!(["id", "text", "url"])
     );
     assert_eq!(
         json["components"]["schemas"]["TypingResponse"],

@@ -21,7 +21,12 @@ export const createTypingRepository = (): TypingRepository => {
     initialized,
     items,
     replace: (nextItems) => {
-      setItems(nextItems.map((item) => ({ ...item })));
+      setItems(
+        nextItems.map((item) => ({
+          ...item,
+          text: item.text.replace(/[‘’]/g, "'"),
+        })),
+      );
       setInitialized(true);
     },
   };

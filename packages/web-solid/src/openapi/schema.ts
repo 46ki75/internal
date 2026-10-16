@@ -453,6 +453,8 @@ export interface components {
         TypingResponse: {
             id: string;
             text: string;
+            /** Format: uri */
+            url: string;
         };
         UpdateAnkiRequest: {
             ease_factor?: number | null;
@@ -1295,6 +1297,8 @@ export interface operations {
                     "application/json": {
                         id: string;
                         text: string;
+                        /** Format: uri */
+                        url: string;
                     }[];
                 };
             };

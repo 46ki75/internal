@@ -2,7 +2,6 @@ import { createEffect, Match, on, Show, Switch } from "solid-js";
 import { createQuery } from "@tanstack/solid-query";
 import { ElmDotLoadingIcon } from "@elmethis/solid";
 
-import { TypingItemTable } from "~/components/typing/typing-item-table";
 import { Typing } from "~/components/typing/typing";
 import { useAuth } from "~/context/auth-context";
 import { openApiClient } from "~/openapi/client";
@@ -85,18 +84,31 @@ export const TypingContainer = () => {
               }
             >
               {(exercise) => (
-                <Typing
-                  text={exercise.text}
-                  onComplete={() => queue.advance(exercise.id)}
-                  onNext={
-                    repository.items().length > 1
-                      ? () => queue.advance()
-                      : undefined
-                  }
-                />
+                <>
+                  <Typing
+                    text={exercise.text}
+                    onComplete={() => queue.advance(exercise.id)}
+                    onNext={
+                      repository.items().length > 1
+                        ? () => queue.advance()
+                        : undefined
+                    }
+                  />
+                  {/* Older API responses and cached exercises may lack a page URL. */}
+                  <a
+                    class={styles["page-link"]}
+                    href={
+                      exercise.url ||
+                      `https://www.notion.so/${exercise.id.replaceAll("-", "")}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open sentence in Notion
+                  </a>
+                </>
               )}
             </Show>
-            <TypingItemTable items={repository.items()} />
           </div>
         </Match>
       </Switch>

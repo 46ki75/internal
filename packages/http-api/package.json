@@ -14,7 +14,7 @@
     "fmt:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:lambda": "pnpm build && vitest run --config vitest.lambda.config.ts",
+    "test:lambda": "pnpm build && NODE_ENV=production vitest run --config vitest.lambda.config.ts",
     "test:live": "vitest run --config vitest.live.config.ts",
     "generate:openapi": "node scripts/openapi.ts",
     "check:openapi": "node scripts/openapi.ts --check"

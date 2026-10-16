@@ -45,7 +45,9 @@ entries in Notion's UI; there are no editing or completion count endpoints.
 Vitest runs in Node. The default suite uses the real official SDK and converter
 with mocked HTTP responses. It covers pagination, property mapping, A2UI section
 behavior, request validation, and each HTTP contract. The Lambda suite imports
-the built `.output/server/index.mjs` and exercises API Gateway v2 events.
+the built `.output/server/index.mjs` and exercises API Gateway v2 events. It runs
+with `NODE_ENV=production` so Vitest uses production export conditions matching
+Nitro's traced dependencies instead of requesting unbundled development files.
 
 ```sh
 mise run --silent :test:live

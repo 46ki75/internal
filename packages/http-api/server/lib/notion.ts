@@ -9,7 +9,7 @@ import { getParameter, stageName } from "./parameters.ts";
 
 export const NOTION_VERSION = "2026-03-11";
 export type DataSource =
-  "anki" | "trivia" | "bookmark" | "todo" | "image" | "image_tag";
+  "anki" | "trivia" | "bookmark" | "todo" | "image" | "image_tag" | "typing";
 
 export class NotionRepository {
   constructor(

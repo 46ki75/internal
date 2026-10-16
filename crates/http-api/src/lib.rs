@@ -7,7 +7,6 @@ pub use http_api_core::{cache, error, layer};
 
 // Feature crates re-exported under their original module names so `crate::<feat>`
 // (and `http_api::<feat>::…` in tests) keep resolving as features move out.
-pub use http_api_typing as typing;
 pub use http_api_writing_assessment as writing_assessment;
 
 pub mod execute;

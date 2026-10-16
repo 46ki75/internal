@@ -76,6 +76,18 @@ describe("built Lambda adapter", () => {
       statusCode: 422,
     });
   });
+  it.each([
+    ["POST", "/api/v1/typing"],
+    ["DELETE", "/api/v1/typing"],
+    ["POST", "/api/v1/typing/page-1/completion"],
+  ])("does not expose typing mutations: %s %s", async (method, path) => {
+    const response = await handler(event(path, method), {} as Context);
+    expect(typeof response).toBe("object");
+    expect([404, 405]).toContain(
+      typeof response === "object" && response.statusCode,
+    );
+  });
+
   it("returns 404 for unknown paths", async () => {
     expect(
       await handler(event("/api/v1/trivia/missing/path"), {} as Context),

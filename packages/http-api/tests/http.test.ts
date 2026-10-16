@@ -6,6 +6,7 @@ import * as notion from "../server/lib/notion.ts";
 import {
   ankiPage,
   triviaPage,
+  typingPage,
   bookmarkPage,
   todoPage,
   imagePage,
@@ -50,6 +51,7 @@ describe("HTTP contracts", () => {
       const fixtures = {
         anki: ankiPage,
         trivia: triviaPage,
+        typing: typingPage,
         bookmark: bookmarkPage,
         "to-do": todoPage,
         image: imagePage,
@@ -128,6 +130,20 @@ describe("HTTP contracts", () => {
       expect(initialize).not.toHaveBeenCalled();
     },
   );
+  it.each([
+    ["POST", "/api/v1/typing"],
+    ["PUT", "/api/v1/typing"],
+    ["DELETE", "/api/v1/typing"],
+    ["POST", "/api/v1/typing/page-1/completion"],
+  ])("does not expose typing mutations: %s %s", async (method, path) => {
+    const initialize = vi.spyOn(notion, "getRepository");
+    const response = await request(
+      new Request(`http://localhost${path}`, { method }),
+    );
+    expect([404, 405]).toContain(response.status);
+    expect(initialize).not.toHaveBeenCalled();
+  });
+
   it("maps upstream failures to the API error envelope", async () => {
     vi.spyOn(notion, "getRepository").mockRejectedValue(
       new Error("upstream failed"),

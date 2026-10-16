@@ -1683,7 +1683,6 @@ dependencies = [
  "axum",
  "http 1.5.0",
  "http-api-core",
- "http-api-typing",
  "http-api-writing-assessment",
  "http-body-util",
  "lambda_http",
@@ -1717,25 +1716,6 @@ dependencies = [
  "tokio",
  "tower",
  "tracing",
-]
-
-[[package]]
-name = "http-api-typing"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "aws-sdk-dynamodb",
- "axum",
- "http 1.5.0",
- "http-api-core",
- "serde",
- "serde_json",
- "thiserror 2.0.21",
- "tokio",
- "tracing",
- "utoipa",
- "utoipa-axum",
- "uuid",
 ]
 
 [[package]]

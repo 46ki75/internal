@@ -13,6 +13,11 @@ const severity = z.enum(["UNKNOWN", "DEBUG", "INFO", "WARN", "ERROR"]);
 const date = z.string().date();
 
 export const schemas = {
+  TypingResponse: z.object({
+    id: z.string(),
+    text: z.string(),
+    url: z.string().url(),
+  }),
   AnkiTagResponse: tag,
   AnkiResponse: z.object({
     page_id: z.string(),
@@ -121,6 +126,11 @@ export const listQuery = z.object({
 });
 
 export const operations = {
+  listTyping: {
+    method: "get",
+    path: "/api/v1/typing",
+    response: z.array(schemas.TypingResponse),
+  },
   listTrivia: {
     method: "get",
     path: "/api/v1/trivia",

@@ -30,141 +30,6 @@ async fn get_json(router: axum::Router, path: &str) -> (StatusCode, serde_json::
     (status, json)
 }
 
-// ---- typing ----
-
-fn typing_test_router() -> axum::Router {
-    let state = Arc::new(http_api::typing::controller::router::TypingState {
-        typing_use_case: Arc::new(http_api::typing::use_case::TypingUseCase {
-            typing_repository: Arc::new(http_api::typing::repository::TypingRepositoryStub),
-        }),
-    });
-    http_api::typing::controller::router::typing_router(state).0
-}
-
-#[tokio::test]
-async fn typing_list_returns_stub_rows() {
-    let (status, json) = get_json(typing_test_router(), "/api/v1/typing").await;
-
-    assert_eq!(status, StatusCode::OK);
-    assert_eq!(json.as_array().unwrap().len(), 2);
-    assert_eq!(json[0]["id"], "93165a44-43c8-4790-84ad-08de54ec549a");
-    assert_eq!(json[0]["completion_count"], 2);
-}
-
-#[tokio::test]
-async fn typing_upsert_returns_ok() {
-    let response = typing_test_router()
-        .oneshot(
-            Request::post("/api/v1/typing")
-                .header("content-type", "application/json")
-                .body(Body::from(r#"{"text":"hello","description":"d"}"#))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    assert_eq!(response.status(), StatusCode::OK);
-
-    let body = response.into_body().collect().await.unwrap().to_bytes();
-    let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
-    assert_eq!(json["id"], "680008c4-d898-4202-8102-137cd9256595");
-    assert_eq!(json["completion_count"], 0);
-}
-
-#[tokio::test]
-async fn typing_upsert_rejects_invalid_id() {
-    let response = typing_test_router()
-        .oneshot(
-            Request::post("/api/v1/typing")
-                .header("content-type", "application/json")
-                .body(Body::from(
-                    r#"{"id":"not-a-uuid","text":"hello","description":"d"}"#,
-                ))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    assert_eq!(response.status(), StatusCode::BAD_REQUEST);
-    let body = response.into_body().collect().await.unwrap().to_bytes();
-    let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
-    assert_eq!(json["error"], "invalid typing item ID: not-a-uuid");
-}
-
-#[tokio::test]
-async fn typing_delete_rejects_invalid_id() {
-    let response = typing_test_router()
-        .oneshot(
-            Request::delete("/api/v1/typing")
-                .header("content-type", "application/json")
-                .body(Body::from(r#"{"id":"not-a-uuid"}"#))
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    assert_eq!(response.status(), StatusCode::BAD_REQUEST);
-    let body = response.into_body().collect().await.unwrap().to_bytes();
-    let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
-    assert_eq!(json["error"], "invalid typing item ID: not-a-uuid");
-}
-
-#[tokio::test]
-async fn typing_completion_returns_incremented_count() {
-    let response = typing_test_router()
-        .oneshot(
-            Request::post("/api/v1/typing/680008c4-d898-4202-8102-137cd9256595/completion")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    assert_eq!(response.status(), StatusCode::OK);
-
-    let body = response.into_body().collect().await.unwrap().to_bytes();
-    let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
-    assert_eq!(json["id"], "680008c4-d898-4202-8102-137cd9256595");
-    assert_eq!(json["completion_count"], 1);
-}
-
-#[tokio::test]
-async fn typing_completion_returns_not_found() {
-    let response = typing_test_router()
-        .oneshot(
-            Request::post("/api/v1/typing/ffffffff-ffff-4fff-bfff-ffffffffffff/completion")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    assert_eq!(response.status(), StatusCode::NOT_FOUND);
-}
-
-#[tokio::test]
-async fn typing_completion_rejects_invalid_id() {
-    let response = typing_test_router()
-        .oneshot(
-            Request::post("/api/v1/typing/not-a-uuid/completion")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
-
-    assert_eq!(response.status(), StatusCode::BAD_REQUEST);
-    let body = response.into_body().collect().await.unwrap().to_bytes();
-    let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
-    assert_eq!(json["error"], "invalid typing item ID: not-a-uuid");
-}
-
-#[tokio::test]
-async fn typing_unknown_path_is_404() {
-    let (status, _) = get_json(typing_test_router(), "/api/v1/nope").await;
-    assert_eq!(status, StatusCode::NOT_FOUND);
-}
-
 // ---- writing assessment ----
 
 use http_api::writing_assessment::{
@@ -346,4 +211,39 @@ async fn openapi_json_remains_available() {
     assert_eq!(status, StatusCode::OK);
     assert_eq!(json["servers"][0]["url"], "/api-gateway");
     assert!(json["paths"]["/api/v1/writing-assessments"].is_object());
+}
+
+#[tokio::test]
+async fn openapi_typing_is_read_only() {
+    let router = http_api::router::init_router().await.unwrap().clone();
+    let (status, json) = get_json(router, "/api-gateway/api/v1/openapi.json").await;
+
+    assert_eq!(status, StatusCode::OK);
+    let paths = json["paths"].as_object().unwrap();
+    let typing = paths["/api/v1/typing"].as_object().unwrap();
+    assert_eq!(
+        typing.keys().map(String::as_str).collect::<Vec<_>>(),
+        ["get"]
+    );
+    assert!(!paths.keys().any(|path| path.starts_with("/api/v1/typing/")));
+
+    let response = &typing["get"]["responses"]["200"]["content"]["application/json"]["schema"];
+    assert_eq!(response["type"], "array");
+    assert_eq!(response["items"]["type"], "object");
+    assert_eq!(
+        response["items"]["properties"],
+        serde_json::json!({
+            "id": { "type": "string" },
+            "text": { "type": "string" },
+            "url": { "type": "string", "format": "uri" }
+        })
+    );
+    assert_eq!(
+        response["items"]["required"],
+        serde_json::json!(["id", "text", "url"])
+    );
+    assert_eq!(
+        json["components"]["schemas"]["TypingResponse"],
+        response["items"]
+    );
 }

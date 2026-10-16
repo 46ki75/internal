@@ -67,6 +67,7 @@ describe("dev migration", () => {
   it.each([
     ["/api/v1/anki?page_size=2", schemas.AnkiResponse.array()],
     ["/api/v1/trivia?page_size=2", schemas.TriviaResponse.array()],
+    ["/api/v1/typing", schemas.TypingResponse.array()],
     ["/api/v1/bookmark", schemas.BookmarkResponse.array()],
     ["/api/v1/to-do", schemas.ToDoResponse.array()],
     ["/api/v1/icon", schemas.IconResponse.array()],

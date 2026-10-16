@@ -26,12 +26,19 @@ SSM parameters are loaded lazily and cached per Lambda execution environment:
 
 - `/<stage>/46ki75/internal/notion/secret`
 - `/<stage>/46ki75/internal/notion/<feature>/data_source/id`, where feature is
-  `anki`, `trivia`, `bookmark`, `todo`, `image`, or `image_tag`.
+  `anki`, `trivia`, `bookmark`, `todo`, `image`, `image_tag`, or `typing`.
 
 The icon endpoint uses the workspace custom-emoji API. The converter enables
 unsupported blocks, image metadata, and bookmark metadata, matching the previous
 Rust implementation. Anki splits surfaces at H1 markers `front`, `back`, and
 `explanation`. Every returned surface has root ID `root`.
+
+`GET /api/v1/typing` returns `{ id, text, url }[]` from every page in the typing
+data source. `Text` must be a title property; its rich-text fragments are joined
+without trimming. `url` is the sentence page's URL supplied by Notion. The
+frontend shuffles the full list for each practice cycle and links to the current
+sentence's Notion page instead of displaying a saved-exercises table. Manage
+entries in Notion's UI; there are no editing or completion count endpoints.
 
 ## Tests
 
@@ -84,6 +91,12 @@ all using the existing Cognito JWT authorizer. The `nitro_api_features` Terrafor
 variable supports staged cutovers while the Rust fallback implementation exists.
 `GET /api/health/nitro` verifies the new integration. CloudFront forwards `/api/*`
 through the same API Gateway origin.
+
+For the typing cutover, first create
+`/<stage>/46ki75/internal/notion/typing/data_source/id` in SSM and grant the existing
+Notion integration access to that data source. Publish/deploy Nitro with `typing`
+in `nitro_api_features`, then deploy the Rust API and frontend. No DynamoDB data
+migration is needed; the shared table remains in use by writing assessments.
 
 ## OpenAPI
 

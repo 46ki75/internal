@@ -187,25 +187,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["typing_list"];
+        get: operations["listTyping"];
         put?: never;
-        post: operations["upsert_typing"];
-        delete: operations["delete_typing"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/typing/{id}/completion": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["complete_typing"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -314,7 +298,7 @@ export interface components {
             label: components["schemas"]["AssessmentLabel"];
             model: string;
             original_text: string;
-            reasoning_effort?: null | components["schemas"]["ReasoningEffort"];
+            reasoning_effort?: components["schemas"]["ReasoningEffort"] | null;
             register: string;
             revised_text?: string | null;
             /** Format: int32 */
@@ -363,7 +347,7 @@ export interface components {
         };
         Feedback: {
             id: string;
-            layer?: null | components["schemas"]["FeedbackLayer"];
+            layer?: components["schemas"]["FeedbackLayer"] | null;
             original: string;
             pattern?: string | null;
             reason: string;
@@ -466,20 +450,11 @@ export interface components {
             url: string;
             view_count: number;
         };
-        TypingDeleteRequest: {
-            id: string;
-        };
         TypingResponse: {
-            /** Format: int64 */
-            completion_count: number;
-            description: string;
             id: string;
             text: string;
-        };
-        TypingUpsertRequest: {
-            description: string;
-            id?: string | null;
-            text: string;
+            /** Format: uri */
+            url: string;
         };
         UpdateAnkiRequest: {
             ease_factor?: number | null;
@@ -1302,7 +1277,7 @@ export interface operations {
             };
         };
     };
-    typing_list: {
+    listTyping: {
         parameters: {
             query?: never;
             header: {
@@ -1313,156 +1288,29 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Typing list */
+            /** @description Success */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TypingResponse"][];
+                    "application/json": {
+                        id: string;
+                        text: string;
+                        /** Format: uri */
+                        url: string;
+                    }[];
                 };
             };
-            /** @description Internal Server Error */
-            500: {
+            /** @description Error */
+            default: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "text/plain": string;
-                };
-            };
-        };
-    };
-    upsert_typing: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["TypingUpsertRequest"];
-            };
-        };
-        responses: {
-            /** @description Upsert typing */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TypingResponse"];
-                };
-            };
-            /** @description Invalid typing item ID */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
-        };
-    };
-    delete_typing: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["TypingDeleteRequest"];
-            };
-        };
-        responses: {
-            /** @description Delete typing */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TypingResponse"];
-                };
-            };
-            /** @description Invalid typing item ID */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
-        };
-    };
-    complete_typing: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path: {
-                /** @description Typing item ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Record typing completion */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TypingResponse"];
-                };
-            };
-            /** @description Invalid typing item ID */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Typing item not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
-            /** @description Internal Server Error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
+                    "application/json": {
+                        error: string;
+                    };
                 };
             };
         };

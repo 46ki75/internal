@@ -63,6 +63,35 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {};
 
+export const RichText: Story = {
+  args: {
+    description: "A formatted Notion exercise",
+    surface: {
+      root: "root",
+      components: {
+        root: { id: "root", component: "Column", children: ["sentence"] },
+        sentence: {
+          id: "sentence",
+          component: "Paragraph",
+          children: ["start", "end"],
+        },
+        start: {
+          id: "start",
+          component: "RichText",
+          text: "Small steps",
+          decoration: ["bold"],
+        },
+        end: {
+          id: "end",
+          component: "RichText",
+          text: " make reliable systems.",
+          decoration: ["italic"],
+        },
+      },
+    },
+  },
+};
+
 export const WithMistake: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

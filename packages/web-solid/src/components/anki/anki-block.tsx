@@ -5,7 +5,7 @@ import {
   ElmMdiIcon,
   notionBlockCatalog,
 } from "@elmethis/solid";
-import { surfaceToMessages } from "./surface-to-messages";
+import { surfaceToMessages } from "~/components/common/a2ui/surface-to-messages";
 
 export interface AnkiBlockProps {
   /** mdi path for the header icon. */

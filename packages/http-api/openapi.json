@@ -36,8 +36,43 @@
                       "id": {
                         "type": "string"
                       },
+                      "description": {
+                        "type": "string"
+                      },
                       "text": {
                         "type": "string"
+                      },
+                      "surface": {
+                        "type": "object",
+                        "properties": {
+                          "root": {
+                            "type": "string"
+                          },
+                          "components": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "component": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "component"
+                              ],
+                              "additionalProperties": true
+                            }
+                          }
+                        },
+                        "required": [
+                          "root",
+                          "components"
+                        ],
+                        "additionalProperties": false
                       },
                       "url": {
                         "type": "string",
@@ -46,7 +81,9 @@
                     },
                     "required": [
                       "id",
+                      "description",
                       "text",
+                      "surface",
                       "url"
                     ],
                     "additionalProperties": false
@@ -2170,8 +2207,43 @@
           "id": {
             "type": "string"
           },
+          "description": {
+            "type": "string"
+          },
           "text": {
             "type": "string"
+          },
+          "surface": {
+            "type": "object",
+            "properties": {
+              "root": {
+                "type": "string"
+              },
+              "components": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "component": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "component"
+                  ],
+                  "additionalProperties": true
+                }
+              }
+            },
+            "required": [
+              "root",
+              "components"
+            ],
+            "additionalProperties": false
           },
           "url": {
             "type": "string",
@@ -2180,7 +2252,9 @@
         },
         "required": [
           "id",
+          "description",
           "text",
+          "surface",
           "url"
         ],
         "additionalProperties": false

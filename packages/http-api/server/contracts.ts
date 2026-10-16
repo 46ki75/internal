@@ -15,7 +15,9 @@ const date = z.string().date();
 export const schemas = {
   TypingResponse: z.object({
     id: z.string(),
+    description: z.string(),
     text: z.string(),
+    surface,
     url: z.string().url(),
   }),
   AnkiTagResponse: tag,

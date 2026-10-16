@@ -8,7 +8,12 @@ import {
 
 const typingItem = (id: string): TypingItem => ({
   id,
+  description: `Description ${id}`,
   text: id,
+  surface: {
+    root: "root",
+    components: { root: { id: "root", component: "Paragraph", children: [] } },
+  },
   url: `https://www.notion.so/${id}`,
 });
 

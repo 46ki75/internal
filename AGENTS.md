@@ -198,8 +198,10 @@ Rust feature crates read their SSM keys via `http_api_core::cache::get_parameter
 Notion integration lives in `packages/http-api`: thin file routes call feature
 services; `server/lib/notion.ts` owns SDK access; `server/contracts.ts` supplies
 validation, response types, and OpenAPI. SSM initialization is cached and retryable.
-Typing reads every page from its Notion data source's `Text` title column; the frontend
-shuffles the full list for each practice cycle. Editing and completion counts are not supported.
+Typing reads every page from its Notion data source: `Title` (title) supplies the exercise
+description, and `Text` (rich text) supplies both plaintext for typing and an A2UI surface for
+display. The frontend shuffles the full list for each practice cycle. Editing and completion
+counts are not supported.
 
 ### `packages/web-solid` — SolidStart CSR
 

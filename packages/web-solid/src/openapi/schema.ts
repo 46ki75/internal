@@ -451,7 +451,19 @@ export interface components {
             view_count: number;
         };
         TypingResponse: {
+            description: string;
             id: string;
+            surface: {
+                components: {
+                    [key: string]: {
+                        component: string;
+                        id: string;
+                    } & {
+                        [key: string]: unknown;
+                    };
+                };
+                root: string;
+            };
             text: string;
             /** Format: uri */
             url: string;
@@ -1295,7 +1307,19 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        description: string;
                         id: string;
+                        surface: {
+                            components: {
+                                [key: string]: {
+                                    component: string;
+                                    id: string;
+                                } & {
+                                    [key: string]: unknown;
+                                };
+                            };
+                            root: string;
+                        };
                         text: string;
                         /** Format: uri */
                         url: string;

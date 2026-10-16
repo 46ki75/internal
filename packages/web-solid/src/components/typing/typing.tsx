@@ -6,8 +6,15 @@ import {
   Show,
   type JSX,
 } from "solid-js";
-import { ElmButton, ElmInlineText, ElmTextArea } from "@elmethis/solid";
+import {
+  ElmA2ui,
+  ElmButton,
+  ElmInlineText,
+  ElmTextArea,
+  notionBlockCatalog,
+} from "@elmethis/solid";
 
+import { surfaceToMessages } from "~/components/common/a2ui/surface-to-messages";
 import {
   createTypingSession,
   splitTypingCharacters,
@@ -23,6 +30,7 @@ export interface TypingProps {
   onComplete?: (result: TypingResult) => void;
   onNext?: () => void;
   style?: JSX.CSSProperties;
+  surface?: unknown;
   text: string;
 }
 
@@ -74,6 +82,15 @@ export const Typing = (props: TypingProps) => {
           {splitTypingCharacters(props.text).length} glyphs
         </ElmInlineText>
       </header>
+
+      <Show when={props.surface}>
+        <div role="region" aria-label="Reference text">
+          <ElmA2ui
+            catalog={notionBlockCatalog}
+            messages={surfaceToMessages(props.surface, `${inputId}-reference`)}
+          />
+        </div>
+      </Show>
 
       <TypingPrompt characters={session.characters()} />
 

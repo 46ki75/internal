@@ -86,6 +86,8 @@ export const TypingContainer = () => {
               {(exercise) => (
                 <>
                   <Typing
+                    description={exercise.description}
+                    surface={exercise.surface}
                     text={exercise.text}
                     onComplete={() => queue.advance(exercise.id)}
                     onNext={

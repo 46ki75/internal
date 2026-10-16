@@ -14,7 +14,22 @@ const exercises = [
     text: "dog",
     url: "https://app.notion.com/p/second-sentence",
   },
-];
+].map((exercise) => ({
+  ...exercise,
+  description: `Description ${exercise.id}`,
+  surface: {
+    root: "root",
+    components: {
+      root: { id: "root", component: "Paragraph", children: [exercise.id] },
+      [exercise.id]: {
+        id: exercise.id,
+        component: "RichText",
+        text: exercise.text,
+        decoration: ["bold"],
+      },
+    },
+  },
+}));
 vi.mock("~/openapi/client", () => ({ openApiClient: api }));
 vi.mock("~/context/auth-context", () => ({ useAuth: () => auth }));
 vi.mock("@elmethis/solid", () => ({
@@ -24,6 +39,10 @@ vi.mock("~/components/typing/typing", () => ({
   Typing: (props: TypingProps) => (
     <section aria-label="Typing practice">
       <output aria-label="Current exercise">{props.text}</output>
+      <output aria-label="Description">{props.description}</output>
+      <output aria-label="Reference surface">
+        {JSON.stringify(props.surface)}
+      </output>
       <button
         onClick={() =>
           props.onComplete?.({
@@ -74,6 +93,12 @@ it("links to the current sentence's Notion page and updates the link when advanc
   await waitFor(() =>
     expect(result.getByLabelText("Current exercise")).toHaveTextContent("cat"),
   );
+  expect(result.getByLabelText("Description")).toHaveTextContent(
+    exercises[0].description,
+  );
+  expect(result.getByLabelText("Reference surface").textContent).toBe(
+    JSON.stringify(exercises[0].surface),
+  );
   expect(result.queryByRole("table")).not.toBeInTheDocument();
   expect(result.queryByText("Saved exercises")).not.toBeInTheDocument();
   const link = () =>
@@ -84,6 +109,12 @@ it("links to the current sentence's Notion page and updates the link when advanc
 
   await user.click(result.getByRole("button", { name: "Complete exercise" }));
   expect(result.getByLabelText("Current exercise")).toHaveTextContent("dog");
+  expect(result.getByLabelText("Description")).toHaveTextContent(
+    exercises[1].description,
+  );
+  expect(result.getByLabelText("Reference surface").textContent).toBe(
+    JSON.stringify(exercises[1].surface),
+  );
   expect(link()).toHaveAttribute("href", exercises[1].url);
   await user.click(result.getByRole("button", { name: "Next exercise" }));
   expect(result.getByLabelText("Current exercise")).toHaveTextContent("cat");
@@ -99,7 +130,22 @@ it("links to the current sentence's Notion page and updates the link when advanc
 });
 
 it("passes straight apostrophes to typing practice without changing API data", async () => {
-  const sentence = { ...exercises[0], text: "It’s the dog’s toy." };
+  const text = "It’s the dog’s toy.";
+  const sentence = {
+    ...exercises[0],
+    text,
+    surface: {
+      root: "root",
+      components: {
+        root: {
+          id: "root",
+          component: "RichText",
+          text,
+          decoration: ["italic"],
+        },
+      },
+    },
+  };
   api.GET.mockResolvedValue({ data: [sentence] });
   const result = renderContainer();
 
@@ -108,7 +154,11 @@ it("passes straight apostrophes to typing practice without changing API data", a
       "It's the dog's toy.",
     ),
   );
-  expect(sentence.text).toBe("It’s the dog’s toy.");
+  expect(sentence.text).toBe(text);
+  expect(result.getByLabelText("Reference surface").textContent).toBe(
+    JSON.stringify(sentence.surface),
+  );
+  expect(sentence.surface.components.root.text).toBe(text);
   expect(
     result.getByRole("link", { name: "Open sentence in Notion" }),
   ).toHaveAttribute("href", sentence.url);

@@ -20,7 +20,7 @@ import {
   ElmMdiIcon,
   notionBlockCatalog,
 } from "@elmethis/solid";
-import { surfaceToMessages } from "~/components/anki/surface-to-messages";
+import { surfaceToMessages } from "~/components/common/a2ui/surface-to-messages";
 import { mdiArrowRightThick, mdiEye, mdiLightbulbOnOutline } from "@mdi/js";
 
 import { openApiClient } from "~/openapi/client";

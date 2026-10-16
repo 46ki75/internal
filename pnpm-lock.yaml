@@ -34,8 +34,8 @@ importers:
         specifier: 1.15.11
         version: 1.15.11
       n2a2ui:
-        specifier: 0.8.0
-        version: 0.8.0
+        specifier: 0.8.1
+        version: 0.8.1
       zod:
         specifier: 3.25.76
         version: 3.25.76
@@ -224,11 +224,11 @@ packages:
   '@46ki75/ikuma-theme@0.0.10':
     resolution: {integrity: sha512-3r6ZpQutfFo4vXPXpmrNSQ0JnfA1RUwKKvasJiYwSp168zlSFOWmj/PNzspWxDDlrPHaxX+Duh9ZSM+53WvzPA==}
 
-  '@a2ui/web_core@0.10.5':
-    resolution: {integrity: sha512-q+HyK1V/jM8l+/VmuXRbBNCS9yDguqdjsJ7/8aqY9O/WUdRE14FbhkFyQyGWQNqPJa9QbVfQyAjGQIK0B1aQtg==}
-
   '@a2ui/web_core@0.11.0':
     resolution: {integrity: sha512-HIrisBO5yAsNb1NFQRRSVLLNWaPlDu7LShwZ/j1qRUWT/W/J7g8dJFEKbq0/nUofI7ZiieDlDXQtrJmwo24Nzw==}
+
+  '@a2ui/web_core@0.13.0':
+    resolution: {integrity: sha512-4Clpksne0RY9KAheQoPoTwVDJ+6XI0Es2yqVME/PN0aWQ1321Wih69SEr8Nkc+7uKMyV5FlK32o88uoyM7ZBCw==}
 
   '@adobe/css-tools@4.3.3':
     resolution: {integrity: sha512-rE0Pygv0sEZ4vBWHlAgJLGDU7Pm8xoO6p3wsEceb7GYAjScrOHpEo8KK/eVkAcnSM+slAEtXjA2JpdjLp4fJQQ==}
@@ -4457,8 +4457,8 @@ packages:
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
-  n2a2ui@0.8.0:
-    resolution: {integrity: sha512-GE0NoBd1S2udEGkmZ055ihELWYpkc+8RbjvMV6QfSiFaG9oQT72H98AkxdZGNuatfpkYQRVN4HQzNk5PKo+hsQ==}
+  n2a2ui@0.8.1:
+    resolution: {integrity: sha512-Grs4gqcVpqJnpMnrFoeM6TW5zwVjUXWxtuXMGmNta89BOgWNf7zEJ4xaLYq2HMCkDdotYZIeYlEt5l9VBuk8UA==}
     engines: {node: '>=22'}
 
   nanoid@3.3.12:
@@ -4941,6 +4941,11 @@ packages:
     resolution: {integrity: sha512-DJnGAeenTdpMEH6uAJRK/uiyEIH9WVsUmoLwzudwGJUwZPp80PDBWPHXSAGNPwNvIXAbe7MSUB1zQFugFml66A==}
     engines: {node: '>=4'}
 
+  redos-detector@6.1.4:
+    resolution: {integrity: sha512-lPlka1rEH6kK42gtgokvvxMmpAvyc28DcRjQbGxeP5RJsJWgAduBOdGedVCDPdSyCr4ay/JDxq3nGYsJZyt8tA==}
+    engines: {node: '>=16.0.0'}
+    hasBin: true
+
   regex-recursion@6.0.2:
     resolution: {integrity: sha512-0YCaSCq2VRIebiaUviZNs0cBz1kg5kVS2UKUfNIx8YVs1cN3AV7NTctO5FOKBA+UT2BPJIWZauYHPqJODG50cg==}
 
@@ -4949,6 +4954,10 @@ packages:
 
   regex@6.1.0:
     resolution: {integrity: sha512-6VwtthbV4o/7+OaAF9I5L5V3llLEsoPyq9P1JVXkedTP33c7MfCG0/5NOPcSJn0TzXcG9YUrR0gQSWioew3LDg==}
+
+  regjsparser@0.13.0:
+    resolution: {integrity: sha512-NZQZdC5wOE/H3UT28fVGL+ikOZcEzfMGk/c3iN9UGxzWHMa1op7274oyiUVrAG4B2EuFhus8SvkaYnhvW92p9Q==}
+    hasBin: true
 
   require-from-string@2.0.2:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
@@ -5793,6 +5802,9 @@ packages:
     resolution: {integrity: sha512-xZe/16rV4aa+HGSOCiY2YeLT1OybRLrrkL/Rqaq7p7GMVXjFh+6wN4oMYgjFmnSnhY8t6Xpdl2l9qmnHYuMHwQ==}
     hasBin: true
 
+  validate-color@2.2.4:
+    resolution: {integrity: sha512-Znolz+b6CwW6eBXYld7MFM3O7funcdyRfjKC/X9hqYV/0VcC5LB/L45mff7m3dIn9wdGdNOAQ/fybNuD5P/HDw==}
+
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
@@ -6059,19 +6071,22 @@ snapshots:
 
   '@46ki75/ikuma-theme@0.0.10': {}
 
-  '@a2ui/web_core@0.10.5':
-    dependencies:
-      '@preact/signals-core': 1.14.4
-      date-fns: 4.4.0
-      zod: 3.25.76
-      zod-to-json-schema: 3.25.2(zod@3.25.76)
-
   '@a2ui/web_core@0.11.0':
     dependencies:
       '@lit/context': 1.1.6
       '@preact/signals-core': 1.14.4
       date-fns: 4.4.0
       lit: 3.3.3
+      zod: 3.25.76
+      zod-to-json-schema: 3.25.2(zod@3.25.76)
+
+  '@a2ui/web_core@0.13.0':
+    dependencies:
+      '@lit/context': 1.1.6
+      '@preact/signals-core': 1.14.4
+      lit: 3.3.3
+      redos-detector: 6.1.4
+      validate-color: 2.2.4
       zod: 3.25.76
       zod-to-json-schema: 3.25.2(zod@3.25.76)
 
@@ -6569,9 +6584,9 @@ snapshots:
     dependencies:
       postcss-selector-parser: 7.1.6
 
-  '@elmethis/core@0.24.0(@a2ui/web_core@0.10.5)(zod@3.25.76)':
+  '@elmethis/core@0.24.0(@a2ui/web_core@0.11.0)(stylelint@17.16.0(@typescript/typescript6@6.0.2))(zod@3.25.76)':
     dependencies:
-      '@a2ui/web_core': 0.10.5
+      '@a2ui/web_core': 0.11.0
       stylelint-config-css-modules: 4.6.0(stylelint@17.16.0(@typescript/typescript6@6.0.2))
       stylelint-config-standard: 40.0.0(stylelint@17.16.0(@typescript/typescript6@6.0.2))
       stylelint-value-no-unknown-custom-properties: 6.1.1(stylelint@17.16.0(@typescript/typescript6@6.0.2))
@@ -6580,9 +6595,9 @@ snapshots:
     transitivePeerDependencies:
       - stylelint
 
-  '@elmethis/core@0.24.0(@a2ui/web_core@0.11.0)(stylelint@17.16.0(@typescript/typescript6@6.0.2))(zod@3.25.76)':
+  '@elmethis/core@0.24.0(@a2ui/web_core@0.13.0)(zod@3.25.76)':
     dependencies:
-      '@a2ui/web_core': 0.11.0
+      '@a2ui/web_core': 0.13.0
       stylelint-config-css-modules: 4.6.0(stylelint@17.16.0(@typescript/typescript6@6.0.2))
       stylelint-config-standard: 40.0.0(stylelint@17.16.0(@typescript/typescript6@6.0.2))
       stylelint-value-no-unknown-custom-properties: 6.1.1(stylelint@17.16.0(@typescript/typescript6@6.0.2))
@@ -10261,10 +10276,10 @@ snapshots:
 
   ms@2.1.3: {}
 
-  n2a2ui@0.8.0:
+  n2a2ui@0.8.1:
     dependencies:
-      '@a2ui/web_core': 0.10.5
-      '@elmethis/core': 0.24.0(@a2ui/web_core@0.10.5)(zod@3.25.76)
+      '@a2ui/web_core': 0.13.0
+      '@elmethis/core': 0.24.0(@a2ui/web_core@0.13.0)(zod@3.25.76)
       '@notionhq/client': 5.27.0
       cheerio: 1.2.0
       image-size: 2.0.4
@@ -10918,6 +10933,10 @@ snapshots:
     dependencies:
       redis-errors: 1.2.0
 
+  redos-detector@6.1.4:
+    dependencies:
+      regjsparser: 0.13.0
+
   regex-recursion@6.0.2:
     dependencies:
       regex-utilities: 2.3.0
@@ -10927,6 +10946,10 @@ snapshots:
   regex@6.1.0:
     dependencies:
       regex-utilities: 2.3.0
+
+  regjsparser@0.13.0:
+    dependencies:
+      jsesc: 3.1.0
 
   require-from-string@2.0.2: {}
 
@@ -11818,6 +11841,8 @@ snapshots:
   uuid@11.1.1: {}
 
   uuid@14.0.2: {}
+
+  validate-color@2.2.4: {}
 
   vary@1.1.2: {}
 

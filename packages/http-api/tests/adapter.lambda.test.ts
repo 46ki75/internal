@@ -1,3 +1,5 @@
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 import { beforeAll, describe, expect, it } from "vitest";
 import type {
   APIGatewayProxyEventV2,
@@ -49,6 +51,16 @@ function event(
   };
 }
 describe("built Lambda adapter", () => {
+  it("does not emit recursive schema warnings on a cold start", async () => {
+    // A fresh process prevents the test runner's module cache from hiding import-time warnings.
+    const { stderr } = await promisify(execFile)(process.execPath, [
+      "--input-type=module",
+      "--eval",
+      `await import(${JSON.stringify(new URL("../.output/server/index.mjs", import.meta.url).href)});`,
+    ]);
+    expect(stderr).not.toContain("Recursive reference detected");
+  });
+
   it("strips the named stage prefix observed in dev Lambda events", async () => {
     const response = await handler(event("/api/health/nitro"), {} as Context);
     expect(response).toMatchObject({ statusCode: 200 });

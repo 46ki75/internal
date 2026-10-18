@@ -7,6 +7,11 @@ updates:
     target-branch: "main"
     assignees:
       - "46ki75"
+    ignore:
+      # Nitro 2 creates H3 1 events; upgrade both runtimes together.
+      - dependency-name: "h3"
+        update-types:
+          - "version-update:semver-major"
     groups:
       tanstack-query:
         # QueryClient's private fields require a single query-core version.

@@ -50,7 +50,7 @@
     "fuse.js": "^7.5.0",
     "nitro": "3.0.260610-beta",
     "openapi-fetch": "^0.17.0",
-    "solid-js": "^1.9.15"
+    "solid-js": "^1.9.17"
   },
   "devDependencies": {
     "@eslint/js": "^10",

@@ -50,7 +50,7 @@
     "fuse.js": "^7.5.0",
     "nitro": "3.0.260610-beta",
     "openapi-fetch": "^0.17.0",
-    "solid-js": "^1.9.15"
+    "solid-js": "^1.9.17"
   },
   "devDependencies": {
     "@eslint/js": "^10",
@@ -58,7 +58,7 @@
     "@storybook/addon-a11y": "^10.6.2",
     "@storybook/addon-docs": "^10.6.2",
     "@testing-library/jest-dom": "^7.0.1",
-    "@testing-library/user-event": "^14.6.7",
+    "@testing-library/user-event": "^14.6.8",
     "@types/node": "26.6.5",
     "@typescript/native": "npm:typescript@7.0.2",
     "@vitest/eslint-plugin": "^1.6.27",
@@ -77,6 +77,6 @@
     "typescript-plugin-css-modules": "latest",
     "vite": "8.3.4",
     "vite-plugin-solid": "^2.11.14",
-    "vitest": "^5.0.1"
+    "vitest": "^5.0.5"
   }
 }

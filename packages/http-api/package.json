@@ -20,7 +20,7 @@
     "check:openapi": "node scripts/openapi.ts --check"
   },
   "dependencies": {
-    "@aws-sdk/client-ssm": "3.1151.0",
+    "@aws-sdk/client-ssm": "3.1152.0",
     "@notionhq/client": "5.27.0",
     "cheerio": "1.2.0",
     "h3": "1.15.11",
@@ -29,7 +29,7 @@
     "zod-to-json-schema": "3.25.2"
   },
   "devDependencies": {
-    "@aws-sdk/client-cognito-identity-provider": "3.1151.0",
+    "@aws-sdk/client-cognito-identity-provider": "3.1152.0",
     "@eslint/js": "10.0.1",
     "@types/aws-lambda": "^8.10.164",
     "@types/node": "26.6.5",
@@ -40,6 +40,6 @@
     "prettier": "3.9.10",
     "typescript": "npm:@typescript/typescript6@6.0.2",
     "typescript-eslint": "8.71.2",
-    "vitest": "5.0.1"
+    "vitest": "5.0.5"
   }
 }

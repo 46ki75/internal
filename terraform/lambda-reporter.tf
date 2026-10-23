@@ -51,6 +51,11 @@ resource "aws_lambda_function" "reporter" {
   publish       = true # Publish a new version
   timeout       = 30
 
+  lifecycle {
+    # The ZIP bootstraps new functions; the release CLI owns subsequent code updates.
+    ignore_changes = [filename, source_code_hash]
+  }
+
   logging_config {
     log_group             = aws_cloudwatch_log_group.lambda_reporter.name
     log_format            = "JSON"
@@ -72,16 +77,27 @@ resource "aws_lambda_function" "reporter" {
 }
 
 resource "aws_lambda_alias" "reporter" {
-  name             = "stable"
+  name             = "green"
   function_name    = aws_lambda_function.reporter.function_name
-  function_version = "$LATEST"
+  function_version = lookup(var.lambda_green_bootstrap_versions, "logs-reporter", aws_lambda_function.reporter.version)
+
+  lifecycle {
+    create_before_destroy = true
+    # Bootstrap only: Terraform must not undo CLI promotions or rollbacks.
+    ignore_changes = [function_version]
+  }
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_logs" {
   statement_id   = "AllowExecutionFromCloudWatchLogs"
   action         = "lambda:InvokeFunction"
-  function_name  = aws_lambda_function.reporter.function_name
+  function_name  = aws_lambda_alias.reporter.function_name
+  qualifier      = aws_lambda_alias.reporter.name
   principal      = "logs.amazonaws.com"
   source_arn     = "${aws_cloudwatch_log_group.lambda_http_api.arn}:*"
   source_account = data.aws_caller_identity.current.account_id
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }

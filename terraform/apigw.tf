@@ -11,6 +11,7 @@ resource "aws_apigatewayv2_integration" "backend" {
   integration_uri = aws_lambda_alias.http_api.invoke_arn
 
   timeout_milliseconds = 29 * 1000
+  depends_on           = [aws_lambda_permission.apigwv2]
 }
 
 resource "aws_apigatewayv2_route" "backend" {
@@ -87,6 +88,10 @@ resource "aws_lambda_permission" "apigwv2" {
   qualifier     = aws_lambda_alias.http_api.name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.backend.execution_arn}/*/*/*"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 output "backend_apigw_url" {

@@ -48,6 +48,20 @@ Read more about invoking the function in [the Cargo Lambda documentation for the
 
 ## Deploying
 
-To deploy the project, run `cargo lambda deploy`. This will create an IAM role and a Lambda function in your AWS account.
+Use the repository release tasks against the Terraform-provisioned function:
 
-Read more about deploying your lambda function in [the Cargo Lambda documentation](https://www.cargo-lambda.info/commands/deploy.html).
+```sh
+mise run --silent //crates:logs-reporter:push dev
+mise run --silent //crates:logs-reporter:promote dev
+mise run --silent //crates:logs-reporter:rollback dev
+```
+
+`push` builds and publishes code without changing live traffic. `promote` saves the
+current green version in blue and pins green to the highest published version.
+`rollback` restores green from blue, then removes blue; blue may legitimately be
+absent. `logs-reporter:deploy` is deferred and prints guidance instead of deploying.
+
+CloudWatch log subscriptions invoke green, not the unqualified function ARN.
+Read the [release lifecycle](../../README.md#lambda-release-lifecycle) and complete
+the [alias migration](../../terraform/README.md#lambda-release-ownership-and-migration)
+before pushing to an existing environment.

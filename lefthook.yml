@@ -17,7 +17,9 @@ fmt:
 
     - &python-format
       name: python
-      glob: "python/**/*.py"
+      glob:
+        - "python/**/*.py"
+        - "scripts/*.py"
       run: uv run --locked --no-sync ruff format {files}
 
     # Globs/exclusions are repository-relative; arguments are relative to root.
@@ -97,7 +99,9 @@ lint:
       run: cargo clippy --locked --workspace --all-targets --all-features -- -D warnings
 
     - name: python
-      glob: "python/**/*.py"
+      glob:
+        - "python/**/*.py"
+        - "scripts/*.py"
       run: uv run --locked --no-sync ruff check {files}
 
     - name: eslint
@@ -140,7 +144,7 @@ check-quick:
       root: "packages/web-solid/"
       run: pnpm exec tsc --noEmit --incremental false
     - name: python-types
-      run: uv run --locked --no-sync pyright python
+      run: uv run --locked --no-sync pyright python scripts
     - name: nitro-types
       root: "packages/http-api/"
       run: pnpm typecheck

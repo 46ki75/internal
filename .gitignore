@@ -15,6 +15,10 @@ coverage/
 .vinxi/
 storybook-static/
 
+# Python tooling
+__pycache__/
+*.py[cod]
+
 # Rust
 target/
 lcov.info

@@ -26,6 +26,7 @@ beforeEach(async () => {
   await mkdir(scripts, { recursive: true });
   await mkdir(bin);
   await mkdir(join(directory, "packages/http-api/.output"));
+  await mkdir(join(directory, "scripts"));
   await writeFile(
     join(directory, "packages/http-api/.output/lambda.zip"),
     artifact,
@@ -36,8 +37,10 @@ beforeEach(async () => {
       new URL(`../scripts/${name}`, import.meta.url),
       join(scripts, name),
     );
-  // Exercise deployment orchestration without rebuilding or contacting AWS.
-  await writeFile(join(scripts, "package.sh"), "#!/usr/bin/env bash\nexit 0\n");
+  await copyFile(
+    new URL("../../../scripts/lambda_release.py", import.meta.url),
+    join(directory, "scripts/lambda_release.py"),
+  );
   for (const command of ["aws", "terraform"])
     await writeFile(
       join(bin, command),
@@ -47,7 +50,7 @@ const { createHash } = require("node:crypto");
 const args = process.argv.slice(2);
 appendFileSync(process.env.CALLS_FILE, JSON.stringify({ command: "${command}", args }) + "\\n");
 if ("${command}" === "terraform") {
-  if (args.includes("show")) console.log(process.env.WORKSPACE);
+  process.exit(4);
 } else if (args[1] === "get-bucket-versioning") {
   console.log(process.env.VERSIONING);
 } else if (args[1] === "put-object") {
@@ -66,7 +69,6 @@ if ("${command}" === "terraform") {
     ...process.env,
     PATH: `${bin}:${process.env.PATH}`,
     CALLS_FILE: callsFile,
-    WORKSPACE: "dev",
     VERSIONING: "Enabled",
     FAIL_UPLOAD: "0",
   };
@@ -76,8 +78,8 @@ afterEach(async () => {
   await rm(directory, { recursive: true, force: true });
 });
 
-function deploy(stage = "dev") {
-  return execFileSync("bash", [join(scripts, "deploy.sh"), stage], {
+function run(script: string, stage = "dev") {
+  return execFileSync("bash", [join(scripts, script), stage], {
     env,
     encoding: "utf8",
     stdio: "pipe",
@@ -91,20 +93,15 @@ async function calls() {
     .map((line) => JSON.parse(line) as { command: string; args: string[] });
 }
 
-describe("versioned Nitro deployment", () => {
-  it("publishes a stage-scoped, checksummed artifact before Terraform apply", async () => {
-    expect(JSON.parse(deploy())).toEqual({
+describe("versioned Nitro artifacts", () => {
+  it("publishes a stage-scoped, checksummed artifact without applying Terraform", async () => {
+    expect(JSON.parse(run("upload.sh"))).toEqual({
       VersionId: "immutable-version",
       ChecksumSHA256: createHash("sha256").update(artifact).digest("base64"),
     });
     const commands = await calls();
-    const upload = commands.findIndex((call) =>
-      call.args.includes("put-object"),
-    );
-    const apply = commands.findIndex((call) => call.args.includes("apply"));
-    expect(upload).toBeGreaterThan(-1);
-    expect(apply).toBeGreaterThan(upload);
-    expect(commands[upload].args).toEqual(
+    const upload = commands.find((call) => call.args.includes("put-object"));
+    expect(upload?.args).toEqual(
       expect.arrayContaining([
         "--region",
         "ap-northeast-1",
@@ -118,45 +115,40 @@ describe("versioned Nitro deployment", () => {
         "SHA256",
       ]),
     );
+    expect(commands.every((call) => call.command === "aws")).toBe(true);
   });
 
   it.each(["Suspended", "None"])(
     "stops before publication when versioning is %s",
     async (status) => {
       env.VERSIONING = status;
-      expect(() => deploy()).toThrow("//packages/http-api:bootstrap dev");
+      expect(() => run("upload.sh")).toThrow(
+        "//packages/http-api:bootstrap dev",
+      );
       expect(
         (await calls()).some((call) => call.args.includes("put-object")),
       ).toBe(false);
-      expect((await calls()).some((call) => call.args.includes("apply"))).toBe(
-        false,
-      );
     },
   );
 
-  it("does not apply Terraform after an upload failure", async () => {
+  it("propagates an upload failure without calling Terraform", async () => {
     env.FAIL_UPLOAD = "1";
-    expect(() => deploy()).toThrow();
-    expect(
-      (await calls()).some((call) => call.args.includes("put-object")),
-    ).toBe(true);
-    expect((await calls()).some((call) => call.args.includes("apply"))).toBe(
-      false,
+    expect(() => run("upload.sh")).toThrow();
+    const commands = await calls();
+    expect(commands.some((call) => call.args.includes("put-object"))).toBe(
+      true,
     );
-  });
-
-  it("does not publish into a mismatched Terraform workspace", async () => {
-    env.WORKSPACE = "prod";
-    expect(() => deploy()).toThrow();
-    expect(
-      (await calls()).some(
-        (call) => call.command === "aws" || call.args.includes("apply"),
-      ),
-    ).toBe(false);
+    expect(commands.every((call) => call.command === "aws")).toBe(true);
   });
 
   it("rejects an invalid stage before any external command", async () => {
-    expect(() => deploy("qa")).toThrow("Invalid stage: qa");
+    expect(() => run("upload.sh", "qa")).toThrow("Invalid stage: qa");
+    expect(await calls()).toEqual([]);
+  });
+
+  it("defers deploy with push and promote hints without contacting AWS or Terraform", async () => {
+    expect(() => run("deploy.sh")).toThrow("//packages/http-api:push dev");
+    expect(() => run("deploy.sh")).toThrow("//packages/http-api:promote dev");
     expect(await calls()).toEqual([]);
   });
 });

@@ -72,8 +72,32 @@ arg "<stage>" { choices "dev" "stg" "prod" }
 '''
 run = ["bash scripts/package.sh", 'bash scripts/upload.sh "${usage_stage?}"']
 
+[tasks.push]
+description = "Package, update Nitro code, and publish a version without changing aliases"
+raw = true
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = 'python ../../scripts/lambda_release.py push nitro-api "${usage_stage?}"'
+
+[tasks.promote]
+description = "Preserve blue and pin green to the latest published Nitro version"
+raw = true
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = 'python ../../scripts/lambda_release.py promote nitro-api "${usage_stage?}"'
+
+[tasks.rollback]
+description = "Restore the Nitro green alias from blue, then remove blue"
+raw = true
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = 'python ../../scripts/lambda_release.py rollback nitro-api "${usage_stage?}"'
+
 [tasks.deploy]
-description = "Publish Nitro, select the Terraform workspace, and apply interactively"
+description = "Deferred: use push followed by promote"
 raw = true
 usage = '''
 arg "<stage>" { choices "dev" "stg" "prod" }

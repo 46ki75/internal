@@ -3,23 +3,26 @@ shell = "bash -euo pipefail -c"
 
 [tasks.fmt]
 description = "Format the Python workspace"
-run = "uv run --locked --no-sync ruff format ."
+run = "uv run --locked --no-sync ruff format . ../scripts"
 
 [tasks.fmt-check]
 description = "Check Python workspace formatting"
-run = "uv run --locked --no-sync ruff format --check ."
+run = "uv run --locked --no-sync ruff format --check . ../scripts"
 
 [tasks.lint]
 description = "Lint the Python workspace"
-run = "uv run --locked --no-sync ruff check ."
+run = "uv run --locked --no-sync ruff check . ../scripts"
 
 [tasks.typecheck]
 description = "Type-check the Python workspace"
-run = "uv run --locked --no-sync pyright ."
+run = "uv run --locked --no-sync pyright . ../scripts"
 
 [tasks.test]
 description = "Run ordinary hermetic Python tests"
-run = "uv run --locked --no-sync --package ag-ui-server pytest ag-ui-server/tests"
+run = [
+  "uv run --locked --no-sync --package ag-ui-server pytest ag-ui-server/tests",
+  "python -m unittest discover -s ../scripts -p test_lambda_release.py",
+]
 
 [tasks.check]
 description = "Run the complete Python workspace quality gate"

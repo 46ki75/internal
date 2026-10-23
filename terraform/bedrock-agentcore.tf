@@ -201,6 +201,8 @@ resource "aws_bedrockagentcore_agent_runtime" "ag-ui-server" {
   # with the same session id spins up a fresh microVM and replays history.
   lifecycle_configuration {
     idle_runtime_session_timeout = 60
+    # AWS returns its eight-hour default on refresh; pin it to avoid runtime-only drift.
+    max_lifetime = 28800
   }
 
   environment_variables = {

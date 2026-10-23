@@ -61,7 +61,9 @@ The `http-api` binary assembles the per-feature router crates into one Axum app:
 ```sh
 mise run --silent //crates:http-api:dev             # watch with STAGE_NAME=dev and debug logs
 mise run --silent //crates:http-api:build           # cargo lambda build --arm64 --release
-mise run --silent //crates:http-api:deploy <stage>  # build and deploy the stage's API Lambda
+mise run --silent //crates:http-api:push <stage>    # build, update code, and publish a version
+mise run --silent //crates:http-api:promote <stage> # preserve blue, pin green to latest published number
+mise run --silent //crates:http-api:rollback <stage> # restore green from blue, then remove blue
 ```
 
 Workspace-wide Rust gates live in **`crates/mise.toml`**: use
@@ -74,8 +76,9 @@ Run a single test with `cargo test -p <crate> <test_name>` — most feature test
 ### `crates/logs-reporter` (CloudWatch Logs → SNS)
 
 Use `mise run --silent //crates:logs-reporter:dev`,
-`//crates:logs-reporter:build`, `//crates:logs-reporter:test`, or
-`//crates:logs-reporter:deploy <stage>`; deployment targets
+`//crates:logs-reporter:build`, `//crates:logs-reporter:test`,
+`//crates:logs-reporter:push <stage>`, `//crates:logs-reporter:promote <stage>`, or
+`//crates:logs-reporter:rollback <stage>`; release tasks target
 `<stage>-46ki75-internal-lambda-function-reporter`.
 
 ### `crates/feed`
@@ -97,7 +100,9 @@ mise run --silent //packages/http-api:test:live         # dev only; creates and 
 mise run --silent //packages/http-api:check             # complete package quality gate
 mise run --silent //packages/http-api:bootstrap dev     # one-time versioned artifact bucket setup
 mise run --silent //packages/http-api:publish dev       # package → upload checksummed S3 object version
-mise run --silent //packages/http-api:deploy dev        # select workspace → publish → interactive apply
+mise run --silent //packages/http-api:push dev          # package → upload → update code → publish version
+mise run --silent //packages/http-api:promote dev       # preserve blue → pin green to latest published number
+mise run --silent //packages/http-api:rollback dev      # restore green from blue → remove blue
 mise run --silent //packages/http-api:generate-openapi  # regenerate committed OpenAPI fragment
 ```
 
@@ -105,8 +110,14 @@ API Gateway uses exact collection and greedy child routes per feature with the
 existing JWT authorizer. Nitro's `/api-gateway` base URL matches the named stage
 prefix observed in Lambda events; public URLs start with `/api/`. Apply Nitro's
 routes before deploying the Rust binary that removes the migrated handlers.
-Terraform resolves the published S3 artifact to its immutable version and checksum;
-after initial bootstrap/publication, shared stack plans need no local Nitro build.
+Terraform resolves the published S3 artifact to its immutable version and checksum
+for initial creation; later code updates and green alias targets belong to
+`scripts/lambda_release.py`. Blue is optional and not Terraform-managed. The three
+managed Lambda `deploy` tasks only fail with push/promote guidance; frontend and
+AgentCore deployment tasks are unchanged. Release operations use conditional S3
+locks in the shared state bucket. Follow the migration and recovery guidance in
+[terraform/README.md](terraform/README.md#lambda-release-ownership-and-migration)
+before pushing to an existing environment. Shared stack plans need no local Nitro build.
 
 ### `packages/web-solid` (SolidStart frontend)
 

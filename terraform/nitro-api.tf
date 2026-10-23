@@ -45,8 +45,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "nitro_api_artifac
   }
 }
 
-# Resolve the published artifact to immutable bits at plan time, like the
-# AgentCore image digest. Other stack deployments need no local Nitro build.
+# Keep a versioned, checksummed artifact for initial creation or replacement.
+# Later code pushes belong to the release CLI; plans still need no local build.
 data "aws_s3_object" "nitro_api" {
   bucket        = aws_s3_bucket.nitro_api_artifacts.id
   key           = "nitro-api/lambda.zip"
@@ -108,6 +108,8 @@ resource "aws_lambda_function" "nitro_api" {
   depends_on        = [aws_iam_role_policy.lambda_nitro_api]
 
   lifecycle {
+    ignore_changes = [s3_bucket, s3_key, s3_object_version, source_code_hash]
+
     precondition {
       condition     = !contains(["", "null"], coalesce(data.aws_s3_object.nitro_api.version_id, "null"))
       error_message = "Nitro requires a versioned artifact. Run mise run --silent //packages/http-api:bootstrap <stage>, then mise run --silent //packages/http-api:publish <stage>."
@@ -130,9 +132,15 @@ resource "aws_lambda_function" "nitro_api" {
 }
 
 resource "aws_lambda_alias" "nitro_api" {
-  name             = "stable"
+  name             = "green"
   function_name    = aws_lambda_function.nitro_api.function_name
-  function_version = aws_lambda_function.nitro_api.version
+  function_version = lookup(var.lambda_green_bootstrap_versions, "nitro-api", aws_lambda_function.nitro_api.version)
+
+  lifecycle {
+    create_before_destroy = true
+    # Bootstrap only: Terraform must not undo CLI promotions or rollbacks.
+    ignore_changes = [function_version]
+  }
 }
 
 resource "aws_apigatewayv2_integration" "nitro_api" {
@@ -141,6 +149,7 @@ resource "aws_apigatewayv2_integration" "nitro_api" {
   integration_uri        = aws_lambda_alias.nitro_api.invoke_arn
   payload_format_version = "2.0"
   timeout_milliseconds   = 29000
+  depends_on             = [aws_lambda_permission.apigwv2_nitro_api]
 }
 
 resource "aws_apigatewayv2_route" "nitro_api" {
@@ -159,15 +168,24 @@ resource "aws_lambda_permission" "apigwv2_nitro_api" {
   qualifier     = aws_lambda_alias.nitro_api.name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.backend.execution_arn}/*/*/*"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_lambda_permission" "nitro_logs_reporter" {
   statement_id   = "AllowExecutionFromNitroLogs"
   action         = "lambda:InvokeFunction"
-  function_name  = aws_lambda_function.reporter.function_name
+  function_name  = aws_lambda_alias.reporter.function_name
+  qualifier      = aws_lambda_alias.reporter.name
   principal      = "logs.amazonaws.com"
   source_arn     = "${aws_cloudwatch_log_group.lambda_nitro_api.arn}:*"
   source_account = data.aws_caller_identity.current.account_id
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_cloudwatch_log_subscription_filter" "nitro_api" {
@@ -176,7 +194,7 @@ resource "aws_cloudwatch_log_subscription_filter" "nitro_api" {
   name            = "${terraform.workspace}-nitro-api_${lower(each.value)}"
   log_group_name  = aws_cloudwatch_log_group.lambda_nitro_api.name
   filter_pattern  = "{$.level=\"${each.value}\"}"
-  destination_arn = aws_lambda_function.reporter.arn
+  destination_arn = aws_lambda_alias.reporter.arn
   depends_on      = [aws_lambda_permission.nitro_logs_reporter]
 }
 

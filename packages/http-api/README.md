@@ -66,31 +66,46 @@ Tokens and integration secrets are kept in memory.
 
 ## Deployment
 
+For an already-provisioned environment with traffic routed through `green`:
+
 ```sh
-mise run --silent :bootstrap dev # Once per environment, before its first publication
-mise run --silent :deploy dev
+mise run --silent :push dev
+mise run --silent :promote dev
+# If the promoted release fails:
+mise run --silent :rollback dev
 ```
 
 Packaging writes `.output/lambda.zip` containing `server/` and its traced runtime
-dependencies. The deploy task selects the requested Terraform workspace, builds
-the ZIP, and uploads it to
-`s3://<stage>-46ki75-internal-s3-bucket-nitro-api-artifacts/nitro-api/lambda.zip`
-before running interactive apply; inspect its plan for other stack changes.
+dependencies. `:push` builds the ZIP, uploads it to
+`s3://<stage>-46ki75-internal-s3-bucket-nitro-api-artifacts/nitro-api/lambda.zip`,
+updates Lambda using that exact S3 object version, and publishes a numbered Lambda
+version in the same revision-guarded API call. It verifies the returned code
+checksum, leaves green and blue unchanged, and never runs Terraform.
+
+`:promote` selects the highest published Lambda version, records the current green
+version in blue, then pins green to the selected number, never `$LATEST`. Repeating
+a promotion of the live version does not overwrite blue. `:rollback` restores green
+from blue, then deletes blue; a missing blue is valid but an explicit rollback
+without it fails without changing live traffic. `:deploy` is deferred and only
+prints an error with `:push` and `:promote` commands.
 
 The Terraform-managed artifact bucket is private, encrypted, and versioned.
-`:bootstrap` creates only that bucket and its configuration, allowing the
-first upload before the Lambda is planned. Uploads use a single-part PUT with an
-S3-validated SHA-256 checksum. Terraform resolves the latest published object to
-its immutable version ID and checksum at plan time, uses handler
-`server/index.handler`, publishes a Lambda version, and updates the `stable` alias.
-Previous S3 versions are retained.
+Uploads use a single-part PUT with an S3-validated SHA-256 checksum; previous S3
+versions are retained. For first-time infrastructure provisioning, run
+`:bootstrap <stage>` to create the artifact bucket, then `:publish <stage>` to build
+and upload the initial ZIP. Select that Terraform workspace and review/apply the
+stack separately. Terraform resolves the ZIP's immutable version and checksum to
+create the function with handler `server/index.handler` and its initial green
+alias. Later code updates and alias targets belong to the release controller, so
+Terraform does not undo promotions or rollbacks. `:publish` remains artifact-only;
+it does not update an existing Lambda or its live alias.
 
-Use `mise run --silent :publish <stage>` to build and upload before reviewing a
-separate Terraform plan/apply. Publication makes that version the desired artifact
-for subsequent plans in that workspace. Once an artifact is published, all shared
-Terraform workflows work from a clean checkout without a local Nitro ZIP. The
-deployment identity needs S3 versioning reads, object uploads, and versioned-object
-reads in addition to its existing Terraform permissions.
+Read the [migration guide](../../terraform/README.md#lambda-release-ownership-and-migration)
+before changing an existing environment from stable to green. For release locking,
+identity permissions, and recovery from interrupted operations, see the root
+[release lifecycle](../../README.md#lambda-release-lifecycle). The deployment
+identity also needs S3 versioning reads, uploads, and versioned-object reads for
+the artifact bucket. Shared Terraform plans still need no local Nitro ZIP.
 
 API Gateway has exact collection and greedy child routes per migrated feature,
 all using the existing Cognito JWT authorizer. The `nitro_api_features` Terraform
@@ -100,8 +115,8 @@ through the same API Gateway origin.
 
 For the typing cutover, first create
 `/<stage>/46ki75/internal/notion/typing/data_source/id` in SSM and grant the existing
-Notion integration access to that data source. Publish/deploy Nitro with `typing`
-in `nitro_api_features`, then deploy the Rust API and frontend. No DynamoDB data
+Notion integration access to that data source. Push and promote Nitro with `typing`
+in `nitro_api_features`, then push/promote the Rust API and deploy the frontend. No DynamoDB data
 migration is needed; the shared table remains in use by writing assessments.
 
 ## OpenAPI

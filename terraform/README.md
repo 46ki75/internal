@@ -1,16 +1,109 @@
 # Terraform
 
-## Nitro deployment artifacts
+## Lambda release ownership and migration
+
+Terraform owns Lambda infrastructure and configuration (IAM, runtime, environment,
+logging, ingress, and initial provisioning). The release CLI owns subsequent code
+updates, the live `green` alias target, and an optional `blue` alias. Only `green`
+receives API Gateway traffic and reporter CloudWatch Logs subscriptions; neither
+`blue` nor unqualified `$LATEST` is a live ingress target.
+
+| Bootstrap map key | Function name (`<stage>` is `dev`, `stg`, or `prod`) |
+| --- | --- |
+| `http-api` | `<stage>-46ki75-internal-lambda-function-http-api` |
+| `logs-reporter` | `<stage>-46ki75-internal-lambda-function-reporter` |
+| `nitro-api` | `<stage>-46ki75-internal-lambda-function-nitro-api` |
+
+The existing Terraform alias addresses (`aws_lambda_alias.http_api`, `.reporter`,
+and `.nitro_api`) now create `green`, always targeting a numbered published version.
+Their `function_version` is bootstrap-only (`ignore_changes`): later infrastructure
+applies do not undo CLI promotions or rollbacks. Terraform does **not** manage
+`blue`; the CLI may create, retarget, or delete it, and it can be absent.
+
+Function code artifact fields are also ignored after creation: `filename` and
+`source_code_hash` for Rust; `s3_bucket`, `s3_key`, `s3_object_version`, and
+`source_code_hash` for Nitro. Terraform still applies configuration changes and may
+publish versions, but those changes do not reach live traffic until the CLI moves
+`green` to a version containing the intended code **and** configuration. A new push
+updates Lambda code directly, without a Terraform apply; promotion and rollback
+are release operations, not infrastructure deployments.
+
+### Migrate an existing workspace safely
+
+Do this separately for each workspace. Freeze code pushes, configuration changes,
+and concurrent Terraform/release operations until migration is verified.
+
+1. **Before the first push or migration apply**, record the currently live code,
+   configuration, and `stable` alias target for all three functions. Existing Rust
+   `stable` aliases may target `$LATEST`; while that exact code/configuration is
+   still live, snapshot it with Lambda `PublishVersion` and record the returned
+   numbered version. Use the captured code SHA-256 and revision ID as publish
+   guards. If identical code/configuration is already published, verify and reuse
+   that version. Do not push new code first and then publish `$LATEST` as the old
+   live version. Recover the known-good artifact/configuration first if necessary.
+   For an already numbered alias (normally Nitro), record its **current alias
+   target**, not the function's newest version or the latest S3 artifact.
+2. Supply `lambda_green_bootstrap_versions` with those verified live versions for
+   **all existing functions**. It is an optional map with only the keys above and
+   positive integer strings; `$LATEST`, zero, and unknown keys are rejected. For
+   example, using illustrative version numbers only:
+
+   ```hcl
+   lambda_green_bootstrap_versions = {
+     "http-api"      = "12"
+     "logs-reporter" = "7"
+     "nitro-api"     = "24"
+   }
+   ```
+
+   Pass this through the selected workspace's variable file or
+   `TF_VAR_lambda_green_bootstrap_versions`. The default empty map falls back to
+   each function's published `version` **only for initial alias creation**. That
+   fallback is suitable for first provisioning, not migration: a function's newest
+   version might be an unpromoted release. Changing this map later does not move
+   an existing `green`, but the map is reused if an alias is recreated; keep any
+   retained overrides appropriate for recovery.
+3. Review the infrastructure plan before applying it. It must create `green` at
+   the captured live versions, create qualified permissions, and switch both API
+   Gateway integrations and **all** reporter subscriptions to `green`. Aliases
+   and changing permissions use `create_before_destroy`; ingress explicitly waits
+   for its new permission. Keep `stable` available until its dependent ingress
+   updates finish; Terraform removes the replaced aliases afterward. Do not
+   manually delete `stable` early or use targeted/partial applies for this cutover.
+4. After the full apply, verify `green` targets, API routes, and reporter delivery
+   before unfreezing releases. Pending code must remain off the live alias until
+   explicitly promoted. Preserve the recorded versions for rollback; do not delete
+   versions referenced by either alias or needed for recovery.
+
+The release CLI serializes per-function releases with conditional S3 writes in the
+existing shared Terraform state bucket,
+`shared-46ki75-internal-s3-bucket-terraform-tfstate`, under
+`lambda-release-locks/<account>/<region>/<function>.lock` (full Lambda function
+name). These are separate from Terraform's state lock and do not serialize
+Terraform configuration changes; coordinate infrastructure applies with releases.
+No additional lock bucket or Terraform-managed `blue` alias is required.
+
+### Initial provisioning and Nitro deployment artifacts
+
+For a new function, Terraform publishes its bootstrap code and creates `green` at
+that numbered version. Rust uses `assets/bootstrap.zip`, a placeholder rather than
+an application release; deploy the real application through the release CLI.
 
 Before the first Nitro publication in each workspace, run
 `mise run --silent //packages/http-api:bootstrap <stage>` to create its private,
 versioned artifact bucket, then
-`mise run --silent //packages/http-api:publish <stage>`. Subsequent Terraform
-plans resolve
-the published ZIP's S3 version ID and SHA-256 checksum remotely, so a clean checkout
-can plan/apply the shared stack without building Nitro. See the
-[Nitro deployment guide](../packages/http-api/README.md#deployment) for the complete
-workflow.
+`mise run --silent //packages/http-api:publish <stage>`. This existing `publish`
+task is **artifact-only bootstrap**: uploading a ZIP does not update an existing
+Lambda or promote `green`. Use the new push/release workflow for subsequent Lambda
+code updates, without a Terraform apply.
+
+Terraform retains the remote version-ID/checksum lookup and validation for initial
+creation or replacement. Shared-stack plans still require a valid published
+artifact, but no local Nitro build. Keep the bootstrap artifact available even
+after adopting direct pushes. Function replacement also consumes bootstrap code;
+review such plans and deploy the intended release explicitly. See the
+[Nitro deployment guide](../packages/http-api/README.md#deployment) for artifact
+packaging details.
 
 ## ドメイン設計
 

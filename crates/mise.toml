@@ -59,17 +59,41 @@ dir = "http-api"
 run = "STAGE_NAME=dev RUST_LOG=warn,http_api=debug,http_api_core=debug,http_api_writing_assessment=debug cargo lambda watch --package http-api"
 
 [tasks."http-api:build"]
-description = "Build the arm64 HTTP API Lambda"
+description = "Build and package the arm64 HTTP API Lambda"
 dir = "http-api"
-run = "cargo lambda build --arm64 --release"
+run = "cargo lambda build --arm64 --release --locked --output-format zip --lambda-dir ../../target/lambda"
 
-[tasks."http-api:deploy"]
-description = "Build and deploy the HTTP API Lambda"
-dir = "http-api"
+[tasks."http-api:push"]
+description = "Build, update HTTP API code, and publish a version without changing aliases"
+raw = true
 usage = '''
 arg "<stage>" { choices "dev" "stg" "prod" }
 '''
-run = [{ task = ":http-api:build" }, 'cargo lambda deploy --binary-name http-api "${usage_stage?}-46ki75-internal-lambda-function-http-api"']
+run = 'python ../scripts/lambda_release.py push http-api "${usage_stage?}"'
+
+[tasks."http-api:promote"]
+description = "Preserve blue and pin green to the latest published HTTP API version"
+raw = true
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = 'python ../scripts/lambda_release.py promote http-api "${usage_stage?}"'
+
+[tasks."http-api:rollback"]
+description = "Restore the HTTP API green alias from blue, then remove blue"
+raw = true
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = 'python ../scripts/lambda_release.py rollback http-api "${usage_stage?}"'
+
+[tasks."http-api:deploy"]
+description = "Deferred: use http-api:push followed by http-api:promote"
+raw = true
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = 'python ../scripts/lambda_release.py deploy http-api "${usage_stage?}"'
 
 [tasks."http-api:test"]
 description = "Run HTTP API library tests"
@@ -105,17 +129,41 @@ dir = "logs-reporter"
 run = "STAGE_NAME=dev RUST_LOG=logs_reporter=debug cargo lambda watch --package logs-reporter"
 
 [tasks."logs-reporter:build"]
-description = "Build the arm64 logs reporter Lambda"
+description = "Build and package the arm64 logs reporter Lambda"
 dir = "logs-reporter"
-run = "cargo lambda build --arm64 --release"
+run = "cargo lambda build --arm64 --release --locked --output-format zip --lambda-dir ../../target/lambda"
 
-[tasks."logs-reporter:deploy"]
-description = "Build and deploy the logs reporter Lambda"
-dir = "logs-reporter"
+[tasks."logs-reporter:push"]
+description = "Build, update reporter code, and publish a version without changing aliases"
+raw = true
 usage = '''
 arg "<stage>" { choices "dev" "stg" "prod" }
 '''
-run = [{ task = ":logs-reporter:build" }, 'cargo lambda deploy --binary-name logs-reporter "${usage_stage?}-46ki75-internal-lambda-function-reporter"']
+run = 'python ../scripts/lambda_release.py push logs-reporter "${usage_stage?}"'
+
+[tasks."logs-reporter:promote"]
+description = "Preserve blue and pin green to the latest published reporter version"
+raw = true
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = 'python ../scripts/lambda_release.py promote logs-reporter "${usage_stage?}"'
+
+[tasks."logs-reporter:rollback"]
+description = "Restore the reporter green alias from blue, then remove blue"
+raw = true
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = 'python ../scripts/lambda_release.py rollback logs-reporter "${usage_stage?}"'
+
+[tasks."logs-reporter:deploy"]
+description = "Deferred: use logs-reporter:push followed by logs-reporter:promote"
+raw = true
+usage = '''
+arg "<stage>" { choices "dev" "stg" "prod" }
+'''
+run = 'python ../scripts/lambda_release.py deploy logs-reporter "${usage_stage?}"'
 
 [tasks."logs-reporter:test"]
 description = "Run logs reporter binary tests"

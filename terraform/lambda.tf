@@ -61,6 +61,11 @@ resource "aws_lambda_function" "http_api" {
   publish       = true # Publish a new version
   timeout       = 30
 
+  lifecycle {
+    # The ZIP bootstraps new functions; the release CLI owns subsequent code updates.
+    ignore_changes = [filename, source_code_hash]
+  }
+
   logging_config {
     log_group             = aws_cloudwatch_log_group.lambda_http_api.name
     log_format            = "JSON"
@@ -86,7 +91,13 @@ resource "aws_lambda_function" "http_api" {
 }
 
 resource "aws_lambda_alias" "http_api" {
-  name             = "stable"
+  name             = "green"
   function_name    = aws_lambda_function.http_api.function_name
-  function_version = "$LATEST"
+  function_version = lookup(var.lambda_green_bootstrap_versions, "http-api", aws_lambda_function.http_api.version)
+
+  lifecycle {
+    create_before_destroy = true
+    # Bootstrap only: Terraform must not undo CLI promotions or rollbacks.
+    ignore_changes = [function_version]
+  }
 }

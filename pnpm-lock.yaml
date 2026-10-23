@@ -23,8 +23,8 @@ importers:
   packages/http-api:
     dependencies:
       '@aws-sdk/client-ssm':
-        specifier: 3.1153.0
-        version: 3.1153.0
+        specifier: 3.1154.0
+        version: 3.1154.0
       '@notionhq/client':
         specifier: 5.27.1
         version: 5.27.1
@@ -45,8 +45,8 @@ importers:
         version: 3.25.2(zod@3.25.76)
     devDependencies:
       '@aws-sdk/client-cognito-identity-provider':
-        specifier: 3.1153.0
-        version: 3.1153.0
+        specifier: 3.1154.0
+        version: 3.1154.0
       '@eslint/js':
         specifier: 10.0.1
         version: 10.0.1(eslint@10.13.0(jiti@2.7.0))
@@ -304,8 +304,8 @@ packages:
   '@aws-crypto/util@5.2.0':
     resolution: {integrity: sha512-4RkU9EsI6ZpBve5fseQlGNUWKMa1RLPQ1dnjnQoe07ldfIzcsGb5hC5W0Dm7u423KWzawlrpbjXBrXCEv9zazQ==}
 
-  '@aws-sdk/client-cognito-identity-provider@3.1153.0':
-    resolution: {integrity: sha512-rwZKMTxLoBh3gcxwQPUuXQnMwzERm9qhpMx7oKe+NKMHW/RmqYEs5k/n8MCfocqp7uCFILIq2KlK3jQ0usmm5A==}
+  '@aws-sdk/client-cognito-identity-provider@3.1154.0':
+    resolution: {integrity: sha512-W3BMrm0L5ibG6zBSZOtot4NnOLkJUwjnn/1g5JiKYfIp0pa9QmuoKNYOpZf5sCWdEFHqdn2Io8jGOMIZ8PCvbw==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/client-firehose@3.1155.0':
@@ -320,8 +320,8 @@ packages:
     resolution: {integrity: sha512-UG91Acyv7QbljRbzMeOc221Xj8FRnkrZZGerFPVTlr66TYyAfsqCxBokPmnp3VDVJfzJjVeO25fMmsTFvz0FfA==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/client-ssm@3.1153.0':
-    resolution: {integrity: sha512-0N8azzwIJK7kZ9otsZx2DiQVaOBz2iSeE6LI9jDzSFcaQnRdelmzNmjvFcgV7r6dtpkomgcQgEt/ZWfCVmpV6w==}
+  '@aws-sdk/client-ssm@3.1154.0':
+    resolution: {integrity: sha512-/oEcRbd5DAWuP3XRljie5HOJ5yfuDh93g8kBRiQ890sA7nWXPv6RWVOhEUhzlduIY7gsFBSdB/csJyHezZ3BMg==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/core@3.978.5':
@@ -6174,7 +6174,7 @@ snapshots:
       '@smithy/util-utf8': 2.3.0
       tslib: 2.8.1
 
-  '@aws-sdk/client-cognito-identity-provider@3.1153.0':
+  '@aws-sdk/client-cognito-identity-provider@3.1154.0':
     dependencies:
       '@aws-sdk/core': 3.978.5
       '@aws-sdk/credential-provider-node': 3.972.88
@@ -6218,7 +6218,7 @@ snapshots:
       '@smithy/types': 4.19.0
       tslib: 2.8.1
 
-  '@aws-sdk/client-ssm@3.1153.0':
+  '@aws-sdk/client-ssm@3.1154.0':
     dependencies:
       '@aws-sdk/core': 3.978.5
       '@aws-sdk/credential-provider-node': 3.972.88

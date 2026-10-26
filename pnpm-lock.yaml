@@ -151,8 +151,8 @@ importers:
         specifier: ^0.8.10
         version: 0.8.10(@solidjs/router@1.0.0(solid-js@1.9.17))(solid-js@1.9.17)
       '@storybook/addon-a11y':
-        specifier: ^10.6.2
-        version: 10.6.2(storybook@10.6.3(@types/react@19.2.14)(prettier@3.9.10)(react@19.3.1))
+        specifier: ^10.6.3
+        version: 10.6.3(storybook@10.6.3(@types/react@19.2.14)(prettier@3.9.10)(react@19.3.1))
       '@storybook/addon-docs':
         specifier: ^10.6.3
         version: 10.6.3(@types/react@19.2.14)(storybook@10.6.3(@types/react@19.2.14)(prettier@3.9.10)(react@19.3.1))
@@ -1892,10 +1892,10 @@ packages:
   '@speed-highlight/core@1.2.24':
     resolution: {integrity: sha512-qeW2e1l78afw8VhRPfPQ1Gjj+KU5XFQ/OFV5ti6eTa9bruO7mJyZtA4vw0ofqmA3tKCkROE9xLk3VZoeRc98nw==}
 
-  '@storybook/addon-a11y@10.6.2':
-    resolution: {integrity: sha512-zleS+btwrTRcUf3opbZntKsEt6PTqAtxsek08tx5jh5fRvd6wWmtnwW3uaBcypfIKnheTB3KGljJwFX+Mc+Umg==}
+  '@storybook/addon-a11y@10.6.3':
+    resolution: {integrity: sha512-nqvjpmu5g+PPtEKwgE0qAi4wfuQ9yngOb/1Gm24pBBZOuRsd3UMEBjKORSuAGrIAz9X3LCFfQi7sCcBFXvFbwg==}
     peerDependencies:
-      storybook: ^10.6.2
+      storybook: ^10.6.3
 
   '@storybook/addon-docs@10.6.3':
     resolution: {integrity: sha512-365f712au4w/xvFqEKY6TIvTeGGAY7FKRB8zP4CFa3VSv9oyxHaq/ublFg4YDbCeRagppwl1PZ6k4+PoUor3+A==}
@@ -7461,7 +7461,7 @@ snapshots:
 
   '@speed-highlight/core@1.2.24': {}
 
-  '@storybook/addon-a11y@10.6.2(storybook@10.6.3(@types/react@19.2.14)(prettier@3.9.10)(react@19.3.1))':
+  '@storybook/addon-a11y@10.6.3(storybook@10.6.3(@types/react@19.2.14)(prettier@3.9.10)(react@19.3.1))':
     dependencies:
       '@storybook/global': 5.0.0
       axe-core: 4.14.0

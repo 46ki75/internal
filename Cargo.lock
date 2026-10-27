@@ -762,9 +762,9 @@ dependencies = [
 
 [[package]]
 name = "aws_lambda_events"
-version = "1.2.0"
+version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d02c123e89527e7b424f74f52d11be0d17ef2887819323a42dcae1c7630ca53d"
+checksum = "4e330109825f18d3456c636be055b59f737ef880820918a78d4ca08df1f7d027"
 dependencies = [
  "base64 0.22.1",
  "bytes",
@@ -920,9 +920,9 @@ dependencies = [
 
 [[package]]
 name = "cached"
-version = "4.0.2"
+version = "4.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3c9d05ed91b6f6c5a343a5d3297fb818cfb7791496931cad6172b38269c38231"
+checksum = "85a0dbacacc2069fc95062beec3f79a28f0f54ef2f72d7fe69000d1557f7c3d0"
 dependencies = [
  "ahash",
  "async-lock",
@@ -1900,7 +1900,7 @@ dependencies = [
  "libc",
  "percent-encoding",
  "pin-project-lite",
- "socket2 0.5.10",
+ "socket2 0.6.5",
  "system-configuration",
  "tokio",
  "tower-service",
@@ -2195,9 +2195,9 @@ dependencies = [
 
 [[package]]
 name = "lambda_runtime"
-version = "1.4.0"
+version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1b4a47ba6672230da151bb4bc10e4c09c9dcb7f6b363f47dc3ce84df1ec9bbbd"
+checksum = "299ff04ffc8ff30a26f5a45fbad8f04dbaf9f05ba035e220045754955138c19c"
 dependencies = [
  "async-stream",
  "base64 0.22.1",
@@ -2940,7 +2940,7 @@ dependencies = [
  "security-framework",
  "security-framework-sys",
  "webpki-root-certs",
- "windows-sys 0.52.0",
+ "windows-sys 0.61.1",
 ]
 
 [[package]]
@@ -3409,9 +3409,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "tokio"
-version = "1.53.3"
+version = "1.54.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
 dependencies = [
  "bytes",
  "libc",
@@ -3771,9 +3771,9 @@ dependencies = [
 
 [[package]]
 name = "uuid"
-version = "1.28.0"
+version = "1.29.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7cc1186384beb7dd8eedea376413fd654937285ea6c9cfbb928dc3043ea4b606"
+checksum = "4a0e2d11620c50695fe12bbbfde96b3477fe606e7284c22d505c12ce51214514"
 dependencies = [
  "getrandom 0.4.2",
  "js-sys",
@@ -3981,7 +3981,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.52.0",
+ "windows-sys 0.61.1",
 ]
 
 [[package]]

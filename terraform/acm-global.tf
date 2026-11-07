@@ -1,6 +1,10 @@
 resource "aws_acm_certificate" "cloudfront_cert" {
   provider = aws.us-east-1 # us-east-1
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   domain_name       = data.aws_route53_zone.internal.name
   validation_method = "DNS"
 }

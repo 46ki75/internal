@@ -10,7 +10,7 @@ Polyglot monorepo with three independent workspaces and shared Terraform:
   The rest are libraries — `http-api-core` (shared error/cache/auth) and one `http-api-<feature>` crate per
   Rust REST router — assembled by the `http-api` binary.
 - `packages/*` — pnpm workspace (`pnpm-workspace.yaml`): SolidStart frontend and Nitro HTTP API.
-- `python/*` — uv workspace (`pyproject.toml` at root). `python/fetch` runs as a containerized Lambda; `python/ag-ui-server` runs as a containerized Bedrock AgentCore runtime.
+- `python/*` — uv workspace (`pyproject.toml` at root). `python/fetch` runs as a containerized Lambda.
 - `terraform/` — single Terraform stack that provisions all `dev`/`stg`/`prod` infra (CloudFront, API Gateway,
   Lambda, Cognito, DynamoDB, SNS, Route53). State lives in the shared S3 bucket
   `shared-46ki75-internal-s3-bucket-terraform-tfstate`.
@@ -113,8 +113,8 @@ routes before deploying the Rust binary that removes the migrated handlers.
 Terraform resolves the published S3 artifact to its immutable version and checksum
 for initial creation; later code updates and green alias targets belong to
 `scripts/lambda_release.py`. Blue is optional and not Terraform-managed. The three
-managed Lambda `deploy` tasks only fail with push/promote guidance; frontend and
-AgentCore deployment tasks are unchanged. Release operations use conditional S3
+managed Lambda `deploy` tasks only fail with push/promote guidance; frontend
+deployment tasks are unchanged. Release operations use conditional S3
 locks in the shared state bucket. Follow the migration and recovery guidance in
 [terraform/README.md](terraform/README.md#lambda-release-ownership-and-migration)
 before pushing to an existing environment. Shared stack plans need no local Nitro build.
@@ -137,28 +137,6 @@ from Nitro's runtime contracts. Regenerate the fragment first when those contrac
 change, then regenerate the frontend client.
 
 `//packages/web-solid:deploy` runs `scripts/deploy-s3.sh` (S3 sync to `<stage>-46ki75-internal-s3-bucket-web`) then `scripts/invalidate.sh` (looks up the CloudFront distribution by alias domain).
-
-### `python/ag-ui-server` (Claude Agent SDK over AG-UI, deployed to Bedrock AgentCore)
-
-A FastAPI app (uv workspace member) that runs a [Claude Agent SDK][casdk] agent and exposes it over the
-**AG-UI protocol**. Replaces the former CopilotKit-on-Hono server; the web frontend
-(`@ag-ui/client` `HttpAgent`) still uses the same AG-UI contract.
-
-```sh
-mise run --silent //:setup:python
-mise run --silent //python:test                       # hermetic (mocks SSM + the SDK)
-mise run --silent //python:ag-ui-server:build dev    # build arm64 + push to dev/ag-ui-server ECR
-mise run --silent //python:ag-ui-server:deploy dev   # build/push, then interactive Terraform apply
-```
-
-Serves the AgentCore `AGUI` contract: `POST /invocations` (AG-UI `RunAgentInput` → AG-UI SSE) and
-`GET /ping` (health). The model is authenticated with a **Claude Pro/Max subscription**
-`claude setup-token` OAuth token read from SSM at `/<stage>/46ki75/internal/claude-code/secret`
-(no Bedrock model invocation); the only tool is the public AWS Knowledge MCP server. AgentCore validates
-the Cognito JWT at the edge. After pushing a new image, `terraform apply` (with a fresh `TAG` for a new
-runtime version). See `python/ag-ui-server/README.md`.
-
-[casdk]: https://github.com/anthropics/claude-agent-sdk-python
 
 ### `python/fetch`
 
@@ -217,7 +195,7 @@ counts are not supported.
 ### `packages/web-solid` — SolidStart CSR
 
 - `src/app.tsx` — SolidStart router root and persistent auth/Anki provider shell.
-- `src/routes/` — SolidStart file routes. Routes: `/`, `/anki`, `/chat`, `/icon`, `/swatch`, `/trivia`.
+- `src/routes/` — SolidStart file routes. Routes: `/`, `/anki`, `/icon`, `/swatch`, `/trivia`, `/typing`, `/writing-assessments`.
 - `src/components/` — feature components grouped by domain (`bookmark/`, `todo/`, `common/`, `icon/`).
 - `src/container/` — stateful feature containers that compose testable components and talk to the API.
 - `src/context/` — Solid contexts (`auth-context.tsx` wraps Cognito via `aws-amplify`; `anki-context.tsx` owns Anki state and actions).

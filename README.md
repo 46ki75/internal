@@ -66,11 +66,9 @@ From the repository root, descendant tasks use names such as
 | `mise run --silent //packages/web-solid:dev`                   | Start the frontend on port 11070                            |
 | `mise run --silent //packages/web-solid:check`                 | Check, test, and build the frontend                         |
 | `mise run --silent //packages/web-solid:deploy <stage>`        | Build, upload, and invalidate the frontend                  |
-| `mise run --silent //python:ag-ui-server:build <stage> [tag]`  | Build and **push** an arm64 ECR image                       |
-| `mise run --silent //python:ag-ui-server:deploy <stage> [tag]` | Push an image, then apply Terraform interactively           |
 
-Stages are `dev`, `stg`, or `prod`; omitted image tags use a timestamp. Existing
-AWS profile/credential setup is required for deployment and live operations.
+Stages are `dev`, `stg`, or `prod`. Existing AWS profile/credential setup is
+required for deployment and live operations.
 `//crates:test:live`, `//crates:check:live`, and package `test:live` tasks remain
 explicit and credential-dependent. Coverage tasks share Cargo's instrumentation
 state; run one coverage scope at a time.
@@ -90,8 +88,8 @@ push a corrected version before promoting again if the highest version is faulty
 
 The Lambda `deploy` tasks are deferred: they exit with an error and commands for
 `push` and `promote`, without building, contacting AWS, or applying Terraform.
-Frontend and AgentCore deployment tasks are unchanged. The unmanaged feed/fetch
-build workflows are outside this release controller's scope.
+Frontend deployment tasks are unchanged. The unmanaged feed/fetch build workflows
+are outside this release controller's scope.
 
 Before using these tasks in an existing environment, follow the
 [green alias migration](terraform/README.md#lambda-release-ownership-and-migration).

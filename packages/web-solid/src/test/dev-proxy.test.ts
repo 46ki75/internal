@@ -111,6 +111,35 @@ describe("development proxy", () => {
     expect(config.nitro?.devHandlers ?? []).toEqual([]);
   });
 
+  it.each([
+    ["Elmethis", ["@elmethis/solid", "@a2ui/web_core", "validate-color"]],
+    [
+      "SolidStart's dev toolbar",
+      [
+        "@solidjs/start",
+        "@jridgewell/trace-mapping",
+        "@jridgewell/resolve-uri",
+      ],
+    ],
+  ])("prebundles nested CommonJS dependencies used by %s", async (_, chain) => {
+    const client = vite!.environments.client;
+    let id: string | undefined;
+    for (const dependency of chain) {
+      const resolved = await client.pluginContainer.resolveId(dependency, id);
+      expect(resolved).not.toBeNull();
+      id = resolved!.id;
+    }
+    expect(id).toContain(join(directory, "vite", "deps"));
+
+    const response = await fetch(`${origin}/@fs/${id}`, {
+      signal: AbortSignal.timeout(10_000),
+    });
+    expect(response.status).toBe(200);
+    expect(await response.text()).toMatch(
+      /\bexport\s+default\b|\bas\s+default\b/,
+    );
+  });
+
   it("forwards API paths, query strings, and authorization instead of rendering HTML", async () => {
     const response = await fetch(`${origin}/api/v1/bookmark?refresh=true`, {
       headers: { Authorization: "Bearer test-token" },

@@ -106,8 +106,7 @@ resource "aws_cloudfront_response_headers_policy" "default" {
 }
 
 resource "aws_cloudfront_distribution" "default" {
-  comment    = terraform.workspace
-  depends_on = [aws_acm_certificate.cloudfront_cert]
+  comment = terraform.workspace
 
   http_version = "http2and3"
   enabled      = true
@@ -122,7 +121,7 @@ resource "aws_cloudfront_distribution" "default" {
 
   # >>> custom domain
   viewer_certificate {
-    acm_certificate_arn      = aws_acm_certificate.cloudfront_cert.arn
+    acm_certificate_arn      = aws_acm_certificate_validation.cloudfront_cert_cert.certificate_arn
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }

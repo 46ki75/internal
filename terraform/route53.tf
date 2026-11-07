@@ -1,3 +1,11 @@
+locals {
+  base_domain_name = {
+    dev  = "dev-internal.ikuma.cloud"
+    stg  = "stg-internal.ikuma.cloud"
+    prod = "internal.ikuma.cloud"
+  }
+}
+
 data "aws_route53_zone" "internal" {
-  name = terraform.workspace == "prod" ? "internal.46ki75.com" : terraform.workspace == "stg" ? "stg-internal.46ki75.com" : "dev-internal.46ki75.com"
+  name = local.base_domain_name[terraform.workspace]
 }

@@ -1,4 +1,9 @@
 resource "aws_acm_certificate" "api_cert" {
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
   domain_name       = "api.${data.aws_route53_zone.internal.name}"
   validation_method = "DNS"
 }

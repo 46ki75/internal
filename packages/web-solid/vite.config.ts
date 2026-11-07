@@ -1,5 +1,4 @@
 import { solidStart } from "@solidjs/start/config";
-import { fromNodeMiddleware } from "nitro/h3";
 import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 
@@ -35,24 +34,7 @@ export default defineConfig({
         target: endpoint,
         changeOrigin: true,
       },
-      "/invocations": {
-        target: endpoint,
-        changeOrigin: true,
-      },
     },
-    devHandlers: [
-      {
-        route: "/invocations",
-        middleware: true,
-        handler: fromNodeMiddleware((request, _response, next) => {
-          delete request.headers.cookie;
-          delete request.headers["sec-fetch-site"];
-          delete request.headers["sec-fetch-mode"];
-          delete request.headers["sec-fetch-dest"];
-          next();
-        }),
-      },
-    ],
     // The CSR build does not need Nitro's raw WASM path, which Vite cannot bundle for Shiki in SSR.
     wasm: false,
     prerender: {

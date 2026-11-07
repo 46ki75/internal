@@ -1,7 +1,6 @@
 import { createModal } from "@elmethis/solid";
 import {
   mdiCertificate,
-  mdiCreation,
   mdiFaceMan,
   mdiHome,
   mdiKeyboardOutline,
@@ -30,7 +29,6 @@ const links = [
     href: "/writing-assessments",
     label: "Writing assessments",
   },
-  { d: mdiCreation, href: "/chat", label: "Chat" },
   {
     d: mdiCertificate,
     href: "/practical_test_en.html",

@@ -105,6 +105,26 @@ review such plans and deploy the intended release explicitly. See the
 [Nitro deployment guide](../packages/http-api/README.md#deployment) for artifact
 packaging details.
 
+## Retired chat infrastructure
+
+The AgentCore chat feature has been removed. Deploy the frontend without the chat
+route before applying the infrastructure removal in each workspace (`dev`, `stg`,
+`prod`). Review the full Terraform plan: it should remove the chat runtime, its
+execution role/policy/attachment, ECR repository, and session DynamoDB table, and
+update CloudFront to remove the `/invocations*` behavior and runtime origin.
+Cognito, the REST APIs, and the shared DynamoDB table must remain.
+
+Deleting the session table permanently removes stored conversations; export any
+needed data first. The ECR repository was not configured for forced deletion:
+archive any needed images and empty it before applying its deletion. Do not use a
+stack-wide `terraform destroy` to retire this feature.
+
+The OAuth token at `/<stage>/46ki75/internal/claude-code/secret` was manually
+managed, so Terraform will not delete it. After the runtime is gone, remove that
+parameter and revoke the token if they are no longer used. Also review any
+runtime-created CloudWatch log groups for retention or manual cleanup; they are
+not managed by this stack.
+
 ## ドメイン設計
 
 ### CloudFront (メインドメイン)

@@ -8,6 +8,7 @@ import {
   createServer,
   loadConfigFromFile,
   mergeConfig,
+  type UserConfig,
   type ViteDevServer,
 } from "vite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
@@ -19,7 +20,6 @@ describe("development proxy", () => {
     headers: Record<string, unknown>;
     body: string;
   }> = [];
-  let finishStream: (() => void) | undefined;
   const upstream = createHttpServer((request, response) => {
     void (async () => {
       const chunks: Buffer[] = [];
@@ -32,11 +32,7 @@ describe("development proxy", () => {
         headers: request.headers,
         body: Buffer.concat(chunks).toString(),
       });
-      if (request.url?.startsWith("/invocations")) {
-        response.writeHead(200, { "Content-Type": "text/event-stream" });
-        response.write('data: {"type":"RUN_STARTED"}\n\n');
-        finishStream = () => response.end('data: {"type":"RUN_FINISHED"}\n\n');
-      } else if (request.headers.authorization) {
+      if (request.headers.authorization) {
         response.writeHead(200, { "Content-Type": "application/json" });
         response.end(JSON.stringify([{ id: "bookmark-1", name: "Favorite" }]));
       } else {
@@ -46,6 +42,7 @@ describe("development proxy", () => {
     })().catch((error: unknown) => response.destroy(error as Error));
   });
   let vite: ViteDevServer | undefined;
+  let config: UserConfig;
   let directory: string;
   let origin: string;
   let upstreamHost: string;
@@ -69,6 +66,7 @@ describe("development proxy", () => {
     if (!loaded) {
       throw new Error("Could not load the application Vite config");
     }
+    config = loaded.config;
     // Replace external services before Nitro initializes from the app configuration.
     for (const proxies of [
       loaded.config.server?.proxy,
@@ -99,13 +97,18 @@ describe("development proxy", () => {
   }, 30_000);
 
   afterAll(async () => {
-    finishStream?.();
     await vite?.close();
     upstream.closeAllConnections();
     await new Promise<void>((resolve) => upstream.close(() => resolve()));
     if (directory) {
       await rm(directory, { recursive: true, force: true });
     }
+  });
+
+  it("configures only the API proxy without development request middleware", () => {
+    expect(Object.keys(config.nitro?.devProxy ?? {})).toEqual(["/api/**"]);
+    expect(config.server?.proxy ?? {}).toEqual({});
+    expect(config.nitro?.devHandlers ?? []).toEqual([]);
   });
 
   it("forwards API paths, query strings, and authorization instead of rendering HTML", async () => {
@@ -134,58 +137,5 @@ describe("development proxy", () => {
     expect(response.status).toBe(401);
     expect(await response.json()).toEqual({ message: "Unauthorized" });
     expect(requests.at(-1)?.headers).not.toHaveProperty("authorization");
-  });
-
-  it("streams invocation responses and removes browser-only headers", async () => {
-    const body = JSON.stringify({ threadId: "thread-1", messages: [] });
-    const response = await fetch(`${origin}/invocations?qualifier=DEFAULT`, {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer test-token",
-        "Content-Type": "application/json",
-        Cookie: "session=test-cookie",
-        "Sec-Fetch-Site": "same-origin",
-        "Sec-Fetch-Mode": "cors",
-        "Sec-Fetch-Dest": "empty",
-      },
-      body,
-      signal: AbortSignal.timeout(10_000),
-    });
-
-    try {
-      expect(response.headers.get("content-type")).toBe("text/event-stream");
-      expect(requests.at(-1)).toMatchObject({
-        url: "/invocations?qualifier=DEFAULT",
-        method: "POST",
-        body,
-        headers: {
-          authorization: "Bearer test-token",
-          "content-type": "application/json",
-          host: upstreamHost,
-        },
-      });
-      for (const header of [
-        "cookie",
-        "sec-fetch-site",
-        "sec-fetch-mode",
-        "sec-fetch-dest",
-      ]) {
-        expect(requests.at(-1)?.headers).not.toHaveProperty(header);
-      }
-      // The upstream stays open until the first event arrives, detecting buffering.
-      const reader = response.body!.getReader();
-      const first = await reader.read();
-      expect(new TextDecoder().decode(first.value)).toBe(
-        'data: {"type":"RUN_STARTED"}\n\n',
-      );
-      finishStream?.();
-      const last = await reader.read();
-      expect(new TextDecoder().decode(last.value)).toBe(
-        'data: {"type":"RUN_FINISHED"}\n\n',
-      );
-      expect((await reader.read()).done).toBe(true);
-    } finally {
-      finishStream?.();
-    }
   });
 });

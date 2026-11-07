@@ -20,7 +20,7 @@ mise run --silent :build        # Build the production CSR bundle
 mise run --silent :check        # Complete package quality gate and build
 ```
 
-`:dev` proxies `/api` and `/invocations` to the dev CloudFront domain.
+`:dev` proxies only `/api` requests to the dev CloudFront domain.
 Set `VITE_STAGE_NAME` to `dev`, `stg`, or `prod` to select another stage.
 
 ### TypeScript tooling

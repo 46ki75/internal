@@ -18,6 +18,13 @@ export default defineConfig({
     }),
     nitro(),
   ],
+  optimizeDeps: {
+    // Solid JSX packages stay unbundled, but their nested CommonJS dependencies must not.
+    include: [
+      "@elmethis/solid > @a2ui/web_core > validate-color",
+      "@solidjs/start > @jridgewell/trace-mapping > @jridgewell/resolve-uri",
+    ],
+  },
   build: {
     // Older CSS targets make Lightning CSS replace light-dark() with an OS
     // media query, which ignores runtime color-scheme changes.

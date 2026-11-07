@@ -35,10 +35,9 @@ resource "aws_apigatewayv2_stage" "backend" {
 }
 
 resource "aws_apigatewayv2_domain_name" "backend" {
-  depends_on  = [aws_acm_certificate.api_cert]
   domain_name = aws_acm_certificate.api_cert.domain_name
   domain_name_configuration {
-    certificate_arn = aws_acm_certificate.api_cert.arn
+    certificate_arn = aws_acm_certificate_validation.api_cert.certificate_arn
     security_policy = "TLS_1_2"
     endpoint_type   = "REGIONAL"
   }

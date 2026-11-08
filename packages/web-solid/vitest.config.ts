@@ -16,7 +16,7 @@ export default defineConfig({
           name: "app",
           environment: "happy-dom",
           setupFiles: ["./src/test/setup.ts"],
-          exclude: [...configDefaults.exclude, "src/test/dev-proxy.test.ts"],
+          exclude: [...configDefaults.exclude, "src/test/*.test.ts"],
         },
       },
       {
@@ -24,7 +24,7 @@ export default defineConfig({
         test: {
           name: "dev-server",
           environment: "node",
-          include: ["src/test/dev-proxy.test.ts"],
+          include: ["src/test/*.test.ts"],
         },
       },
     ],

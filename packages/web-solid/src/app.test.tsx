@@ -12,13 +12,13 @@ vi.mock("@solidjs/start/router", () => ({
   ),
 }));
 vi.mock("~/context/auth-context", () => ({
-  AuthProvider: (props: ParentProps) => props.children,
+  AuthProvider: (props: ParentProps) => <>{props.children}</>,
 }));
 vi.mock("~/context/anki-context", () => ({
-  AnkiProvider: (props: ParentProps) => props.children,
+  AnkiProvider: (props: ParentProps) => <>{props.children}</>,
 }));
 vi.mock("~/container/app-shell", () => ({
-  AppShell: (props: ParentProps) => props.children,
+  AppShell: (props: ParentProps) => <>{props.children}</>,
 }));
 
 import App from "./app";

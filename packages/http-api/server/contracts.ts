@@ -17,6 +17,7 @@ export const schemas = {
     id: z.string(),
     description: z.string(),
     text: z.string(),
+    tts: z.string().url().nullable(),
     surface,
     url: z.string().url(),
   }),

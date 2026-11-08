@@ -10,6 +10,7 @@ const typingItem = (id: string): TypingItem => ({
   id,
   description: `Description ${id}`,
   text: id,
+  tts: null,
   surface: {
     root: "root",
     components: { root: { id: "root", component: "Paragraph", children: [] } },

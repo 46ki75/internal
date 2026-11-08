@@ -37,6 +37,7 @@ describe("read-only Notion typing", () => {
       id: "page-100",
       description: "Description page-100",
       text: "Last exercise",
+      tts: null,
       url: "https://www.notion.so/page-100",
     });
     expect(
@@ -145,6 +146,64 @@ describe("read-only Notion typing", () => {
     expect(row).toEqual(original);
   });
 
+  it.each([
+    {
+      type: "url",
+      url: "https://example.com/sentence.mp3",
+    },
+    {
+      type: "files",
+      files: [
+        {
+          name: "sentence.mp3",
+          type: "file",
+          file: {
+            url: "https://example.com/sentence.mp3",
+            expiry_time: "2026-09-21T01:00:00.000Z",
+          },
+        },
+        {
+          name: "ignored.mp3",
+          type: "external",
+          external: { url: "https://example.com/ignored.mp3" },
+        },
+      ],
+    },
+    {
+      type: "files",
+      files: [
+        {
+          name: "sentence.mp3",
+          type: "external",
+          external: { url: "https://example.com/sentence.mp3" },
+        },
+      ],
+    },
+  ])("returns the TTS URL from a $type property", (tts) => {
+    const row = typingPage("sentence", "Practice");
+    const entity = typingEntity(page({ ...row.properties, TTS: tts }, row.id));
+
+    expect(entity).toMatchObject({ tts: "https://example.com/sentence.mp3" });
+    expect(schemas.TypingResponse.parse(entity)).toHaveProperty(
+      "tts",
+      "https://example.com/sentence.mp3",
+    );
+  });
+
+  it.each([
+    undefined,
+    { type: "url", url: null },
+    { type: "files", files: [] },
+  ])("returns null when TTS has no audio: %j", (tts) => {
+    const row = typingPage("sentence", "Practice");
+    const entity = typingEntity(
+      page({ ...row.properties, ...(tts ? { TTS: tts } : {}) }, row.id),
+    );
+
+    expect(entity).toHaveProperty("tts", null);
+    expect(schemas.TypingResponse.parse(entity)).toHaveProperty("tts", null);
+  });
+
   it("supports empty data sources, descriptions, and rich text", async () => {
     const { repository } = mockRepository(() => list([]));
     expect(await new TypingService(repository).list()).toEqual([]);
@@ -168,6 +227,7 @@ describe("read-only Notion typing", () => {
     ["Title", { type: "rich_text", rich_text: rich("Wrong type") }],
     ["Text", undefined],
     ["Text", { type: "title", title: rich("Old schema") }],
+    ["TTS", { type: "rich_text", rich_text: rich("Wrong type") }],
   ])("rejects a missing or incorrectly typed %s column", (name, value) => {
     const row = typingPage("invalid", "Practice");
     const properties: Record<string, unknown> = { ...row.properties };

@@ -61,6 +61,16 @@ export const typingPage = () =>
   page({
     Title: { type: "title", title: rich("Practice description") },
     Text: { type: "rich_text", rich_text: rich("Practice text") },
+    TTS: {
+      type: "files",
+      files: [
+        {
+          name: "practice.mp3",
+          type: "external",
+          external: { url: "https://example.com/practice.mp3" },
+        },
+      ],
+    },
   });
 export const triviaPage = () =>
   page({

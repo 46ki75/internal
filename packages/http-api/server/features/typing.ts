@@ -3,6 +3,18 @@ import { convertRichTexts, Surface } from "n2a2ui";
 import type { NotionRepository } from "../lib/notion.ts";
 import { property, richText } from "../lib/properties.ts";
 
+function ttsUrl(page: PageObjectResponse): string | null {
+  const tts = page.properties.TTS;
+  if (!tts) return null;
+  if (tts.type === "url") return tts.url;
+
+  for (const file of property(page, "TTS", "files").files) {
+    if (file.type === "file") return file.file.url;
+    if (file.type === "external") return file.external.url;
+  }
+  return null;
+}
+
 export function typingEntity(page: PageObjectResponse) {
   const description = richText(property(page, "Title", "title").title);
   const text = property(page, "Text", "rich_text");
@@ -20,6 +32,7 @@ export function typingEntity(page: PageObjectResponse) {
     id: page.id,
     description,
     text: richText(text.rich_text),
+    tts: ttsUrl(page),
     surface: surface.toJSON(),
     url: page.url,
   };

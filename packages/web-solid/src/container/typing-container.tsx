@@ -1,12 +1,4 @@
-import {
-  createEffect,
-  createSignal,
-  Match,
-  on,
-  onCleanup,
-  Show,
-  Switch,
-} from "solid-js";
+import { createEffect, createSignal, Match, on, Show, Switch } from "solid-js";
 import { createQuery } from "@tanstack/solid-query";
 import { ElmDotLoadingIcon } from "@elmethis/solid";
 
@@ -21,23 +13,8 @@ export const TypingContainer = () => {
   const auth = useAuth();
   const repository = createTypingRepository();
   const queue = createTypingQueue(repository);
-  // Keep the listener's opt-in across keyed exercise/player remounts.
+  // Keep the listener's opt-in across keyed Typing remounts.
   const [autoplayTts, setAutoplayTts] = createSignal(false);
-  let audio: HTMLAudioElement | undefined;
-
-  const changeAutoplayTts = (enabled: boolean) => {
-    setAutoplayTts(enabled);
-    if (!audio) {
-      return;
-    }
-    if (enabled) {
-      void audio.play().catch(() => {
-        // Browser policy or unavailable media can reject play; native controls remain usable.
-      });
-    } else {
-      audio.pause();
-    }
-  };
 
   const exercisesQuery = createQuery(() => ({
     queryKey: queryKeys.typing,
@@ -101,20 +78,6 @@ export const TypingContainer = () => {
         </Match>
         <Match when={repository.initialized()}>
           <div class={styles.content}>
-            <Show when={repository.items().length > 0}>
-              <label class={styles["autoplay-control"]}>
-                <input
-                  class={styles["autoplay-switch"]}
-                  type="checkbox"
-                  role="switch"
-                  checked={autoplayTts()}
-                  onChange={(event) =>
-                    changeAutoplayTts(event.currentTarget.checked)
-                  }
-                />
-                Autoplay TTS
-              </label>
-            </Show>
             <Show
               when={queue.current()}
               keyed
@@ -125,6 +88,9 @@ export const TypingContainer = () => {
               {(exercise) => (
                 <>
                   <Typing
+                    audioSrc={exercise.tts}
+                    autoplayTts={autoplayTts()}
+                    onAutoplayTtsChange={setAutoplayTts}
                     description={exercise.description}
                     surface={exercise.surface}
                     text={exercise.text}
@@ -135,26 +101,6 @@ export const TypingContainer = () => {
                         : undefined
                     }
                   />
-                  <Show when={exercise.tts} keyed>
-                    {(tts) => (
-                      <audio
-                        ref={(element) => {
-                          audio = element;
-                          onCleanup(() => {
-                            element.pause();
-                            if (audio === element) {
-                              audio = undefined;
-                            }
-                          });
-                        }}
-                        aria-label="Sentence audio"
-                        src={tts}
-                        autoplay={autoplayTts()}
-                        preload="none"
-                        controls
-                      />
-                    )}
-                  </Show>
                   {/* Older API responses and cached exercises may lack a page URL. */}
                   <a
                     class={styles["page-link"]}

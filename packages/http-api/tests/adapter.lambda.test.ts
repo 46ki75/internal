@@ -33,7 +33,7 @@ function event(
     requestContext: {
       accountId: "test",
       apiId: "test",
-      domainName: "api.dev-internal.46ki75.com",
+      domainName: "api.dev-internal.ikuma.cloud",
       domainPrefix: "api",
       requestId: "test",
       routeKey: "ANY /api/{proxy+}",

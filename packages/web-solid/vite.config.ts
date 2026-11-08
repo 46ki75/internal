@@ -8,7 +8,7 @@ if (!(["dev", "stg", "prod"] as const).includes(stage as never)) {
   throw new Error(`Invalid VITE_STAGE_NAME: ${stage}`);
 }
 
-const endpoint = `https://${stage === "prod" ? "internal" : `${stage}-internal`}.46ki75.com`;
+const endpoint = `https://${stage === "prod" ? "internal" : `${stage}-internal`}.ikuma.cloud`;
 
 export default defineConfig({
   plugins: [

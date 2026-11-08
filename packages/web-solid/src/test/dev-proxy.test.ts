@@ -43,6 +43,7 @@ describe("development proxy", () => {
   });
   let vite: ViteDevServer | undefined;
   let config: UserConfig;
+  let configuredProxyTarget: unknown;
   let directory: string;
   let origin: string;
   let upstreamHost: string;
@@ -67,6 +68,9 @@ describe("development proxy", () => {
       throw new Error("Could not load the application Vite config");
     }
     config = loaded.config;
+    const apiProxy = config.nitro?.devProxy?.["/api/**"];
+    configuredProxyTarget =
+      typeof apiProxy === "object" ? apiProxy.target : apiProxy;
     // Replace external services before Nitro initializes from the app configuration.
     for (const proxies of [
       loaded.config.server?.proxy,
@@ -103,6 +107,10 @@ describe("development proxy", () => {
     if (directory) {
       await rm(directory, { recursive: true, force: true });
     }
+  });
+
+  it("targets the migrated dev CloudFront domain", () => {
+    expect(configuredProxyTarget).toBe("https://dev-internal.ikuma.cloud");
   });
 
   it("configures only the API proxy without development request middleware", () => {

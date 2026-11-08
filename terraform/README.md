@@ -129,15 +129,23 @@ not managed by this stack.
 
 ### CloudFront (メインドメイン)
 
-- `dev-internal.46ki75.com`: 開発環境の CloudFront
-- `stg-internal.46ki75.com`: ステージング環境の CloudFront
-- `internal.46ki75.com`: 本番環境の CloudFront
+- `dev-internal.ikuma.cloud`: 開発環境の CloudFront
+- `stg-internal.ikuma.cloud`: ステージング環境の CloudFront
+- `internal.ikuma.cloud`: 本番環境の CloudFront
 
 ### Amazon API Gateway
 
-- `api.dev-internal.46ki75.com: 開発環境
-- `api.stg-internal.46ki75.com: ステージング環境
-- `api.internal.46ki75.com: 本番環境
+- `api.dev-internal.ikuma.cloud`: 開発環境
+- `api.stg-internal.ikuma.cloud`: ステージング環境
+- `api.internal.ikuma.cloud`: 本番環境
+
+### Cognito passkeys
+
+The WebAuthn relying-party ID uses the same stage-specific web domain as Route 53
+and CloudFront (`local.base_domain_name`). After applying a domain change, users
+must sign in with their password and register a new passkey for the new domain;
+passkeys registered for the previous relying-party ID cannot be reused. See
+[AWS's passkey configuration guidance](https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-authentication-flow-methods.html#amazon-cognito-user-pools-authentication-flow-methods-passkey-cognito).
 
 ## 手動管理リソース
 
@@ -171,14 +179,14 @@ not managed by this stack.
 
 以下のゾーンを手動作成する。NS レコードは後で使用する。
 
-- `dev-internal.46ki75.com`
-- `stg-internal.46ki75.com`
-- `internal.46ki75.com`
+- `dev-internal.ikuma.cloud`
+- `stg-internal.ikuma.cloud`
+- `internal.ikuma.cloud`
 
 ## Route 53 レコード(別アカウント)
 
-以下の子ゾーンが作成されるので、`46ki75.com` を所持しているアカウントに NS レコードを追加する。執筆時点で `46ki75.com` のレコードは [こちらのリポジトリ](https://github.com/46ki75/iac) で管理されている。
+以下の子ゾーンが作成されるので、`ikuma.cloud` を所持しているアカウントに NS レコードを追加する。執筆時点で `ikuma.cloud` のレコードは [こちらのリポジトリ](https://github.com/46ki75/iac) で管理されている。
 
-- `dev-internal.46ki75.com`
-- `stg-internal.46ki75.com`
-- `internal.46ki75.com`
+- `dev-internal.ikuma.cloud`
+- `stg-internal.ikuma.cloud`
+- `internal.ikuma.cloud`

@@ -16,7 +16,7 @@ resource "aws_cognito_user_pool" "default" {
   }
 
   web_authn_configuration {
-    relying_party_id  = terraform.workspace == "prod" ? "internal.46ki75.com" : terraform.workspace == "stg" ? "stg-internal.46ki75.com" : "dev-internal.46ki75.com"
+    relying_party_id  = local.base_domain_name[terraform.workspace]
     user_verification = "preferred"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@46ki75/internal-web",
-  "description": "SolidStart frontend for internal.46ki75.com",
+  "description": "SolidStart frontend for internal.ikuma.cloud",
   "engines": {
     "node": ">=24.0.0"
   },

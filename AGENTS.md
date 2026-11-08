@@ -16,7 +16,7 @@ Polyglot monorepo with three independent workspaces and shared Terraform:
   `shared-46ki75-internal-s3-bucket-terraform-tfstate`.
 
 Stages are `dev` | `stg` | `prod` and are passed via `STAGE_NAME` (Rust/server) or `VITE_STAGE_NAME` (web).
-Domains: `{stage-}internal.46ki75.com` (web) and `api.{stage-}internal.46ki75.com` (API Gateway).
+Domains: `{stage-}internal.ikuma.cloud` (web) and `api.{stage-}internal.ikuma.cloud` (API Gateway).
 `prod` drops the stage prefix.
 
 ## Common commands

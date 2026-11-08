@@ -41,7 +41,7 @@ impl AssessmentGenerator for OpenRouterAssessmentGenerator {
             .post(ENDPOINT)
             .bearer_auth(api_key)
             .header(reqwest::header::CONTENT_TYPE, "application/json")
-            .header("HTTP-Referer", "https://internal.46ki75.com")
+            .header("HTTP-Referer", "https://internal.ikuma.cloud")
             .header("X-OpenRouter-Title", "46ki75 Internal")
             .json(&json!({
                 "model": model,

@@ -6,8 +6,8 @@ import { schemas, imagePage } from "../server/contracts.ts";
 import { text } from "../server/lib/properties.ts";
 import { liveAuthentication } from "./live-auth.ts";
 
-const api = "https://api.dev-internal.46ki75.com";
-const web = "https://dev-internal.46ki75.com";
+const api = "https://api.dev-internal.ikuma.cloud";
+const web = "https://dev-internal.ikuma.cloud";
 let auth: Awaited<ReturnType<typeof liveAuthentication>> | undefined;
 const pages = new Set<string>();
 

@@ -1,7 +1,7 @@
 # Internal Web
 
 Client-rendered [SolidStart](https://docs.solidjs.com/solid-start) frontend for
-`internal.46ki75.com`.
+`internal.ikuma.cloud`.
 
 ## Development
 

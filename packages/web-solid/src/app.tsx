@@ -34,7 +34,7 @@ import {
 const Root = (props: ParentProps) => {
   const location = useLocation();
   const stage = import.meta.env.VITE_STAGE_NAME ?? "dev";
-  const origin = `https://${stage === "prod" ? "internal" : `${stage}-internal`}.46ki75.com`;
+  const origin = `https://${stage === "prod" ? "internal" : `${stage}-internal`}.ikuma.cloud`;
 
   return (
     <MetaProvider>

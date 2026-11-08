@@ -17,6 +17,7 @@ const exercises = [
 ].map((exercise) => ({
   ...exercise,
   description: `Description ${exercise.id}`,
+  tts: `https://example.com/${exercise.id}.mp3`,
   surface: {
     root: "root",
     components: {
@@ -128,6 +129,150 @@ it("links to the current sentence's Notion page and updates the link when advanc
   expect(auth.refresh).toHaveBeenCalledOnce();
   expect(api.POST).not.toHaveBeenCalled();
 });
+
+it("defaults TTS autoplay to off while keeping manual playback available", async () => {
+  const play = vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+  const user = userEvent.setup();
+  const result = renderContainer();
+  const toggle = await result.findByRole("switch", { name: "Autoplay TTS" });
+  const audio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+
+  expect(toggle).not.toBeChecked();
+  expect(audio.src).toBe(exercises[0].tts);
+  expect(audio.autoplay).toBe(false);
+  expect(audio.controls).toBe(true);
+  expect(audio.muted).toBe(false);
+  expect(play).not.toHaveBeenCalled();
+
+  await user.click(result.getByRole("button", { name: "Next exercise" }));
+  expect(toggle).not.toBeChecked();
+  expect(
+    result.getByLabelText<HTMLAudioElement>("Sentence audio").autoplay,
+  ).toBe(false);
+  expect(play).not.toHaveBeenCalled();
+});
+
+it("starts TTS when enabled, preserves the choice across exercises, and pauses when disabled", async () => {
+  const user = userEvent.setup();
+  const play = vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+  const pause = vi.spyOn(HTMLMediaElement.prototype, "pause");
+  const result = renderContainer();
+  const toggle = await result.findByRole("switch", { name: "Autoplay TTS" });
+  const firstAudio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+
+  await user.click(toggle);
+  expect(toggle).toBeChecked();
+  expect(firstAudio.autoplay).toBe(true);
+  expect(firstAudio.muted).toBe(false);
+  expect(play).toHaveBeenCalledOnce();
+  expect(play.mock.contexts[0]).toBe(firstAudio);
+
+  await user.click(result.getByRole("button", { name: "Complete exercise" }));
+  const secondAudio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+  expect(secondAudio).not.toBe(firstAudio);
+  expect(secondAudio.src).toBe(exercises[1].tts);
+  expect(secondAudio.autoplay).toBe(true);
+  expect(toggle).toBeChecked();
+  expect(pause.mock.contexts).toContain(firstAudio);
+
+  await user.click(toggle);
+  expect(toggle).not.toBeChecked();
+  expect(secondAudio.autoplay).toBe(false);
+  expect(pause.mock.contexts).toContain(secondAudio);
+
+  await user.click(result.getByRole("button", { name: "Next exercise" }));
+  const nextAudio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+  expect(nextAudio.autoplay).toBe(false);
+  expect(play).toHaveBeenCalledOnce();
+
+  result.unmount();
+  expect(pause.mock.contexts).toContain(nextAudio);
+});
+
+it("supports keyboard toggling and resets autoplay to off when the page is reopened", async () => {
+  const play = vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+  const user = userEvent.setup();
+  const result = renderContainer();
+  const toggle = await result.findByRole("switch", { name: "Autoplay TTS" });
+  toggle.focus();
+
+  await user.keyboard(" ");
+  expect(toggle).toBeChecked();
+  expect(play).toHaveBeenCalledOnce();
+
+  result.unmount();
+  const reopened = renderContainer();
+  expect(
+    await reopened.findByRole("switch", { name: "Autoplay TTS" }),
+  ).not.toBeChecked();
+  expect(
+    reopened.getByLabelText<HTMLAudioElement>("Sentence audio").autoplay,
+  ).toBe(false);
+});
+
+it("keeps the autoplay choice when an exercise has no TTS", async () => {
+  const play = vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+  const pause = vi.spyOn(HTMLMediaElement.prototype, "pause");
+  api.GET.mockResolvedValue({
+    data: [{ ...exercises[0], tts: null }, exercises[1]],
+  });
+  const user = userEvent.setup();
+  const result = renderContainer();
+  const toggle = await result.findByRole("switch", { name: "Autoplay TTS" });
+
+  await user.click(toggle);
+  expect(toggle).toBeChecked();
+  expect(play).not.toHaveBeenCalled();
+  expect(result.queryByLabelText("Sentence audio")).not.toBeInTheDocument();
+
+  await user.click(result.getByRole("button", { name: "Next exercise" }));
+  const audio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+  expect(audio.autoplay).toBe(true);
+
+  await user.click(result.getByRole("button", { name: "Next exercise" }));
+  expect(result.queryByLabelText("Sentence audio")).not.toBeInTheDocument();
+  expect(pause.mock.contexts).toContain(audio);
+  await user.click(toggle);
+  expect(toggle).not.toBeChecked();
+});
+
+it("handles rejected autoplay requests without interrupting typing or hiding manual controls", async () => {
+  const play = vi
+    .spyOn(HTMLMediaElement.prototype, "play")
+    .mockRejectedValue(
+      new DOMException("Playback is blocked", "NotAllowedError"),
+    );
+  const user = userEvent.setup();
+  const result = renderContainer();
+  const toggle = await result.findByRole("switch", { name: "Autoplay TTS" });
+
+  await user.click(toggle);
+  expect(play).toHaveBeenCalledOnce();
+  expect(
+    result.getByLabelText<HTMLAudioElement>("Sentence audio").controls,
+  ).toBe(true);
+  await user.click(result.getByRole("button", { name: "Complete exercise" }));
+  expect(result.getByLabelText("Current exercise")).toHaveTextContent("dog");
+});
+
+it.each([undefined, null, ""])(
+  "omits the player when the current sentence has tts=%s",
+  async (tts) => {
+    api.GET.mockResolvedValue({
+      data: [{ ...exercises[0], tts }, exercises[1]],
+    });
+    const user = userEvent.setup();
+    const result = renderContainer();
+    await result.findByLabelText("Current exercise");
+    expect(result.queryByLabelText("Sentence audio")).not.toBeInTheDocument();
+
+    await user.click(result.getByRole("button", { name: "Next exercise" }));
+    const audio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+    expect(audio.src).toBe(exercises[1].tts);
+    expect(audio.autoplay).toBe(false);
+    expect(audio.muted).toBe(false);
+  },
+);
 
 it("passes straight apostrophes to typing practice without changing API data", async () => {
   const text = "It’s the dog’s toy.";

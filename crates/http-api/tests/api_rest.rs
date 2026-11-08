@@ -236,6 +236,12 @@ async fn openapi_typing_is_read_only() {
             "id": { "type": "string" },
             "description": { "type": "string" },
             "text": { "type": "string" },
+            "tts": {
+                "anyOf": [
+                    { "type": "string", "format": "uri" },
+                    { "type": "null" }
+                ]
+            },
             "surface": {
                 "type": "object",
                 "properties": {
@@ -261,7 +267,7 @@ async fn openapi_typing_is_read_only() {
     );
     assert_eq!(
         response["items"]["required"],
-        serde_json::json!(["id", "description", "text", "surface", "url"])
+        serde_json::json!(["id", "description", "text", "tts", "surface", "url"])
     );
     assert_eq!(
         json["components"]["schemas"]["TypingResponse"],

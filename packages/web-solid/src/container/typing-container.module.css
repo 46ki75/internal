@@ -16,6 +16,50 @@
   gap: 1.5rem;
 }
 
+.autoplay-control {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--elmethis-color-neutral);
+  font-family: var(--elmethis-font-family-sans);
+  cursor: pointer;
+}
+
+.autoplay-switch {
+  appearance: none;
+  width: 2.5rem;
+  height: 1.5rem;
+  margin: 0;
+  border: 0;
+  border-radius: 0.75rem;
+  background-color: var(--elmethis-color-surface-sunken);
+  box-shadow: var(--elmethis-box-shadow-medium);
+  cursor: inherit;
+}
+
+.autoplay-switch::before {
+  content: "";
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  margin: 0.25rem;
+  border-radius: 50%;
+  background-color: var(--elmethis-color-surface-raised);
+}
+
+.autoplay-switch:checked {
+  background-color: var(--elmethis-color-primary);
+}
+
+.autoplay-switch:checked::before {
+  transform: translateX(1rem);
+}
+
+.autoplay-switch:focus-visible {
+  outline: 2px solid var(--elmethis-color-primary);
+  outline-offset: 0.25rem;
+}
+
 .page-link {
   color: var(--elmethis-color-primary);
   font-family: var(--elmethis-font-family-sans);

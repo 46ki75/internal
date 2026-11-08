@@ -33,14 +33,22 @@ unsupported blocks, image metadata, and bookmark metadata, matching the previous
 Rust implementation. Anki splits surfaces at H1 markers `front`, `back`, and
 `explanation`. Every returned surface has root ID `root`.
 
-`GET /api/v1/typing` returns `{ id, description, text, surface, url }[]` from every
+`GET /api/v1/typing` returns `{ id, description, text, tts, surface, url }[]` from every
 page in the typing data source. `Title` must be a title property and supplies the
 exercise description. `Text` must be a rich-text property: its `plain_text`
 fragments are joined without trimming for typing, and `n2a2ui.convertRichTexts`
-converts the same fragments into an A2UI `surface` for formatted display. `url`
-is the sentence page's URL supplied by Notion. The frontend displays the rich
-reference alongside plaintext character feedback, normalizes curly apostrophes
-only in the typing text, and shuffles the full list for each practice cycle.
+converts the same fragments into an A2UI `surface` for formatted display. `tts`
+is the `TTS` URL property or the first hosted/external file URL from a `TTS` files
+property, or `null` when absent or empty. Notion-hosted file URLs are temporary;
+fetch the list again to refresh them. `url` is the sentence page's URL supplied by
+Notion. The frontend displays the rich reference alongside plaintext character
+feedback, normalizes curly apostrophes only in the typing text, and shuffles the
+full list for each practice cycle. The frontend's **Autoplay TTS** switch is off
+by default. Turning it on plays the current sentence with sound and enables
+autoplay for subsequent sentences; turning it off stops playback. The choice
+lasts until the typing page is closed. The native player remains available for
+manual playback. Browsers may block autoplay; use the player's play button in
+that case. Advancing stops the previous sentence's audio.
 Manage entries through the current sentence's Notion link; there are no editing
 or completion count endpoints.
 

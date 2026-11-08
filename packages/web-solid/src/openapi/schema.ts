@@ -465,6 +465,7 @@ export interface components {
                 root: string;
             };
             text: string;
+            tts: string | null;
             /** Format: uri */
             url: string;
         };
@@ -1321,6 +1322,7 @@ export interface operations {
                             root: string;
                         };
                         text: string;
+                        tts: string | null;
                         /** Format: uri */
                         url: string;
                     }[];

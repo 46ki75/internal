@@ -42,6 +42,17 @@
                       "text": {
                         "type": "string"
                       },
+                      "tts": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "format": "uri"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
                       "surface": {
                         "type": "object",
                         "properties": {
@@ -83,6 +94,7 @@
                       "id",
                       "description",
                       "text",
+                      "tts",
                       "surface",
                       "url"
                     ],
@@ -2213,6 +2225,17 @@
           "text": {
             "type": "string"
           },
+          "tts": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "surface": {
             "type": "object",
             "properties": {
@@ -2254,6 +2277,7 @@
           "id",
           "description",
           "text",
+          "tts",
           "surface",
           "url"
         ],

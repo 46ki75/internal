@@ -90,9 +90,13 @@ describe("HTTP contracts", () => {
       expect(response.status).toBe(
         "status" in operation ? operation.status : 200,
       );
-      expect(operation.response.safeParse(await response.json()).success).toBe(
-        true,
-      );
+      const body: unknown = await response.json();
+      expect(operation.response.safeParse(body).success).toBe(true);
+      if (name === "listTyping") {
+        expect(body).toEqual([
+          expect.objectContaining({ tts: "https://example.com/practice.mp3" }),
+        ]);
+      }
     },
   );
 

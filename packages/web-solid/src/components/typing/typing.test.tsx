@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
 
-import { render } from "@solidjs/testing-library";
+import { cleanup, render } from "@solidjs/testing-library";
 import userEvent from "@testing-library/user-event";
 import { createSignal, Show, type JSX, type ParentProps } from "solid-js";
-import { expect, it, vi } from "vitest";
+import { afterEach, expect, it, vi } from "vitest";
 
 vi.mock("@elmethis/solid", () => ({
   ElmA2ui: (props: { messages: object[] }) => (
@@ -57,6 +57,146 @@ vi.mock("@elmethis/solid", () => ({
 }));
 
 import { Typing } from "./typing";
+
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
+
+it("renders sentence audio and its default-off autoplay control inside typing practice", () => {
+  const play = vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+  const result = render(() => (
+    <Typing text="cat" audioSrc="https://example.com/cat.mp3" />
+  ));
+  const practice = result.getByRole("region", { name: "Typing practice" });
+  const toggle = result.getByRole("switch", { name: "Autoplay TTS" });
+  const audio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+
+  expect(practice).toContainElement(toggle);
+  expect(practice).toContainElement(audio);
+  expect(toggle).not.toBeChecked();
+  expect(audio.src).toBe("https://example.com/cat.mp3");
+  expect(audio.autoplay).toBe(false);
+  expect(audio.controls).toBe(true);
+  expect(audio.muted).toBe(false);
+  expect(audio.preload).toBe("none");
+  expect(play).not.toHaveBeenCalled();
+});
+
+it("starts audio on opt-in and pauses it when autoplay is switched off with the keyboard", async () => {
+  const play = vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+  const pause = vi.spyOn(HTMLMediaElement.prototype, "pause");
+  const user = userEvent.setup();
+  const result = render(() => (
+    <Typing text="cat" audioSrc="https://example.com/cat.mp3" />
+  ));
+  const toggle = result.getByRole("switch", { name: "Autoplay TTS" });
+  const audio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+
+  await user.click(toggle);
+  expect(toggle).toBeChecked();
+  expect(audio.autoplay).toBe(true);
+  expect(play).toHaveBeenCalledOnce();
+  expect(play.mock.contexts[0]).toBe(audio);
+
+  toggle.focus();
+  await user.keyboard(" ");
+  expect(toggle).not.toBeChecked();
+  expect(audio.autoplay).toBe(false);
+  expect(pause.mock.contexts).toContain(audio);
+
+  result.unmount();
+  expect(pause.mock.contexts).toContain(audio);
+});
+
+it("uses the parent-owned autoplay preference across audio source changes", async () => {
+  const play = vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+  const pause = vi.spyOn(HTMLMediaElement.prototype, "pause");
+  const [audioSrc, setAudioSrc] = createSignal<string | null>(
+    "https://example.com/cat.mp3",
+  );
+  const [autoplayTts, setAutoplayTts] = createSignal(false);
+  const onAutoplayTtsChange = vi.fn((enabled: boolean) =>
+    setAutoplayTts(enabled),
+  );
+  const user = userEvent.setup();
+  const result = render(() => (
+    <Typing
+      text="cat"
+      audioSrc={audioSrc()}
+      autoplayTts={autoplayTts()}
+      onAutoplayTtsChange={onAutoplayTtsChange}
+    />
+  ));
+  const toggle = result.getByRole("switch", { name: "Autoplay TTS" });
+  const firstAudio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+
+  await user.click(toggle);
+  expect(onAutoplayTtsChange).toHaveBeenCalledExactlyOnceWith(true);
+  expect(play).toHaveBeenCalledOnce();
+
+  setAudioSrc("https://example.com/dog.mp3");
+  const secondAudio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+  expect(secondAudio).not.toBe(firstAudio);
+  expect(secondAudio.src).toBe("https://example.com/dog.mp3");
+  expect(secondAudio.autoplay).toBe(true);
+  expect(pause.mock.contexts).toContain(firstAudio);
+
+  setAudioSrc(null);
+  expect(result.queryByLabelText("Sentence audio")).not.toBeInTheDocument();
+  expect(toggle).toBeChecked();
+  expect(pause.mock.contexts).toContain(secondAudio);
+
+  setAudioSrc("https://example.com/cat.mp3");
+  const nextAudio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+  expect(nextAudio.autoplay).toBe(true);
+
+  setAutoplayTts(false);
+  expect(toggle).not.toBeChecked();
+  expect(nextAudio.autoplay).toBe(false);
+  expect(pause.mock.contexts).toContain(nextAudio);
+});
+
+it("keeps manual controls and typing usable when audio playback is rejected", async () => {
+  const play = vi
+    .spyOn(HTMLMediaElement.prototype, "play")
+    .mockRejectedValue(
+      new DOMException("Playback is blocked", "NotAllowedError"),
+    );
+  const user = userEvent.setup();
+  const result = render(() => (
+    <Typing text="cat" audioSrc="https://example.com/cat.mp3" />
+  ));
+
+  await user.click(result.getByRole("switch", { name: "Autoplay TTS" }));
+  expect(play).toHaveBeenCalledOnce();
+  expect(
+    result.getByLabelText<HTMLAudioElement>("Sentence audio").controls,
+  ).toBe(true);
+
+  await user.type(result.getByRole("textbox", { name: "Your typing" }), "cat");
+  expect(result.getByRole("status")).toHaveTextContent(
+    "3 of 3 characters match",
+  );
+});
+
+it.each([undefined, null, ""])(
+  "keeps the autoplay choice available without an audio source (%s)",
+  async (audioSrc) => {
+    const play = vi
+      .spyOn(HTMLMediaElement.prototype, "play")
+      .mockResolvedValue();
+    const user = userEvent.setup();
+    const result = render(() => <Typing text="cat" audioSrc={audioSrc} />);
+    const toggle = result.getByRole("switch", { name: "Autoplay TTS" });
+
+    expect(toggle).not.toBeChecked();
+    expect(result.queryByLabelText("Sentence audio")).not.toBeInTheDocument();
+    await user.click(toggle);
+    expect(toggle).toBeChecked();
+    expect(play).not.toHaveBeenCalled();
+  },
+);
 
 it("renders typing feedback and resets the exercise", async () => {
   const user = userEvent.setup();

@@ -1,7 +1,9 @@
 import {
   createEffect,
+  createSignal,
   createUniqueId,
   on,
+  onCleanup,
   onMount,
   Show,
   type JSX,
@@ -25,8 +27,12 @@ import { TypingStats } from "./typing-stats";
 import styles from "./typing.module.css";
 
 export interface TypingProps {
+  audioSrc?: string | null;
+  /** Supply with onAutoplayTtsChange to retain the preference across keyed exercises. */
+  autoplayTts?: boolean;
   class?: string;
   description?: string;
+  onAutoplayTtsChange?: (enabled: boolean) => void;
   onComplete?: (result: TypingResult) => void;
   onNext?: () => void;
   style?: JSX.CSSProperties;
@@ -37,7 +43,27 @@ export interface TypingProps {
 export const Typing = (props: TypingProps) => {
   const inputId = createUniqueId();
   const instructionsId = createUniqueId();
+  const [localAutoplayTts, setLocalAutoplayTts] = createSignal(false);
+  const autoplayTts = () => props.autoplayTts ?? localAutoplayTts();
   let inputRef!: HTMLTextAreaElement;
+  let audio: HTMLAudioElement | undefined;
+
+  // Native autoplay handles new clips; preference changes control the current clip.
+  createEffect(
+    on(
+      autoplayTts,
+      (enabled) => {
+        if (enabled) {
+          void audio?.play().catch(() => {
+            // Browser policy or unavailable media can reject play; native controls remain usable.
+          });
+        } else {
+          audio?.pause();
+        }
+      },
+      { defer: true },
+    ),
+  );
 
   const session = createTypingSession({
     text: () => props.text,
@@ -125,6 +151,44 @@ export const Typing = (props: TypingProps) => {
           {session.result().totalCharacters} characters match.
         </p>
       </Show>
+
+      <div class={styles.playback}>
+        <label class={styles["autoplay-control"]}>
+          <input
+            class={styles["autoplay-switch"]}
+            type="checkbox"
+            role="switch"
+            checked={autoplayTts()}
+            onChange={(event) => {
+              const enabled = event.currentTarget.checked;
+              setLocalAutoplayTts(enabled);
+              props.onAutoplayTtsChange?.(enabled);
+            }}
+          />
+          Autoplay TTS
+        </label>
+        <Show when={props.audioSrc} keyed>
+          {(src) => (
+            <audio
+              ref={(element) => {
+                audio = element;
+                onCleanup(() => {
+                  element.pause();
+                  if (audio === element) {
+                    audio = undefined;
+                  }
+                });
+              }}
+              class={styles.audio}
+              aria-label="Sentence audio"
+              src={src}
+              autoplay={autoplayTts()}
+              preload="none"
+              controls
+            />
+          )}
+        </Show>
+      </div>
 
       <div class={styles.controls}>
         <ElmButton type="button" onClick={reset}>

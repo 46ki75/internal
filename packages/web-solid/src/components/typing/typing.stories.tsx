@@ -12,6 +12,7 @@ const autoAdvanceExercises = [
 
 const AutoAdvanceSequence = (props: TypingProps) => {
   const [currentIndex, setCurrentIndex] = createSignal(0);
+  const [autoplayTts, setAutoplayTts] = createSignal(false);
   const currentExercise = () => autoAdvanceExercises[currentIndex()];
   const next = () =>
     setCurrentIndex((index) => (index + 1) % autoAdvanceExercises.length);
@@ -23,6 +24,11 @@ const AutoAdvanceSequence = (props: TypingProps) => {
           {...props}
           text={exercise.text}
           description={exercise.description}
+          autoplayTts={autoplayTts()}
+          onAutoplayTtsChange={(enabled) => {
+            setAutoplayTts(enabled);
+            props.onAutoplayTtsChange?.(enabled);
+          }}
           onComplete={(result) => {
             props.onComplete?.(result);
             next();
@@ -44,6 +50,7 @@ const meta = {
   args: {
     text: sampleText,
     description: "Practice line 07: Systems thinking",
+    onAutoplayTtsChange: fn(),
     onComplete: fn(),
     onNext: fn(),
     style: {
@@ -51,6 +58,9 @@ const meta = {
     },
   },
   argTypes: {
+    audioSrc: { control: "text" },
+    autoplayTts: { control: false },
+    onAutoplayTtsChange: { control: false },
     text: { control: "text" },
     description: { control: "text" },
     onComplete: { control: false },
@@ -61,7 +71,21 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Primary: Story = {};
+export const Primary: Story = {
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const toggle = canvas.getByRole("switch", { name: "Autoplay TTS" });
+
+    await expect(toggle).not.toBeChecked();
+    await userEvent.click(toggle);
+    await expect(toggle).toBeChecked();
+    await expect(args.onAutoplayTtsChange).toHaveBeenCalledWith(true);
+
+    await userEvent.keyboard(" ");
+    await expect(toggle).not.toBeChecked();
+    await expect(args.onAutoplayTtsChange).toHaveBeenLastCalledWith(false);
+  },
+};
 
 export const RichText: Story = {
   args: {
@@ -128,13 +152,14 @@ export const AutoAdvance: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
+    await userEvent.click(canvas.getByRole("switch", { name: "Autoplay TTS" }));
     await userEvent.type(
       canvas.getByRole("textbox", { name: "Your typing" }),
       "cat",
     );
 
     await expect(
-      canvas.getByRole("heading", { name: "Second exercise" }),
+      canvas.getByRole("region", { name: "Second exercise" }),
     ).toBeInTheDocument();
     await expect(
       canvas.getByRole("textbox", { name: "Your typing" }),
@@ -142,6 +167,9 @@ export const AutoAdvance: Story = {
     await expect(
       canvas.getByRole("textbox", { name: "Your typing" }),
     ).toHaveFocus();
+    await expect(
+      canvas.getByRole("switch", { name: "Autoplay TTS" }),
+    ).toBeChecked();
     await expect(args.onComplete).toHaveBeenCalledOnce();
   },
 };

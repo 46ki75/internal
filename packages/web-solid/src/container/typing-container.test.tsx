@@ -1,9 +1,7 @@
-import { render, waitFor } from "@solidjs/testing-library";
+import { cleanup, render, waitFor } from "@solidjs/testing-library";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
-import { Show } from "solid-js";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import type { TypingProps } from "~/components/typing/typing";
 
 const api = vi.hoisted(() => ({ GET: vi.fn(), POST: vi.fn() }));
 const auth = vi.hoisted(() => ({ accessToken: vi.fn(), refresh: vi.fn() }));
@@ -33,36 +31,8 @@ const exercises = [
 }));
 vi.mock("~/openapi/client", () => ({ openApiClient: api }));
 vi.mock("~/context/auth-context", () => ({ useAuth: () => auth }));
-vi.mock("@elmethis/solid", () => ({
-  ElmDotLoadingIcon: () => <span role="progressbar">Loading</span>,
-}));
-vi.mock("~/components/typing/typing", () => ({
-  Typing: (props: TypingProps) => (
-    <section aria-label="Typing practice">
-      <output aria-label="Current exercise">{props.text}</output>
-      <output aria-label="Description">{props.description}</output>
-      <output aria-label="Reference surface">
-        {JSON.stringify(props.surface)}
-      </output>
-      <button
-        onClick={() =>
-          props.onComplete?.({
-            accuracy: 100,
-            correctCharacters: props.text.length,
-            durationMs: 1000,
-            totalCharacters: props.text.length,
-            wordsPerMinute: 36,
-          })
-        }
-      >
-        Complete exercise
-      </button>
-      <Show when={props.onNext}>
-        <button onClick={() => props.onNext?.()}>Next exercise</button>
-      </Show>
-    </section>
-  ),
-}));
+// Exercise the real Typing/audio integration; external Node imports cannot load token CSS.
+vi.mock("@elmethis/core/tokens.css", () => ({}));
 
 import { TypingContainer } from "./typing-container";
 
@@ -73,6 +43,7 @@ beforeEach(() => {
   api.GET.mockResolvedValue({ data: exercises });
 });
 afterEach(() => {
+  cleanup();
   vi.restoreAllMocks();
   vi.resetAllMocks();
 });
@@ -91,15 +62,15 @@ function renderContainer() {
 it("links to the current sentence's Notion page and updates the link when advancing", async () => {
   const user = userEvent.setup();
   const result = renderContainer();
-  await waitFor(() =>
-    expect(result.getByLabelText("Current exercise")).toHaveTextContent("cat"),
-  );
-  expect(result.getByLabelText("Description")).toHaveTextContent(
-    exercises[0].description,
-  );
-  expect(result.getByLabelText("Reference surface").textContent).toBe(
-    JSON.stringify(exercises[0].surface),
-  );
+  await result.findByText("Text to type: cat");
+  expect(
+    result.getByRole("region", { name: exercises[0].description }),
+  ).toBeInTheDocument();
+  expect(
+    result
+      .getByRole("region", { name: "Reference text" })
+      .querySelector("strong"),
+  ).toHaveTextContent("cat");
   expect(result.queryByRole("table")).not.toBeInTheDocument();
   expect(result.queryByText("Saved exercises")).not.toBeInTheDocument();
   const link = () =>
@@ -108,17 +79,19 @@ it("links to the current sentence's Notion page and updates the link when advanc
   expect(link()).toHaveAttribute("target", "_blank");
   expect(link()).toHaveAttribute("rel", "noopener noreferrer");
 
-  await user.click(result.getByRole("button", { name: "Complete exercise" }));
-  expect(result.getByLabelText("Current exercise")).toHaveTextContent("dog");
-  expect(result.getByLabelText("Description")).toHaveTextContent(
-    exercises[1].description,
-  );
-  expect(result.getByLabelText("Reference surface").textContent).toBe(
-    JSON.stringify(exercises[1].surface),
-  );
+  await user.type(result.getByRole("textbox", { name: "Your typing" }), "cat");
+  expect(result.getByText("Text to type: dog")).toBeInTheDocument();
+  expect(
+    result.getByRole("region", { name: exercises[1].description }),
+  ).toBeInTheDocument();
+  expect(
+    result
+      .getByRole("region", { name: "Reference text" })
+      .querySelector("strong"),
+  ).toHaveTextContent("dog");
   expect(link()).toHaveAttribute("href", exercises[1].url);
   await user.click(result.getByRole("button", { name: "Next exercise" }));
-  expect(result.getByLabelText("Current exercise")).toHaveTextContent("cat");
+  expect(result.getByText("Text to type: cat")).toBeInTheDocument();
   expect(link()).toHaveAttribute("href", exercises[0].url);
   expect(api.GET).toHaveBeenCalledExactlyOnceWith(
     "/api/v1/typing",
@@ -136,7 +109,12 @@ it("defaults TTS autoplay to off while keeping manual playback available", async
   const result = renderContainer();
   const toggle = await result.findByRole("switch", { name: "Autoplay TTS" });
   const audio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+  const practice = result.getByRole("region", {
+    name: exercises[0].description,
+  });
 
+  expect(practice).toContainElement(toggle);
+  expect(practice).toContainElement(audio);
   expect(toggle).not.toBeChecked();
   expect(audio.src).toBe(exercises[0].tts);
   expect(audio.autoplay).toBe(false);
@@ -145,7 +123,9 @@ it("defaults TTS autoplay to off while keeping manual playback available", async
   expect(play).not.toHaveBeenCalled();
 
   await user.click(result.getByRole("button", { name: "Next exercise" }));
-  expect(toggle).not.toBeChecked();
+  expect(
+    result.getByRole("switch", { name: "Autoplay TTS" }),
+  ).not.toBeChecked();
   expect(
     result.getByLabelText<HTMLAudioElement>("Sentence audio").autoplay,
   ).toBe(false);
@@ -157,26 +137,27 @@ it("starts TTS when enabled, preserves the choice across exercises, and pauses w
   const play = vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
   const pause = vi.spyOn(HTMLMediaElement.prototype, "pause");
   const result = renderContainer();
-  const toggle = await result.findByRole("switch", { name: "Autoplay TTS" });
+  await result.findByRole("switch", { name: "Autoplay TTS" });
+  const toggle = () => result.getByRole("switch", { name: "Autoplay TTS" });
   const firstAudio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
 
-  await user.click(toggle);
-  expect(toggle).toBeChecked();
+  await user.click(toggle());
+  expect(toggle()).toBeChecked();
   expect(firstAudio.autoplay).toBe(true);
   expect(firstAudio.muted).toBe(false);
   expect(play).toHaveBeenCalledOnce();
   expect(play.mock.contexts[0]).toBe(firstAudio);
 
-  await user.click(result.getByRole("button", { name: "Complete exercise" }));
+  await user.type(result.getByRole("textbox", { name: "Your typing" }), "cat");
   const secondAudio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
   expect(secondAudio).not.toBe(firstAudio);
   expect(secondAudio.src).toBe(exercises[1].tts);
   expect(secondAudio.autoplay).toBe(true);
-  expect(toggle).toBeChecked();
+  expect(toggle()).toBeChecked();
   expect(pause.mock.contexts).toContain(firstAudio);
 
-  await user.click(toggle);
-  expect(toggle).not.toBeChecked();
+  await user.click(toggle());
+  expect(toggle()).not.toBeChecked();
   expect(secondAudio.autoplay).toBe(false);
   expect(pause.mock.contexts).toContain(secondAudio);
 
@@ -232,8 +213,10 @@ it("keeps the autoplay choice when an exercise has no TTS", async () => {
   await user.click(result.getByRole("button", { name: "Next exercise" }));
   expect(result.queryByLabelText("Sentence audio")).not.toBeInTheDocument();
   expect(pause.mock.contexts).toContain(audio);
-  await user.click(toggle);
-  expect(toggle).not.toBeChecked();
+  const currentToggle = result.getByRole("switch", { name: "Autoplay TTS" });
+  expect(currentToggle).toBeChecked();
+  await user.click(currentToggle);
+  expect(currentToggle).not.toBeChecked();
 });
 
 it("handles rejected autoplay requests without interrupting typing or hiding manual controls", async () => {
@@ -251,8 +234,8 @@ it("handles rejected autoplay requests without interrupting typing or hiding man
   expect(
     result.getByLabelText<HTMLAudioElement>("Sentence audio").controls,
   ).toBe(true);
-  await user.click(result.getByRole("button", { name: "Complete exercise" }));
-  expect(result.getByLabelText("Current exercise")).toHaveTextContent("dog");
+  await user.type(result.getByRole("textbox", { name: "Your typing" }), "cat");
+  expect(result.getByText("Text to type: dog")).toBeInTheDocument();
 });
 
 it.each([undefined, null, ""])(
@@ -263,7 +246,7 @@ it.each([undefined, null, ""])(
     });
     const user = userEvent.setup();
     const result = renderContainer();
-    await result.findByLabelText("Current exercise");
+    await result.findByText("Text to type: cat");
     expect(result.queryByLabelText("Sentence audio")).not.toBeInTheDocument();
 
     await user.click(result.getByRole("button", { name: "Next exercise" }));
@@ -295,14 +278,14 @@ it("passes straight apostrophes to typing practice without changing API data", a
   const result = renderContainer();
 
   await waitFor(() =>
-    expect(result.getByLabelText("Current exercise")).toHaveTextContent(
-      "It's the dog's toy.",
-    ),
+    expect(
+      result.getByText("Text to type: It's the dog's toy."),
+    ).toBeInTheDocument(),
   );
   expect(sentence.text).toBe(text);
-  expect(result.getByLabelText("Reference surface").textContent).toBe(
-    JSON.stringify(sentence.surface),
-  );
+  expect(
+    result.getByRole("region", { name: "Reference text" }),
+  ).toHaveTextContent(text);
   expect(sentence.surface.components.root.text).toBe(text);
   expect(
     result.getByRole("link", { name: "Open sentence in Notion" }),
@@ -344,6 +327,8 @@ it("does not show a page link when there is no current sentence", async () => {
     await result.findByText("No typing exercises are available."),
   ).toBeInTheDocument();
   expect(result.queryByRole("button")).not.toBeInTheDocument();
+  expect(result.queryByRole("switch")).not.toBeInTheDocument();
+  expect(result.queryByLabelText("Sentence audio")).not.toBeInTheDocument();
   expect(result.queryByRole("link")).not.toBeInTheDocument();
 });
 

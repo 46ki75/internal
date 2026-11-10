@@ -106,17 +106,17 @@ importers:
         specifier: ^2.0.6
         version: 2.0.6(@solidjs/router@1.0.0(solid-js@1.9.17))(@testing-library/jest-dom@7.0.1(@testing-library/dom@10.4.2)(vitest@5.0.5(@types/node@26.6.5)(happy-dom@21.0.4)(vite@8.3.5(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(less@4.9.1)(sass@1.106.1)(stylus@0.62.0)(terser@5.51.2)(yaml@2.9.0))))(crossws@0.4.12(srvx@0.11.22))(vite@8.3.5(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(less@4.9.1)(sass@1.106.1)(stylus@0.62.0)(terser@5.51.2)(yaml@2.9.0))
       '@tanstack/query-sync-storage-persister':
-        specifier: 5.105.0
-        version: 5.105.0
+        specifier: 5.107.1
+        version: 5.107.1
       '@tanstack/solid-form':
         specifier: ^1.33.5
         version: 1.33.5(solid-js@1.9.17)
       '@tanstack/solid-query':
-        specifier: 5.105.0
-        version: 5.105.0(solid-js@1.9.17)
+        specifier: 5.107.1
+        version: 5.107.1(solid-js@1.9.17)
       '@tanstack/solid-query-persist-client':
-        specifier: 5.105.0
-        version: 5.105.0(@tanstack/solid-query@5.105.0(solid-js@1.9.17))(solid-js@1.9.17)
+        specifier: 5.107.1
+        version: 5.107.1(@tanstack/solid-query@5.107.1(solid-js@1.9.17))(solid-js@1.9.17)
       aws-amplify:
         specifier: ^6.22.2
         version: 6.22.2
@@ -1966,28 +1966,28 @@ packages:
     resolution: {integrity: sha512-y/xtNPNt/YeyoVxE/JCx+T7yjEzpezmbb+toK8DDD1P4m7Kzs5YR956+7OKexG3f8aXgC3rLZl7b1V+yNUSy5w==}
     engines: {node: '>=18'}
 
-  '@tanstack/query-core@5.105.0':
-    resolution: {integrity: sha512-7p56vRmT/z4UJ6sctGIdl5WRUQyUv53IUpUwEKi2g97zMbO7zh8ZsCLffGAvCPBR4xD72e3VXsDyLwXHhoNTMQ==}
+  '@tanstack/query-core@5.107.1':
+    resolution: {integrity: sha512-PSyAik11oQBEVOiVy5hjZWHmoUqOXqK1WYy4v55mcxozEfKaQgpUMsgnXhWjuESzSht8JfzqMS1m6M/9CpNgvg==}
 
-  '@tanstack/query-persist-client-core@5.105.0':
-    resolution: {integrity: sha512-bOy2lMzzEyacL6s9hIa0tKmaIr/TM24HZaK9a20ctZjPYlCs6NhGdgbxi20RcdJWZwWunkLqPDnxfClD7QIyKg==}
+  '@tanstack/query-persist-client-core@5.107.1':
+    resolution: {integrity: sha512-/qDxEcKh44xViKKFlf8MUoeITritIn58XcT3YkCOQ0Ovj4Wa2EgZtqvHSlw+tnQQGhtq9+gLVZSeUtSfkIL9Kg==}
 
-  '@tanstack/query-sync-storage-persister@5.105.0':
-    resolution: {integrity: sha512-8Rq31cmUnLlxj/MTpw/nGw3gkCQwRZhl1fh0VQa4NNTzYX4emg56TyTZSCet62RkcFWJkfkfGlgHMbazp/U8SQ==}
+  '@tanstack/query-sync-storage-persister@5.107.1':
+    resolution: {integrity: sha512-+VwbqLIQVf0j5To3uCWmEEwUrqOqb9l+S/bafytDjJbuwp9p/Lsp4LHr/4KeKwpUhbbBlqXvccOm2XkovAVTMg==}
 
   '@tanstack/solid-form@1.33.5':
     resolution: {integrity: sha512-azYHYzNwop64bedJRKgjCpi5w9cHu7cNz+dAdSXzaqy9M6JO+GlKNQn54VFhCLYJo45sgNjcdrnz4eyTmgzJ/w==}
     peerDependencies:
       solid-js: '>=1.9.9'
 
-  '@tanstack/solid-query-persist-client@5.105.0':
-    resolution: {integrity: sha512-h6qRfzqaaF8w4F8OwZy+wiVH/sPvzrX0JFEmImxwDuVP388hHqKwH6+07O3Hb9R8akVKcDjCaBUTWFZsoQrMvw==}
+  '@tanstack/solid-query-persist-client@5.107.1':
+    resolution: {integrity: sha512-gU0C+8CXBtYsqm6zs0ZOp/BjHk1nccH788PMQVoNIPLlPtNbi3yYD2j7ooufBdnano82GM1APClSsCqMB2gaSQ==}
     peerDependencies:
-      '@tanstack/solid-query': ^5.105.0
+      '@tanstack/solid-query': ^5.107.1
       solid-js: ^1.6.0
 
-  '@tanstack/solid-query@5.105.0':
-    resolution: {integrity: sha512-ewPzDb6zPF53006Iebv+C2wEtZ+KrXgpcg8CdLkzMxrYN+0ndgqMaO5Cba+CUuf98s/ylLeZQ/OxsiR4UT/MAg==}
+  '@tanstack/solid-query@5.107.1':
+    resolution: {integrity: sha512-ZqwDSKk/DtKblv+09XUgrbHENvTzZvyEQK5E19j8QTrjcW2jw+bLitLdtfayC83rWNMQvkzsCqGnOj+SWnBD2w==}
     peerDependencies:
       solid-js: ^1.6.0
 
@@ -7570,16 +7570,16 @@ snapshots:
 
   '@tanstack/pacer-lite@0.1.1': {}
 
-  '@tanstack/query-core@5.105.0': {}
+  '@tanstack/query-core@5.107.1': {}
 
-  '@tanstack/query-persist-client-core@5.105.0':
+  '@tanstack/query-persist-client-core@5.107.1':
     dependencies:
-      '@tanstack/query-core': 5.105.0
+      '@tanstack/query-core': 5.107.1
 
-  '@tanstack/query-sync-storage-persister@5.105.0':
+  '@tanstack/query-sync-storage-persister@5.107.1':
     dependencies:
-      '@tanstack/query-core': 5.105.0
-      '@tanstack/query-persist-client-core': 5.105.0
+      '@tanstack/query-core': 5.107.1
+      '@tanstack/query-persist-client-core': 5.107.1
 
   '@tanstack/solid-form@1.33.5(solid-js@1.9.17)':
     dependencies:
@@ -7587,15 +7587,15 @@ snapshots:
       '@tanstack/solid-store': 0.11.1(solid-js@1.9.17)
       solid-js: 1.9.17
 
-  '@tanstack/solid-query-persist-client@5.105.0(@tanstack/solid-query@5.105.0(solid-js@1.9.17))(solid-js@1.9.17)':
+  '@tanstack/solid-query-persist-client@5.107.1(@tanstack/solid-query@5.107.1(solid-js@1.9.17))(solid-js@1.9.17)':
     dependencies:
-      '@tanstack/query-persist-client-core': 5.105.0
-      '@tanstack/solid-query': 5.105.0(solid-js@1.9.17)
+      '@tanstack/query-persist-client-core': 5.107.1
+      '@tanstack/solid-query': 5.107.1(solid-js@1.9.17)
       solid-js: 1.9.17
 
-  '@tanstack/solid-query@5.105.0(solid-js@1.9.17)':
+  '@tanstack/solid-query@5.107.1(solid-js@1.9.17)':
     dependencies:
-      '@tanstack/query-core': 5.105.0
+      '@tanstack/query-core': 5.107.1
       solid-js: 1.9.17
 
   '@tanstack/solid-store@0.11.1(solid-js@1.9.17)':

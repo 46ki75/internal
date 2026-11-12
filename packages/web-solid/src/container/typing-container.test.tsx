@@ -62,7 +62,7 @@ function renderContainer() {
 it("links to the current sentence's Notion page and updates the link when advancing", async () => {
   const user = userEvent.setup();
   const result = renderContainer();
-  await result.findByText("Text to type: cat");
+  await user.click(await result.findByRole("switch", { name: "Typing mode" }));
   expect(
     result.getByRole("region", { name: exercises[0].description }),
   ).toBeInTheDocument();
@@ -101,6 +101,95 @@ it("links to the current sentence's Notion page and updates the link when advanc
   );
   expect(auth.refresh).toHaveBeenCalledOnce();
   expect(api.POST).not.toHaveBeenCalled();
+});
+
+it("defaults typing mode to off while keeping reference text, audio, and navigation available", async () => {
+  const user = userEvent.setup();
+  const result = renderContainer();
+  const toggle = await result.findByRole("switch", { name: "Typing mode" });
+
+  expect(toggle).not.toBeChecked();
+  expect(result.queryByRole("textbox")).not.toBeInTheDocument();
+  expect(result.queryByLabelText("Typing statistics")).not.toBeInTheDocument();
+  expect(
+    result.queryByRole("button", { name: "Reset line" }),
+  ).not.toBeInTheDocument();
+  expect(
+    result.getByRole("region", { name: "Reference text" }),
+  ).toHaveTextContent("cat");
+  expect(result.getByLabelText("Sentence audio")).toBeInTheDocument();
+  expect(
+    result.getByRole("link", { name: "Open sentence in Notion" }),
+  ).toBeInTheDocument();
+
+  await user.click(result.getByRole("button", { name: "Next exercise" }));
+  expect(
+    result.getByRole("region", { name: "Reference text" }),
+  ).toHaveTextContent("dog");
+  expect(result.getByRole("switch", { name: "Typing mode" })).not.toBeChecked();
+  expect(result.queryByRole("textbox")).not.toBeInTheDocument();
+  expect(result.queryByText("Text to type: dog")).not.toBeInTheDocument();
+  expect(
+    result.getByRole("link", { name: "Open sentence in Notion" }),
+  ).toHaveAttribute("href", exercises[1].url);
+});
+
+it("preserves typing mode across exercises and hides typing UI when disabled", async () => {
+  const user = userEvent.setup();
+  const result = renderContainer();
+  await result.findByRole("switch", { name: "Typing mode" });
+  const input = () => result.getByRole("textbox", { name: "Your typing" });
+  const toggle = () => result.getByRole("switch", { name: "Typing mode" });
+
+  await user.click(toggle());
+  expect(toggle()).toBeChecked();
+  expect(input()).toHaveFocus();
+  expect(
+    result.getByRole("switch", { name: "Autoplay TTS" }),
+  ).not.toBeChecked();
+
+  await user.keyboard("cat");
+  expect(result.getByText("Text to type: dog")).toBeInTheDocument();
+  expect(toggle()).toBeChecked();
+  expect(input()).toHaveFocus();
+
+  await user.click(result.getByRole("button", { name: "Next exercise" }));
+  expect(result.getByText("Text to type: cat")).toBeInTheDocument();
+  expect(toggle()).toBeChecked();
+  expect(input()).toHaveFocus();
+  const audio = result.getByLabelText("Sentence audio");
+
+  await user.click(toggle());
+  expect(toggle()).not.toBeChecked();
+  expect(result.queryByRole("textbox")).not.toBeInTheDocument();
+  expect(result.queryByText("Text to type: cat")).not.toBeInTheDocument();
+  expect(result.getByLabelText("Sentence audio")).toBe(audio);
+
+  await user.click(result.getByRole("button", { name: "Next exercise" }));
+  expect(
+    result.getByRole("region", { name: "Reference text" }),
+  ).toHaveTextContent("dog");
+  expect(toggle()).not.toBeChecked();
+  expect(result.queryByRole("textbox")).not.toBeInTheDocument();
+
+  await user.click(toggle());
+  expect(result.getByText("Text to type: dog")).toBeInTheDocument();
+  expect(input()).toHaveValue("");
+  expect(input()).toHaveFocus();
+});
+
+it("resets typing mode to off when the page is reopened", async () => {
+  const user = userEvent.setup();
+  const result = renderContainer();
+  await user.click(await result.findByRole("switch", { name: "Typing mode" }));
+  expect(result.getByRole("switch", { name: "Typing mode" })).toBeChecked();
+
+  result.unmount();
+  const reopened = renderContainer();
+  expect(
+    await reopened.findByRole("switch", { name: "Typing mode" }),
+  ).not.toBeChecked();
+  expect(reopened.queryByRole("textbox")).not.toBeInTheDocument();
 });
 
 it("defaults TTS autoplay to off while keeping manual playback available", async () => {
@@ -148,6 +237,7 @@ it("starts TTS when enabled, preserves the choice across exercises, and pauses w
   expect(play).toHaveBeenCalledOnce();
   expect(play.mock.contexts[0]).toBe(firstAudio);
 
+  await user.click(result.getByRole("switch", { name: "Typing mode" }));
   await user.type(result.getByRole("textbox", { name: "Your typing" }), "cat");
   const secondAudio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
   expect(secondAudio).not.toBe(firstAudio);
@@ -234,6 +324,7 @@ it("handles rejected autoplay requests without interrupting typing or hiding man
   expect(
     result.getByLabelText<HTMLAudioElement>("Sentence audio").controls,
   ).toBe(true);
+  await user.click(result.getByRole("switch", { name: "Typing mode" }));
   await user.type(result.getByRole("textbox", { name: "Your typing" }), "cat");
   expect(result.getByText("Text to type: dog")).toBeInTheDocument();
 });
@@ -246,7 +337,7 @@ it.each([undefined, null, ""])(
     });
     const user = userEvent.setup();
     const result = renderContainer();
-    await result.findByText("Text to type: cat");
+    await result.findByRole("switch", { name: "Typing mode" });
     expect(result.queryByLabelText("Sentence audio")).not.toBeInTheDocument();
 
     await user.click(result.getByRole("button", { name: "Next exercise" }));
@@ -276,6 +367,9 @@ it("passes straight apostrophes to typing practice without changing API data", a
   };
   api.GET.mockResolvedValue({ data: [sentence] });
   const result = renderContainer();
+  await userEvent
+    .setup()
+    .click(await result.findByRole("switch", { name: "Typing mode" }));
 
   await waitFor(() =>
     expect(

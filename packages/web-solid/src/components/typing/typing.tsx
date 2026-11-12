@@ -35,17 +35,22 @@ export interface TypingProps {
   onAutoplayTtsChange?: (enabled: boolean) => void;
   onComplete?: (result: TypingResult) => void;
   onNext?: () => void;
+  onTypingModeChange?: (enabled: boolean) => void;
   style?: JSX.CSSProperties;
   surface?: unknown;
   text: string;
+  /** Supply with onTypingModeChange to retain the preference across keyed exercises. */
+  typingMode?: boolean;
 }
 
 export const Typing = (props: TypingProps) => {
   const inputId = createUniqueId();
   const instructionsId = createUniqueId();
+  const [localTypingMode, setLocalTypingMode] = createSignal(false);
+  const typingMode = () => props.typingMode ?? localTypingMode();
   const [localAutoplayTts, setLocalAutoplayTts] = createSignal(false);
   const autoplayTts = () => props.autoplayTts ?? localAutoplayTts();
-  let inputRef!: HTMLTextAreaElement;
+  let inputRef: HTMLTextAreaElement | undefined;
   let audio: HTMLAudioElement | undefined;
 
   // Native autoplay handles new clips; preference changes control the current clip.
@@ -70,23 +75,13 @@ export const Typing = (props: TypingProps) => {
     onComplete: (result) => props.onComplete?.(result),
   });
 
-  onMount(() => inputRef.focus());
+  // Returning to typing mode starts a fresh attempt instead of counting time spent reading.
+  createEffect(on(typingMode, () => session.reset(), { defer: true }));
 
   const reset = () => {
     session.reset();
-    inputRef.value = "";
-    inputRef.focus();
+    inputRef?.focus();
   };
-
-  createEffect(
-    on(
-      () => props.text,
-      () => {
-        inputRef.value = "";
-      },
-      { defer: true },
-    ),
-  );
 
   return (
     <section
@@ -100,62 +95,87 @@ export const Typing = (props: TypingProps) => {
             {props.description || "Typing practice"}
           </ElmInlineText>
         </span>
-        <ElmInlineText
-          class={styles.length}
-          size="0.75rem"
-          color="var(--elmethis-color-neutral-weak)"
-        >
-          {splitTypingCharacters(props.text).length} glyphs
-        </ElmInlineText>
+        <Show when={typingMode()}>
+          <ElmInlineText
+            class={styles.length}
+            size="0.75rem"
+            color="var(--elmethis-color-neutral-weak)"
+          >
+            {splitTypingCharacters(props.text).length} glyphs
+          </ElmInlineText>
+        </Show>
       </header>
 
-      <Show when={props.surface}>
-        <div role="region" aria-label="Reference text">
+      <div role="region" aria-label="Reference text">
+        <Show when={props.surface} fallback={<p>{props.text}</p>}>
           <ElmA2ui
             catalog={notionBlockCatalog}
             messages={surfaceToMessages(props.surface, `${inputId}-reference`)}
           />
-        </div>
-      </Show>
+        </Show>
+      </div>
 
-      <TypingPrompt characters={session.characters()} />
+      <Show when={typingMode()}>
+        <TypingPrompt characters={session.characters()} />
 
-      <TypingStats
-        accuracy={session.accuracy()}
-        progress={session.progress()}
-        wordsPerMinute={session.wordsPerMinute()}
-      />
+        <TypingStats
+          accuracy={session.accuracy()}
+          progress={session.progress()}
+          wordsPerMinute={session.wordsPerMinute()}
+        />
 
-      <p id={instructionsId} class={styles.instructions}>
-        Correct each mistake to finish the exercise.
-      </p>
-      <ElmTextArea
-        ref={(element) => (inputRef = element)}
-        id={inputId}
-        label="Your typing"
-        aria-label="Your typing"
-        aria-describedby={instructionsId}
-        rows={3}
-        autocomplete="off"
-        autocapitalize="off"
-        spellcheck={false}
-        onInput={(event) => {
-          session.setValue(event.currentTarget.value);
-          event.currentTarget.value = session.value();
-        }}
-      />
-
-      <Show when={session.status() === "complete"}>
-        <p class={styles.complete} role="status">
-          Line complete. {session.result().correctCharacters} of{" "}
-          {session.result().totalCharacters} characters match.
+        <p id={instructionsId} class={styles.instructions}>
+          Correct each mistake to finish the exercise.
         </p>
+        <ElmTextArea
+          ref={(element) => {
+            inputRef = element;
+            onMount(() => element.focus());
+            onCleanup(() => {
+              inputRef = undefined;
+            });
+          }}
+          id={inputId}
+          label="Your typing"
+          aria-label="Your typing"
+          aria-describedby={instructionsId}
+          rows={3}
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck={false}
+          value={session.value()}
+          onInput={(event) => {
+            session.setValue(event.currentTarget.value);
+            event.currentTarget.value = session.value();
+          }}
+        />
+
+        <Show when={session.status() === "complete"}>
+          <p class={styles.complete} role="status">
+            Line complete. {session.result().correctCharacters} of{" "}
+            {session.result().totalCharacters} characters match.
+          </p>
+        </Show>
       </Show>
 
-      <div class={styles.playback}>
-        <label class={styles["autoplay-control"]}>
+      <div class={styles.preferences}>
+        <label class={styles["preference-control"]}>
           <input
-            class={styles["autoplay-switch"]}
+            class={styles["preference-switch"]}
+            type="checkbox"
+            role="switch"
+            checked={typingMode()}
+            onChange={(event) => {
+              const enabled = event.currentTarget.checked;
+              setLocalTypingMode(enabled);
+              props.onTypingModeChange?.(enabled);
+            }}
+          />
+          Typing mode
+        </label>
+        <label class={styles["preference-control"]}>
+          <input
+            class={styles["preference-switch"]}
             type="checkbox"
             role="switch"
             checked={autoplayTts()}
@@ -191,9 +211,11 @@ export const Typing = (props: TypingProps) => {
       </div>
 
       <div class={styles.controls}>
-        <ElmButton type="button" onClick={reset}>
-          Reset line
-        </ElmButton>
+        <Show when={typingMode()}>
+          <ElmButton type="button" onClick={reset}>
+            Reset line
+          </ElmButton>
+        </Show>
         <Show when={props.onNext} keyed>
           {(onNext) => (
             <ElmButton type="button" primary onClick={onNext}>

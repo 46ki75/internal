@@ -100,7 +100,7 @@
   background-color: var(--elmethis-color-accent-success-surface);
 }
 
-.playback {
+.preferences {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -112,7 +112,7 @@
   width: min(100%, 20rem);
 }
 
-.autoplay-control {
+.preference-control {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -121,7 +121,7 @@
   cursor: pointer;
 }
 
-.autoplay-switch {
+.preference-switch {
   appearance: none;
   width: 2.5rem;
   height: 1.5rem;
@@ -133,7 +133,7 @@
   cursor: inherit;
 }
 
-.autoplay-switch::before {
+.preference-switch::before {
   content: "";
   display: block;
   width: 1rem;
@@ -143,15 +143,15 @@
   background-color: var(--elmethis-color-surface-raised);
 }
 
-.autoplay-switch:checked {
+.preference-switch:checked {
   background-color: var(--elmethis-color-primary);
 }
 
-.autoplay-switch:checked::before {
+.preference-switch:checked::before {
   transform: translateX(1rem);
 }
 
-.autoplay-switch:focus-visible {
+.preference-switch:focus-visible {
   outline: 2px solid var(--elmethis-color-primary);
   outline-offset: 0.25rem;
 }

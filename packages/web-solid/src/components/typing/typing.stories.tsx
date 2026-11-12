@@ -12,6 +12,7 @@ const autoAdvanceExercises = [
 
 const AutoAdvanceSequence = (props: TypingProps) => {
   const [currentIndex, setCurrentIndex] = createSignal(0);
+  const [typingMode, setTypingMode] = createSignal(false);
   const [autoplayTts, setAutoplayTts] = createSignal(false);
   const currentExercise = () => autoAdvanceExercises[currentIndex()];
   const next = () =>
@@ -24,6 +25,11 @@ const AutoAdvanceSequence = (props: TypingProps) => {
           {...props}
           text={exercise.text}
           description={exercise.description}
+          typingMode={typingMode()}
+          onTypingModeChange={(enabled) => {
+            setTypingMode(enabled);
+            props.onTypingModeChange?.(enabled);
+          }}
           autoplayTts={autoplayTts()}
           onAutoplayTtsChange={(enabled) => {
             setAutoplayTts(enabled);
@@ -50,6 +56,7 @@ const meta = {
   args: {
     text: sampleText,
     description: "Practice line 07: Systems thinking",
+    onTypingModeChange: fn(),
     onAutoplayTtsChange: fn(),
     onComplete: fn(),
     onNext: fn(),
@@ -59,7 +66,9 @@ const meta = {
   },
   argTypes: {
     audioSrc: { control: "text" },
+    typingMode: { control: false },
     autoplayTts: { control: false },
+    onTypingModeChange: { control: false },
     onAutoplayTtsChange: { control: false },
     text: { control: "text" },
     description: { control: "text" },
@@ -74,7 +83,21 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
+    const typingToggle = canvas.getByRole("switch", { name: "Typing mode" });
     const toggle = canvas.getByRole("switch", { name: "Autoplay TTS" });
+
+    await expect(typingToggle).not.toBeChecked();
+    await expect(canvas.queryByRole("textbox")).not.toBeInTheDocument();
+    await userEvent.click(typingToggle);
+    await expect(typingToggle).toBeChecked();
+    await expect(
+      canvas.getByRole("textbox", { name: "Your typing" }),
+    ).toHaveFocus();
+    await expect(args.onTypingModeChange).toHaveBeenCalledWith(true);
+    await userEvent.click(typingToggle);
+    await expect(typingToggle).not.toBeChecked();
+    await expect(canvas.queryByRole("textbox")).not.toBeInTheDocument();
+    await expect(args.onTypingModeChange).toHaveBeenLastCalledWith(false);
 
     await expect(toggle).not.toBeChecked();
     await userEvent.click(toggle);
@@ -119,6 +142,7 @@ export const RichText: Story = {
 export const WithMistake: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("switch", { name: "Typing mode" }));
     await userEvent.type(
       canvas.getByRole("textbox", { name: "Your typing" }),
       "Small steps make reliablf",
@@ -133,6 +157,7 @@ export const Complete: Story = {
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("switch", { name: "Typing mode" }));
     await userEvent.type(
       canvas.getByRole("textbox", { name: "Your typing" }),
       sampleText,
@@ -153,6 +178,7 @@ export const AutoAdvance: Story = {
     const canvas = within(canvasElement);
 
     await userEvent.click(canvas.getByRole("switch", { name: "Autoplay TTS" }));
+    await userEvent.click(canvas.getByRole("switch", { name: "Typing mode" }));
     await userEvent.type(
       canvas.getByRole("textbox", { name: "Your typing" }),
       "cat",
@@ -169,6 +195,9 @@ export const AutoAdvance: Story = {
     ).toHaveFocus();
     await expect(
       canvas.getByRole("switch", { name: "Autoplay TTS" }),
+    ).toBeChecked();
+    await expect(
+      canvas.getByRole("switch", { name: "Typing mode" }),
     ).toBeChecked();
     await expect(args.onComplete).toHaveBeenCalledOnce();
   },

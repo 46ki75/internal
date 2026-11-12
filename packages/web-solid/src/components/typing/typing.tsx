@@ -53,12 +53,19 @@ export const Typing = (props: TypingProps) => {
   let inputRef: HTMLTextAreaElement | undefined;
   let audio: HTMLAudioElement | undefined;
 
+  const playAudio = () => {
+    void audio?.play().catch(() => {
+      // Browser policy or unavailable media can reject play; native controls remain usable.
+    });
+  };
+
   onMount(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const onNext = props.onNext;
+      const replay = event.key === "h" || event.key === "a";
       if (
         typingMode() ||
-        !onNext ||
+        (replay ? !audio : !onNext) ||
         event.defaultPrevented ||
         event.altKey ||
         event.ctrlKey ||
@@ -66,7 +73,7 @@ export const Typing = (props: TypingProps) => {
         event.shiftKey ||
         event.repeat ||
         event.isComposing ||
-        !["d", "l", "ArrowRight"].includes(event.key)
+        (!replay && !["d", "l", "ArrowRight"].includes(event.key))
       ) {
         return;
       }
@@ -82,7 +89,12 @@ export const Typing = (props: TypingProps) => {
       }
 
       event.preventDefault();
-      onNext();
+      if (replay && audio) {
+        audio.currentTime = 0;
+        playAudio();
+      } else {
+        onNext?.();
+      }
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -95,9 +107,7 @@ export const Typing = (props: TypingProps) => {
       autoplayTts,
       (enabled) => {
         if (enabled) {
-          void audio?.play().catch(() => {
-            // Browser policy or unavailable media can reject play; native controls remain usable.
-          });
+          playAudio();
         } else {
           audio?.pause();
         }
@@ -239,6 +249,8 @@ export const Typing = (props: TypingProps) => {
             }}
             class={styles.audio}
             aria-label="Sentence audio"
+            aria-keyshortcuts={typingMode() ? undefined : "h a"}
+            title={typingMode() ? undefined : "Replay audio (h or a)"}
             src={src}
             autoplay={autoplayTts()}
             preload="none"

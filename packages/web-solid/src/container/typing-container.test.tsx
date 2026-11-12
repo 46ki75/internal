@@ -134,6 +134,46 @@ it("defaults typing mode to off while keeping reference text, audio, and navigat
   ).toHaveAttribute("href", exercises[1].url);
 });
 
+it("advances one card per d, l, or Right Arrow press only when typing mode is off", async () => {
+  vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+  const user = userEvent.setup();
+  const result = renderContainer();
+  await user.click(await result.findByRole("switch", { name: "Autoplay TTS" }));
+  const nextButton = () =>
+    result.getByRole("button", { name: "Next exercise" });
+  const reference = () =>
+    result.getByRole("region", { name: "Reference text" });
+
+  expect(nextButton()).toHaveAttribute("aria-keyshortcuts", "d l ArrowRight");
+  expect(reference()).toHaveTextContent("cat");
+  for (const [key, text] of [
+    ["d", "dog"],
+    ["l", "cat"],
+    ["{ArrowRight}", "dog"],
+  ]) {
+    await user.keyboard(key);
+    expect(reference()).toHaveTextContent(text);
+    expect(result.queryByRole("textbox")).not.toBeInTheDocument();
+    expect(result.getByRole("switch", { name: "Autoplay TTS" })).toBeChecked();
+    expect(
+      result.getByLabelText<HTMLAudioElement>("Sentence audio").autoplay,
+    ).toBe(true);
+  }
+
+  await user.click(result.getByRole("switch", { name: "Typing mode" }));
+  expect(nextButton()).not.toHaveAttribute("aria-keyshortcuts");
+  await user.keyboard("dl{ArrowRight}");
+  expect(reference()).toHaveTextContent("dog");
+  expect(result.getByRole("textbox", { name: "Your typing" })).toHaveValue(
+    "dl",
+  );
+
+  await user.click(result.getByRole("switch", { name: "Typing mode" }));
+  await user.keyboard("{ArrowRight}");
+  expect(reference()).toHaveTextContent("cat");
+  expect(result.queryByRole("textbox")).not.toBeInTheDocument();
+});
+
 it("preserves typing mode across exercises and hides typing UI when disabled", async () => {
   const user = userEvent.setup();
   const result = renderContainer();

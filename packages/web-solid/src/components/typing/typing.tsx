@@ -53,6 +53,42 @@ export const Typing = (props: TypingProps) => {
   let inputRef: HTMLTextAreaElement | undefined;
   let audio: HTMLAudioElement | undefined;
 
+  onMount(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const onNext = props.onNext;
+      if (
+        typingMode() ||
+        !onNext ||
+        event.defaultPrevented ||
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.shiftKey ||
+        event.repeat ||
+        event.isComposing ||
+        !["d", "l", "ArrowRight"].includes(event.key)
+      ) {
+        return;
+      }
+
+      // Leave editing, selection, and native media-seeking keys to the focused control.
+      if (
+        event.target instanceof Element &&
+        event.target.closest(
+          'input:not([type="checkbox"]), textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"], [role="combobox"], [role="slider"], [role="spinbutton"], audio, video',
+        )
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      onNext();
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    onCleanup(() => document.removeEventListener("keydown", handleKeyDown));
+  });
+
   // Native autoplay handles new clips; preference changes control the current clip.
   createEffect(
     on(
@@ -187,28 +223,29 @@ export const Typing = (props: TypingProps) => {
           />
           Autoplay TTS
         </label>
-        <Show when={props.audioSrc} keyed>
-          {(src) => (
-            <audio
-              ref={(element) => {
-                audio = element;
-                onCleanup(() => {
-                  element.pause();
-                  if (audio === element) {
-                    audio = undefined;
-                  }
-                });
-              }}
-              class={styles.audio}
-              aria-label="Sentence audio"
-              src={src}
-              autoplay={autoplayTts()}
-              preload="none"
-              controls
-            />
-          )}
-        </Show>
       </div>
+
+      <Show when={props.audioSrc} keyed>
+        {(src) => (
+          <audio
+            ref={(element) => {
+              audio = element;
+              onCleanup(() => {
+                element.pause();
+                if (audio === element) {
+                  audio = undefined;
+                }
+              });
+            }}
+            class={styles.audio}
+            aria-label="Sentence audio"
+            src={src}
+            autoplay={autoplayTts()}
+            preload="none"
+            controls
+          />
+        )}
+      </Show>
 
       <div class={styles.controls}>
         <Show when={typingMode()}>
@@ -218,7 +255,13 @@ export const Typing = (props: TypingProps) => {
         </Show>
         <Show when={props.onNext} keyed>
           {(onNext) => (
-            <ElmButton type="button" primary onClick={onNext}>
+            <ElmButton
+              type="button"
+              primary
+              onClick={onNext}
+              aria-keyshortcuts={typingMode() ? undefined : "d l ArrowRight"}
+              title={typingMode() ? undefined : "Next exercise (d, l, or →)"}
+            >
               Next exercise
             </ElmButton>
           )}

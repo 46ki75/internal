@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import { cleanup, render } from "@solidjs/testing-library";
+import { cleanup, fireEvent, render } from "@solidjs/testing-library";
 import userEvent from "@testing-library/user-event";
 import { createSignal, Show, type JSX, type ParentProps } from "solid-js";
 import { afterEach, expect, it, vi } from "vitest";
@@ -89,6 +89,115 @@ it("defaults typing mode to off and hides typing UI while showing the reference"
   expect(
     result.getByRole("button", { name: "Next exercise" }),
   ).toBeInTheDocument();
+});
+
+it.each(["d", "l", "ArrowRight"])(
+  "advances on %s only while typing mode is off and removes the shortcut on unmount",
+  (key) => {
+    const onNext = vi.fn();
+    const [typingMode, setTypingMode] = createSignal(false);
+    const result = render(() => (
+      <Typing text="cat" typingMode={typingMode()} onNext={onNext} />
+    ));
+
+    expect(fireEvent.keyDown(document.body, { key })).toBe(false);
+    expect(onNext).toHaveBeenCalledOnce();
+
+    setTypingMode(true);
+    expect(fireEvent.keyDown(document.body, { key })).toBe(true);
+    expect(onNext).toHaveBeenCalledOnce();
+
+    setTypingMode(false);
+    expect(fireEvent.keyDown(document.body, { key })).toBe(false);
+    expect(onNext).toHaveBeenCalledTimes(2);
+
+    result.unmount();
+    expect(fireEvent.keyDown(document.body, { key })).toBe(true);
+    expect(onNext).toHaveBeenCalledTimes(2);
+  },
+);
+
+it("uses the current next callback and leaves keys alone when no next exercise is available", () => {
+  const firstNext = vi.fn();
+  const secondNext = vi.fn();
+  const [onNext, setOnNext] = createSignal<(() => void) | undefined>();
+  render(() => <Typing text="cat" onNext={onNext()} />);
+
+  expect(fireEvent.keyDown(document.body, { key: "d" })).toBe(true);
+  setOnNext(() => firstNext);
+  expect(fireEvent.keyDown(document.body, { key: "l" })).toBe(false);
+  expect(firstNext).toHaveBeenCalledOnce();
+
+  setOnNext(() => secondNext);
+  expect(fireEvent.keyDown(document.body, { key: "ArrowRight" })).toBe(false);
+  expect(firstNext).toHaveBeenCalledOnce();
+  expect(secondNext).toHaveBeenCalledOnce();
+
+  setOnNext(undefined);
+  expect(fireEvent.keyDown(document.body, { key: "d" })).toBe(true);
+  expect(secondNext).toHaveBeenCalledOnce();
+});
+
+it("ignores modified, repeated, composing, handled, and unrelated key presses", () => {
+  const onNext = vi.fn();
+  render(() => <Typing text="cat" onNext={onNext} />);
+  const ignoredOptions: KeyboardEventInit[] = [
+    { altKey: true },
+    { ctrlKey: true },
+    { metaKey: true },
+    { shiftKey: true },
+    { repeat: true },
+    { isComposing: true },
+  ];
+
+  for (const key of ["d", "l", "ArrowRight"]) {
+    for (const options of ignoredOptions) {
+      expect(fireEvent.keyDown(document.body, { key, ...options })).toBe(true);
+    }
+    const handled = new KeyboardEvent("keydown", {
+      key,
+      bubbles: true,
+      cancelable: true,
+    });
+    handled.preventDefault();
+    fireEvent(document.body, handled);
+  }
+  for (const key of ["h", "ArrowLeft", "Enter", " "]) {
+    expect(fireEvent.keyDown(document.body, { key })).toBe(true);
+  }
+  expect(onNext).not.toHaveBeenCalled();
+});
+
+it("leaves keystrokes in editors and media controls alone", () => {
+  const onNext = vi.fn();
+  const result = render(() => (
+    <>
+      <input aria-label="Shortcut target input" />
+      <textarea aria-label="Shortcut target textarea" />
+      <select aria-label="Shortcut target select">
+        <option>Option</option>
+      </select>
+      <input type="range" aria-label="Shortcut target range" />
+      <div contentEditable tabIndex={0} aria-label="Shortcut target editor">
+        <span aria-label="Shortcut target editor child">Editable text</span>
+      </div>
+      <div
+        role="textbox"
+        tabIndex={0}
+        aria-label="Shortcut target custom textbox"
+      />
+      <audio controls aria-label="Shortcut target audio" />
+      <video controls aria-label="Shortcut target video" />
+      <Typing text="cat" onNext={onNext} />
+    </>
+  ));
+
+  for (const target of result.getAllByLabelText(/^Shortcut target/)) {
+    for (const key of ["d", "l", "ArrowRight"]) {
+      expect(fireEvent.keyDown(target, { key })).toBe(true);
+    }
+  }
+  expect(onNext).not.toHaveBeenCalled();
 });
 
 it("supports keyboard toggling of typing mode and focuses the input when enabled or reset", async () => {

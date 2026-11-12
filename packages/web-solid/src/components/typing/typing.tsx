@@ -223,28 +223,29 @@ export const Typing = (props: TypingProps) => {
           />
           Autoplay TTS
         </label>
-        <Show when={props.audioSrc} keyed>
-          {(src) => (
-            <audio
-              ref={(element) => {
-                audio = element;
-                onCleanup(() => {
-                  element.pause();
-                  if (audio === element) {
-                    audio = undefined;
-                  }
-                });
-              }}
-              class={styles.audio}
-              aria-label="Sentence audio"
-              src={src}
-              autoplay={autoplayTts()}
-              preload="none"
-              controls
-            />
-          )}
-        </Show>
       </div>
+
+      <Show when={props.audioSrc} keyed>
+        {(src) => (
+          <audio
+            ref={(element) => {
+              audio = element;
+              onCleanup(() => {
+                element.pause();
+                if (audio === element) {
+                  audio = undefined;
+                }
+              });
+            }}
+            class={styles.audio}
+            aria-label="Sentence audio"
+            src={src}
+            autoplay={autoplayTts()}
+            preload="none"
+            controls
+          />
+        )}
+      </Show>
 
       <div class={styles.controls}>
         <Show when={typingMode()}>

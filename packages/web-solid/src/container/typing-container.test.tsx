@@ -174,6 +174,44 @@ it("advances one card per d, l, or Right Arrow press only when typing mode is of
   expect(result.queryByRole("textbox")).not.toBeInTheDocument();
 });
 
+it("replays the current exercise on h or a without advancing or enabling autoplay", async () => {
+  const play = vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+  const user = userEvent.setup();
+  const result = renderContainer();
+  await result.findByRole("switch", { name: "Typing mode" });
+
+  for (const [index, key] of ["h", "a"].entries()) {
+    const audio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+    expect(audio.src).toBe(exercises[index].tts);
+    audio.currentTime = 5;
+    await user.keyboard(key);
+    expect(audio.currentTime).toBe(0);
+    expect(play).toHaveBeenCalledTimes(index + 1);
+    expect(play.mock.contexts[index]).toBe(audio);
+    expect(
+      result.getByRole("region", { name: "Reference text" }),
+    ).toHaveTextContent(exercises[index].text);
+    expect(
+      result.getByRole("switch", { name: "Autoplay TTS" }),
+    ).not.toBeChecked();
+    if (index === 0) {
+      await user.click(result.getByRole("button", { name: "Next exercise" }));
+    }
+  }
+
+  await user.click(result.getByRole("switch", { name: "Typing mode" }));
+  await user.keyboard("ha");
+  expect(result.getByRole("textbox", { name: "Your typing" })).toHaveValue(
+    "ha",
+  );
+  expect(play).toHaveBeenCalledTimes(2);
+
+  await user.click(result.getByRole("switch", { name: "Typing mode" }));
+  await user.keyboard("h");
+  expect(play).toHaveBeenCalledTimes(3);
+  expect(play.mock.contexts[2]).toBe(result.getByLabelText("Sentence audio"));
+});
+
 it("preserves typing mode across exercises and hides typing UI when disabled", async () => {
   const user = userEvent.setup();
   const result = renderContainer();

@@ -117,6 +117,103 @@ it.each(["d", "l", "ArrowRight"])(
   },
 );
 
+it.each(["h", "a"])(
+  "replays audio from the start on %s only while typing mode is off and cleans up on unmount",
+  (key) => {
+    const play = vi
+      .spyOn(HTMLMediaElement.prototype, "play")
+      .mockResolvedValue();
+    const [typingMode, setTypingMode] = createSignal(false);
+    const result = render(() => (
+      <Typing
+        text="cat"
+        audioSrc="https://example.com/cat.mp3"
+        typingMode={typingMode()}
+      />
+    ));
+    const audio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+
+    expect(play).not.toHaveBeenCalled();
+    audio.currentTime = 12;
+    expect(fireEvent.keyDown(document.body, { key })).toBe(false);
+    expect(audio.currentTime).toBe(0);
+    expect(play).toHaveBeenCalledOnce();
+    expect(play.mock.contexts[0]).toBe(audio);
+    expect(
+      result.getByRole("switch", { name: "Autoplay TTS" }),
+    ).not.toBeChecked();
+    expect(audio).toHaveAttribute("aria-keyshortcuts", "h a");
+
+    setTypingMode(true);
+    audio.currentTime = 5;
+    expect(fireEvent.keyDown(document.body, { key })).toBe(true);
+    expect(audio.currentTime).toBe(5);
+    expect(play).toHaveBeenCalledOnce();
+    expect(audio).not.toHaveAttribute("aria-keyshortcuts");
+
+    setTypingMode(false);
+    expect(fireEvent.keyDown(document.body, { key })).toBe(false);
+    expect(audio.currentTime).toBe(0);
+    expect(play).toHaveBeenCalledTimes(2);
+
+    result.unmount();
+    expect(fireEvent.keyDown(document.body, { key })).toBe(true);
+    expect(play).toHaveBeenCalledTimes(2);
+  },
+);
+
+it("replays only the current audio and leaves replay keys alone without an audio source", () => {
+  const play = vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+  const onNext = vi.fn();
+  const [audioSrc, setAudioSrc] = createSignal<string | null>();
+  const result = render(() => (
+    <Typing text="cat" audioSrc={audioSrc()} onNext={onNext} />
+  ));
+
+  for (const key of ["h", "a"]) {
+    expect(fireEvent.keyDown(document.body, { key })).toBe(true);
+  }
+  expect(play).not.toHaveBeenCalled();
+
+  for (const [index, key] of ["h", "a"].entries()) {
+    setAudioSrc(`https://example.com/${key}.mp3`);
+    const audio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+    audio.currentTime = 5;
+    expect(fireEvent.keyDown(document.body, { key })).toBe(false);
+    expect(audio.currentTime).toBe(0);
+    expect(play.mock.contexts[index]).toBe(audio);
+  }
+  expect(play).toHaveBeenCalledTimes(2);
+
+  setAudioSrc(null);
+  for (const key of ["h", "a"]) {
+    expect(fireEvent.keyDown(document.body, { key })).toBe(true);
+  }
+  expect(play).toHaveBeenCalledTimes(2);
+  expect(onNext).not.toHaveBeenCalled();
+});
+
+it("keeps native audio controls available when shortcut playback is rejected", async () => {
+  const play = vi
+    .spyOn(HTMLMediaElement.prototype, "play")
+    .mockRejectedValue(
+      new DOMException("Playback is blocked", "NotAllowedError"),
+    );
+  const user = userEvent.setup();
+  const result = render(() => (
+    <Typing text="cat" audioSrc="https://example.com/cat.mp3" />
+  ));
+
+  await user.keyboard("ha");
+  expect(play).toHaveBeenCalledTimes(2);
+  expect(
+    result.getByLabelText<HTMLAudioElement>("Sentence audio").controls,
+  ).toBe(true);
+  expect(
+    result.getByRole("switch", { name: "Autoplay TTS" }),
+  ).not.toBeChecked();
+});
+
 it("uses the current next callback and leaves keys alone when no next exercise is available", () => {
   const firstNext = vi.fn();
   const secondNext = vi.fn();
@@ -139,8 +236,13 @@ it("uses the current next callback and leaves keys alone when no next exercise i
 });
 
 it("ignores modified, repeated, composing, handled, and unrelated key presses", () => {
+  const play = vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
   const onNext = vi.fn();
-  render(() => <Typing text="cat" onNext={onNext} />);
+  const result = render(() => (
+    <Typing text="cat" audioSrc="https://example.com/cat.mp3" onNext={onNext} />
+  ));
+  const audio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+  audio.currentTime = 5;
   const ignoredOptions: KeyboardEventInit[] = [
     { altKey: true },
     { ctrlKey: true },
@@ -150,7 +252,7 @@ it("ignores modified, repeated, composing, handled, and unrelated key presses", 
     { isComposing: true },
   ];
 
-  for (const key of ["d", "l", "ArrowRight"]) {
+  for (const key of ["d", "l", "ArrowRight", "h", "a"]) {
     for (const options of ignoredOptions) {
       expect(fireEvent.keyDown(document.body, { key, ...options })).toBe(true);
     }
@@ -162,13 +264,16 @@ it("ignores modified, repeated, composing, handled, and unrelated key presses", 
     handled.preventDefault();
     fireEvent(document.body, handled);
   }
-  for (const key of ["h", "ArrowLeft", "Enter", " "]) {
+  for (const key of ["H", "A", "ArrowLeft", "Enter", " "]) {
     expect(fireEvent.keyDown(document.body, { key })).toBe(true);
   }
   expect(onNext).not.toHaveBeenCalled();
+  expect(play).not.toHaveBeenCalled();
+  expect(audio.currentTime).toBe(5);
 });
 
 it("leaves keystrokes in editors and media controls alone", () => {
+  const play = vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
   const onNext = vi.fn();
   const result = render(() => (
     <>
@@ -188,16 +293,27 @@ it("leaves keystrokes in editors and media controls alone", () => {
       />
       <audio controls aria-label="Shortcut target audio" />
       <video controls aria-label="Shortcut target video" />
-      <Typing text="cat" onNext={onNext} />
+      <Typing
+        text="cat"
+        audioSrc="https://example.com/cat.mp3"
+        onNext={onNext}
+      />
     </>
   ));
 
-  for (const target of result.getAllByLabelText(/^Shortcut target/)) {
-    for (const key of ["d", "l", "ArrowRight"]) {
+  const audio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+  audio.currentTime = 5;
+  for (const target of [
+    ...result.getAllByLabelText(/^Shortcut target/),
+    audio,
+  ]) {
+    for (const key of ["d", "l", "ArrowRight", "h", "a"]) {
       expect(fireEvent.keyDown(target, { key })).toBe(true);
     }
   }
   expect(onNext).not.toHaveBeenCalled();
+  expect(play).not.toHaveBeenCalled();
+  expect(audio.currentTime).toBe(5);
 });
 
 it("supports keyboard toggling of typing mode and focuses the input when enabled or reset", async () => {

@@ -13,7 +13,8 @@ export const TypingContainer = () => {
   const auth = useAuth();
   const repository = createTypingRepository();
   const queue = createTypingQueue(repository);
-  // Keep the listener's opt-in across keyed Typing remounts.
+  // Keep opt-in preferences across keyed Typing remounts.
+  const [typingMode, setTypingMode] = createSignal(false);
   const [autoplayTts, setAutoplayTts] = createSignal(false);
 
   const exercisesQuery = createQuery(() => ({
@@ -91,6 +92,8 @@ export const TypingContainer = () => {
                     audioSrc={exercise.tts}
                     autoplayTts={autoplayTts()}
                     onAutoplayTtsChange={setAutoplayTts}
+                    typingMode={typingMode()}
+                    onTypingModeChange={setTypingMode}
                     description={exercise.description}
                     surface={exercise.surface}
                     text={exercise.text}

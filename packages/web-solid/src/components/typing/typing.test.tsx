@@ -44,6 +44,7 @@ vi.mock("@elmethis/solid", () => ({
         autocomplete={props.autocomplete}
         autocapitalize={props.autocapitalize}
         spellcheck={props.spellcheck}
+        value={props.value ?? ""}
         onInput={(event) => {
           if (typeof props.onInput === "function") {
             props.onInput(event);
@@ -61,6 +62,119 @@ import { Typing } from "./typing";
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+});
+
+it("defaults typing mode to off and hides typing UI while showing the reference", () => {
+  const onNext = vi.fn();
+  const result = render(() => <Typing text="cat" onNext={onNext} />);
+
+  expect(result.queryByRole("textbox")).not.toBeInTheDocument();
+  expect(result.queryByText("Text to type: cat")).not.toBeInTheDocument();
+  expect(result.queryByLabelText("Typing statistics")).not.toBeInTheDocument();
+  expect(result.queryByText("3 glyphs")).not.toBeInTheDocument();
+  expect(
+    result.queryByText("Correct each mistake to finish the exercise."),
+  ).not.toBeInTheDocument();
+  expect(
+    result.queryByRole("button", { name: "Reset line" }),
+  ).not.toBeInTheDocument();
+  expect(result.queryByRole("status")).not.toBeInTheDocument();
+  expect(result.getByRole("switch", { name: "Typing mode" })).not.toBeChecked();
+  expect(
+    result.queryByRole("switch", { name: "Autofocus" }),
+  ).not.toBeInTheDocument();
+  expect(
+    result.getByRole("region", { name: "Reference text" }),
+  ).toHaveTextContent("cat");
+  expect(
+    result.getByRole("button", { name: "Next exercise" }),
+  ).toBeInTheDocument();
+});
+
+it("supports keyboard toggling of typing mode and focuses the input when enabled or reset", async () => {
+  const user = userEvent.setup();
+  const result = render(() => <Typing text="cat" />);
+  const toggle = result.getByRole("switch", { name: "Typing mode" });
+
+  toggle.focus();
+  await user.keyboard(" ");
+  const input = result.getByRole("textbox", { name: "Your typing" });
+  expect(toggle).toBeChecked();
+  expect(input).toHaveFocus();
+  expect(result.getByText("Text to type: cat")).toBeInTheDocument();
+  expect(result.getByLabelText("Typing statistics")).toBeInTheDocument();
+  expect(result.getByText("3 glyphs")).toBeInTheDocument();
+
+  await user.type(input, "c");
+  await user.click(result.getByRole("button", { name: "Reset line" }));
+  expect(input).toHaveValue("");
+  expect(input).toHaveFocus();
+  await user.type(input, "ca");
+
+  toggle.focus();
+  await user.keyboard(" ");
+  expect(toggle).not.toBeChecked();
+  expect(toggle).toHaveFocus();
+  expect(input).not.toBeInTheDocument();
+  expect(result.queryByLabelText("Typing statistics")).not.toBeInTheDocument();
+  expect(
+    result.queryByRole("button", { name: "Reset line" }),
+  ).not.toBeInTheDocument();
+
+  await user.keyboard(" ");
+  const nextInput = result.getByRole("textbox", { name: "Your typing" });
+  expect(nextInput).toHaveValue("");
+  expect(nextInput).toHaveFocus();
+  expect(result.getByLabelText("Typing statistics")).toHaveTextContent(
+    "Progress0%",
+  );
+});
+
+it("uses the parent-owned typing mode and handles text changes while it is off", () => {
+  const [typingMode, setTypingMode] = createSignal(true);
+  const [text, setText] = createSignal("cat");
+  const result = render(() => (
+    <Typing text={text()} typingMode={typingMode()} />
+  ));
+  const input = result.getByRole("textbox", { name: "Your typing" });
+  const toggle = result.getByRole("switch", { name: "Typing mode" });
+
+  expect(toggle).toBeChecked();
+  expect(input).toHaveFocus();
+
+  setTypingMode(false);
+  expect(toggle).not.toBeChecked();
+  expect(input).not.toBeInTheDocument();
+  setText("dog");
+  expect(
+    result.getByRole("region", { name: "Reference text" }),
+  ).toHaveTextContent("dog");
+  expect(result.queryByRole("textbox")).not.toBeInTheDocument();
+
+  setTypingMode(true);
+  expect(toggle).toBeChecked();
+  expect(result.getByText("Text to type: dog")).toBeInTheDocument();
+  expect(result.getByRole("textbox", { name: "Your typing" })).toHaveValue("");
+  expect(result.getByRole("textbox", { name: "Your typing" })).toHaveFocus();
+});
+
+it("clears completion feedback when leaving typing mode", async () => {
+  const user = userEvent.setup();
+  const onComplete = vi.fn();
+  const result = render(() => <Typing text="cat" onComplete={onComplete} />);
+  const toggle = result.getByRole("switch", { name: "Typing mode" });
+
+  await user.click(toggle);
+  await user.keyboard("cat");
+  expect(result.getByRole("status")).toHaveTextContent("Line complete.");
+  expect(onComplete).toHaveBeenCalledOnce();
+
+  await user.click(toggle);
+  expect(result.queryByRole("status")).not.toBeInTheDocument();
+  await user.click(toggle);
+  expect(result.queryByRole("status")).not.toBeInTheDocument();
+  expect(result.getByRole("textbox", { name: "Your typing" })).toHaveValue("");
+  expect(onComplete).toHaveBeenCalledOnce();
 });
 
 it("renders sentence audio and its default-off autoplay control inside typing practice", () => {
@@ -165,7 +279,7 @@ it("keeps manual controls and typing usable when audio playback is rejected", as
     );
   const user = userEvent.setup();
   const result = render(() => (
-    <Typing text="cat" audioSrc="https://example.com/cat.mp3" />
+    <Typing text="cat" audioSrc="https://example.com/cat.mp3" typingMode />
   ));
 
   await user.click(result.getByRole("switch", { name: "Autoplay TTS" }));
@@ -202,7 +316,12 @@ it("renders typing feedback and resets the exercise", async () => {
   const user = userEvent.setup();
   const onComplete = vi.fn();
   const result = render(() => (
-    <Typing text="cat" description="Short words" onComplete={onComplete} />
+    <Typing
+      text="cat"
+      description="Short words"
+      onComplete={onComplete}
+      typingMode
+    />
   ));
   const input = result.getByRole("textbox", { name: "Your typing" });
 
@@ -250,7 +369,7 @@ it("displays the rich reference while using only plaintext for typing", async ()
     },
   };
   const result = render(() => (
-    <Typing text="cat" description="Short words" surface={surface} />
+    <Typing text="cat" description="Short words" surface={surface} typingMode />
   ));
 
   expect(
@@ -288,6 +407,7 @@ it("updates the description and formatted reference when props change", () => {
   const result = render(() => (
     <Typing
       text={word()}
+      typingMode
       description={`Practice ${word()}`}
       surface={{
         root: "root",
@@ -314,7 +434,9 @@ it("updates the description and formatted reference when props change", () => {
 
 it("uses graphemes consistently without a UTF-16 input limit", async () => {
   const user = userEvent.setup();
-  const result = render(() => <Typing text="👍a" description="Unicode" />);
+  const result = render(() => (
+    <Typing text="👍a" description="Unicode" typingMode />
+  ));
   const input = result.getByRole("textbox", {
     name: "Your typing",
   });
@@ -351,6 +473,7 @@ it("supports uninterrupted automatic advancement", async () => {
           <Typing
             text={exercise.text}
             description={exercise.description}
+            typingMode
             onComplete={() => setCurrentIndex((index) => index + 1)}
           />
         )}

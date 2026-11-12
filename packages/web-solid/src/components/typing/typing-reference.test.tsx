@@ -6,7 +6,7 @@ vi.mock("@elmethis/core/tokens.css", () => ({}));
 
 import { Typing } from "./typing";
 
-it("renders the A2UI reference with the real Notion catalog", async () => {
+it("renders the A2UI reference with the real Notion catalog while typing mode is off", async () => {
   const result = render(() => (
     <Typing
       description="A Notion description"
@@ -50,5 +50,9 @@ it("renders the A2UI reference with the real Notion catalog", async () => {
   expect(
     result.getByRole("region", { name: "A Notion description" }),
   ).toBeInTheDocument();
-  expect(result.getByText("Text to type: Type this link.")).toBeInTheDocument();
+  expect(
+    result.queryByText("Text to type: Type this link."),
+  ).not.toBeInTheDocument();
+  expect(result.queryByRole("textbox")).not.toBeInTheDocument();
+  expect(result.getByRole("switch", { name: "Typing mode" })).not.toBeChecked();
 });

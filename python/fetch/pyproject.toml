@@ -6,4 +6,6 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "crawl4ai>=0.7.6",
+    # Keep pip-based Lambda builds on the fixed selector engine too.
+    "soupsieve>=4.0.0",
 ]

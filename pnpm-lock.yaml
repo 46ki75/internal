@@ -92,8 +92,8 @@ importers:
         specifier: ^0.8.0
         version: 0.8.0(solid-js@1.9.17)(stylelint@17.16.0(@typescript/typescript6@6.0.2))
       '@formkit/auto-animate':
-        specifier: ^0.10.0
-        version: 0.10.0
+        specifier: ^0.10.2
+        version: 0.10.2
       '@js-temporal/polyfill':
         specifier: ^0.5.1
         version: 0.5.1
@@ -792,8 +792,8 @@ packages:
     resolution: {integrity: sha512-IkO+/KEUvwbVpiURZg+P7zF74z5Jxe0UgJxVni+RtoHQ6IZieXaO02kmadomap/q+l6bc/jdPGGqTjhuZnuz1Q==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
-  '@formkit/auto-animate@0.10.0':
-    resolution: {integrity: sha512-KGomRttjUfORuPUaR/ZGQw+6xfMrTM+sxnILv7JAd9AmabU9rg9i6gF/iC0Ih+QpKCubJpCA/1DX9UHKE8cX+A==}
+  '@formkit/auto-animate@0.10.2':
+    resolution: {integrity: sha512-t2Z3y8b/zB3wPWwgpc6JDVm4q0ezb5vfe2mqfUrQJ7XziZY8iYuhocQ7eJdTzowRePihrNbZ/DNJoFa6Yi5blg==}
 
   '@hono/node-server@2.1.8':
     resolution: {integrity: sha512-jdf7FHh6A1lzjpHHQUgxsg2GeER2vMetnAOfeActzcoli6jamlK+NAwL6Dsr5Fl3BS3tYUQzCdtZjU8Qxv7bEA==}
@@ -6579,7 +6579,7 @@ snapshots:
       '@eslint/core': 1.2.1
       levn: 0.4.1
 
-  '@formkit/auto-animate@0.10.0': {}
+  '@formkit/auto-animate@0.10.2': {}
 
   '@hono/node-server@2.1.8(hono@4.13.18)':
     dependencies:

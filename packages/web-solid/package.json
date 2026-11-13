@@ -33,7 +33,7 @@
   "dependencies": {
     "@elmethis/core": "^0.24.1",
     "@elmethis/solid": "^0.8.0",
-    "@formkit/auto-animate": "^0.10.0",
+    "@formkit/auto-animate": "^0.10.2",
     "@js-temporal/polyfill": "^0.5.1",
     "@mdi/js": "^7.4.47",
     "@solidjs/meta": "^0.29.4",

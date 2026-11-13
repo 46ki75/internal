@@ -12,10 +12,13 @@ edition = "2024"
 [workspace.dependencies]
 async-trait = "0.1.89"
 aws-config = "1.8.14"
-aws-sdk-cloudwatch = "=1.118.0"
-aws-sdk-cognitoidentityprovider = "1.109.0"
-aws-sdk-dynamodb = "1.105.0"
-aws-sdk-ssm = "1.104.0"
+# The SDK's `rustls` default enables the vulnerable legacy Rustls 0.21 connector.
+# Keep the modern HTTPS client (Rustls 0.23) and Tokio without that legacy feature.
+aws-sdk-cloudwatch = { version = "=1.118.0", default-features = false, features = ["default-https-client", "rt-tokio"] }
+aws-sdk-cognitoidentityprovider = { version = "1.109.0", default-features = false, features = ["default-https-client", "rt-tokio"] }
+aws-sdk-dynamodb = { version = "1.105.0", default-features = false, features = ["default-https-client", "rt-tokio"] }
+aws-sdk-sns = { version = "1.95.0", default-features = false, features = ["default-https-client", "rt-tokio"] }
+aws-sdk-ssm = { version = "1.104.0", default-features = false, features = ["default-https-client", "rt-tokio"] }
 axum = "0.8.8"
 cached = { version = "4.0.0", features = ["async"] }
 chrono = "0.4.43"

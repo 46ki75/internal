@@ -120,6 +120,23 @@ Selecting one Rust file still invokes
 the workspace-wide Cargo formatter/linter. Existing Lefthook exclusions and
 staged-file handling apply.
 
+## Dependency security
+
+Scan runtime and development dependencies with:
+
+```sh
+trivy fs --scanners vuln --include-dev-deps --exit-code 1 .
+```
+
+Root `package.json#pnpm.overrides` selects fixed glob, minimatch, KaTeX, and
+re2js releases where upstream dependency ranges still exclude security fixes.
+The glob and minimatch overrides cover only the affected modern versions:
+older consumers retain their legacy APIs. In particular, minimatch 11 removes
+`makeRe()`, so do not broaden its override without checking callers against the
+[upstream API changes](https://github.com/isaacs/minimatch/blob/main/changelog.md).
+Remove these overrides when parent packages accept fixed releases, regenerate
+`pnpm-lock.yaml`, then rerun the scan and `mise run --silent //:check`.
+
 ## Continuous integration
 
 `.github/workflows/ci.yml` runs on every pull request targeting `main` and every

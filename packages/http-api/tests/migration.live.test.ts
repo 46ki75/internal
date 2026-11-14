@@ -70,7 +70,6 @@ describe("dev migration", () => {
     ["/api/v1/typing", schemas.TypingResponse.array()],
     ["/api/v1/bookmark", schemas.BookmarkResponse.array()],
     ["/api/v1/to-do", schemas.ToDoResponse.array()],
-    ["/api/v1/icon", schemas.IconResponse.array()],
     ["/api/v1/image", imagePage],
     ["/api/v1/image/tag", schemas.ImageTagResponse.array()],
   ] as const)("reads %s with the documented contract", async (path, schema) => {

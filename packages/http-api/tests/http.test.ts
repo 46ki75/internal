@@ -59,10 +59,6 @@ describe("HTTP contracts", () => {
       const fixture = fixtures[feature as keyof typeof fixtures] ?? triviaPage;
       const { repository } = mockRepository((url) => {
         if (url.includes("/blocks/")) return list([]);
-        if (url.includes("custom_emojis"))
-          return list([
-            { id: "icon", name: "Icon", url: "https://example.com/icon.png" },
-          ]);
         if (url.includes("image_tag")) return list([imageTagPage()]);
         if (url.endsWith("/query")) return list([fixture()]);
         return fixture();
@@ -99,6 +95,15 @@ describe("HTTP contracts", () => {
       }
     },
   );
+
+  it("does not expose the removed icon endpoint", async () => {
+    const initialize = vi
+      .spyOn(notion, "getRepository")
+      .mockResolvedValue(mockRepository(() => list([])).repository);
+    const response = await request(new Request("http://localhost/api/v1/icon"));
+    expect(response.status).toBe(404);
+    expect(initialize).not.toHaveBeenCalled();
+  });
 
   it.each([
     ["GET", "/api/v1/anki?page_size=no", undefined, "application/json", 400],

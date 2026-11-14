@@ -89,7 +89,7 @@ from the crate directory.
 ### `packages/http-api` (Notion HTTP API Lambda)
 
 Standalone Nitro 2 (`nitropack`) with Node.js 24, the official `@notionhq/client`,
-and npm `n2a2ui`. Owns Anki, Trivia, Bookmark, To-do, Icon, Image, and read-only Typing endpoints.
+and npm `n2a2ui`. Owns Anki, Trivia, Bookmark, To-do, Image, and read-only Typing endpoints.
 Read [its README](packages/http-api/README.md) for configuration and deployment.
 
 ```sh
@@ -195,8 +195,8 @@ counts are not supported.
 ### `packages/web-solid` — SolidStart CSR
 
 - `src/app.tsx` — SolidStart router root and persistent auth/Anki provider shell.
-- `src/routes/` — SolidStart file routes. Routes: `/`, `/anki`, `/icon`, `/swatch`, `/trivia`, `/typing`, `/writing-assessments`.
-- `src/components/` — feature components grouped by domain (`bookmark/`, `todo/`, `common/`, `icon/`).
+- `src/routes/` — SolidStart file routes. Routes: `/`, `/anki`, `/swatch`, `/trivia`, `/typing`, `/writing-assessments`.
+- `src/components/` — feature components grouped by domain (`bookmark/`, `todo/`, `common/`, `typing/`).
 - `src/container/` — stateful feature containers that compose testable components and talk to the API.
 - `src/context/` — Solid contexts (`auth-context.tsx` wraps Cognito via `aws-amplify`; `anki-context.tsx` owns Anki state and actions).
 - `src/openapi/schema.ts` — generated from `http-api`'s OpenAPI; do not edit by hand. Consumed via `openapi-fetch`.

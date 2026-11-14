@@ -27,14 +27,14 @@ describe("query client", () => {
     client.setQueryData(queryKeys.todos, []);
     client.setQueryData(queryKeys.bookmarks, []);
     client.setQueryData(queryKeys.anki, []);
-    client.setQueryData(["icons"], []);
+    client.setQueryData(queryKeys.typing, []);
 
     const todos = client.getQueryCache().find({ queryKey: queryKeys.todos });
     const bookmarks = client
       .getQueryCache()
       .find({ queryKey: queryKeys.bookmarks });
     const anki = client.getQueryCache().find({ queryKey: queryKeys.anki });
-    const icons = client.getQueryCache().find({ queryKey: ["icons"] });
+    const typing = client.getQueryCache().find({ queryKey: queryKeys.typing });
 
     expect(todos && shouldPersistTodoQuery(todos)).toBe(true);
     expect(todos && shouldPersistBookmarkQuery(todos)).toBe(false);
@@ -42,8 +42,8 @@ describe("query client", () => {
     expect(bookmarks && shouldPersistTodoQuery(bookmarks)).toBe(false);
     expect(anki && shouldPersistBookmarkQuery(anki)).toBe(false);
     expect(anki && shouldPersistTodoQuery(anki)).toBe(false);
-    expect(icons && shouldPersistBookmarkQuery(icons)).toBe(false);
-    expect(icons && shouldPersistTodoQuery(icons)).toBe(false);
+    expect(typing && shouldPersistBookmarkQuery(typing)).toBe(false);
+    expect(typing && shouldPersistTodoQuery(typing)).toBe(false);
   });
 
   it("splits the legacy persisted cache by feature", () => {

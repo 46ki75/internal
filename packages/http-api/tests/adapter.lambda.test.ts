@@ -100,6 +100,12 @@ describe("built Lambda adapter", () => {
     );
   });
 
+  it("returns 404 for the removed icon endpoint", async () => {
+    expect(await handler(event("/api/v1/icon"), {} as Context)).toMatchObject({
+      statusCode: 404,
+    });
+  });
+
   it("returns 404 for unknown paths", async () => {
     expect(
       await handler(event("/api/v1/trivia/missing/path"), {} as Context),

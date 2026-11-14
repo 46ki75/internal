@@ -1,7 +1,6 @@
 import { createModal } from "@elmethis/solid";
 import {
   mdiCertificate,
-  mdiFaceMan,
   mdiHome,
   mdiKeyboardOutline,
   mdiLightbulbOnOutline,
@@ -23,7 +22,6 @@ const links = [
   { d: mdiLightbulbOnOutline, href: "/trivia", label: "Trivia" },
   { d: mdiKeyboardOutline, href: "/typing", label: "Typing" },
   { d: mdiPaletteSwatch, href: "/swatch", label: "Swatches" },
-  { d: mdiFaceMan, href: "/icon", label: "Icons" },
   {
     d: mdiTextBoxCheckOutline,
     href: "/writing-assessments",

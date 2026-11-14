@@ -68,22 +68,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/icon": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["listIcons"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/image": {
         parameters: {
             query?: never;
@@ -375,12 +359,6 @@ export interface components {
                 url?: string | null;
             }[];
             next_cursor?: string | null;
-        };
-        IconResponse: {
-            content_type?: string | null;
-            id: string;
-            name: string;
-            url: string;
         };
         ImageResponse: {
             images: string[];
@@ -862,44 +840,6 @@ export interface operations {
                         } | null;
                         url?: string | null;
                     };
-                };
-            };
-            /** @description Error */
-            default: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        error: string;
-                    };
-                };
-            };
-        };
-    };
-    listIcons: {
-        parameters: {
-            query?: never;
-            header: {
-                Authorization: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        content_type?: string | null;
-                        id: string;
-                        name: string;
-                        url: string;
-                    }[];
                 };
             };
             /** @description Error */

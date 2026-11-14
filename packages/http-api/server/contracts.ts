@@ -95,12 +95,6 @@ export const schemas = {
     deadline: date.nullish(),
   }),
   UpdateToDoInput: z.object({ id: z.string().min(1), is_done: z.boolean() }),
-  IconResponse: z.object({
-    id: z.string(),
-    url: z.string(),
-    name: z.string(),
-    content_type: nullableText,
-  }),
   ImageSourceResponse: tag,
   ImageResponse: z.object({
     title: z.string(),
@@ -208,11 +202,6 @@ export const operations = {
     path: "/api/v1/to-do",
     body: schemas.UpdateToDoInput,
     response: schemas.ToDoResponse,
-  },
-  listIcons: {
-    method: "get",
-    path: "/api/v1/icon",
-    response: z.array(schemas.IconResponse),
   },
   listImages: { method: "get", path: "/api/v1/image", response: imagePage },
   listImageTags: {

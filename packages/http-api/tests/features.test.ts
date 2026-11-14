@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { Surface } from "n2a2ui";
 import recordedBookmark from "./fixtures/bookmark.json";
 import recordedToDo from "./fixtures/to-do.json";
@@ -11,7 +11,6 @@ import { TriviaService, triviaEntity } from "../server/features/trivia.ts";
 import { BookmarkService, faviconUrl } from "../server/features/bookmark.ts";
 import { ToDoService, toDoEntity } from "../server/features/to-do.ts";
 import { ImageService } from "../server/features/image.ts";
-import { IconService } from "../server/features/icon.ts";
 import {
   ankiPage,
   triviaPage,
@@ -206,22 +205,6 @@ describe("Notion repositories and feature contracts", () => {
         url: "https://example.com/artist",
         tag_type: "Artist",
       },
-    ]);
-  });
-  it("paginates custom emoji and tolerates absent content types", async () => {
-    const { repository } = mockRepository((url) =>
-      list(
-        [{ id: "icon", name: "Icon", url: "https://example.com/icon.png" }],
-        url.includes("start_cursor") ? null : "next",
-      ),
-    );
-    const type = vi
-      .fn()
-      .mockResolvedValueOnce("image/png")
-      .mockResolvedValueOnce(null);
-    expect(await new IconService(repository, type).list()).toMatchObject([
-      { content_type: "image/png" },
-      { content_type: null },
     ]);
   });
   it("creates bookmarks even when optional metadata fails", async () => {

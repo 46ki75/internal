@@ -28,10 +28,9 @@ SSM parameters are loaded lazily and cached per Lambda execution environment:
 - `/<stage>/46ki75/internal/notion/<feature>/data_source/id`, where feature is
   `anki`, `trivia`, `bookmark`, `todo`, `image`, `image_tag`, or `typing`.
 
-The icon endpoint uses the workspace custom-emoji API. The converter enables
-unsupported blocks, image metadata, and bookmark metadata, matching the previous
-Rust implementation. Anki splits surfaces at H1 markers `front`, `back`, and
-`explanation`. Every returned surface has root ID `root`.
+The converter enables unsupported blocks, image metadata, and bookmark metadata,
+matching the previous Rust implementation. Anki splits surfaces at H1 markers
+`front`, `back`, and `explanation`. Every returned surface has root ID `root`.
 
 `GET /api/v1/typing` returns `{ id, description, text, tts, surface, url }[]` from every
 page in the typing data source. `Title` must be a title property and supplies the

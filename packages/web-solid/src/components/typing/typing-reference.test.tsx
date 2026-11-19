@@ -1,4 +1,5 @@
 import { render, within } from "@solidjs/testing-library";
+import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
 
 // Keep the real renderer; external Node imports in Vitest cannot load token CSS.
@@ -6,7 +7,8 @@ vi.mock("@elmethis/core/tokens.css", () => ({}));
 
 import { Typing } from "./typing";
 
-it("renders the A2UI reference with the real Notion catalog while typing mode is off", async () => {
+it("shows the rich reference without the Notion title when typing mode is off", async () => {
+  const user = userEvent.setup();
   const result = render(() => (
     <Typing
       description="A Notion description"
@@ -43,16 +45,21 @@ it("renders the A2UI reference with the real Notion catalog while typing mode is
   expect(
     (await reference.findByText("Type this")).closest("strong"),
   ).not.toBeNull();
-  expect(await reference.findByRole("link", { name: "link." })).toHaveAttribute(
-    "href",
-    "https://example.com",
-  );
-  expect(
-    result.getByRole("region", { name: "A Notion description" }),
-  ).toBeInTheDocument();
+  const link = await reference.findByRole("link", { name: "link." });
+  expect(link).toHaveAttribute("href", "https://example.com");
+  expect(result.queryByText("A Notion description")).not.toBeInTheDocument();
   expect(
     result.queryByText("Text to type: Type this link."),
   ).not.toBeInTheDocument();
   expect(result.queryByRole("textbox")).not.toBeInTheDocument();
-  expect(result.getByRole("switch", { name: "Typing mode" })).not.toBeChecked();
+  const toggle = result.getByRole("switch", { name: "Typing mode" });
+  expect(toggle).not.toBeChecked();
+
+  await user.click(toggle);
+  expect(result.getByText("A Notion description")).toBeVisible();
+  expect(reference.getByRole("link", { name: "link." })).toBe(link);
+
+  await user.click(toggle);
+  expect(result.queryByText("A Notion description")).not.toBeInTheDocument();
+  expect(reference.getByRole("link", { name: "link." })).toBe(link);
 });

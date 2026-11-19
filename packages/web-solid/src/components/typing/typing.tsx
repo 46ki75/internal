@@ -133,15 +133,16 @@ export const Typing = (props: TypingProps) => {
     <section
       class={`${styles.typing} ${props.class ?? ""}`}
       style={props.style}
-      aria-labelledby={`${inputId}-title`}
+      aria-label={typingMode() ? undefined : "Typing practice"}
+      aria-labelledby={typingMode() ? `${inputId}-title` : undefined}
     >
-      <header class={styles.header}>
-        <span id={`${inputId}-title`}>
-          <ElmInlineText size="1.25rem">
-            {props.description || "Typing practice"}
-          </ElmInlineText>
-        </span>
-        <Show when={typingMode()}>
+      <Show when={typingMode()}>
+        <header class={styles.header}>
+          <span id={`${inputId}-title`}>
+            <ElmInlineText size="1.25rem">
+              {props.description || "Typing practice"}
+            </ElmInlineText>
+          </span>
           <ElmInlineText
             class={styles.length}
             size="0.75rem"
@@ -149,8 +150,8 @@ export const Typing = (props: TypingProps) => {
           >
             {splitTypingCharacters(props.text).length} glyphs
           </ElmInlineText>
-        </Show>
-      </header>
+        </header>
+      </Show>
 
       <div role="region" aria-label="Reference text">
         <Show when={props.surface} fallback={<p>{props.text}</p>}>

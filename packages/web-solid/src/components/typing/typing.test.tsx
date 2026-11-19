@@ -68,6 +68,7 @@ it("defaults typing mode to off and hides typing UI while showing the reference"
   const onNext = vi.fn();
   const result = render(() => <Typing text="cat" onNext={onNext} />);
 
+  expect(result.queryByText("Typing practice")).not.toBeInTheDocument();
   expect(result.queryByRole("textbox")).not.toBeInTheDocument();
   expect(result.queryByText("Text to type: cat")).not.toBeInTheDocument();
   expect(result.queryByLabelText("Typing statistics")).not.toBeInTheDocument();

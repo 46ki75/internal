@@ -109,6 +109,7 @@ it("defaults typing mode to off while keeping reference text, audio, and navigat
   const toggle = await result.findByRole("switch", { name: "Typing mode" });
 
   expect(toggle).not.toBeChecked();
+  expect(result.queryByText(exercises[0].description)).not.toBeInTheDocument();
   expect(result.queryByRole("textbox")).not.toBeInTheDocument();
   expect(result.queryByLabelText("Typing statistics")).not.toBeInTheDocument();
   expect(
@@ -127,6 +128,7 @@ it("defaults typing mode to off while keeping reference text, audio, and navigat
     result.getByRole("region", { name: "Reference text" }),
   ).toHaveTextContent("dog");
   expect(result.getByRole("switch", { name: "Typing mode" })).not.toBeChecked();
+  expect(result.queryByText(exercises[1].description)).not.toBeInTheDocument();
   expect(result.queryByRole("textbox")).not.toBeInTheDocument();
   expect(result.queryByText("Text to type: dog")).not.toBeInTheDocument();
   expect(
@@ -276,9 +278,7 @@ it("defaults TTS autoplay to off while keeping manual playback available", async
   const result = renderContainer();
   const toggle = await result.findByRole("switch", { name: "Autoplay TTS" });
   const audio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
-  const practice = result.getByRole("region", {
-    name: exercises[0].description,
-  });
+  const practice = result.getByRole("region", { name: "Typing practice" });
 
   expect(practice).toContainElement(toggle);
   expect(practice).toContainElement(audio);

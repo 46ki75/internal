@@ -162,6 +162,7 @@ export const Typing = (props: TypingProps) => {
       <div role="region" aria-label="Reference text">
         <Show when={props.surface} fallback={<p>{props.text}</p>}>
           <ElmA2ui
+            class={styles["rich-text"]}
             catalog={notionBlockCatalog}
             messages={surfaceToMessages(props.surface, `${inputId}-reference`)}
           />

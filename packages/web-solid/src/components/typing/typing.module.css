@@ -23,6 +23,10 @@
   font-family: var(--elmethis-font-family-monospace);
 }
 
+.rich-text {
+  font-size: 1.25rem;
+}
+
 .prompt-frame {
   position: relative;
   padding: 1rem;

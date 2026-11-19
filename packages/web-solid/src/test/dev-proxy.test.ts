@@ -148,6 +148,16 @@ describe("development proxy", () => {
     );
   });
 
+  it("serves the app shell through the Nitro worker", async () => {
+    const response = await fetch(`${origin}/`, {
+      headers: { Accept: "text/html" },
+      signal: AbortSignal.timeout(10_000),
+    });
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toContain("text/html");
+    expect(await response.text()).toContain('id="app"');
+  }, 15_000);
+
   it("forwards API paths, query strings, and authorization instead of rendering HTML", async () => {
     const response = await fetch(`${origin}/api/v1/bookmark?refresh=true`, {
       headers: { Authorization: "Bearer test-token" },

@@ -55,8 +55,15 @@ export const Typing = (props: TypingProps) => {
 
   const playAudio = () => {
     void audio?.play().catch(() => {
-      // Browser policy or unavailable media can reject play; native controls remain usable.
+      // Playback can be blocked or unavailable; the replay button remains usable.
     });
+  };
+
+  const replayAudio = () => {
+    if (audio) {
+      audio.currentTime = 0;
+      playAudio();
+    }
   };
 
   onMount(() => {
@@ -89,9 +96,8 @@ export const Typing = (props: TypingProps) => {
       }
 
       event.preventDefault();
-      if (replay && audio) {
-        audio.currentTime = 0;
-        playAudio();
+      if (replay) {
+        replayAudio();
       } else {
         onNext?.();
       }
@@ -248,14 +254,10 @@ export const Typing = (props: TypingProps) => {
                 }
               });
             }}
-            class={styles.audio}
-            aria-label="Sentence audio"
-            aria-keyshortcuts={typingMode() ? undefined : "h a"}
-            title={typingMode() ? undefined : "Replay audio (h or a)"}
             src={src}
             autoplay={autoplayTts()}
             preload="none"
-            controls
+            hidden
           />
         )}
       </Show>
@@ -264,6 +266,16 @@ export const Typing = (props: TypingProps) => {
         <Show when={typingMode()}>
           <ElmButton type="button" onClick={reset}>
             Reset line
+          </ElmButton>
+        </Show>
+        <Show when={props.audioSrc}>
+          <ElmButton
+            type="button"
+            onClick={replayAudio}
+            aria-keyshortcuts={typingMode() ? undefined : "h a"}
+            title={typingMode() ? undefined : "Replay audio (h or a)"}
+          >
+            Replay audio
           </ElmButton>
         </Show>
         <Show when={props.onNext} keyed>

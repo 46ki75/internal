@@ -118,7 +118,9 @@ it("defaults typing mode to off while keeping reference text, audio, and navigat
   expect(
     result.getByRole("region", { name: "Reference text" }),
   ).toHaveTextContent("cat");
-  expect(result.getByLabelText("Sentence audio")).toBeInTheDocument();
+  expect(
+    result.getByRole("button", { name: "Replay audio" }),
+  ).toBeInTheDocument();
   expect(
     result.getByRole("link", { name: "Open sentence in Notion" }),
   ).toBeInTheDocument();
@@ -157,9 +159,7 @@ it("advances one card per d, l, or Right Arrow press only when typing mode is of
     expect(reference()).toHaveTextContent(text);
     expect(result.queryByRole("textbox")).not.toBeInTheDocument();
     expect(result.getByRole("switch", { name: "Autoplay TTS" })).toBeChecked();
-    expect(
-      result.getByLabelText<HTMLAudioElement>("Sentence audio").autoplay,
-    ).toBe(true);
+    expect(result.container.querySelector("audio")!.autoplay).toBe(true);
   }
 
   await user.click(result.getByRole("switch", { name: "Typing mode" }));
@@ -183,7 +183,10 @@ it("replays the current exercise on h or a without advancing or enabling autopla
   await result.findByRole("switch", { name: "Typing mode" });
 
   for (const [index, key] of ["h", "a"].entries()) {
-    const audio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+    const audio = result.container.querySelector("audio")!;
+    expect(
+      result.getByRole("button", { name: "Replay audio" }),
+    ).toHaveAttribute("aria-keyshortcuts", "h a");
     expect(audio.src).toBe(exercises[index].tts);
     audio.currentTime = 5;
     await user.keyboard(key);
@@ -202,6 +205,9 @@ it("replays the current exercise on h or a without advancing or enabling autopla
   }
 
   await user.click(result.getByRole("switch", { name: "Typing mode" }));
+  expect(
+    result.getByRole("button", { name: "Replay audio" }),
+  ).not.toHaveAttribute("aria-keyshortcuts");
   await user.keyboard("ha");
   expect(result.getByRole("textbox", { name: "Your typing" })).toHaveValue(
     "ha",
@@ -211,7 +217,7 @@ it("replays the current exercise on h or a without advancing or enabling autopla
   await user.click(result.getByRole("switch", { name: "Typing mode" }));
   await user.keyboard("h");
   expect(play).toHaveBeenCalledTimes(3);
-  expect(play.mock.contexts[2]).toBe(result.getByLabelText("Sentence audio"));
+  expect(play.mock.contexts[2]).toBe(result.container.querySelector("audio"));
 });
 
 it("preserves typing mode across exercises and hides typing UI when disabled", async () => {
@@ -237,13 +243,13 @@ it("preserves typing mode across exercises and hides typing UI when disabled", a
   expect(result.getByText("Text to type: cat")).toBeInTheDocument();
   expect(toggle()).toBeChecked();
   expect(input()).toHaveFocus();
-  const audio = result.getByLabelText("Sentence audio");
+  const audio = result.container.querySelector("audio")!;
 
   await user.click(toggle());
   expect(toggle()).not.toBeChecked();
   expect(result.queryByRole("textbox")).not.toBeInTheDocument();
   expect(result.queryByText("Text to type: cat")).not.toBeInTheDocument();
-  expect(result.getByLabelText("Sentence audio")).toBe(audio);
+  expect(result.container.querySelector("audio")).toBe(audio);
 
   await user.click(result.getByRole("button", { name: "Next exercise" }));
   expect(
@@ -277,15 +283,17 @@ it("defaults TTS autoplay to off while keeping manual playback available", async
   const user = userEvent.setup();
   const result = renderContainer();
   const toggle = await result.findByRole("switch", { name: "Autoplay TTS" });
-  const audio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+  const audio = result.container.querySelector("audio")!;
   const practice = result.getByRole("region", { name: "Typing practice" });
 
   expect(practice).toContainElement(toggle);
-  expect(practice).toContainElement(audio);
+  expect(practice).toContainElement(
+    result.getByRole("button", { name: "Replay audio" }),
+  );
   expect(toggle).not.toBeChecked();
   expect(audio.src).toBe(exercises[0].tts);
   expect(audio.autoplay).toBe(false);
-  expect(audio.controls).toBe(true);
+  expect(audio).not.toBeVisible();
   expect(audio.muted).toBe(false);
   expect(play).not.toHaveBeenCalled();
 
@@ -293,10 +301,13 @@ it("defaults TTS autoplay to off while keeping manual playback available", async
   expect(
     result.getByRole("switch", { name: "Autoplay TTS" }),
   ).not.toBeChecked();
-  expect(
-    result.getByLabelText<HTMLAudioElement>("Sentence audio").autoplay,
-  ).toBe(false);
+  const nextAudio = result.container.querySelector("audio")!;
+  expect(nextAudio.autoplay).toBe(false);
   expect(play).not.toHaveBeenCalled();
+
+  await user.click(result.getByRole("button", { name: "Replay audio" }));
+  expect(play).toHaveBeenCalledOnce();
+  expect(play.mock.contexts[0]).toBe(nextAudio);
 });
 
 it("starts TTS when enabled, preserves the choice across exercises, and pauses when disabled", async () => {
@@ -306,7 +317,7 @@ it("starts TTS when enabled, preserves the choice across exercises, and pauses w
   const result = renderContainer();
   await result.findByRole("switch", { name: "Autoplay TTS" });
   const toggle = () => result.getByRole("switch", { name: "Autoplay TTS" });
-  const firstAudio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+  const firstAudio = result.container.querySelector("audio")!;
 
   await user.click(toggle());
   expect(toggle()).toBeChecked();
@@ -317,7 +328,7 @@ it("starts TTS when enabled, preserves the choice across exercises, and pauses w
 
   await user.click(result.getByRole("switch", { name: "Typing mode" }));
   await user.type(result.getByRole("textbox", { name: "Your typing" }), "cat");
-  const secondAudio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+  const secondAudio = result.container.querySelector("audio")!;
   expect(secondAudio).not.toBe(firstAudio);
   expect(secondAudio.src).toBe(exercises[1].tts);
   expect(secondAudio.autoplay).toBe(true);
@@ -330,7 +341,7 @@ it("starts TTS when enabled, preserves the choice across exercises, and pauses w
   expect(pause.mock.contexts).toContain(secondAudio);
 
   await user.click(result.getByRole("button", { name: "Next exercise" }));
-  const nextAudio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+  const nextAudio = result.container.querySelector("audio")!;
   expect(nextAudio.autoplay).toBe(false);
   expect(play).toHaveBeenCalledOnce();
 
@@ -354,9 +365,7 @@ it("supports keyboard toggling and resets autoplay to off when the page is reope
   expect(
     await reopened.findByRole("switch", { name: "Autoplay TTS" }),
   ).not.toBeChecked();
-  expect(
-    reopened.getByLabelText<HTMLAudioElement>("Sentence audio").autoplay,
-  ).toBe(false);
+  expect(reopened.container.querySelector("audio")!.autoplay).toBe(false);
 });
 
 it("keeps the autoplay choice when an exercise has no TTS", async () => {
@@ -372,14 +381,14 @@ it("keeps the autoplay choice when an exercise has no TTS", async () => {
   await user.click(toggle);
   expect(toggle).toBeChecked();
   expect(play).not.toHaveBeenCalled();
-  expect(result.queryByLabelText("Sentence audio")).not.toBeInTheDocument();
+  expect(result.container.querySelector("audio")).not.toBeInTheDocument();
 
   await user.click(result.getByRole("button", { name: "Next exercise" }));
-  const audio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+  const audio = result.container.querySelector("audio")!;
   expect(audio.autoplay).toBe(true);
 
   await user.click(result.getByRole("button", { name: "Next exercise" }));
-  expect(result.queryByLabelText("Sentence audio")).not.toBeInTheDocument();
+  expect(result.container.querySelector("audio")).not.toBeInTheDocument();
   expect(pause.mock.contexts).toContain(audio);
   const currentToggle = result.getByRole("switch", { name: "Autoplay TTS" });
   expect(currentToggle).toBeChecked();
@@ -387,7 +396,7 @@ it("keeps the autoplay choice when an exercise has no TTS", async () => {
   expect(currentToggle).not.toBeChecked();
 });
 
-it("handles rejected autoplay requests without interrupting typing or hiding manual controls", async () => {
+it("handles rejected autoplay without interrupting typing or hiding replay", async () => {
   const play = vi
     .spyOn(HTMLMediaElement.prototype, "play")
     .mockRejectedValue(
@@ -400,15 +409,15 @@ it("handles rejected autoplay requests without interrupting typing or hiding man
   await user.click(toggle);
   expect(play).toHaveBeenCalledOnce();
   expect(
-    result.getByLabelText<HTMLAudioElement>("Sentence audio").controls,
-  ).toBe(true);
+    result.getByRole("button", { name: "Replay audio" }),
+  ).toBeInTheDocument();
   await user.click(result.getByRole("switch", { name: "Typing mode" }));
   await user.type(result.getByRole("textbox", { name: "Your typing" }), "cat");
   expect(result.getByText("Text to type: dog")).toBeInTheDocument();
 });
 
 it.each([undefined, null, ""])(
-  "omits the player when the current sentence has tts=%s",
+  "omits replay when the current sentence has tts=%s",
   async (tts) => {
     api.GET.mockResolvedValue({
       data: [{ ...exercises[0], tts }, exercises[1]],
@@ -416,10 +425,15 @@ it.each([undefined, null, ""])(
     const user = userEvent.setup();
     const result = renderContainer();
     await result.findByRole("switch", { name: "Typing mode" });
-    expect(result.queryByLabelText("Sentence audio")).not.toBeInTheDocument();
+    expect(
+      result.queryByRole("button", { name: "Replay audio" }),
+    ).not.toBeInTheDocument();
 
     await user.click(result.getByRole("button", { name: "Next exercise" }));
-    const audio = result.getByLabelText<HTMLAudioElement>("Sentence audio");
+    expect(
+      result.getByRole("button", { name: "Replay audio" }),
+    ).toBeInTheDocument();
+    const audio = result.container.querySelector("audio")!;
     expect(audio.src).toBe(exercises[1].tts);
     expect(audio.autoplay).toBe(false);
     expect(audio.muted).toBe(false);
@@ -500,7 +514,7 @@ it("does not show a page link when there is no current sentence", async () => {
   ).toBeInTheDocument();
   expect(result.queryByRole("button")).not.toBeInTheDocument();
   expect(result.queryByRole("switch")).not.toBeInTheDocument();
-  expect(result.queryByLabelText("Sentence audio")).not.toBeInTheDocument();
+  expect(result.container.querySelector("audio")).not.toBeInTheDocument();
   expect(result.queryByRole("link")).not.toBeInTheDocument();
 });
 

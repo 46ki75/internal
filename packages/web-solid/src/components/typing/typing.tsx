@@ -159,7 +159,11 @@ export const Typing = (props: TypingProps) => {
         </header>
       </Show>
 
-      <div role="region" aria-label="Reference text">
+      <div
+        class={styles["reference-text"]}
+        role="region"
+        aria-label="Reference text"
+      >
         <Show when={props.surface} fallback={<p>{props.text}</p>}>
           <ElmA2ui
             class={styles["rich-text"]}

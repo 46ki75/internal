@@ -23,6 +23,14 @@
   font-family: var(--elmethis-font-family-monospace);
 }
 
+.reference-text {
+  box-sizing: border-box;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  background-color: var(--elmethis-color-surface-raised);
+  box-shadow: var(--elmethis-box-shadow-medium);
+}
+
 .rich-text {
   font-size: 1.25rem;
 }
@@ -173,7 +181,7 @@
   border: 0;
 }
 
-@media (width <= 36rem) {
+@media (width <=36rem) {
   .header {
     align-items: flex-start;
     flex-direction: column;
